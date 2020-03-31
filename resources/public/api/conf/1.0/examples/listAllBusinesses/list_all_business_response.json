@@ -1,0 +1,9 @@
+{
+  "listOfBusinesses":[
+    {
+      "typeOfBusiness": "self-employment",
+      "incomeSourceId": "123456789012345",
+      "tradingName": "RCDTS"
+    }
+  ]
+}
