@@ -18,25 +18,22 @@ package v1.models.response.listAllBusiness
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
-import utils.NestedJsonReads
 import v1.models.domain.{IncomeSourceType, TypeOfBusiness}
 
 case class Business(typeOfBusiness: TypeOfBusiness, businessId: String, tradingName: Option[String])
 
-object Business extends NestedJsonReads {
+object Business {
 
   implicit val writes: OWrites[Business] = Json.writes[Business]
   implicit val reads: Reads[Business] = {
     val typeOfBusinessReads: Reads[TypeOfBusiness] =
-      ((JsPath \ "businessData" \ "incomeSourceType").read[IncomeSourceType] or
-        (JsPath \ "propertyData" \ "incomeSourceType").read[IncomeSourceType]).map(_.toTypeOfBusiness)
+      (JsPath \ "incomeSourceType").read[IncomeSourceType].map(_.toTypeOfBusiness)
 
     val businessIdReads: Reads[String] =
-      (JsPath \ "businessData" \ "incomeSourceId").read[String] or
-        (JsPath \ "propertyData" \ "incomeSourceId").read[String]
+      (JsPath \ "incomeSourceId").read[String]
 
     val tradingNameReads: Reads[Option[String]] =
-      (JsPath \ "businessData" \ "tradingName").readNestedNullable[String]
+      (JsPath \ "tradingName").readNullable[String]
 
     (typeOfBusinessReads and businessIdReads and tradingNameReads) (Business.apply _)
   }

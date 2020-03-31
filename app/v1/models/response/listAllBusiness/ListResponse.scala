@@ -16,12 +16,16 @@
 
 package v1.models.response.listAllBusiness
 
-import play.api.libs.json.{Json, OWrites, Reads}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 
-case class ListResponse(studentLoans: Seq[Business])
+case class ListResponse(listOfBusinesses: Seq[Business])
 
 object ListResponse {
-  implicit val reads: Reads[ListResponse] = implicitly[Reads[Seq[Business]]].map(ListResponse(_))
+  implicit val reads: Reads[ListResponse] = for {
+    listOfBusinesses <- (JsPath \ "businessData").read[Seq[Business]] or (JsPath \ "propertyData").read[Seq[Business]]
+  } yield {
+    ListResponse(listOfBusinesses)
+  }
   implicit val writes: OWrites[ListResponse] = Json.writes[ListResponse]
 }
-

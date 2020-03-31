@@ -26,19 +26,17 @@ class BusinessSpec extends UnitSpec {
 
     val mtdModel: TypeOfBusiness => Business = mtdValue => Business(mtdValue, "Business", Some("Business Co"))
 
-    "read from businessData" when {
+    "read from JSON" when {
 
       val desJson: String => JsValue = desValue => Json.parse(
         s"""
            |{
-           |  "businessData": {
-           |    "incomeSourceType": "$desValue",
-           |    "incomeSourceId": "Business",
-           |    "tradingName": "Business Co"
-           |  }
+           |  "incomeSourceType": "$desValue",
+           |  "incomeSourceId": "Business",
+           |  "tradingName": "Business Co"
            |}
            |""".stripMargin)
-Business
+      Business
       Seq(("1", TypeOfBusiness.`self-employment`), ("2", TypeOfBusiness.`uk-property`), ("3", TypeOfBusiness.`foreign-property`)).foreach {
         case (desValue, mtdValue) =>
           s"the field contains [$desValue]" in {
@@ -47,24 +45,18 @@ Business
       }
     }
 
-    "read from propertyData" when {
-
-      val desJson: String => JsValue = desValue => Json.parse(
+    "read from JSON with no tradingName" in {
+      val desJson: JsValue = Json.parse(
         s"""
            |{
-           |  "propertyData": {
-           |    "incomeSourceType": "$desValue",
-           |    "incomeSourceId": "Business"
-           |  }
+           |  "incomeSourceType": "1",
+           |  "incomeSourceId": "Business"
            |}
            |""".stripMargin)
 
-      Seq(("1", TypeOfBusiness.`self-employment`), ("2", TypeOfBusiness.`uk-property`), ("3", TypeOfBusiness.`foreign-property`)).foreach {
-        case (desValue, mtdValue) =>
-          s"the field contains [$desValue]" in {
-            desJson(desValue).as[Business] shouldBe mtdModel(mtdValue).copy(tradingName = None)
-          }
-      }
+      val mtdModel: Business = Business(TypeOfBusiness.`self-employment`, "Business", None)
+
+      desJson.as[Business] shouldBe mtdModel
     }
   }
 }
