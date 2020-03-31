@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package v1.models.requestData
+package v1.models.response.listAllBusiness
 
-/**
-  * Represents a tax year for DES
-  *
-  * @param value the tax year string (where 2018 represents 2017-18)
-  */
-case class DesTaxYear(value: String) extends AnyVal {
-  override def toString: String = value
-}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 
-object DesTaxYear {
+case class ListResponse(listOfBusinesses: Seq[Business])
 
-  /**
-    * @param taxYear tax year in MTD format (e.g. 2017-18)
-    */
-  def fromMtd(taxYear: String): DesTaxYear =
-    DesTaxYear(taxYear.take(2) + taxYear.drop(5))
+object ListResponse {
+  implicit val reads: Reads[ListResponse] = for {
+    listOfBusinesses <- (JsPath \ "businessData").read[Seq[Business]] or (JsPath \ "propertyData").read[Seq[Business]]
+  } yield {
+    ListResponse(listOfBusinesses)
+  }
+  implicit val writes: OWrites[ListResponse] = Json.writes[ListResponse]
 }

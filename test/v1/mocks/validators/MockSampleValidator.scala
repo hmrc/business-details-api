@@ -20,7 +20,7 @@ import org.scalamock.handlers.CallHandler1
 import org.scalamock.scalatest.MockFactory
 import v1.controllers.requestParsers.validators.SampleValidator
 import v1.models.errors.MtdError
-import v1.models.requestData.SampleRawData
+import v1.models.request.SampleRawData
 
 class MockSampleValidator extends MockFactory {
 

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
-package v1.models.requestData
+package v1.models.request.listAllBusinesses
 
-trait RawData
+import v1.models.request.RawData
+
+case class ListAllBusinessesRawData(nino: String) extends RawData

@@ -19,7 +19,7 @@ package v1.controllers.requestParsers.validators
 import v1.controllers.requestParsers.validators.validations._
 import v1.models.domain.SampleRequestBody
 import v1.models.errors.{MtdError, RuleIncorrectOrEmptyBodyError, RuleTaxYearNotSupportedError}
-import v1.models.requestData.SampleRawData
+import v1.models.request.SampleRawData
 
 class SampleValidator extends Validator[SampleRawData] {
 

@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package v1.controllers.requestParsers
+package v1.models.request
 
-import javax.inject.Inject
-import uk.gov.hmrc.domain.Nino
-import v1.controllers.requestParsers.validators.SampleValidator
-import v1.models.domain.SampleRequestBody
-import v1.models.request.{DesTaxYear, SampleRawData, SampleRequestData}
+/**
+  * Represents a tax year for DES
+  *
+  * @param value the tax year string (where 2018 represents 2017-18)
+  */
+case class DesTaxYear(value: String) extends AnyVal {
+  override def toString: String = value
+}
 
-class SampleRequestDataParser @Inject()(val validator: SampleValidator)
-  extends RequestParser[SampleRawData, SampleRequestData] {
+object DesTaxYear {
 
-  override protected def requestFor(data: SampleRawData): SampleRequestData =
-    SampleRequestData(Nino(data.nino), DesTaxYear.fromMtd(data.taxYear), data.body.as[SampleRequestBody])
-
+  /**
+    * @param taxYear tax year in MTD format (e.g. 2017-18)
+    */
+  def fromMtd(taxYear: String): DesTaxYear =
+    DesTaxYear(taxYear.take(2) + taxYear.drop(5))
 }
