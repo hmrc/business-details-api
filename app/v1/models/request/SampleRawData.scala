@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-package v1.models.requestData.listAllBusinesses
+package v1.models.request
 
-import v1.models.requestData.RawData
+import play.api.libs.json.JsValue
 
-case class ListRawData(nino: String) extends RawData
+case class SampleRawData(nino: String, taxYear: String, body: JsValue) extends RawData

@@ -19,6 +19,7 @@ package v1.models.response
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 import v1.models.domain.TypeOfBusiness
+import v1.models.response.listAllBusiness.Business
 
 class BusinessSpec extends UnitSpec {
   "reads" should {

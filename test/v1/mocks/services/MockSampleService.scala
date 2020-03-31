@@ -23,7 +23,7 @@ import v1.controllers.EndpointLogContext
 import v1.models.domain.SampleResponse
 import v1.models.errors.ErrorWrapper
 import v1.models.outcomes.ResponseWrapper
-import v1.models.requestData.SampleRequestData
+import v1.models.request.SampleRequestData
 import v1.services.SampleService
 
 import scala.concurrent.{ExecutionContext, Future}

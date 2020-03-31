@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-package v1.models.requestData
+package v1.models.response.listAllBusiness
 
-import uk.gov.hmrc.domain.Nino
-import v1.models.domain.SampleRequestBody
+import play.api.libs.json.{Json, OWrites, Reads}
 
-case class SampleRequestData(nino: Nino, desTaxYear: DesTaxYear, body: SampleRequestBody)
+case class ListResponse(studentLoans: Seq[Business])
+
+object ListResponse {
+  implicit val reads: Reads[ListResponse] = implicitly[Reads[Seq[Business]]].map(ListResponse(_))
+  implicit val writes: OWrites[ListResponse] = Json.writes[ListResponse]
+}
+

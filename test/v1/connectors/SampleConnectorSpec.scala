@@ -22,7 +22,7 @@ import v1.mocks.MockHttpClient
 import v1.models.des.DesSampleResponse
 import v1.models.domain.{EmptyJsonBody, SampleRequestBody}
 import v1.models.outcomes.ResponseWrapper
-import v1.models.requestData.{DesTaxYear, SampleRequestData}
+import v1.models.request.{DesTaxYear, SampleRequestData}
 
 import scala.concurrent.Future
 

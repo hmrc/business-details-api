@@ -25,7 +25,7 @@ import v1.models.des.DesSampleResponse
 import v1.models.domain.{SampleRequestBody, SampleResponse}
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
-import v1.models.requestData.{DesTaxYear, SampleRequestData}
+import v1.models.request.{DesTaxYear, SampleRequestData}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
