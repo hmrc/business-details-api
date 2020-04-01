@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Retrieve a list of all business details for Subcontractor",
+  "description": "Retrieve business details response",
+  "type": "object",
+  "properties": {
+    "listOfBusinesses": {
+      "type": "array",
+      "description": "An array containing the details of all the business income sources held against the specified National insurance number.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "incomeSourceId": {
+            "description": "A unique identifier for the business income source.",
+            "type": "string",
+            "example": "123456789012345"
+          },
+          "typeOfBusiness": {
+            "description": "The type of business income source, one of: 'self-employment', 'uk-property' or 'foreign-property'.",
+            "type": "string",
+            "example": "self-employment"
+          },
+          "tradingName": {
+            "description": "The trading name of the business.",
+            "type": "string",
+            "example": "RCDTS"
+          }
+        },
+        "required": [
+          "incomeSourceId",
+          "typeOfBusiness"
+        ]
+      }
+    }
+  },
+  "required": ["listOfBusinesses"]
+}
