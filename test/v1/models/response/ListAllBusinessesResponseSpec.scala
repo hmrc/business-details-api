@@ -19,9 +19,9 @@ package v1.models.response
 import play.api.libs.json.Json
 import support.UnitSpec
 import v1.models.domain.TypeOfBusiness
-import v1.models.response.listAllBusiness.{Business, ListResponse}
+import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
-class ListResponseSpec  extends UnitSpec {
+class ListAllBusinessesResponseSpec  extends UnitSpec {
   "reads" when {
     "passed DES json" should {
       "output a model" in {
@@ -64,8 +64,8 @@ class ListResponseSpec  extends UnitSpec {
             |}
             |""".stripMargin
         )
-        val model = ListResponse(Seq(Business(TypeOfBusiness.`self-employment`,"123456789012345", Some("RCDTS"))))
-        desJson.as[ListResponse] shouldBe model
+        val model = ListAllBusinessesResponse(Seq(Business(TypeOfBusiness.`self-employment`,"123456789012345", Some("RCDTS"))))
+        desJson.as[ListAllBusinessesResponse] shouldBe model
       }
     }
   }
@@ -73,7 +73,7 @@ class ListResponseSpec  extends UnitSpec {
   "writes" when {
     "passed a model" should {
       "return mtd JSON" in {
-        val model = ListResponse(Seq(Business(TypeOfBusiness.`self-employment`,"123456789012345", Some("RCDTS"))))
+        val model = ListAllBusinessesResponse(Seq(Business(TypeOfBusiness.`self-employment`,"123456789012345", Some("RCDTS"))))
         val mtdJson = Json.parse(
           """
             |{
