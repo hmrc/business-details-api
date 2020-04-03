@@ -30,8 +30,6 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
   private trait Test {
 
     val nino = "AA123456A"
-    val idType = "nino"
-    val idNumber = "AA123456As"
 
     val responseBody = Json.parse(
       """
@@ -56,7 +54,7 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         |   "propertyIncome": false,
         |   "businessData": [
         |      {
-        |         "incomeSourceType": "nino",
+        |         "incomeSourceType": "1",
         |         "incomeSourceId": "123456789012345",
         |         "accountingPeriodStartDate": "2001-01-01",
         |         "accountingPeriodEndDate": "2001-01-01",
@@ -110,7 +108,7 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
 
     trait ListAllBusinessesControllerTest extends Test {
       def uri: String = s"/$nino/list"
-      def desUri: String = s"/registration/business-details/$idType/$idNumber"
+      def desUri: String = s"/registration/business-details/nino/$nino"
     }
 
     "return a 200 status code" when {
@@ -172,8 +170,8 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         }
 
         val input = Seq(
-          (Status.BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", Status.BAD_REQUEST, NinoFormatError),
-          (Status.NOT_FOUND, "NOT_FOUND", Status.NOT_FOUND, NotFoundError),
+          (Status.BAD_REQUEST, "INVALID_NINO", Status.BAD_REQUEST, NinoFormatError),
+          (Status.NOT_FOUND, "NOT_FOUND_NINO", Status.NOT_FOUND, NotFoundError),
           (Status.INTERNAL_SERVER_ERROR, "SERVER_ERROR", Status.INTERNAL_SERVER_ERROR, DownstreamError),
           (Status.SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", Status.INTERNAL_SERVER_ERROR, DownstreamError)
         )
