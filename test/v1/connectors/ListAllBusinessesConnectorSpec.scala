@@ -22,7 +22,7 @@ import v1.mocks.MockHttpClient
 import v1.models.domain.TypeOfBusiness.`self-employment`
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
-import v1.models.response.listAllBusiness.{Business, ListResponse}
+import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.Future
 
@@ -42,7 +42,7 @@ class ListAllBusinessesConnectorSpec extends ConnectorSpec {
     val request = ListAllBusinessesRequest(nino)
     "return a result" when {
       "the downstream call is successful" in new Test {
-        val outcome = Right(ResponseWrapper(correlationId, ListResponse(Seq(Business(`self-employment`, "123456789012345", Some("RCDTS"))))))
+        val outcome = Right(ResponseWrapper(correlationId, ListAllBusinessesResponse(Seq(Business(`self-employment`, "123456789012345", Some("RCDTS"))))))
         MockedHttpClient.
           get(
             url = s"$baseUrl/registration/business-details/nino/${request.nino}",

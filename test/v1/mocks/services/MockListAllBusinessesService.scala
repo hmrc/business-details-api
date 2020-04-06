@@ -14,28 +14,31 @@
  * limitations under the License.
  */
 
-package v1.mocks.connectors
+package v1.mocks.services
 
-import org.scalamock.handlers.CallHandler3
+import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.connectors.{DesOutcome, ListAllBusinessesConnector}
+import v1.controllers.EndpointLogContext
+import v1.models.errors.ErrorWrapper
+import v1.models.outcomes.ResponseWrapper
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
 import v1.models.response.listAllBusiness.ListAllBusinessesResponse
+import v1.services.ListAllBusinessesService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockListAllBusinessesConnector extends MockFactory{
+trait MockListAllBusinessesService extends MockFactory {
 
-  val mockListAllBusinessesConnector: ListAllBusinessesConnector = mock[ListAllBusinessesConnector]
+  val mockListAllBusinessesService: ListAllBusinessesService = mock[ListAllBusinessesService]
 
-  object MockListAllBusinessesConnector {
+  object MockListAllBusinessesService {
 
-    def listAllBusinesses(requestData: ListAllBusinessesRequest):
-    CallHandler3[ListAllBusinessesRequest, HeaderCarrier, ExecutionContext, Future[DesOutcome[ListAllBusinessesResponse]]] = {
-      (mockListAllBusinessesConnector
-        .listAllBusinesses(_: ListAllBusinessesRequest)(_: HeaderCarrier, _: ExecutionContext))
-        .expects(requestData, *, *)
+    def listAllBusinessesService(request: ListAllBusinessesRequest):
+    CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[ListAllBusinessesResponse]]]] = {
+      (mockListAllBusinessesService
+        .listAllBusinessesService(_: ListAllBusinessesRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext))
+        .expects(request, *, *, *)
     }
   }
 }

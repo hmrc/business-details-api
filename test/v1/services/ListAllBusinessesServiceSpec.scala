@@ -24,7 +24,7 @@ import v1.mocks.connectors.MockListAllBusinessesConnector
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
-import v1.models.response.listAllBusiness.ListResponse
+import v1.models.response.listAllBusiness.ListAllBusinessesResponse
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -35,7 +35,7 @@ class ListAllBusinessesServiceSpec extends UnitSpec {
   private val validNino = Nino("AA123456A")
   private val requestData = ListAllBusinessesRequest(validNino)
 
-  private val responseBody = ListResponse(Seq())
+  private val responseBody = ListAllBusinessesResponse(Seq())
 
   trait Test extends MockListAllBusinessesConnector {
     implicit val hc: HeaderCarrier = HeaderCarrier()
