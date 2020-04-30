@@ -28,18 +28,18 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
     |   "scopes":[
     |      {
     |         "key":"read:self-assessment",
-    |         "name":"#name#",
-    |         "description":"#desc#"
+    |         "name":"View your Self Assessment information",
+    |         "description":"Allow read access to self assessment data"
     |      },
     |      {
     |         "key":"write:self-assessment",
-    |         "name":"#name#",
-    |         "description":"#desc#"
+    |         "name":"Change your Self Assessment information",
+    |         "description":"Allow write access to self assessment data"
     |      }
     |   ],
     |   "api":{
-    |      "name":"#mtd-api# (MTD)",
-    |      "description":"#desc#",
+    |      "name":"Business Details (MTD)",
+    |      "description":"An API for providing business details data",
     |      "context":"mtd/template",
     |      "categories":[
     |         "INCOME_TAX_MTD"
