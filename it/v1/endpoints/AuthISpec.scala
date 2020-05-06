@@ -28,16 +28,6 @@ class AuthISpec extends IntegrationBaseSpec {
 
   private trait Test {
     val nino          = "AA123456A"
-    val taxYear       = "2017-18"
-    val data        = "someData"
-    val correlationId = "X-123"
-
-    val requestJson: String =
-      s"""
-         |{
-         |"data": "$data"
-         |}
-    """.stripMargin
 
     def setupStubs(): StubMapping
 
