@@ -22,43 +22,64 @@ import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import support.IntegrationBaseSpec
-import v1.models.request.DesTaxYear
 import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 
 class AuthISpec extends IntegrationBaseSpec {
 
   private trait Test {
     val nino          = "AA123456A"
-    val taxYear       = "2017-18"
-    val data        = "someData"
-    val correlationId = "X-123"
-
-    val requestJson: String =
-      s"""
-         |{
-         |"data": "$data"
-         |}
-    """.stripMargin
 
     def setupStubs(): StubMapping
 
     def request(): WSRequest = {
       setupStubs()
-      buildRequest(s"/$nino/$taxYear/sampleEndpoint")
+      buildRequest(s"/$nino/list")
         .withHttpHeaders((ACCEPT, "application/vnd.hmrc.1.0+json"))
     }
 
-    def desUri: String = s"/income-tax/nino/$nino/taxYear/${DesTaxYear.fromMtd(taxYear)}/someService"
+    def desUri: String = s"/registration/business-details/nino/$nino"
 
     val desResponse: JsValue = Json.parse(
       """
-        | {
-        | "responseData" : "someResponse"
-        | }
-    """.stripMargin)
+        |{
+        |   "safeId": "XE00001234567890",
+        |   "nino": "AA123456A",
+        |   "mtdbsa": "123456789012345",
+        |   "propertyIncome": false,
+        |   "businessData": [
+        |      {
+        |         "incomeSourceType": "1",
+        |         "incomeSourceId": "123456789012345",
+        |         "accountingPeriodStartDate": "2001-01-01",
+        |         "accountingPeriodEndDate": "2001-01-01",
+        |         "tradingName": "RCDTS",
+        |         "businessAddressDetails": {
+        |            "addressLine1": "100 SuttonStreet",
+        |            "addressLine2": "Wokingham",
+        |            "addressLine3": "Surrey",
+        |            "addressLine4": "London",
+        |            "postalCode": "DH14EJ",
+        |            "countryCode": "GB"
+        |         },
+        |         "businessContactDetails": {
+        |            "phoneNumber": "01332752856",
+        |            "mobileNumber": "07782565326",
+        |            "faxNumber": "01332754256",
+        |            "emailAddress": "stephen@manncorpone.co.uk"
+        |         },
+        |         "tradingStartDate": "2001-01-01",
+        |         "cashOrAccruals": "cash",
+        |         "seasonal": true,
+        |         "cessationDate": "2001-01-01",
+        |         "cessationReason": "002",
+        |         "paperLess": true
+        |      }
+        |   ]
+        |}
+        |""".stripMargin)
   }
 
-  "Calling the sample endpoint" when {
+  "Calling the list endpoint" when {
 
     "the NINO cannot be converted to a MTD ID" should {
 
@@ -70,7 +91,7 @@ class AuthISpec extends IntegrationBaseSpec {
           MtdIdLookupStub.internalServerError(nino)
         }
 
-        val response: WSResponse = await(request().post(Json.parse(requestJson)))
+        val response: WSResponse = await(request().get())
         response.status shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
@@ -82,11 +103,11 @@ class AuthISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.POST, desUri, Status.OK, desResponse)
+          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desResponse)
         }
 
-        val response: WSResponse = await(request().post(Json.parse(requestJson)))
-        response.status shouldBe Status.CREATED
+        val response: WSResponse = await(request().get())
+        response.status shouldBe Status.OK
       }
     }
 
@@ -101,7 +122,7 @@ class AuthISpec extends IntegrationBaseSpec {
           AuthStub.unauthorisedNotLoggedIn()
         }
 
-        val response: WSResponse = await(request().post(Json.parse(requestJson)))
+        val response: WSResponse = await(request().get())
         response.status shouldBe Status.FORBIDDEN
       }
     }
@@ -117,7 +138,7 @@ class AuthISpec extends IntegrationBaseSpec {
           AuthStub.unauthorisedOther()
         }
 
-        val response: WSResponse = await(request().post(Json.parse(requestJson)))
+        val response: WSResponse = await(request().get())
         response.status shouldBe Status.FORBIDDEN
       }
     }

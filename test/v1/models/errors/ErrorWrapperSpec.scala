@@ -18,6 +18,7 @@ package v1.models.errors
 
 import play.api.libs.json.Json
 import support.UnitSpec
+import v1.models.audit.AuditError
 
 class ErrorWrapperSpec extends UnitSpec {
 
@@ -90,5 +91,21 @@ class ErrorWrapperSpec extends UnitSpec {
       Json.toJson(error) shouldBe json
     }
   }
+
+  "auditError" should {
+    "return a Seq[AuditError]" when {
+      "passed a single error" in {
+        val error = ErrorWrapper(None, NinoFormatError, None)
+
+        error.auditErrors shouldBe Seq(AuditError(NinoFormatError.code))
+      }
+      "passed multiple errors" in {
+        val error = ErrorWrapper(None, BadRequestError, Some(Seq(NinoFormatError, TaxYearFormatError)))
+
+        error.auditErrors shouldBe Seq(NinoFormatError, TaxYearFormatError).map(error => AuditError(error.code))
+      }
+    }
+  }
+
 
 }

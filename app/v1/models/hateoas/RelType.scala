@@ -16,8 +16,8 @@
 
 package v1.models.hateoas
 
-object RelType {
-  val SAMPLE_ENDPOINT_REL = "sample-rel"
+//$COVERAGE-OFF$
 
+object RelType {
   val SELF = "self"
 }
