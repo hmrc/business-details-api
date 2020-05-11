@@ -40,7 +40,7 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
     |   "api":{
     |      "name":"Business Details (MTD)",
     |      "description":"An API for providing business details data",
-    |      "context":"mtd/template",
+    |      "context":"individuals/business/details",
     |      "categories":[
     |         "INCOME_TAX_MTD"
     |      ],
