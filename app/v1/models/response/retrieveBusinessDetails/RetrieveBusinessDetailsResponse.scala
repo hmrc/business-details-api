@@ -17,7 +17,7 @@
 package v1.models.response.retrieveBusinessDetails
 
 import play.api.libs.json.{Json, OWrites, Reads}
-import v1.models.domain.{AccountingType, CountryCode, TypeOfBusiness}
+import v1.models.domain.{AccountingType, TypeOfBusiness}
 
 case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,
@@ -31,7 +31,7 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            businessAddressLineThree: Option[String],
                                            businessAddressLineFour: Option[String],
                                            businessAddressPostcode: Option[String],
-                                           businessAddressCountryCode: Option[CountryCode])
+                                           businessAddressCountryCode: Option[String])
 
 object RetrieveBusinessDetailsResponse {
 

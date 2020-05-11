@@ -18,7 +18,7 @@ package v1.models.response.RetrieveBusinessDetails
 
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
-import v1.models.domain.{AccountingType, CountryCode, TypeOfBusiness}
+import v1.models.domain.{AccountingType, TypeOfBusiness}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 class RetrieveBusinessDetailsResponseSpec extends UnitSpec {
@@ -40,7 +40,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec {
           Some("ToiletDucktown"),
           Some("CIFSHIRE"),
           Some("SW4F 3GA"),
-          Some(CountryCode.`GB`)
+          Some("GB")
         )
 
         val desJson: JsValue = Json.parse(
@@ -120,7 +120,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec {
           None,
           None,
           None,
-          Some(CountryCode.`CM`)
+          Some("CM")
         )
 
         val desJson: JsValue = Json.parse(
