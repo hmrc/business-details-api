@@ -16,10 +16,12 @@
 
 package v1.models.domain
 
-import play.api.libs.json.{Json, Reads}
+import support.UnitSpec
+import utils.enums.EnumJsonSpecSupport
 
-case class SampleRequestBody(data: String)
-
-object SampleRequestBody {
-  implicit val reads: Reads[SampleRequestBody] = Json.reads[SampleRequestBody]
+class AccountingTypeSpec extends UnitSpec with EnumJsonSpecSupport {
+  testRoundTrip[AccountingType](
+    ("CASH", AccountingType.`CASH`),
+    ("ACCRUALS", AccountingType.`ACCRUALS`)
+  )
 }

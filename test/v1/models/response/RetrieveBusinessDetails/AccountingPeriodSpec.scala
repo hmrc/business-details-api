@@ -14,34 +14,29 @@
  * limitations under the License.
  */
 
-package v1.models.domain
+package v1.models.response.RetrieveBusinessDetails
 
-import play.api.libs.json._
+import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
-import v1.models.utils.JsonErrorValidators
+import v1.models.response.retrieveBusinessDetails.AccountingPeriod
 
-class SampleRequestBodySpec extends UnitSpec with JsonErrorValidators {
-  "reads" when {
-    "passed valid JSON" should {
-      val inputJson = Json.parse(
+class AccountingPeriodSpec extends UnitSpec {
+
+  val responseBody: AccountingPeriod = AccountingPeriod("2018-04-06", "2019-04-05")
+
+  "reads" should {
+    "read from json" when {
+      val desJson: JsValue = Json.parse(
         """
           |{
-          |   "data": "someData"
+          |  "start": "2018-04-06",
+          |  "end": "2019-04-05"
           |}
-        """.stripMargin
+          |""".stripMargin
       )
-
       "return a valid model" in {
-        SampleRequestBody("someData") shouldBe inputJson.as[SampleRequestBody]
+        responseBody shouldBe desJson.as[AccountingPeriod]
       }
-
-      testMandatoryProperty[SampleRequestBody](inputJson)("/data")
-
-      testPropertyType[SampleRequestBody](inputJson)(
-        path = "/data",
-        replacement = 12344.toJson,
-        expectedError = JsonError.STRING_FORMAT_EXCEPTION
-      )
     }
   }
 }
