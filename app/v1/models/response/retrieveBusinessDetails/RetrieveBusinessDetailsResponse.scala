@@ -17,21 +17,21 @@
 package v1.models.response.retrieveBusinessDetails
 
 import play.api.libs.json.{Json, OWrites, Reads}
-import v1.models.domain.{AccountingType, TypeOfBusiness}
+import v1.models.domain.{AccountingType, CountryCode, TypeOfBusiness}
 
 case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,
-                                           tradingName: String,
-                                           accountingPeriods: Seq[AccountingPeriod],
-                                           accountingType: AccountingType,
-                                           commencementDate: String,
-                                           cessationDate: String,
-                                           businessAddressLineOne: String,
-                                           businessAddressLineTwo: String,
-                                           businessAddressLineThree: String,
-                                           businessAddressLineFour: String,
-                                           businessAddressPostcode: String,
-                                           businessAddressCountryCode: CountryCode)
+                                           tradingName: Option[String],
+                                           accountingPeriods: Option[Seq[AccountingPeriod]],
+                                           accountingType: Option[AccountingType],
+                                           commencementDate: Option[String],
+                                           cessationDate: Option[String],
+                                           businessAddressLineOne: Option[String],
+                                           businessAddressLineTwo: Option[String],
+                                           businessAddressLineThree: Option[String],
+                                           businessAddressLineFour: Option[String],
+                                           businessAddressPostcode: Option[String],
+                                           businessAddressCountryCode: Option[CountryCode])
 
 object RetrieveBusinessDetailsResponse {
 

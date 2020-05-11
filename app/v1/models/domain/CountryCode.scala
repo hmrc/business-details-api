@@ -99,6 +99,7 @@ object CountryCode {
   case object `FO` extends CountryCode
   case object `FR` extends CountryCode
   case object `GA` extends CountryCode
+  case object `GB` extends CountryCode
   case object `GD` extends CountryCode
   case object `GE` extends CountryCode
   case object `GF` extends CountryCode
