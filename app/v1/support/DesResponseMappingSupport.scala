@@ -24,6 +24,27 @@ import v1.models.outcomes.ResponseWrapper
 trait DesResponseMappingSupport {
   self: Logging =>
 
+  final def filterId(
+    responseWrapper: ResponseWrapper[RetrieveBusinessDetailsResponse],
+    businessId: String
+  ): Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]] = {
+    val filteredObligations = responseWrapper.responseData.obligations.filter {
+      obligation => typeOfBusiness.forall(_ == obligation.typeOfBusiness)
+    }.filter {
+      obligation => businessId.forall(_ == obligation.businessId)
+    }.filter {
+      obligation => obligation.obligationDetails.nonEmpty
+    }
+
+    if (filteredObligations.nonEmpty) {
+      Right(ResponseWrapper(responseWrapper.correlationId, RetrievePeriodObligationsResponse(
+        filteredObligations
+      )))
+    } else {
+      Left(ErrorWrapper(Some(responseWrapper.correlationId), NoObligationsFoundError))
+    }
+  }
+
   final def mapDesErrors[D](errorCodeMap: PartialFunction[String, MtdError])(desResponseWrapper: ResponseWrapper[DesError])(
     implicit logContext: EndpointLogContext): ErrorWrapper = {
 

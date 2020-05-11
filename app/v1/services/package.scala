@@ -25,4 +25,6 @@ package object services {
   private type ServiceOutcome[A] = Either[ErrorWrapper, ResponseWrapper[A]]
 
   type ListAllBusinessesServiceOutcome = ServiceOutcome[ListAllBusinessesResponse]
+
+  type RetrieveBusinessDetailsServiceOutcome = ServiceOutcome[RetrieveBusinessDetailsResponse]
 }
