@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Retrieve additional information for a user's business details",
+  "description": "Retrieve business details response",
+  "type": "object",
+  "properties": {
+    "businessId": {
+      "type": "string",
+      "description": "A unique identifier for the business income source.",
+      "example": "XAIS12345678910"
+    },
+    "typeOfBusiness": {
+      "type": "string",
+      "description": "The type of business income source, one of: 'self-employment', 'uk-property' or 'foreign-property'.",
+      "example": "self-employment"
+    },
+    "tradingName": {
+      "type": "string",
+      "description": "The trading name of the business.",
+      "example": "Aardvark Window Cleaning Services"
+    },
+    "accountingPeriods": {
+      "type": "array",
+      "description": "A list of the accounting periods for the business",
+      "items": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "description": "Date your books or accounts start - the beginning of your accounting period.",
+            "type": "string",
+            "example": "2018-04-06"
+          },
+          "end": {
+            "description": "Date your books or accounts are made up to - the end of your accounting period.",
+            "type": "string",
+            "example": "2019-04-05"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ]
+      }
+    },
+    "accountingType": {
+      "description": "CASH if you used the cash basis, money actually received and paid out, to calculate your income and expenses. Otherwise ACCRUALS.",
+      "type": "string",
+      "example": "ACCRUALS"
+    },
+    "commencementDate": {
+      "description": "Business start date, must be in the past.",
+      "type": "string",
+      "example": "2016-09-24"
+    },
+    "cessationDate": {
+      "description": "Business cessation date.",
+      "type": "string",
+      "example": "2020-03-24"
+    },
+    "businessAddressLineOne": {
+      "description": "First line of the business address.",
+      "type": "string",
+      "example": "6 Harpic Drive"
+    },
+    "businessAddressLineTwo": {
+      "description": "Second line of the business address.",
+      "type": "string",
+      "example": "Domestos Wood"
+    },
+    "businessAddressLineThree": {
+      "description": "Third line of the business address.",
+      "type": "string",
+      "example": "ToiletDucktown"
+    },
+    "businessAddressLineFour": {
+      "description": "Fourth line of the business address.",
+      "type": "string",
+      "example": "CIFSHIRE"
+    },
+    "businessAddressPostcode": {
+      "description": "Business code.",
+      "type": "string",
+      "example": "SW4F 3GA"
+    },
+    "businessAddressCountryCode": {
+      "description": "The two letter code for a country must adhere to ISO 3166.",
+      "type": "string",
+      "example": "GB"
+    }
+  },
+  "required": [
+    "businessId",
+    "typeOfBusiness"
+  ]
+}
