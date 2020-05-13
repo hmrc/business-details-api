@@ -17,7 +17,7 @@
     "tradingName": {
       "type": "string",
       "description": "The trading name of the business.",
-      "example": "Aardvark Window Cleaning Services"
+      "example": "Acme Ltd."
     },
     "accountingPeriods": {
       "type": "array",
@@ -60,27 +60,27 @@
     "businessAddressLineOne": {
       "description": "First line of the business address.",
       "type": "string",
-      "example": "6 Harpic Drive"
+      "example": "1 Acme Rd."
     },
     "businessAddressLineTwo": {
       "description": "Second line of the business address.",
       "type": "string",
-      "example": "Domestos Wood"
+      "example": "London"
     },
     "businessAddressLineThree": {
       "description": "Third line of the business address.",
       "type": "string",
-      "example": "ToiletDucktown"
+      "example": "Greater London"
     },
     "businessAddressLineFour": {
       "description": "Fourth line of the business address.",
       "type": "string",
-      "example": "CIFSHIRE"
+      "example": "United Kingdom"
     },
     "businessAddressPostcode": {
       "description": "Business code.",
       "type": "string",
-      "example": "SW4F 3GA"
+      "example": "M1 1AG"
     },
     "businessAddressCountryCode": {
       "description": "The two letter code for a country must adhere to ISO 3166.",
