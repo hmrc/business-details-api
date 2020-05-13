@@ -20,17 +20,17 @@ import utils.Logging
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
-import v1.models.response.retrieveBusinessDetails.{RetrieveBusinessDetailsResponse, RetrieveBusinessDetailsResponseList}
+import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponse
 
 trait DesResponseMappingSupport {
   self: Logging =>
 
   final def filterId(
-    responseWrapper: ResponseWrapper[RetrieveBusinessDetailsResponseList],
+    responseWrapper: ResponseWrapper[Seq[RetrieveBusinessDetailsResponse]],
     businessId: String
   ): Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]] = {
-    val filteredBusinesses = responseWrapper.responseData.retrieveBusinessDetailsResponse.filter {
-      BusinessDetails => businessId == BusinessDetails.businessId
+    val filteredBusinesses = responseWrapper.responseData.filter {
+      businessDetails => businessId == businessDetails.businessId
     }
 
     if (filteredBusinesses.nonEmpty) {

@@ -25,8 +25,7 @@ import v1.models.domain.{AccountingType, TypeOfBusiness}
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
-import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse, RetrieveBusinessDetailsResponseList}
-import views.html.defaultpages.error
+import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -54,7 +53,7 @@ class RetrieveBusinessDetailsServiceSpec extends UnitSpec {
     Some("GB")
   )
 
-  private val desSingleResponseBody = RetrieveBusinessDetailsResponseList(Seq(RetrieveBusinessDetailsResponse(
+  private val desSingleResponseBody = Seq(RetrieveBusinessDetailsResponse(
     "XAIS12345678910",
     TypeOfBusiness.`self-employment`,
     Some("Aardvark Window Cleaning Services"),
@@ -68,9 +67,9 @@ class RetrieveBusinessDetailsServiceSpec extends UnitSpec {
     Some("CIFSHIRE"),
     Some("SW4F 3GA"),
     Some("GB")
-  )))
+  ))
 
-  private val desMultiResponseBody = RetrieveBusinessDetailsResponseList(Seq(RetrieveBusinessDetailsResponse(
+  private val desMultiResponseBody = Seq(RetrieveBusinessDetailsResponse(
     "XAIS12345678910",
     TypeOfBusiness.`self-employment`,
     Some("Aardvark Window Cleaning Services"),
@@ -99,7 +98,7 @@ class RetrieveBusinessDetailsServiceSpec extends UnitSpec {
     Some("CIFSHIRE"),
     Some("SW4F 3GA"),
     Some("GB")
-  )))
+  ))
 
   trait Test extends MockRetrieveBusinessDetailsConnector {
     implicit val hc: HeaderCarrier = HeaderCarrier()
