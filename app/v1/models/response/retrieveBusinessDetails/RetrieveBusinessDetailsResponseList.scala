@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package v1
+package v1.models.response.retrieveBusinessDetails
 
-import v1.models.errors.ErrorWrapper
-import v1.models.outcomes.ResponseWrapper
-import v1.models.response.listAllBusiness.ListAllBusinessesResponse
-import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponse
+import play.api.libs.json.{Json, OWrites, Reads}
 
-package object services {
+case class RetrieveBusinessDetailsResponseList(retrieveBusinessDetailsResponse: Seq[RetrieveBusinessDetailsResponse])
+object RetrieveBusinessDetailsResponseList {
+  implicit val writes: OWrites[RetrieveBusinessDetailsResponseList] = Json.writes[RetrieveBusinessDetailsResponseList]
+  implicit val reads: Reads[RetrieveBusinessDetailsResponseList] = Json.reads[RetrieveBusinessDetailsResponseList]
 
-  private type ServiceOutcome[A] = Either[ErrorWrapper, ResponseWrapper[A]]
-
-  type ListAllBusinessesServiceOutcome = ServiceOutcome[ListAllBusinessesResponse]
-
-  type RetrieveBusinessDetailsServiceOutcome = ServiceOutcome[RetrieveBusinessDetailsResponse]
 }

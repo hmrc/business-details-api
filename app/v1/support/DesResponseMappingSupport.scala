@@ -20,24 +20,23 @@ import utils.Logging
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
+import v1.models.response.retrieveBusinessDetails.{RetrieveBusinessDetailsResponse, RetrieveBusinessDetailsResponseList}
 
 trait DesResponseMappingSupport {
   self: Logging =>
 
   final def filterId(
-    responseWrapper: ResponseWrapper[RetrieveBusinessDetailsResponse],
+    responseWrapper: ResponseWrapper[RetrieveBusinessDetailsResponseList],
     businessId: String
   ): Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]] = {
-    val filteredBusinesses = responseWrapper.responseData.filter {
-      obligation => businessId.forall(_ == obligation.businessId)
+    val filteredBusinesses = responseWrapper.responseData.retrieveBusinessDetailsResponse.filter {
+      BusinessDetails => businessId == BusinessDetails.businessId
     }
 
     if (filteredBusinesses.nonEmpty) {
-      Right(ResponseWrapper(responseWrapper.correlationId, RetrieveBusinessDetailsResponse(
-        filteredBusinesses
-      )))
+      Right(ResponseWrapper(responseWrapper.correlationId, filteredBusinesses.head))
     } else {
-      Left(ErrorWrapper(Some(responseWrapper.correlationId), NoBusinessFoundError))
+      Left(ErrorWrapper(Some(responseWrapper.correlationId), NotFoundError))
     }
   }
 

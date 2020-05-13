@@ -21,16 +21,20 @@ import javax.inject.Inject
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import v1.connectors.httpparsers.StandardDesHttpParser._
+import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
+import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponseList
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class RetrieveBusinessDetailsConnector @Inject()(val http: HttpClient,
                                                  val appConfig: AppConfig) extends BaseDesConnector {
 def retrieveBusinessDetails(request: RetrieveBusinessDetailsRequest)
-                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DesOutcome[Seq[RetrieveBusinessDetailsResponse]]] = {
+                           (implicit hc: HeaderCarrier, ec: ExecutionContext):
+                            Future[DesOutcome[RetrieveBusinessDetailsResponseList]] = {
+
     val url = s"registration/business-details/nino/${request.nino}"
   get(
-    DesUri[List[RetrieveBusinessDetailsResponse]](s"$url")
+    DesUri[RetrieveBusinessDetailsResponseList](s"$url")
   )
   }
 }

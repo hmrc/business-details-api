@@ -17,12 +17,14 @@
 package v1.services
 
 import cats.data.EitherT
+import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Logging
 import v1.connectors.RetrieveBusinessDetailsConnector
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
+import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
 import v1.support.DesResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
