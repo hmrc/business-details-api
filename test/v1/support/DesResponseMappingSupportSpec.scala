@@ -19,8 +19,10 @@ package v1.support
 import support.UnitSpec
 import utils.Logging
 import v1.controllers.EndpointLogContext
+import v1.models.domain.{AccountingType, TypeOfBusiness}
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
+import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 class DesResponseMappingSupportSpec extends UnitSpec {
 
@@ -37,7 +39,7 @@ class DesResponseMappingSupportSpec extends UnitSpec {
 
   object ErrorBvr extends MtdError("msg", "bvr")
 
-  val errorCodeMap : PartialFunction[String, MtdError] = {
+  val errorCodeMap: PartialFunction[String, MtdError] = {
     case "ERR1" => Error1
     case "ERR2" => Error2
     case "DS" => DownstreamError
@@ -54,7 +56,7 @@ class DesResponseMappingSupportSpec extends UnitSpec {
 
       "the error code is not in the map provided" must {
         "default to DownstreamError and wrap" in {
-          mapping.mapDesErrors (errorCodeMap)(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode("UNKNOWN")))) shouldBe
+          mapping.mapDesErrors(errorCodeMap)(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode("UNKNOWN")))) shouldBe
             ErrorWrapper(Some(correlationId), DownstreamError)
         }
       }
@@ -97,5 +99,73 @@ class DesResponseMappingSupportSpec extends UnitSpec {
       }
     }
   }
+  "filterId" should {
+    val singleBusiness: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
+      "XAIS12345678910",
+      TypeOfBusiness.`self-employment`,
+      Some("Aardvark Window Cleaning Services"),
+      Some(Seq(AccountingPeriod("2018-04-06", "2019-04-05"))),
+      Some(AccountingType.`ACCRUALS`),
+      Some("2016-09-24"),
+      Some("2020-03-24"),
+      Some("6 Harpic Drive"),
+      Some("Domestos Wood"),
+      Some("ToiletDucktown"),
+      Some("CIFSHIRE"),
+      Some("SW4F 3GA"),
+      Some("GB")
+    )
+    val multipleBusinessInSeq: Seq[RetrieveBusinessDetailsResponse] = Seq(RetrieveBusinessDetailsResponse(
+      "XAIS12345678910",
+      TypeOfBusiness.`self-employment`,
+      Some("Aardvark Window Cleaning Services"),
+      Some(Seq(AccountingPeriod("2018-04-06", "2019-04-05"))),
+      Some(AccountingType.`ACCRUALS`),
+      Some("2016-09-24"),
+      Some("2020-03-24"),
+      Some("6 Harpic Drive"),
+      Some("Domestos Wood"),
+      Some("ToiletDucktown"),
+      Some("CIFSHIRE"),
+      Some("SW4F 3GA"),
+      Some("GB")
+    ),
+      RetrieveBusinessDetailsResponse(
+        "XAIS0987654321",
+        TypeOfBusiness.`self-employment`,
+        Some("Aardvark Window Cleaning Services"),
+        Some(Seq(AccountingPeriod("2018-04-06", "2019-04-05"))),
+        Some(AccountingType.`ACCRUALS`),
+        Some("2016-09-24"),
+        Some("2020-03-24"),
+        Some("6 Test Drive"),
+        Some("Test Wood"),
+        Some("Test Town"),
+        Some("TESTSHIRE"),
+        Some("TE4 3ST"),
+        Some("FR")
+      ))
 
+    "return a single businesses details" when {
+      "a single business is passed in with correct id" in {
+        mapping.filterId(ResponseWrapper("", Seq(singleBusiness)), "XAIS12345678910") shouldBe Right(ResponseWrapper("", singleBusiness))
+      }
+
+      "multiple businesses are passed with one correct id" in {
+        mapping.filterId(ResponseWrapper("", multipleBusinessInSeq), "XAIS12345678910") shouldBe Right(ResponseWrapper("", singleBusiness))
+      }
+    }
+    "return no business details error" when {
+      "businesses are passed with none having the correct id" in {
+        mapping.filterId(ResponseWrapper("", multipleBusinessInSeq), "XAIS6789012345") shouldBe
+          Left(ErrorWrapper(Some(""), NoBusinessFoundError))
+      }
+    }
+    "return downstream error" when {
+      "multiple businesses are passed with multiple having the correct id" in {
+        mapping.filterId(ResponseWrapper("", Seq(singleBusiness, singleBusiness)), "XAIS12345678910") shouldBe
+          Left(ErrorWrapper(Some(""), DownstreamError))
+      }
+    }
+  }
 }

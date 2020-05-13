@@ -20,9 +20,25 @@ import utils.Logging
 import v1.controllers.EndpointLogContext
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
+import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponse
 
 trait DesResponseMappingSupport {
   self: Logging =>
+
+  final def filterId(
+    responseWrapper: ResponseWrapper[Seq[RetrieveBusinessDetailsResponse]],
+    businessId: String
+  ): Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]] = {
+    val filteredBusinesses = responseWrapper.responseData.filter {
+      businessDetails => businessId == businessDetails.businessId
+    }
+
+    filteredBusinesses match {
+      case business :: Nil => Right(ResponseWrapper(responseWrapper.correlationId, business))
+      case Nil => Left(ErrorWrapper(Some(responseWrapper.correlationId), NoBusinessFoundError))
+      case _ :: _ => Left(ErrorWrapper(Some(responseWrapper.correlationId), DownstreamError))
+    }
+  }
 
   final def mapDesErrors[D](errorCodeMap: PartialFunction[String, MtdError])(desResponseWrapper: ResponseWrapper[DesError])(
     implicit logContext: EndpointLogContext): ErrorWrapper = {

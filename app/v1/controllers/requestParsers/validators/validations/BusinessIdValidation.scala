@@ -16,8 +16,7 @@
 
 package v1.controllers.requestParsers.validators.validations
 
-import uk.gov.hmrc.domain.Nino
-import v1.models.errors.{BusinessIdFormatError, MtdError, NinoFormatError}
+import v1.models.errors.{BusinessIdFormatError, MtdError}
 
 object BusinessIdValidation {
 
