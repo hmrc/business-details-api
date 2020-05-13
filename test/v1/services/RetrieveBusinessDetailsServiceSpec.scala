@@ -129,7 +129,7 @@ class RetrieveBusinessDetailsServiceSpec extends UnitSpec {
         MockRetrieveBusinessDetailsConnector.retrieveBusinessDetails(badRequestData)
           .returns(Future.successful(Right(ResponseWrapper("resultId", desMultiResponseBody))))
 
-        await(service.retrieveBusinessDetailsService(badRequestData)) shouldBe Left(ErrorWrapper(Some("resultId"), NotFoundError))
+        await(service.retrieveBusinessDetailsService(badRequestData)) shouldBe Left(ErrorWrapper(Some("resultId"), NoBusinessFoundError))
     }
     "a connector call is unsuccessful" should {
         def serviceError(desErrorCode: String, error: MtdError): Unit =

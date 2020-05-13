@@ -36,7 +36,7 @@ trait DesResponseMappingSupport {
     if (filteredBusinesses.nonEmpty) {
       Right(ResponseWrapper(responseWrapper.correlationId, filteredBusinesses.head))
     } else {
-      Left(ErrorWrapper(Some(responseWrapper.correlationId), NotFoundError))
+      Left(ErrorWrapper(Some(responseWrapper.correlationId), NoBusinessFoundError))
     }
   }
 
