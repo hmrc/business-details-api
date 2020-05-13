@@ -16,7 +16,6 @@
 
 package v1.support
 
-import play.api.libs.json.Json
 import support.UnitSpec
 import utils.Logging
 import v1.controllers.EndpointLogContext
