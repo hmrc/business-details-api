@@ -1,7 +1,7 @@
 {
   "businessId": "XAIS12345678910",
   "typeOfBusiness": "self-employment",
-  "tradingName": "Aardvark Window Cleaning Services",
+  "tradingName": "Acme Ltd.",
   "accountingPeriods":
   [
     {
@@ -12,10 +12,10 @@
   "accountingType": "ACCRUALS",
   "commencementDate": "2016-09-24",
   "cessationDate": "2020-03-24",
-  "businessAddressLineOne": "6 Harpic Drive",
-  "businessAddressLineTwo": "Domestos Wood",
-  "businessAddressLineThree": "ToiletDucktown",
-  "businessAddressLineFour": "CIFSHIRE",
-  "businessAddressPostcode": "SW4F 3GA",
+  "businessAddressLineOne": "1 Acme Rd.",
+  "businessAddressLineTwo": "London",
+  "businessAddressLineThree": "Greater London",
+  "businessAddressLineFour": "United Kingdom",
+  "businessAddressPostcode": "M1 1AG",
   "businessAddressCountryCode": "GB"
 }

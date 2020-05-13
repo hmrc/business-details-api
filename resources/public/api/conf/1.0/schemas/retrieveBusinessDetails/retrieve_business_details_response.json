@@ -11,7 +11,7 @@
     },
     "typeOfBusiness": {
       "type": "string",
-      "description": "The type of business income source, one of: 'self-employment', 'uk-property' or 'foreign-property'.",
+      "description": "The type of business income source, one of: `self-employment`, `uk-property` or `foreign-property`.",
       "example": "self-employment"
     },
     "tradingName": {

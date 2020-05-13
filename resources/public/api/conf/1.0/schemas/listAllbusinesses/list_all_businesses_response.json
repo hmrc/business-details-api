@@ -16,7 +16,7 @@
             "example": "123456789012345"
           },
           "typeOfBusiness": {
-            "description": "The type of business income source, one of: 'self-employment', 'uk-property' or 'foreign-property'.",
+            "description": "The type of business income source, one of: `self-employment`, `uk-property` or `foreign-property`.",
             "type": "string",
             "example": "self-employment"
           },
