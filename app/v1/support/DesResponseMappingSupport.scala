@@ -33,10 +33,10 @@ trait DesResponseMappingSupport {
       businessDetails => businessId == businessDetails.businessId
     }
 
-    if (filteredBusinesses.nonEmpty) {
-      Right(ResponseWrapper(responseWrapper.correlationId, filteredBusinesses.head))
-    } else {
-      Left(ErrorWrapper(Some(responseWrapper.correlationId), NoBusinessFoundError))
+    filteredBusinesses match {
+      case business :: Nil => Right(ResponseWrapper(responseWrapper.correlationId, business))
+      case Nil => Left(ErrorWrapper(Some(responseWrapper.correlationId), NoBusinessFoundError))
+      case _ :: _ => Left(ErrorWrapper(Some(responseWrapper.correlationId), DownstreamError))
     }
   }
 
