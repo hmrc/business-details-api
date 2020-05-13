@@ -29,13 +29,17 @@ uses:
   errors: errors.raml
   headers: headers.raml
 
-'/individuals/business/details':
+'/individuals/business-details':
   /{nino}:
     uriParameters:
       nino:
         description: National Insurance number, in the format AA999999A.
         type: string
         example: TC663795B
+      businessId:
+        description: A unique identifier for the business income source.
+        type: string
+        example: XAIS12345678910
     /list:
       get: !include list.raml
     /{businessId}:
