@@ -17,12 +17,15 @@
 package v1.controllers
 
 import cats.data.EitherT
+import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.Logging
-import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, NinoFormatError, NotFoundError}
-import v1.services.{EnrolmentsAuthService, RetrieveBusinessDetailsService, MtdIdLookupService}
+import v1.controllers.requestParsers.RetrieveBusinessDetailsRequestParser
+import v1.models.errors._
+import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRawData
+import v1.services.{EnrolmentsAuthService, MtdIdLookupService, RetrieveBusinessDetailsService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,7 +46,7 @@ extends AuthorisedController(cc) with BaseController with Logging {
       val result =
         for {
           parsedRequest <- EitherT.fromEither[Future](requestDataParser.parseRequest(rawData))
-          serviceResponse <- EitherT(service.RetrieveBusinessDetailsService(parsedRequest))
+          serviceResponse <- EitherT(service.retrieveBusinessDetailsService(parsedRequest))
         } yield {
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
@@ -60,9 +63,9 @@ extends AuthorisedController(cc) with BaseController with Logging {
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
     (errorWrapper.error: @unchecked) match {
-      case NinoFormatError | BadRequestError => BadRequest(Json.toJson(errorWrapper))
-      case NotFoundError                     => NotFound(Json.toJson(errorWrapper))
-      case DownstreamError                   => InternalServerError(Json.toJson(errorWrapper))
+      case NinoFormatError | BadRequestError | BusinessIdFormatError => BadRequest(Json.toJson(errorWrapper))
+      case NotFoundError | NoBusinessFoundError                      => NotFound(Json.toJson(errorWrapper))
+      case DownstreamError                                           => InternalServerError(Json.toJson(errorWrapper))
     }
   }
 }
