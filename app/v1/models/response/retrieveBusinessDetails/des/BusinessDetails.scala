@@ -56,7 +56,7 @@ object BusinessDetails {
   implicit val reads: Reads[BusinessDetails] = (
     (JsPath \ "incomeSourceId").read[String] and
       (JsPath \ "incomeSourceType").read[IncomeSourceType].map(_.toTypeOfBusiness) and
-      (JsPath \ "incomeSourceType").readNullable[String] and
+      (JsPath \ "tradingName").readNullable[String] and
       (JsPath \ "accountingPeriods").readNullable[Seq[AccountingPeriod]] and
       (JsPath \ "cashOrAccruals").read[CashOrAccruals].map(_.toMtd) and
       (JsPath \ "tradingStartDate").readNullable[String] and

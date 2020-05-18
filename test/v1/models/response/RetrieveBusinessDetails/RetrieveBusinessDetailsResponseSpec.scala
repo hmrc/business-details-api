@@ -19,6 +19,7 @@ package v1.models.response.RetrieveBusinessDetails
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 import v1.models.domain.TypeOfBusiness
+import v1.models.domain.accountingType.AccountingType
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 class RetrieveBusinessDetailsResponseSpec extends UnitSpec {
@@ -32,7 +33,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec {
           TypeOfBusiness.`self-employment`,
           Some("Aardvark Window Cleaning Services"),
           Some(Seq(AccountingPeriod("2018-04-06", "2019-04-05"))),
-          Some(AccountingType.`ACCRUALS`),
+          AccountingType.ACCRUALS,
           Some("2016-09-24"),
           Some("2020-03-24"),
           Some("6 Harpic Drive"),
@@ -50,8 +51,8 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec {
             |   "typeOfBusiness": "self-employment",
             |   "tradingName": "Aardvark Window Cleaning Services",
             |   "accountingPeriods": [{
-            |      "start": "2018-04-06",
-            |      "end": "2019-04-05"
+            |      "accountingPeriodStartDate": "2018-04-06",
+            |      "accountingPeriodEndDate": "2019-04-05"
             |      }
             |   ],
             |   "accountingType": "ACCRUALS",
@@ -76,7 +77,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec {
           TypeOfBusiness.`self-employment`,
           Some("Aardvark Window Cleaning Services"),
           Some(Seq(AccountingPeriod("2018-04-06", "2019-04-05"))),
-          Some(AccountingType.`ACCRUALS`),
+          AccountingType.ACCRUALS,
           None,
           None,
           None,
@@ -94,8 +95,8 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec {
             |   "typeOfBusiness": "self-employment",
             |   "tradingName": "Aardvark Window Cleaning Services",
             |   "accountingPeriods": [{
-            |      "start": "2018-04-06",
-            |      "end": "2019-04-05"
+            |      "accountingPeriodStartDate": "2018-04-06",
+            |      "accountingPeriodEndDate": "2019-04-05"
             |      }
             |   ],
             |   "accountingType": "ACCRUALS"
@@ -112,7 +113,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec {
           TypeOfBusiness.`self-employment`,
           Some("Aardvark Window Cleaning Services"),
           Some(Seq(AccountingPeriod("2018-04-06", "2019-04-05"))),
-          Some(AccountingType.`ACCRUALS`),
+          AccountingType.ACCRUALS,
           Some("2016-09-24"),
           Some("2020-03-24"),
           None,
@@ -130,8 +131,8 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec {
             |   "typeOfBusiness": "self-employment",
             |   "tradingName": "Aardvark Window Cleaning Services",
             |   "accountingPeriods": [{
-            |      "start": "2018-04-06",
-            |      "end": "2019-04-05"
+            |      "accountingPeriodStartDate": "2018-04-06",
+            |      "accountingPeriodEndDate": "2019-04-05"
             |      }
             |   ],
             |   "accountingType": "ACCRUALS",

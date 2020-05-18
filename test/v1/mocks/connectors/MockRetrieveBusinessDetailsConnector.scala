@@ -21,7 +21,7 @@ import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.{DesOutcome, RetrieveBusinessDetailsConnector}
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
-import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponse
+import v1.models.response.retrieveBusinessDetails.des.RetrieveBusinessDetailsDesResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -32,7 +32,7 @@ class MockRetrieveBusinessDetailsConnector  extends MockFactory{
   object MockRetrieveBusinessDetailsConnector {
 
     def retrieveBusinessDetails(requestData: RetrieveBusinessDetailsRequest):
-    CallHandler3[RetrieveBusinessDetailsRequest, HeaderCarrier, ExecutionContext, Future[DesOutcome[Seq[RetrieveBusinessDetailsResponse]]]] = {
+    CallHandler3[RetrieveBusinessDetailsRequest, HeaderCarrier, ExecutionContext, Future[DesOutcome[RetrieveBusinessDetailsDesResponse]]] = {
       (mockRetrieveBusinessDetailsConnector
         .retrieveBusinessDetails(_: RetrieveBusinessDetailsRequest)(_: HeaderCarrier, _: ExecutionContext))
         .expects(requestData, *, *)
