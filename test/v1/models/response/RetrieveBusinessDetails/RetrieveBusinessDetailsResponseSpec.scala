@@ -18,7 +18,7 @@ package v1.models.response.RetrieveBusinessDetails
 
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
-import v1.models.domain.{AccountingType, TypeOfBusiness}
+import v1.models.domain.TypeOfBusiness
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 class RetrieveBusinessDetailsResponseSpec extends UnitSpec {

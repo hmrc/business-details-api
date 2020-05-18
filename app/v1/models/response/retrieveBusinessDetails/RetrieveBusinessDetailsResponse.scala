@@ -16,14 +16,15 @@
 
 package v1.models.response.retrieveBusinessDetails
 
-import play.api.libs.json.{Json, OWrites, Reads}
-import v1.models.domain.{AccountingType, TypeOfBusiness}
+import play.api.libs.json.{Json, OWrites}
+import v1.models.domain.TypeOfBusiness
+import v1.models.domain.accountingType.AccountingType
 
 case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,
                                            tradingName: Option[String],
                                            accountingPeriods: Option[Seq[AccountingPeriod]],
-                                           accountingType: Option[AccountingType],
+                                           accountingType: AccountingType,
                                            commencementDate: Option[String],
                                            cessationDate: Option[String],
                                            businessAddressLineOne: Option[String],
@@ -36,6 +37,5 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
 object RetrieveBusinessDetailsResponse {
 
   implicit val writes: OWrites[RetrieveBusinessDetailsResponse] = Json.writes[RetrieveBusinessDetailsResponse]
-  implicit val reads: Reads[RetrieveBusinessDetailsResponse] = Json.reads[RetrieveBusinessDetailsResponse]
 
 }

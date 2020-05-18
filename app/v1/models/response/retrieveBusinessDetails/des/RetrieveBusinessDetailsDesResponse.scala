@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package v1.models.domain
+package v1.models.response.retrieveBusinessDetails.des
 
-import support.UnitSpec
-import utils.enums.EnumJsonSpecSupport
-import v1.models.domain.accountingType.AccountingType
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{JsPath, Reads}
 
-class AccountingTypeSpec extends UnitSpec with EnumJsonSpecSupport {
-  testRoundTrip[AccountingType](
-    ("CASH", AccountingType.CASH),
-    ("ACCRUALS", AccountingType.ACCRUALS)
-  )
+case class RetrieveBusinessDetailsDesResponse(businessDetails: Seq[BusinessDetails])
+
+object RetrieveBusinessDetailsDesResponse {
+  implicit val reads: Reads[RetrieveBusinessDetailsDesResponse] = (
+    (JsPath \ "businessData").read[Seq[BusinessDetails]] or
+      (JsPath \ "propertyData").read[Seq[BusinessDetails]]
+    ).map(RetrieveBusinessDetailsDesResponse(_))
 }
