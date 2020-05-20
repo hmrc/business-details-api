@@ -29,8 +29,8 @@ class AccountingPeriodSpec extends UnitSpec {
       val desJson: JsValue = Json.parse(
         """
           |{
-          |  "start": "2018-04-06",
-          |  "end": "2019-04-05"
+          |  "accountingPeriodStartDate": "2018-04-06",
+          |  "accountingPeriodEndDate": "2019-04-05"
           |}
           |""".stripMargin
       )

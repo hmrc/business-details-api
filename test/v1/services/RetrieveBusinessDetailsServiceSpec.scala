@@ -21,10 +21,12 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.controllers.EndpointLogContext
 import v1.mocks.connectors.MockRetrieveBusinessDetailsConnector
-import v1.models.domain.{AccountingType, TypeOfBusiness}
+import v1.models.domain.TypeOfBusiness
+import v1.models.domain.accountingType.AccountingType
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
+import v1.models.response.retrieveBusinessDetails.des.{BusinessDetails, RetrieveBusinessDetailsDesResponse}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
@@ -42,7 +44,7 @@ class RetrieveBusinessDetailsServiceSpec extends UnitSpec {
     TypeOfBusiness.`self-employment`,
     Some("Aardvark Window Cleaning Services"),
     Some(Seq(AccountingPeriod("2018-04-06", "2019-04-05"))),
-    Some(AccountingType.`ACCRUALS`),
+    AccountingType.ACCRUALS,
     Some("2016-09-24"),
     Some("2020-03-24"),
     Some("6 Harpic Drive"),
@@ -53,12 +55,12 @@ class RetrieveBusinessDetailsServiceSpec extends UnitSpec {
     Some("GB")
   )
 
-  private val desSingleResponseBody = Seq(RetrieveBusinessDetailsResponse(
+  private val desSingleResponseBody = RetrieveBusinessDetailsDesResponse(Seq(BusinessDetails(
     "XAIS12345678910",
     TypeOfBusiness.`self-employment`,
     Some("Aardvark Window Cleaning Services"),
     Some(Seq(AccountingPeriod("2018-04-06", "2019-04-05"))),
-    Some(AccountingType.`ACCRUALS`),
+    AccountingType.ACCRUALS,
     Some("2016-09-24"),
     Some("2020-03-24"),
     Some("6 Harpic Drive"),
@@ -67,14 +69,14 @@ class RetrieveBusinessDetailsServiceSpec extends UnitSpec {
     Some("CIFSHIRE"),
     Some("SW4F 3GA"),
     Some("GB")
-  ))
+  )))
 
-  private val desMultiResponseBody = Seq(RetrieveBusinessDetailsResponse(
+  private val desMultiResponseBody = RetrieveBusinessDetailsDesResponse(Seq(BusinessDetails(
     "XAIS12345678910",
     TypeOfBusiness.`self-employment`,
     Some("Aardvark Window Cleaning Services"),
     Some(Seq(AccountingPeriod("2018-04-06", "2019-04-05"))),
-    Some(AccountingType.`ACCRUALS`),
+    AccountingType.ACCRUALS,
     Some("2016-09-24"),
     Some("2020-03-24"),
     Some("6 Harpic Drive"),
@@ -84,12 +86,12 @@ class RetrieveBusinessDetailsServiceSpec extends UnitSpec {
     Some("SW4F 3GA"),
     Some("GB")
   ),
-    RetrieveBusinessDetailsResponse(
+    BusinessDetails(
     "XAIS0987654321",
     TypeOfBusiness.`self-employment`,
     Some("Aardvark Window Cleaning Services"),
     Some(Seq(AccountingPeriod("2018-04-06", "2019-04-05"))),
-    Some(AccountingType.`ACCRUALS`),
+    AccountingType.ACCRUALS,
     Some("2016-09-24"),
     Some("2020-03-24"),
     Some("6 Harpic Drive"),
@@ -98,7 +100,7 @@ class RetrieveBusinessDetailsServiceSpec extends UnitSpec {
     Some("CIFSHIRE"),
     Some("SW4F 3GA"),
     Some("GB")
-  ))
+  )))
 
   trait Test extends MockRetrieveBusinessDetailsConnector {
     implicit val hc: HeaderCarrier = HeaderCarrier()

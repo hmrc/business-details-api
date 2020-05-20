@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package v1.models.domain
+package v1.models.domain.accountingType
 
-import support.UnitSpec
-import utils.enums.EnumJsonSpecSupport
-import v1.models.domain.accountingType.AccountingType
+import play.api.libs.json.Format
+import utils.enums.Enums
 
-class AccountingTypeSpec extends UnitSpec with EnumJsonSpecSupport {
-  testRoundTrip[AccountingType](
-    ("CASH", AccountingType.CASH),
-    ("ACCRUALS", AccountingType.ACCRUALS),
-  )
+sealed trait CashOrAccruals {
+  def toMtd: AccountingType
+}
+
+object CashOrAccruals {
+  case object `cash` extends CashOrAccruals {
+    override def toMtd: AccountingType = AccountingType.CASH
+  }
+  case object `accruals` extends CashOrAccruals {
+    override def toMtd: AccountingType = AccountingType.ACCRUALS
+  }
+
+  implicit val format: Format[CashOrAccruals] = Enums.format[CashOrAccruals]
+
 }

@@ -37,20 +37,20 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         |{
         |   "businessId": "X0IS123456789012",
         |   "typeOfBusiness": "self-employment",
-        |   "tradingName": "Aardvark Window Cleaning Services",
+        |   "tradingName": "RCDTS",
         |   "accountingPeriods": [{
-        |      "start": "2018-04-06",
-        |      "end": "2019-04-05"
+        |      "start": "2001-01-01",
+        |      "end": "2001-01-01"
         |      }
         |   ],
-        |   "accountingType": "ACCRUALS",
-        |   "commencementDate": "2016-09-24",
-        |   "cessationDate": "2020-03-24",
-        |   "businessAddressLineOne": "6 Harpic Drive",
-        |   "businessAddressLineTwo": "Domestos Wood",
-        |   "businessAddressLineThree": "ToiletDucktown",
-        |   "businessAddressLineFour": "CIFSHIRE",
-        |   "businessAddressPostcode": "SW4F 3GA",
+        |   "accountingType": "CASH",
+        |   "commencementDate": "2001-01-01",
+        |   "cessationDate": "2001-01-01",
+        |   "businessAddressLineOne": "100 SuttonStreet",
+        |   "businessAddressLineTwo": "Wokingham",
+        |   "businessAddressLineThree": "Surrey",
+        |   "businessAddressLineFour": "London",
+        |   "businessAddressPostcode": "DH14EJ",
         |   "businessAddressCountryCode": "GB"
         |}
         |""".stripMargin
@@ -88,27 +88,43 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
 
         val desJson: JsValue = Json.parse(
           """
-            |[
-            |  {
-            |     "businessId": "X0IS123456789012",
-            |     "typeOfBusiness": "self-employment",
-            |     "tradingName": "Aardvark Window Cleaning Services",
-            |     "accountingPeriods": [{
-            |        "start": "2018-04-06",
-            |        "end": "2019-04-05"
-            |        }
-            |     ],
-            |     "accountingType": "ACCRUALS",
-            |     "commencementDate": "2016-09-24",
-            |     "cessationDate": "2020-03-24",
-            |     "businessAddressLineOne": "6 Harpic Drive",
-            |     "businessAddressLineTwo": "Domestos Wood",
-            |     "businessAddressLineThree": "ToiletDucktown",
-            |     "businessAddressLineFour": "CIFSHIRE",
-            |     "businessAddressPostcode": "SW4F 3GA",
-            |     "businessAddressCountryCode": "GB"
-            |  }
-            |]
+            |{
+            |  "safeId": "XE00001234567890",
+            |  "nino": "AA123456A",
+            |  "mtdbsa": "123456789012345",
+            |  "propertyIncome": false,
+            |  "businessData": [
+            |    {
+            |      "incomeSourceType": "1",
+            |      "incomeSourceId": "X0IS123456789012",
+            |      "accountingPeriods": [{
+            |        "accountingPeriodStartDate": "2001-01-01",
+            |        "accountingPeriodEndDate": "2001-01-01"
+            |      }],
+            |      "tradingName": "RCDTS",
+            |      "businessAddressDetails": {
+            |        "addressLine1": "100 SuttonStreet",
+            |        "addressLine2": "Wokingham",
+            |        "addressLine3": "Surrey",
+            |        "addressLine4": "London",
+            |        "postalCode": "DH14EJ",
+            |        "countryCode": "GB"
+            |      },
+            |      "businessContactDetails": {
+            |        "phoneNumber": "01332752856",
+            |        "mobileNumber": "07782565326",
+            |        "faxNumber": "01332754256",
+            |        "emailAddress": "stephen@manncorpone.co.uk"
+            |      },
+            |      "tradingStartDate": "2001-01-01",
+            |      "cashOrAccruals": "cash",
+            |      "seasonal": true,
+            |      "cessationDate": "2001-01-01",
+            |      "cessationReason": "002",
+            |      "paperLess": true
+            |    }
+            |  ]
+            |}
             |""".stripMargin
         )
 
@@ -129,46 +145,72 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
 
         val desJson: JsValue = Json.parse(
           """
-            |[
-            |  {
-            |     "businessId": "X0IS123456789012",
-            |     "typeOfBusiness": "self-employment",
-            |     "tradingName": "Aardvark Window Cleaning Services",
-            |     "accountingPeriods": [{
-            |        "start": "2018-04-06",
-            |        "end": "2019-04-05"
-            |        }
-            |     ],
-            |     "accountingType": "ACCRUALS",
-            |     "commencementDate": "2016-09-24",
-            |     "cessationDate": "2020-03-24",
-            |     "businessAddressLineOne": "6 Harpic Drive",
-            |     "businessAddressLineTwo": "Domestos Wood",
-            |     "businessAddressLineThree": "ToiletDucktown",
-            |     "businessAddressLineFour": "CIFSHIRE",
-            |     "businessAddressPostcode": "SW4F 3GA",
-            |     "businessAddressCountryCode": "GB"
-            |  },
-            |  {
-            |     "businessId": "X0IS098765432109",
-            |     "typeOfBusiness": "self-employment",
-            |     "tradingName": "Aardvark Window Cleaning Services",
-            |     "accountingPeriods": [{
-            |        "start": "2018-04-06",
-            |        "end": "2019-04-05"
-            |        }
-            |     ],
-            |     "accountingType": "ACCRUALS",
-            |     "commencementDate": "2016-09-24",
-            |     "cessationDate": "2020-03-24",
-            |     "businessAddressLineOne": "6 Test Drive",
-            |     "businessAddressLineTwo": "Test Wood",
-            |     "businessAddressLineThree": "Test Town",
-            |     "businessAddressLineFour": "TESTSHIRE",
-            |     "businessAddressPostcode": "TE4 3ST",
-            |     "businessAddressCountryCode": "GB"
-            |  }
-            |]
+            |{
+            |  "safeId": "XE00001234567890",
+            |  "nino": "AA123456A",
+            |  "mtdbsa": "123456789012345",
+            |  "propertyIncome": false,
+            |  "businessData": [
+            |    {
+            |      "incomeSourceType": "1",
+            |      "incomeSourceId": "X0IS123456789012",
+            |      "accountingPeriods": [{
+            |        "accountingPeriodStartDate": "2001-01-01",
+            |        "accountingPeriodEndDate": "2001-01-01"
+            |      }],
+            |      "tradingName": "RCDTS",
+            |      "businessAddressDetails": {
+            |        "addressLine1": "100 SuttonStreet",
+            |        "addressLine2": "Wokingham",
+            |        "addressLine3": "Surrey",
+            |        "addressLine4": "London",
+            |        "postalCode": "DH14EJ",
+            |        "countryCode": "GB"
+            |      },
+            |      "businessContactDetails": {
+            |        "phoneNumber": "01332752856",
+            |        "mobileNumber": "07782565326",
+            |        "faxNumber": "01332754256",
+            |        "emailAddress": "stephen@manncorpone.co.uk"
+            |      },
+            |      "tradingStartDate": "2001-01-01",
+            |      "cashOrAccruals": "cash",
+            |      "seasonal": true,
+            |      "cessationDate": "2001-01-01",
+            |      "cessationReason": "002",
+            |      "paperLess": true
+            |    },
+            |    {
+            |      "incomeSourceType": "1",
+            |      "incomeSourceId": "X0IS098765432112",
+            |      "accountingPeriods": [{
+            |        "accountingPeriodStartDate": "2001-01-01",
+            |        "accountingPeriodEndDate": "2001-01-01"
+            |      }],
+            |      "tradingName": "RCDTS",
+            |      "businessAddressDetails": {
+            |        "addressLine1": "100 SuttonStreet",
+            |        "addressLine2": "Wokingham",
+            |        "addressLine3": "Surrey",
+            |        "addressLine4": "London",
+            |        "postalCode": "DH14EJ",
+            |        "countryCode": "GB"
+            |      },
+            |      "businessContactDetails": {
+            |        "phoneNumber": "01332752856",
+            |        "mobileNumber": "07782565326",
+            |        "faxNumber": "01332754256",
+            |        "emailAddress": "stephen@manncorpone.co.uk"
+            |      },
+            |      "tradingStartDate": "2001-01-01",
+            |      "cashOrAccruals": "cash",
+            |      "seasonal": true,
+            |      "cessationDate": "2001-01-01",
+            |      "cessationReason": "002",
+            |      "paperLess": true
+            |    }
+            |  ]
+            |}
             |""".stripMargin
         )
 

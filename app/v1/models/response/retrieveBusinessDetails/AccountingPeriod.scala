@@ -16,11 +16,15 @@
 
 package v1.models.response.retrieveBusinessDetails
 
-import play.api.libs.json.{Json, OWrites, Reads}
+import play.api.libs.functional.syntax._
+import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 
 case class AccountingPeriod(start: String, end: String)
 
 object AccountingPeriod {
   implicit val writes: OWrites[AccountingPeriod] = Json.writes[AccountingPeriod]
-  implicit val reads: Reads[AccountingPeriod] = Json.reads[AccountingPeriod]
+  implicit val reads: Reads[AccountingPeriod] = (
+    (JsPath \ "accountingPeriodStartDate").read[String] and
+    (JsPath \ "accountingPeriodEndDate").read[String]
+  )(AccountingPeriod.apply _)
 }
