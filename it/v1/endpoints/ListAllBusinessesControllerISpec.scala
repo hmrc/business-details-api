@@ -17,7 +17,7 @@
 package v1.endpoints
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import support.IntegrationBaseSpec
 import play.api.http.HeaderNames.ACCEPT
@@ -31,56 +31,193 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
 
     val nino = "AA123456A"
 
-    val responseBody = Json.parse(
+    val responseBodyBusinessData: JsValue = Json.parse(
       """
         |{
         |  "listOfBusinesses":[
-        |     {
-        |     "typeOfBusiness": "self-employment",
-        |     "businessId": "123456789012345",
-        |     "tradingName": "RCDTS"
-        |     }
+        |    {
+        |      "typeOfBusiness": "self-employment",
+        |      "businessId": "123456789012345",
+        |      "tradingName": "RCDTS"
+        |    }
         |  ]
         |}
         """.stripMargin
     )
 
-    val desResponseBody = Json.parse(
+    val responseBodyPropertyData: JsValue = Json.parse(
       """
         |{
-        |   "safeId": "XE00001234567890",
-        |   "nino": "AA123456A",
-        |   "mtdbsa": "123456789012345",
-        |   "propertyIncome": false,
-        |   "businessData": [
-        |      {
-        |         "incomeSourceType": "1",
-        |         "incomeSourceId": "123456789012345",
-        |         "accountingPeriodStartDate": "2001-01-01",
-        |         "accountingPeriodEndDate": "2001-01-01",
-        |         "tradingName": "RCDTS",
-        |         "businessAddressDetails": {
-        |            "addressLine1": "100 SuttonStreet",
-        |            "addressLine2": "Wokingham",
-        |            "addressLine3": "Surrey",
-        |            "addressLine4": "London",
-        |            "postalCode": "DH14EJ",
-        |            "countryCode": "GB"
-        |         },
-        |         "businessContactDetails": {
-        |            "phoneNumber": "01332752856",
-        |            "mobileNumber": "07782565326",
-        |            "faxNumber": "01332754256",
-        |            "emailAddress": "stephen@manncorpone.co.uk"
-        |         },
-        |         "tradingStartDate": "2001-01-01",
-        |         "cashOrAccruals": "cash",
-        |         "seasonal": true,
-        |         "cessationDate": "2001-01-01",
-        |         "cessationReason": "002",
-        |         "paperLess": true
-        |      }
-        |   ]
+        |  "listOfBusinesses":[
+        |    {
+        |      "typeOfBusiness": "uk-property",
+        |      "businessId": "123456789012345"
+        |    }
+        |  ]
+        |}
+        """.stripMargin
+    )
+
+    val responseBodyBothData: JsValue = Json.parse(
+      """
+        |{
+        |  "listOfBusinesses":[
+        |    {
+        |      "typeOfBusiness": "self-employment",
+        |      "businessId": "123456789012345",
+        |      "tradingName": "RCDTS"
+        |    },
+        |    {
+        |      "typeOfBusiness": "uk-property",
+        |      "businessId": "123456789012345"
+        |    }
+        |  ]
+        |}
+        """.stripMargin
+    )
+
+    val desResponseBodyBusinessData: JsValue = Json.parse(
+      """
+        |{
+        |  "safeId": "XE00001234567890",
+        |  "nino": "AA123456A",
+        |  "mtdbsa": "123456789012345",
+        |  "propertyIncome": false,
+        |  "businessData": [
+        |    {
+        |      "incomeSourceId": "123456789012345",
+        |      "accountingPeriodStartDate": "2001-01-01",
+        |      "accountingPeriodEndDate": "2001-01-01",
+        |      "tradingName": "RCDTS",
+        |      "businessAddressDetails": {
+        |        "addressLine1": "100 SuttonStreet",
+        |        "addressLine2": "Wokingham",
+        |        "addressLine3": "Surrey",
+        |        "addressLine4": "London",
+        |        "postalCode": "DH14EJ",
+        |        "countryCode": "GB"
+        |      },
+        |      "businessContactDetails": {
+        |        "phoneNumber": "01332752856",
+        |        "mobileNumber": "07782565326",
+        |        "faxNumber": "01332754256",
+        |        "emailAddress": "stephen@manncorpone.co.uk"
+        |      },
+        |      "tradingStartDate": "2001-01-01",
+        |      "cashOrAccruals": "cash",
+        |      "seasonal": true,
+        |      "cessationDate": "2001-01-01",
+        |      "cessationReason": "002",
+        |      "paperLess": true
+        |    }
+        |  ]
+        |}
+        """.stripMargin
+    )
+
+    val desResponseBodyPropertyData: JsValue = Json.parse(
+      """
+        |{
+        |  "safeId": "XE00001234567890",
+        |  "nino": "AA123456A",
+        |  "mtdbsa": "123456789012345",
+        |  "propertyIncome": false,
+        |  "propertyData": [
+        |    {
+        |      "incomeSourceType": "uk-property",
+        |      "incomeSourceId": "123456789012345",
+        |      "accountingPeriodStartDate": "2001-01-01",
+        |      "accountingPeriodEndDate": "2001-01-01",
+        |      "businessAddressDetails": {
+        |        "addressLine1": "100 SuttonStreet",
+        |        "addressLine2": "Wokingham",
+        |        "addressLine3": "Surrey",
+        |        "addressLine4": "London",
+        |        "postalCode": "DH14EJ",
+        |        "countryCode": "GB"
+        |      },
+        |      "businessContactDetails": {
+        |        "phoneNumber": "01332752856",
+        |        "mobileNumber": "07782565326",
+        |        "faxNumber": "01332754256",
+        |        "emailAddress": "stephen@manncorpone.co.uk"
+        |      },
+        |      "tradingStartDate": "2001-01-01",
+        |      "cashOrAccruals": "cash",
+        |      "seasonal": true,
+        |      "cessationDate": "2001-01-01",
+        |      "cessationReason": "002",
+        |      "paperLess": true
+        |    }
+        |  ]
+        |}
+        """.stripMargin
+    )
+
+    val desResponseBodyBothData: JsValue = Json.parse(
+      """
+        |{
+        |  "safeId": "XE00001234567890",
+        |  "nino": "AA123456A",
+        |  "mtdbsa": "123456789012345",
+        |  "propertyIncome": false,
+        |  "businessData": [
+        |    {
+        |      "incomeSourceType": "1",
+        |      "incomeSourceId": "123456789012345",
+        |      "accountingPeriodStartDate": "2001-01-01",
+        |      "accountingPeriodEndDate": "2001-01-01",
+        |      "tradingName": "RCDTS",
+        |      "businessAddressDetails": {
+        |        "addressLine1": "100 SuttonStreet",
+        |        "addressLine2": "Wokingham",
+        |        "addressLine3": "Surrey",
+        |        "addressLine4": "London",
+        |        "postalCode": "DH14EJ",
+        |        "countryCode": "GB"
+        |      },
+        |      "businessContactDetails": {
+        |        "phoneNumber": "01332752856",
+        |        "mobileNumber": "07782565326",
+        |        "faxNumber": "01332754256",
+        |        "emailAddress": "stephen@manncorpone.co.uk"
+        |      },
+        |      "tradingStartDate": "2001-01-01",
+        |      "cashOrAccruals": "cash",
+        |      "seasonal": true,
+        |      "cessationDate": "2001-01-01",
+        |      "cessationReason": "002",
+        |      "paperLess": true
+        |    }
+        |  ],
+        |  "propertyData": [
+        |    {
+        |      "incomeSourceType": "uk-property",
+        |      "incomeSourceId": "123456789012345",
+        |      "accountingPeriodStartDate": "2001-01-01",
+        |      "accountingPeriodEndDate": "2001-01-01",
+        |      "businessAddressDetails": {
+        |        "addressLine1": "100 SuttonStreet",
+        |        "addressLine2": "Wokingham",
+        |        "addressLine3": "Surrey",
+        |        "addressLine4": "London",
+        |        "postalCode": "DH14EJ",
+        |        "countryCode": "GB"
+        |      },
+        |      "businessContactDetails": {
+        |        "phoneNumber": "01332752856",
+        |        "mobileNumber": "07782565326",
+        |        "faxNumber": "01332754256",
+        |        "emailAddress": "stephen@manncorpone.co.uk"
+        |      },
+        |      "tradingStartDate": "2001-01-01",
+        |      "cashOrAccruals": "cash",
+        |      "seasonal": true,
+        |      "cessationDate": "2001-01-01",
+        |      "cessationReason": "002",
+        |      "paperLess": true
+        |    }
+        |  ]
         |}
         """.stripMargin
     )
@@ -112,18 +249,46 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
     }
 
     "return a 200 status code" when {
-      "any valid request is made" in new ListAllBusinessesControllerTest {
+      "any valid request is made and DES only returns businessData" in new ListAllBusinessesControllerTest {
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desResponseBody)
+          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desResponseBodyBusinessData)
         }
 
         val response: WSResponse = await(request().get())
         response.status shouldBe Status.OK
-        response.json shouldBe responseBody
+        response.json shouldBe responseBodyBusinessData
+        response.header("Content-Type") shouldBe Some("application/json")
+      }
+      "any valid request is made and DES only returns propertyData" in new ListAllBusinessesControllerTest {
+
+        override def setupStubs(): StubMapping = {
+          AuditStub.audit()
+          AuthStub.authorised()
+          MtdIdLookupStub.ninoFound(nino)
+          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desResponseBodyPropertyData)
+        }
+
+        val response: WSResponse = await(request().get())
+        response.status shouldBe Status.OK
+        response.json shouldBe responseBodyPropertyData
+        response.header("Content-Type") shouldBe Some("application/json")
+      }
+      "any valid request is made and DES returns both businessData and propertyData" in new ListAllBusinessesControllerTest {
+
+        override def setupStubs(): StubMapping = {
+          AuditStub.audit()
+          AuthStub.authorised()
+          MtdIdLookupStub.ninoFound(nino)
+          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desResponseBodyBothData)
+        }
+
+        val response: WSResponse = await(request().get())
+        response.status shouldBe Status.OK
+        response.json shouldBe responseBodyBothData
         response.header("Content-Type") shouldBe Some("application/json")
       }
     }
