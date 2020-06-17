@@ -10,15 +10,15 @@
       "items": {
         "type": "object",
         "properties": {
-          "incomeSourceId": {
+          "typeOfBusiness": {
+            "description": "The type of business income source, one of: `self-employment`, `uk-property`, `foreign-property` or `property-unspecified`",
+            "type": "string",
+            "example": "self-employment"
+          },
+          "businessId": {
             "description": "A unique identifier for the business income source.",
             "type": "string",
             "example": "123456789012345"
-          },
-          "typeOfBusiness": {
-            "description": "The type of business income source, one of: `self-employment`, `uk-property` or `foreign-property`.",
-            "type": "string",
-            "example": "self-employment"
           },
           "tradingName": {
             "description": "The trading name of the business.",
@@ -27,7 +27,7 @@
           }
         },
         "required": [
-          "incomeSourceId",
+          "businessId",
           "typeOfBusiness"
         ]
       }
