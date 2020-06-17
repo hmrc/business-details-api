@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package v1.models.domain
+package v1.models.domain.accountingType
 
 import support.UnitSpec
 import utils.enums.EnumJsonSpecSupport
-import v1.models.domain.accountingType.{AccountingType, CashOrAccruals}
 
 class CashOrAccrualsSpec extends UnitSpec with EnumJsonSpecSupport {
   testRoundTrip[CashOrAccruals](

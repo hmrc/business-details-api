@@ -18,11 +18,12 @@ package v1.models.domain
 
 import support.UnitSpec
 import utils.enums.EnumJsonSpecSupport
-import v1.models.domain.accountingType.AccountingType
 
-class AccountingTypeSpec extends UnitSpec with EnumJsonSpecSupport {
-  testRoundTrip[AccountingType](
-    ("CASH", AccountingType.CASH),
-    ("ACCRUALS", AccountingType.ACCRUALS),
+class TypeOfBusinessSpec extends UnitSpec with EnumJsonSpecSupport {
+  testRoundTrip[TypeOfBusiness](
+    ("self-employment", TypeOfBusiness.`self-employment`),
+    ("uk-property", TypeOfBusiness.`uk-property`),
+    ("foreign-property", TypeOfBusiness.`foreign-property`)
   )
+
 }
