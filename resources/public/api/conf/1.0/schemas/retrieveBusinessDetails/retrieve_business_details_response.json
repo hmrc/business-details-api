@@ -11,7 +11,7 @@
     },
     "typeOfBusiness": {
       "type": "string",
-      "description": "The type of business income source, one of: `self-employment`, `uk-property`, `foreign-property` or `property`.",
+      "description": "The type of business income source, one of: `self-employment`, `uk-property`, `foreign-property` or `property-unspecified`.",
       "example": "self-employment"
     },
     "tradingName": {
@@ -123,6 +123,7 @@
   },
   "required": [
     "businessId",
-    "typeOfBusiness"
+    "typeOfBusiness",
+    "accountingPeriods"
   ]
 }
