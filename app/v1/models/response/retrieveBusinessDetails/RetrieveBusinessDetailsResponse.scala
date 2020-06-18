@@ -16,9 +16,12 @@
 
 package v1.models.response.retrieveBusinessDetails
 
+import config.AppConfig
 import play.api.libs.json.{Json, OWrites, Reads}
+import v1.hateoas.{HateoasLinks, HateoasLinksFactory}
 import v1.models.domain.TypeOfBusiness
 import v1.models.domain.accountingType.AccountingType
+import v1.models.hateoas.{HateoasData, Link}
 
 case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,
@@ -34,9 +37,20 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            businessAddressPostcode: Option[String],
                                            businessAddressCountryCode: Option[String])
 
-object RetrieveBusinessDetailsResponse {
+object RetrieveBusinessDetailsResponse extends HateoasLinks {
 
   implicit val writes: OWrites[RetrieveBusinessDetailsResponse] = Json.writes[RetrieveBusinessDetailsResponse]
   implicit val reads: Reads[RetrieveBusinessDetailsResponse] = Json.reads[RetrieveBusinessDetailsResponse]
 
+  implicit object RetrieveBusinessDetailsLinksFactory extends HateoasLinksFactory[RetrieveBusinessDetailsResponse, RetrieveBusinessDetailsHateoasData] {
+    override def links(appConfig: AppConfig, data: RetrieveBusinessDetailsHateoasData): Seq[Link] = {
+      import data._
+      Seq(
+        retrieveBusinessDetails(appConfig, nino, businessId)
+      )
+    }
+  }
+
 }
+
+case class RetrieveBusinessDetailsHateoasData(nino: String, businessId: String) extends HateoasData

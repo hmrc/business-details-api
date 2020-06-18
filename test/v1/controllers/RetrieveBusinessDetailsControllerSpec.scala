@@ -20,14 +20,17 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockRetrieveBusinessDetailsRequestParser
 import v1.mocks.services.{MockEnrolmentsAuthService, MockMtdIdLookupService, MockRetrieveBusinessDetailsService}
 import v1.models.domain.TypeOfBusiness
 import v1.models.domain.accountingType.AccountingType
 import v1.models.errors._
+import v1.models.hateoas.{HateoasWrapper, Link}
+import v1.models.hateoas.Method.GET
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest}
-import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
+import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -37,6 +40,7 @@ class RetrieveBusinessDetailsControllerSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockRetrieveBusinessDetailsService
+    with MockHateoasFactory
     with MockRetrieveBusinessDetailsRequestParser {
 
   trait Test {
@@ -45,8 +49,9 @@ class RetrieveBusinessDetailsControllerSpec
     val controller = new RetrieveBusinessDetailsController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      requestDataParser = mockRequestParser,
+      parser = mockRequestParser,
       service = mockRetrieveBusinessDetailsService,
+      hateoasFactory = mockHateoasFactory,
       cc = cc
     )
     MockedMtdIdLookupService.lookup(validNino).returns(Future.successful(Right("test-mtd-id")))
@@ -56,6 +61,7 @@ class RetrieveBusinessDetailsControllerSpec
   private val validNino = "AA123456A"
   private val validBusinessId = "XAIS12345678910"
   private val correlationId = "X-123"
+  private val testHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
 
   private val responseBody = Json.parse(
     """
@@ -63,10 +69,11 @@ class RetrieveBusinessDetailsControllerSpec
       |   "businessId": "XAIS12345678910",
       |   "typeOfBusiness": "self-employment",
       |   "tradingName": "Aardvark Window Cleaning Services",
-      |   "accountingPeriods": [{
-      |      "start": "2018-04-06",
-      |      "end": "2019-04-05"
-      |      }
+      |   "accountingPeriods": [
+      |     {
+      |       "start": "2018-04-06",
+      |       "end": "2019-04-05"
+      |     }
       |   ],
       |   "accountingType": "ACCRUALS",
       |   "commencementDate": "2016-09-24",
@@ -76,7 +83,14 @@ class RetrieveBusinessDetailsControllerSpec
       |   "businessAddressLineThree": "ToiletDucktown",
       |   "businessAddressLineFour": "CIFSHIRE",
       |   "businessAddressPostcode": "SW4F 3GA",
-      |   "businessAddressCountryCode": "GB"
+      |   "businessAddressCountryCode": "GB",
+      |   "links": [
+      |     {
+      |       "href": "/foo/bar",
+      |       "method": "GET",
+      |       "rel": "test-relationship"
+      |     }
+      |   ]
       |}
         """.stripMargin
   )
@@ -112,6 +126,10 @@ class RetrieveBusinessDetailsControllerSpec
         MockRetrieveBusinessDetailsService
           .retrieveBusinessDetailsService(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData))))
+
+        MockHateoasFactory
+          .wrap(responseData, RetrieveBusinessDetailsHateoasData(validNino, validBusinessId))
+          .returns(HateoasWrapper(responseData, Seq(testHateoasLink)))
 
         val result: Future[Result] = controller.handleRequest(validNino, validBusinessId)(fakeRequest)
 
