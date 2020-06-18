@@ -22,41 +22,146 @@ import v1.models.domain.TypeOfBusiness
 import v1.models.response.listAllBusiness.Business
 
 class BusinessSpec extends UnitSpec {
-  "reads" should {
+  "readsBusinessData" should {
 
     val mtdModel: TypeOfBusiness => Business = mtdValue => Business(mtdValue, "Business", Some("Business Co"))
 
     "read from JSON" when {
 
-      val desJson: String => JsValue = desValue => Json.parse(
+      val desJson: JsValue = Json.parse(
         s"""
            |{
-           |  "incomeSourceType": "$desValue",
+           |  "incomeSourceType": "doesn't matter",
            |  "incomeSourceId": "Business",
            |  "tradingName": "Business Co"
            |}
            |""".stripMargin)
-      Business
-      Seq(("1", TypeOfBusiness.`self-employment`), ("2", TypeOfBusiness.`uk-property`), ("3", TypeOfBusiness.`foreign-property`)).foreach {
-        case (desValue, mtdValue) =>
-          s"the field contains [$desValue]" in {
-            desJson(desValue).as[Business] shouldBe mtdModel(mtdValue)
-          }
+      s"trading name is provided" in {
+        desJson.as[Business](Business.readsBusinessData) shouldBe mtdModel(TypeOfBusiness.`self-employment`)
+      }
+
+      "no tradingName is provided" in {
+        val desJson: JsValue = Json.parse(
+          s"""
+             |{
+             |  "incomeSourceId": "Business"
+             |}
+             |""".stripMargin)
+
+        val mtdModel: Business = Business(TypeOfBusiness.`self-employment`, "Business", None)
+
+        desJson.as[Business](Business.readsBusinessData) shouldBe mtdModel
       }
     }
+  }
+  "readsSeqBusinessData" should {
+    "read from JSON" when {
 
-    "read from JSON with no tradingName" in {
       val desJson: JsValue = Json.parse(
         s"""
-           |{
-           |  "incomeSourceType": "1",
-           |  "incomeSourceId": "Business"
-           |}
+           |[
+           |  {
+           |    "incomeSourceId": "Business",
+           |    "tradingName": "Business Co"
+           |  },
+           |  {
+           |    "incomeSourceType": "doesn't matter",
+           |    "incomeSourceId": "Business"
+           |  }
+           |]
            |""".stripMargin)
+      s"a json array is provided" in {
+        desJson.as[Seq[Business]](Business.readsSeqBusinessData) shouldBe Seq(
+          Business(TypeOfBusiness.`self-employment`, "Business", Some("Business Co")),
+          Business(TypeOfBusiness.`self-employment`, "Business", None)
+        )
+      }
+    }
+  }
 
-      val mtdModel: Business = Business(TypeOfBusiness.`self-employment`, "Business", None)
+  "readsPropertyData" should {
 
-      desJson.as[Business] shouldBe mtdModel
+    "read from JSON" when {
+      s"incomeSourceType is uk-property" in {
+        val desJson: JsValue = Json.parse(
+          s"""
+             |{
+             |  "incomeSourceType": "uk-property",
+             |  "incomeSourceId": "Business",
+             |  "tradingName": "doesn't matter"
+             |}
+             |""".stripMargin)
+        val mtdModel: Business = Business(TypeOfBusiness.`uk-property`, "Business", None)
+
+        desJson.as[Business](Business.readsPropertyData) shouldBe mtdModel
+      }
+      s"incomeSourceType is foreign-property" in {
+        val desJson: JsValue = Json.parse(
+          s"""
+             |{
+             |  "incomeSourceType": "foreign-property",
+             |  "incomeSourceId": "Business",
+             |  "tradingName": "doesn't matter"
+             |}
+             |""".stripMargin)
+        val mtdModel: Business = Business(TypeOfBusiness.`foreign-property`, "Business", None)
+
+        desJson.as[Business](Business.readsPropertyData) shouldBe mtdModel
+      }
+      s"incomeSourceType is not provided" in {
+        val desJson: JsValue = Json.parse(
+          s"""
+             |{
+             |  "incomeSourceId": "Business",
+             |  "tradingName": "doesn't matter"
+             |}
+             |""".stripMargin)
+        val mtdModel: Business = Business(TypeOfBusiness.`property-unspecified`, "Business", None)
+
+        desJson.as[Business](Business.readsPropertyData) shouldBe mtdModel
+      }
+    }
+  }
+  "readsSeqPropertyData" should {
+    "read from JSON" when {
+
+      val desJson: JsValue = Json.parse(
+        s"""
+           |[
+           |  {
+           |    "incomeSourceId": "Business",
+           |    "tradingName": "doesn't matter"
+           |  },
+           |  {
+           |    "incomeSourceType": "uk-property",
+           |    "incomeSourceId": "Business"
+           |  }
+           |]
+           |""".stripMargin)
+      s"a json array is provided" in {
+        desJson.as[Seq[Business]](Business.readsSeqPropertyData) shouldBe Seq(
+          Business(TypeOfBusiness.`property-unspecified`, "Business", None),
+          Business(TypeOfBusiness.`uk-property`, "Business", None)
+        )
+      }
+    }
+  }
+
+  "writes" should {
+    "write to JSON" when {
+      "passed a model" in {
+        val model = Business(TypeOfBusiness.`self-employment`, "myid", Some("name"))
+        val json = Json.parse(
+          """
+            |{
+            |  "typeOfBusiness": "self-employment",
+            |  "businessId": "myid",
+            |  "tradingName": "name"
+            |}
+            |""".stripMargin)
+
+        Json.toJson(model) shouldBe json
+      }
     }
   }
 }

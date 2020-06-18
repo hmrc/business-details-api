@@ -14,19 +14,16 @@
  * limitations under the License.
  */
 
-package v1.models.domain
+package v1.models.outcomes
 
-import play.api.libs.json.Format
-import utils.enums.Enums
+import support.UnitSpec
 
-sealed trait TypeOfBusiness
+class ResponseWrapperSpec extends UnitSpec {
+  "map" should {
+    "apply the partial function to the responseData" in {
+      val partialFunction: Int => String = _.toString
 
-object TypeOfBusiness {
-  case object `self-employment` extends TypeOfBusiness
-  case object `uk-property` extends TypeOfBusiness
-  case object `foreign-property` extends TypeOfBusiness
-  case object `property-unspecified` extends TypeOfBusiness
-
-  implicit val format: Format[TypeOfBusiness] = Enums.format[TypeOfBusiness]
-  val parser: PartialFunction[String, TypeOfBusiness] = Enums.parser[TypeOfBusiness]
+      ResponseWrapper("", 1).map(partialFunction) shouldBe ResponseWrapper("", "1")
+    }
+  }
 }

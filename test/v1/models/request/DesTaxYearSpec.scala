@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package v1.models.domain
+package v1.models.request
 
-import play.api.libs.json.Format
-import utils.enums.Enums
+import support.UnitSpec
 
-sealed trait TypeOfBusiness
+class DesTaxYearSpec extends UnitSpec {
+  "toString" should {
+    "return the string value inside a DesTaxYear model" in {
+      DesTaxYear("my value").toString shouldBe "my value"
+    }
+  }
 
-object TypeOfBusiness {
-  case object `self-employment` extends TypeOfBusiness
-  case object `uk-property` extends TypeOfBusiness
-  case object `foreign-property` extends TypeOfBusiness
-  case object `property-unspecified` extends TypeOfBusiness
-
-  implicit val format: Format[TypeOfBusiness] = Enums.format[TypeOfBusiness]
-  val parser: PartialFunction[String, TypeOfBusiness] = Enums.parser[TypeOfBusiness]
+  "fromMtd" should {
+    "return the DES representation of a MTD tax year" in {
+      DesTaxYear.fromMtd("2017-18") shouldBe DesTaxYear("2018")
+    }
+  }
 }
