@@ -18,23 +18,24 @@ package v1.models.response.listAllBusiness
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
-import v1.models.domain.{IncomeSourceType, TypeOfBusiness}
+import v1.models.domain.TypeOfBusiness
 
 case class Business(typeOfBusiness: TypeOfBusiness, businessId: String, tradingName: Option[String])
 
 object Business {
 
   implicit val writes: OWrites[Business] = Json.writes[Business]
-  implicit val reads: Reads[Business] = {
-    val typeOfBusinessReads: Reads[TypeOfBusiness] =
-      (JsPath \ "incomeSourceType").read[IncomeSourceType].map(_.toTypeOfBusiness)
-
-    val businessIdReads: Reads[String] =
-      (JsPath \ "incomeSourceId").read[String]
-
-    val tradingNameReads: Reads[Option[String]] =
+  val readsBusinessData: Reads[Business] = (
+    Reads.pure(TypeOfBusiness.`self-employment`) and
+      (JsPath \ "incomeSourceId").read[String] and
       (JsPath \ "tradingName").readNullable[String]
+    ) (Business.apply _)
+  val readsSeqBusinessData: Reads[Seq[Business]] = Reads.traversableReads[Seq, Business](implicitly, readsBusinessData)
 
-    (typeOfBusinessReads and businessIdReads and tradingNameReads) (Business.apply _)
-  }
+  val readsPropertyData: Reads[Business] = (
+    (JsPath \ "incomeSourceType").readNullable[TypeOfBusiness].map(_.getOrElse(TypeOfBusiness.`property-unspecified`)) and
+      (JsPath \ "incomeSourceId").read[String] and
+      Reads.pure(None)
+    ) (Business.apply _)
+  val readsSeqPropertyData: Reads[Seq[Business]] = Reads.traversableReads[Seq, Business](implicitly, readsPropertyData)
 }

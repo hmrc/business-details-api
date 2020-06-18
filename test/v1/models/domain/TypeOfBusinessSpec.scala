@@ -18,22 +18,12 @@ package v1.models.domain
 
 import support.UnitSpec
 import utils.enums.EnumJsonSpecSupport
-import v1.models.domain.accountingType.{AccountingType, CashOrAccruals}
 
-class CashOrAccrualsSpec extends UnitSpec with EnumJsonSpecSupport {
-  testRoundTrip[CashOrAccruals](
-    ("cash", CashOrAccruals.`cash`),
-    ("accruals", CashOrAccruals.`accruals`),
+class TypeOfBusinessSpec extends UnitSpec with EnumJsonSpecSupport {
+  testRoundTrip[TypeOfBusiness](
+    ("self-employment", TypeOfBusiness.`self-employment`),
+    ("uk-property", TypeOfBusiness.`uk-property`),
+    ("foreign-property", TypeOfBusiness.`foreign-property`)
   )
-
-  "toMtd" should {
-    Seq((CashOrAccruals.`cash`, AccountingType.CASH),
-      (CashOrAccruals.`accruals`, AccountingType.ACCRUALS)).foreach {
-      case (cashOrAccruals, accountingType) =>
-        s"convert $cashOrAccruals to $accountingType" in {
-          cashOrAccruals.toMtd shouldBe accountingType
-        }
-    }
-  }
 
 }

@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package v1.models.domain
+package v1.models.domain.accountingType
 
-import play.api.libs.json.Format
-import utils.enums.Enums
+import support.UnitSpec
+import utils.enums.EnumJsonSpecSupport
 
-sealed trait TypeOfBusiness
-
-object TypeOfBusiness {
-  case object `self-employment` extends TypeOfBusiness
-  case object `uk-property` extends TypeOfBusiness
-  case object `foreign-property` extends TypeOfBusiness
-  case object `property-unspecified` extends TypeOfBusiness
-
-  implicit val format: Format[TypeOfBusiness] = Enums.format[TypeOfBusiness]
-  val parser: PartialFunction[String, TypeOfBusiness] = Enums.parser[TypeOfBusiness]
+class AccountingTypeSpec extends UnitSpec with EnumJsonSpecSupport {
+  testRoundTrip[AccountingType](
+    ("CASH", AccountingType.CASH),
+    ("ACCRUALS", AccountingType.ACCRUALS),
+  )
 }
