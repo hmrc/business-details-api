@@ -16,12 +16,17 @@
 
 package v1.models.response.listAllBusiness
 
-import play.api.libs.json.{JsPath, Json, OWrites, Reads}
+import cats.Functor
+import config.AppConfig
+import play.api.libs.json.{JsPath, Json, OWrites, Reads, Writes}
+import v1.hateoas.{HateoasLinks, HateoasListLinksFactory}
+import v1.models.hateoas.{HateoasData, Link}
+import v1.models.hateoas.RelType.RETRIEVE_BUSINESS_DETAILS
 
-case class ListAllBusinessesResponse(listOfBusinesses: Seq[Business])
+case class ListAllBusinessesResponse[I](listOfBusinesses: Seq[I])
 
-object ListAllBusinessesResponse {
-  implicit val reads: Reads[ListAllBusinessesResponse] = {
+object ListAllBusinessesResponse extends HateoasLinks {
+  implicit def reads: Reads[ListAllBusinessesResponse[Business]] = {
     val businessDataReads: Reads[Seq[Business]] =
       (JsPath \ "businessData").readNullable[Seq[Business]](Business.readsSeqBusinessData).map(_.getOrElse(Nil))
     val propertyDataReads: Reads[Seq[Business]] =
@@ -35,5 +40,23 @@ object ListAllBusinessesResponse {
     }
   }
 
-  implicit val writes: OWrites[ListAllBusinessesResponse] = Json.writes[ListAllBusinessesResponse]
+  implicit def writes[I: Writes]: OWrites[ListAllBusinessesResponse[I]] = Json.writes[ListAllBusinessesResponse[I]]
+
+  implicit object LinksFactory extends HateoasListLinksFactory[ListAllBusinessesResponse, Business, ListAllBusinessesHateoasData] {
+    override def links(appConfig: AppConfig, data: ListAllBusinessesHateoasData): Seq[Link] = {
+      Seq(
+        listAllBusinesses(appConfig, data.nino)
+      )
+    }
+
+    override def itemLinks(appConfig: AppConfig, data: ListAllBusinessesHateoasData, item: Business): Seq[Link] =
+      Seq(retrieveBusinessDetails(appConfig, data.nino, item.businessId, rel = RETRIEVE_BUSINESS_DETAILS))
+  }
+
+  implicit object ResponseFunctor extends Functor[ListAllBusinessesResponse] {
+    override def map[A, B](fa: ListAllBusinessesResponse[A])(f: A => B): ListAllBusinessesResponse[B] =
+      ListAllBusinessesResponse(fa.listOfBusinesses.map(f))
+  }
 }
+
+case class ListAllBusinessesHateoasData(nino: String) extends HateoasData

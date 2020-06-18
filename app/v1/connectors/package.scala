@@ -18,10 +18,13 @@ package v1
 
 import v1.models.errors.{DesError, MtdError}
 import v1.models.outcomes.ResponseWrapper
+import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
 package object connectors {
 
   type MtdIdLookupOutcome = Either[MtdError, String]
 
   type DesOutcome[A] = Either[ResponseWrapper[DesError], ResponseWrapper[A]]
+
+  type ListConnectorOutcome = DesOutcome[ListAllBusinessesResponse[Business]]
 }

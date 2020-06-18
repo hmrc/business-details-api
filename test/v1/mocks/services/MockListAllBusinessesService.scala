@@ -23,7 +23,7 @@ import v1.controllers.EndpointLogContext
 import v1.models.errors.ErrorWrapper
 import v1.models.outcomes.ResponseWrapper
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
-import v1.models.response.listAllBusiness.ListAllBusinessesResponse
+import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 import v1.services.ListAllBusinessesService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,7 +35,7 @@ trait MockListAllBusinessesService extends MockFactory {
   object MockListAllBusinessesService {
 
     def listAllBusinessesService(request: ListAllBusinessesRequest):
-    CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[ListAllBusinessesResponse]]]] = {
+    CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[ListAllBusinessesResponse[Business]]]]] = {
       (mockListAllBusinessesService
         .listAllBusinessesService(_: ListAllBusinessesRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext))
         .expects(request, *, *, *)

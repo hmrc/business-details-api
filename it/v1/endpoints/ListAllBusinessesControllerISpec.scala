@@ -38,7 +38,21 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         |    {
         |      "typeOfBusiness": "self-employment",
         |      "businessId": "123456789012345",
-        |      "tradingName": "RCDTS"
+        |      "tradingName": "RCDTS",
+        |      "links":[
+        |        {
+        |          "href":"/individuals/business/details/AA123456A/123456789012345",
+        |          "method":"GET",
+        |          "rel":"retrieve-business-details"
+        |        }
+        |      ]
+        |    }
+        |  ],
+        |  "links":[
+        |    {
+        |      "href":"/individuals/business/details/AA123456A/list",
+        |      "method":"GET",
+        |      "rel":"self"
         |    }
         |  ]
         |}
@@ -51,7 +65,21 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         |  "listOfBusinesses":[
         |    {
         |      "typeOfBusiness": "uk-property",
-        |      "businessId": "123456789012345"
+        |      "businessId": "098765432109876",
+        |      "links":[
+        |        {
+        |          "href":"/individuals/business/details/AA123456A/098765432109876",
+        |          "method":"GET",
+        |          "rel":"retrieve-business-details"
+        |        }
+        |      ]
+        |    }
+        |  ],
+        |  "links":[
+        |    {
+        |      "href":"/individuals/business/details/AA123456A/list",
+        |      "method":"GET",
+        |      "rel":"self"
         |    }
         |  ]
         |}
@@ -65,11 +93,32 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         |    {
         |      "typeOfBusiness": "self-employment",
         |      "businessId": "123456789012345",
-        |      "tradingName": "RCDTS"
+        |      "tradingName": "RCDTS",
+        |      "links":[
+        |        {
+        |          "href":"/individuals/business/details/AA123456A/123456789012345",
+        |          "method":"GET",
+        |          "rel":"retrieve-business-details"
+        |        }
+        |      ]
         |    },
         |    {
         |      "typeOfBusiness": "uk-property",
-        |      "businessId": "123456789012345"
+        |      "businessId": "098765432109876",
+        |      "links":[
+        |        {
+        |          "href":"/individuals/business/details/AA123456A/098765432109876",
+        |          "method":"GET",
+        |          "rel":"retrieve-business-details"
+        |        }
+        |      ]
+        |    }
+        |  ],
+        |  "links":[
+        |    {
+        |      "href":"/individuals/business/details/AA123456A/list",
+        |      "method":"GET",
+        |      "rel":"self"
         |    }
         |  ]
         |}
@@ -125,7 +174,7 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         |  "propertyData": [
         |    {
         |      "incomeSourceType": "uk-property",
-        |      "incomeSourceId": "123456789012345",
+        |      "incomeSourceId": "098765432109876",
         |      "accountingPeriodStartDate": "2001-01-01",
         |      "accountingPeriodEndDate": "2001-01-01",
         |      "tradingStartDate": "2001-01-01",
@@ -154,7 +203,6 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         |  "propertyIncome": true,
         |  "businessData": [
         |    {
-        |      "incomeSourceType": "1",
         |      "incomeSourceId": "123456789012345",
         |      "accountingPeriodStartDate": "2001-01-01",
         |      "accountingPeriodEndDate": "2001-01-01",
@@ -184,7 +232,7 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         |  "propertyData": [
         |    {
         |      "incomeSourceType": "uk-property",
-        |      "incomeSourceId": "123456789012345",
+        |      "incomeSourceId": "098765432109876",
         |      "accountingPeriodStartDate": "2001-01-01",
         |      "accountingPeriodEndDate": "2001-01-01",
         |      "tradingStartDate": "2001-01-01",

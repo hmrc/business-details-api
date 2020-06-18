@@ -21,18 +21,18 @@ import javax.inject.Inject
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
-import v1.models.response.listAllBusiness.ListAllBusinessesResponse
+import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 import v1.connectors.httpparsers.StandardDesHttpParser._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ListAllBusinessesConnector @Inject()(val http: HttpClient,
                                            val appConfig: AppConfig) extends BaseDesConnector {
-  def listAllBusinesses(request: ListAllBusinessesRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DesOutcome[ListAllBusinessesResponse]] = {
+  def listAllBusinesses(request: ListAllBusinessesRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ListConnectorOutcome] = {
 
     val url = s"registration/business-details/nino/${request.nino}"
     get(
-      DesUri[ListAllBusinessesResponse](s"$url")
+      DesUri[ListAllBusinessesResponse[Business]](s"$url")
     )
   }
 }

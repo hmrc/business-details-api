@@ -26,6 +26,8 @@ import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, NinoFor
 import v1.models.request.listAllBusinesses.ListAllBusinessesRawData
 import v1.services.{EnrolmentsAuthService, ListAllBusinessesService, MtdIdLookupService}
 import cats.implicits._
+import v1.hateoas.HateoasFactory
+import v1.models.response.listAllBusiness.ListAllBusinessesHateoasData
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,6 +36,7 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
                                             val lookupService: MtdIdLookupService,
                                             requestDataParser: ListAllBusinessesRequestParser,
                                             service: ListAllBusinessesService,
+                                            hateoasFactory: HateoasFactory,
                                             cc: ControllerComponents)(implicit ec: ExecutionContext)
   extends AuthorisedController(cc) with BaseController with Logging {
 
@@ -47,11 +50,16 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
         for {
           parsedRequest <- EitherT.fromEither[Future](requestDataParser.parseRequest(rawData))
           serviceResponse <- EitherT(service.listAllBusinessesService(parsedRequest))
+          vendorResponse <- EitherT.fromEither[Future](
+            hateoasFactory
+              .wrapList(serviceResponse.responseData, ListAllBusinessesHateoasData(nino))
+              .asRight[ErrorWrapper]
+          )
         } yield {
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
               s"Success response received with CorrelationId: ${serviceResponse.correlationId}")
-          Ok(Json.toJson(serviceResponse.responseData))
+          Ok(Json.toJson(vendorResponse))
             .withApiHeaders(serviceResponse.correlationId)
         }
 
