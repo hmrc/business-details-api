@@ -121,33 +121,24 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         |  "safeId": "XE00001234567890",
         |  "nino": "AA123456A",
         |  "mtdbsa": "123456789012345",
-        |  "propertyIncome": false,
+        |  "propertyIncome": true,
         |  "propertyData": [
         |    {
         |      "incomeSourceType": "uk-property",
         |      "incomeSourceId": "123456789012345",
         |      "accountingPeriodStartDate": "2001-01-01",
         |      "accountingPeriodEndDate": "2001-01-01",
-        |      "businessAddressDetails": {
-        |        "addressLine1": "100 SuttonStreet",
-        |        "addressLine2": "Wokingham",
-        |        "addressLine3": "Surrey",
-        |        "addressLine4": "London",
-        |        "postalCode": "DH14EJ",
-        |        "countryCode": "GB"
-        |      },
-        |      "businessContactDetails": {
-        |        "phoneNumber": "01332752856",
-        |        "mobileNumber": "07782565326",
-        |        "faxNumber": "01332754256",
-        |        "emailAddress": "stephen@manncorpone.co.uk"
-        |      },
         |      "tradingStartDate": "2001-01-01",
-        |      "cashOrAccruals": "cash",
-        |      "seasonal": true,
+        |      "cashOrAccrualsFlag": true,
+        |      "numPropRented": 0,
+        |      "numPropRentedUK": 0,
+        |      "numPropRentedEEA": 5,
+        |      "numPropRentedNONEEA": 1,
+        |      "emailAddress": "stephen@manncorpone.co.uk",
         |      "cessationDate": "2001-01-01",
         |      "cessationReason": "002",
-        |      "paperLess": true
+        |      "paperLess": true,
+        |      "incomeSourceStartDate": "2019-07-14"
         |    }
         |  ]
         |}
@@ -160,7 +151,7 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         |  "safeId": "XE00001234567890",
         |  "nino": "AA123456A",
         |  "mtdbsa": "123456789012345",
-        |  "propertyIncome": false,
+        |  "propertyIncome": true,
         |  "businessData": [
         |    {
         |      "incomeSourceType": "1",
@@ -196,26 +187,17 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         |      "incomeSourceId": "123456789012345",
         |      "accountingPeriodStartDate": "2001-01-01",
         |      "accountingPeriodEndDate": "2001-01-01",
-        |      "businessAddressDetails": {
-        |        "addressLine1": "100 SuttonStreet",
-        |        "addressLine2": "Wokingham",
-        |        "addressLine3": "Surrey",
-        |        "addressLine4": "London",
-        |        "postalCode": "DH14EJ",
-        |        "countryCode": "GB"
-        |      },
-        |      "businessContactDetails": {
-        |        "phoneNumber": "01332752856",
-        |        "mobileNumber": "07782565326",
-        |        "faxNumber": "01332754256",
-        |        "emailAddress": "stephen@manncorpone.co.uk"
-        |      },
         |      "tradingStartDate": "2001-01-01",
-        |      "cashOrAccruals": "cash",
-        |      "seasonal": true,
+        |      "cashOrAccrualsFlag": true,
+        |      "numPropRented": 0,
+        |      "numPropRentedUK": 0,
+        |      "numPropRentedEEA": 5,
+        |      "numPropRentedNONEEA": 1,
+        |      "emailAddress": "stephen@manncorpone.co.uk",
         |      "cessationDate": "2001-01-01",
         |      "cessationReason": "002",
-        |      "paperLess": true
+        |      "paperLess": true,
+        |      "incomeSourceStartDate": "2019-07-14"
         |    }
         |  ]
         |}

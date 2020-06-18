@@ -18,7 +18,6 @@ package v1.models.domain
 
 import support.UnitSpec
 import utils.enums.EnumJsonSpecSupport
-import v1.models.domain.accountingType.{AccountingType, CashOrAccruals}
 
 class IncomeSourceTypeSpec extends UnitSpec with EnumJsonSpecSupport {
   testRoundTrip[IncomeSourceType](
