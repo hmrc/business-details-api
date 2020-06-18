@@ -9,19 +9,7 @@
     <tbody>
         <tr>
             <td><p>N/A - DEFAULT</p></td>
-            <td><p>Simulate a successful response with only business data.</p></td>
-        </tr>
-        <tr>
-            <td><p>PROPERTY</p></td>
-            <td><p>Simulate a successful response with only property data.</p></td>
-        </tr>
-        <tr>
-            <td><p>BUSINESS_AND_PROPERTY</p></td>
-            <td><p>Simulate a successful response with business and property data.</p></td>
-        </tr>
-        <tr>
-            <td><p>UNSPECIFIED</p></td>
-            <td><p>Simulate a successful response with property data that has an unspecified source of income.</p></td>
+            <td><p>Simulate a successful response.</p></td>
         </tr>
         <tr>
             <td><p>NOT_FOUND</p></td>
