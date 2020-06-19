@@ -19,7 +19,7 @@
           "businessId": {
             "description": "A unique identifier for the business income source.",
             "type": "string",
-            "example": "123456789012345"
+            "example": "XAIS12345678910"
           },
           "tradingName": {
             "description": "The trading name of the business.",
