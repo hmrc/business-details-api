@@ -16,7 +16,6 @@
 
 package v1.models.response.retrieveBusinessDetails.des
 
-import play.api.libs.functional.syntax._
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 
 case class RetrieveBusinessDetailsDesResponse(businessDetails: Seq[BusinessDetails])

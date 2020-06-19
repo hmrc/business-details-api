@@ -49,7 +49,7 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
           TypeOfBusiness.`self-employment`,
           Some("Aardvark Window Cleaning Services"),
           Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-          AccountingType.ACCRUALS,
+          Some(AccountingType.ACCRUALS),
           Some("2016-09-24"),
           Some("2020-03-24"),
           Some("6 Harpic Drive"),

@@ -26,7 +26,7 @@ case class BusinessDetails(businessId: String,
                            typeOfBusiness: TypeOfBusiness,
                            tradingName: Option[String],
                            accountingPeriods: Seq[AccountingPeriod],
-                           accountingType: AccountingType,
+                           accountingType: Option[AccountingType],
                            commencementDate: Option[String],
                            cessationDate: Option[String],
                            businessAddressLineOne: Option[String],
@@ -55,24 +55,25 @@ case class BusinessDetails(businessId: String,
 
 object BusinessDetails {
 
-  val cashOrAccrualsReads: Reads[AccountingType] = (JsPath \ "cashOrAccrualsFlag").read[Boolean].map {
-    case false => CashOrAccruals.`cash`
-    case true => CashOrAccruals.`accruals`
-  }.map(_.toMtd)
+  val cashOrAccrualsReads: Reads[Option[AccountingType]] = (JsPath \ "cashOrAccrualsFlag").readNullable[Boolean].map {
+    case Some(false) => Some(AccountingType.CASH)
+    case Some(true)  => Some(AccountingType.ACCRUALS)
+    case None        => None
+  }
 
-  implicit val accountingPeriodReads: Reads[Seq[AccountingPeriod]] = (
+  val accountingPeriodReads: Reads[Seq[AccountingPeriod]] = (
     (JsPath \ "accountingPeriodStartDate").read[String] and
       (JsPath \ "accountingPeriodEndDate").read[String]
-    )apply((start, end) =>  Seq(AccountingPeriod(start, end)))
+    ).apply((start, end) =>  Seq(AccountingPeriod(start, end)))
 
   implicit val writes: OWrites[BusinessDetails] = Json.writes[BusinessDetails]
 
-  implicit val readsBusinessData: Reads[BusinessDetails] = (
+  val readsBusinessData: Reads[BusinessDetails] = (
     (JsPath \ "incomeSourceId").read[String] and
       Reads.pure(TypeOfBusiness.`self-employment`) and
       (JsPath \ "tradingName").readNullable[String] and
       accountingPeriodReads and
-      (JsPath \ "cashOrAccruals").read[CashOrAccruals].map(_.toMtd) and
+      (JsPath \ "cashOrAccruals").readNullable[CashOrAccruals].map(_.map(_.toMtd)) and
       (JsPath \ "tradingStartDate").readNullable[String] and
       (JsPath \ "cessationDate").readNullable[String] and
       (JsPath \ "businessAddressDetails" \ "addressLine1").readNullable[String] and

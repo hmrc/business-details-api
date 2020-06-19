@@ -61,20 +61,20 @@ class BusinessDetailsSpec extends UnitSpec {
         )
 
         val responseBody = BusinessDetails(
-            "XAIS12345678910",
-            TypeOfBusiness.`self-employment`,
-            Some("RCDTS"),
-            Seq(AccountingPeriod("2001-01-01", "2001-01-01")),
-            AccountingType.CASH,
-            Some("2001-01-01"),
-            Some("2001-01-01"),
-            Some("100 SuttonStreet"),
-            Some("Wokingham"),
-            Some("Surrey"),
-            Some("London"),
-            Some("DH14EJ"),
-            Some("GB")
-          )
+          "XAIS12345678910",
+          TypeOfBusiness.`self-employment`,
+          Some("RCDTS"),
+          Seq(AccountingPeriod("2001-01-01", "2001-01-01")),
+          Some(AccountingType.CASH),
+          Some("2001-01-01"),
+          Some("2001-01-01"),
+          Some("100 SuttonStreet"),
+          Some("Wokingham"),
+          Some("Surrey"),
+          Some("London"),
+          Some("DH14EJ"),
+          Some("GB")
+        )
         businessDesJson.as[BusinessDetails](BusinessDetails.readsBusinessData) shouldBe responseBody
       }
     }
@@ -104,20 +104,90 @@ class BusinessDetailsSpec extends UnitSpec {
         )
 
         val responseBody = BusinessDetails(
-            "X0IS123456789012",
-            TypeOfBusiness.`foreign-property`,
-            None,
-            Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
-            AccountingType.ACCRUALS,
-            Some("2017-07-24"),
-            Some("2020-01-01"),
-            None,
-            None,
-            None,
-            None,
-            None,
-            None
-          )
+          "X0IS123456789012",
+          TypeOfBusiness.`foreign-property`,
+          None,
+          Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+          Some(AccountingType.ACCRUALS),
+          Some("2017-07-24"),
+          Some("2020-01-01"),
+          None,
+          None,
+          None,
+          None,
+          None,
+          None
+        )
+
+        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+      }
+
+      "A partial json is supplied" in {
+
+        val propertyDesJson: JsValue = Json.parse(
+          """
+            |{
+            |  "incomeSourceId": "X0IS123456789012",
+            |  "accountingPeriodStartDate": "2019-04-06",
+            |  "accountingPeriodEndDate": "2020-04-05",
+            |  "cashOrAccrualsFlag": false,
+            |  "numPropRented": 0,
+            |  "numPropRentedUK": 0,
+            |  "numPropRentedEEA": 5,
+            |  "numPropRentedNONEEA": 1,
+            |  "emailAddress": "stephen@manncorpone.co.uk",
+            |  "cessationReason": "002",
+            |  "paperLess": true,
+            |  "incomeSourceStartDate": "2019-07-14"
+            |}
+            |""".stripMargin
+        )
+
+        val responseBody = BusinessDetails(
+          "X0IS123456789012",
+          TypeOfBusiness.`property-unspecified`,
+          None,
+          Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+          Some(AccountingType.CASH),
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None
+        )
+
+        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+      }
+      "A the minimum json is supplied" in {
+
+        val propertyDesJson: JsValue = Json.parse(
+          """
+            |{
+            |  "incomeSourceId": "X0IS123456789012",
+            |  "accountingPeriodStartDate": "2019-04-06",
+            |  "accountingPeriodEndDate": "2020-04-05"
+            |}
+            |""".stripMargin
+        )
+
+        val responseBody = BusinessDetails(
+          "X0IS123456789012",
+          TypeOfBusiness.`property-unspecified`,
+          None,
+          Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None
+        )
 
         propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
       }
