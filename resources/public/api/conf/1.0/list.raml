@@ -5,8 +5,8 @@ is:
   - errors.formatNino
   - errors.clientOrAgentNotAuthorised
   - errors.notFound
-displayName: Retrieve a list of all business details for Subcontractor [test only]
-description: This endpoint allows a developer to retrieve all details of a user's business income sources. The unique account reference (National insurance number) must be provided.
+displayName: List All Businesses [test only]
+description: This endpoint allows a developer to retrieve all details of a user's business income sources. The unique account reference (National Insurance number) must be provided.
 (annotations.sandboxData): !include scenarios/listAllBusinesses.md
 (annotations.scope): "read:self-assessment"
 securedBy: [ sec.oauth_2_0: { scopes: [ "read:self-assessment" ] } ]
