@@ -16,10 +16,14 @@
 
 package v1.models.response.listAllBusinesses
 
+import mocks.MockAppConfig
 import play.api.libs.json.Json
 import support.UnitSpec
+import v1.hateoas.HateoasFactory
 import v1.models.domain.TypeOfBusiness
-import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
+import v1.models.hateoas.{HateoasWrapper, Link}
+import v1.models.hateoas.Method.GET
+import v1.models.response.listAllBusiness.{Business, ListAllBusinessesHateoasData, ListAllBusinessesResponse}
 
 class ListAllBusinessesResponseSpec  extends UnitSpec {
   "reads" should {
@@ -95,7 +99,7 @@ class ListAllBusinessesResponseSpec  extends UnitSpec {
           Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS")),
           Business(TypeOfBusiness.`self-employment`, "098765432109876", Some("RCDTS 2"))
         ))
-        desJson.as[ListAllBusinessesResponse] shouldBe model
+        desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
       }
       "passed DES json with propertyData" in {
         val desJson = Json.parse(
@@ -148,7 +152,7 @@ class ListAllBusinessesResponseSpec  extends UnitSpec {
           Business(TypeOfBusiness.`uk-property` ,"123456789012345", None),
           Business(TypeOfBusiness.`foreign-property` ,"098765432109876", None)
         ))
-        desJson.as[ListAllBusinessesResponse] shouldBe model
+        desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
       }
       "passed DES json with businessData and propertyData" in {
         val desJson = Json.parse(
@@ -259,7 +263,7 @@ class ListAllBusinessesResponseSpec  extends UnitSpec {
           Business(TypeOfBusiness.`uk-property` ,"123456789012345", None),
           Business(TypeOfBusiness.`foreign-property` ,"098765432109876", None)
         ))
-        desJson.as[ListAllBusinessesResponse] shouldBe model
+        desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
       }
     }
   }
@@ -289,6 +293,26 @@ class ListAllBusinessesResponseSpec  extends UnitSpec {
              |""".stripMargin)
         Json.toJson(model) shouldBe mtdJson
       }
+    }
+  }
+
+
+  "HateoasFactory" must {
+    class Test extends MockAppConfig {
+      val hateoasFactory = new HateoasFactory(mockAppConfig)
+      val nino           = "someNino"
+      MockedAppConfig.apiGatewayContext.returns("individuals/business/details").anyNumberOfTimes
+    }
+
+    "expose the correct links for list" in new Test {
+      hateoasFactory.wrapList(ListAllBusinessesResponse(Seq(Business(TypeOfBusiness.`self-employment`, "myid", None))), ListAllBusinessesHateoasData(nino)) shouldBe
+        HateoasWrapper(
+          ListAllBusinessesResponse(
+            Seq(HateoasWrapper(Business(TypeOfBusiness.`self-employment`, "myid", None), Seq(Link(s"/individuals/business/details/$nino/myid", GET, "retrieve-business-details"))))),
+          Seq(
+            Link(s"/individuals/business/details/$nino/list", GET, "self")
+          )
+        )
     }
   }
 }

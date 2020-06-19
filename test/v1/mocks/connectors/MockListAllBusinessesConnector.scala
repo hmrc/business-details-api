@@ -21,7 +21,7 @@ import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.{DesOutcome, ListAllBusinessesConnector}
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
-import v1.models.response.listAllBusiness.ListAllBusinessesResponse
+import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -32,7 +32,7 @@ trait MockListAllBusinessesConnector extends MockFactory{
   object MockListAllBusinessesConnector {
 
     def listAllBusinesses(requestData: ListAllBusinessesRequest):
-    CallHandler3[ListAllBusinessesRequest, HeaderCarrier, ExecutionContext, Future[DesOutcome[ListAllBusinessesResponse]]] = {
+    CallHandler3[ListAllBusinessesRequest, HeaderCarrier, ExecutionContext, Future[DesOutcome[ListAllBusinessesResponse[Business]]]] = {
       (mockListAllBusinessesConnector
         .listAllBusinesses(_: ListAllBusinessesRequest)(_: HeaderCarrier, _: ExecutionContext))
         .expects(requestData, *, *)

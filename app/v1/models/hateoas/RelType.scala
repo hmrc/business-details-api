@@ -20,4 +20,5 @@ package v1.models.hateoas
 
 object RelType {
   val SELF = "self"
+  val RETRIEVE_BUSINESS_DETAILS = "retrieve-business-details"
 }

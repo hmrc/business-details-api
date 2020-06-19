@@ -23,8 +23,10 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.Logging
 import v1.controllers.requestParsers.RetrieveBusinessDetailsRequestParser
+import v1.hateoas.HateoasFactory
 import v1.models.errors._
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRawData
+import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsHateoasData
 import v1.services.{EnrolmentsAuthService, MtdIdLookupService, RetrieveBusinessDetailsService}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,8 +34,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RetrieveBusinessDetailsController @Inject()(val authService: EnrolmentsAuthService,
                                                   val lookupService: MtdIdLookupService,
-                                                  requestDataParser: RetrieveBusinessDetailsRequestParser,
+                                                  parser: RetrieveBusinessDetailsRequestParser,
                                                   service: RetrieveBusinessDetailsService,
+                                                  hateoasFactory: HateoasFactory,
                                                   cc: ControllerComponents)(implicit ec: ExecutionContext)
 extends AuthorisedController(cc) with BaseController with Logging {
 
@@ -45,13 +48,15 @@ extends AuthorisedController(cc) with BaseController with Logging {
       val rawData = RetrieveBusinessDetailsRawData(nino, businessId)
       val result =
         for {
-          parsedRequest <- EitherT.fromEither[Future](requestDataParser.parseRequest(rawData))
+          parsedRequest <- EitherT.fromEither[Future](parser.parseRequest(rawData))
           serviceResponse <- EitherT(service.retrieveBusinessDetailsService(parsedRequest))
+          vendorResponse <- EitherT.fromEither[Future](
+            hateoasFactory.wrap(serviceResponse.responseData, RetrieveBusinessDetailsHateoasData(nino, businessId)).asRight[ErrorWrapper])
         } yield {
           logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
               s"Success response received with CorrelationId: ${serviceResponse.correlationId}")
-          Ok(Json.toJson(serviceResponse.responseData))
+          Ok(Json.toJson(vendorResponse))
             .withApiHeaders(serviceResponse.correlationId)
         }
 

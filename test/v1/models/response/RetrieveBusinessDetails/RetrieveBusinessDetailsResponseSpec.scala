@@ -16,13 +16,16 @@
 
 package v1.models.response.RetrieveBusinessDetails
 
+import mocks.MockAppConfig
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 import v1.models.domain.TypeOfBusiness
 import v1.models.domain.accountingType.AccountingType
-import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
+import v1.models.hateoas.Link
+import v1.models.hateoas.Method.GET
+import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
 
-class RetrieveBusinessDetailsResponseSpec extends UnitSpec {
+class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
 
   "reads" should {
     "read from json" when {
@@ -144,6 +147,22 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec {
         )
 
         responseBody shouldBe desJson.as[RetrieveBusinessDetailsResponse]
+      }
+    }
+  }
+
+  "LinksFactory" should {
+    "expose the correct links" when {
+      "called" in {
+        val nino = "mynino"
+        val businessId = "myid"
+        MockedAppConfig.apiGatewayContext.returns("individuals/business/details").anyNumberOfTimes
+        RetrieveBusinessDetailsResponse
+          .RetrieveBusinessDetailsLinksFactory
+          .links(mockAppConfig, RetrieveBusinessDetailsHateoasData(nino, businessId)) shouldBe Seq(
+          Link(s"/individuals/business/details/$nino/$businessId", GET, "self")
+        )
+
       }
     }
   }

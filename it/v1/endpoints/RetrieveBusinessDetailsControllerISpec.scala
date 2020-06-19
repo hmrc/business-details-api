@@ -33,15 +33,16 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
     val businessId = "X0IS123456789012"
 
     val responseBody: JsValue = Json.parse(
-      """
+      s"""
         |{
         |   "businessId": "X0IS123456789012",
         |   "typeOfBusiness": "self-employment",
         |   "tradingName": "RCDTS",
-        |   "accountingPeriods": [{
-        |      "start": "2001-01-01",
-        |      "end": "2001-01-01"
-        |      }
+        |   "accountingPeriods": [
+        |     {
+        |       "start": "2001-01-01",
+        |       "end": "2001-01-01"
+        |     }
         |   ],
         |   "accountingType": "CASH",
         |   "commencementDate": "2001-01-01",
@@ -51,7 +52,14 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         |   "businessAddressLineThree": "Surrey",
         |   "businessAddressLineFour": "London",
         |   "businessAddressPostcode": "DH14EJ",
-        |   "businessAddressCountryCode": "GB"
+        |   "businessAddressCountryCode": "GB",
+        |   "links": [
+        |     {
+        |       "href": "/individuals/business/details/$nino/$businessId",
+        |       "method": "GET",
+        |       "rel": "self"
+        |     }
+        |   ]
         |}
         |""".stripMargin
     )
