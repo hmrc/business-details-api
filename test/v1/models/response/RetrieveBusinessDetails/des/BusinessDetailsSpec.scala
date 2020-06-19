@@ -26,48 +26,45 @@ import v1.models.response.retrieveBusinessDetails.des.BusinessDetails
 class BusinessDetailsSpec extends UnitSpec {
 
   "reads" should {
-    "read from json" when {
+    "read from business json" when {
       "A full json is supplied" in {
 
-        val desJson: JsValue = Json.parse(
+        val businessDesJson: JsValue = Json.parse(
           """
-            |    {
-            |      "incomeSourceType": "1",
-            |      "incomeSourceId": "X0IS123456789012",
-            |      "accountingPeriods": [{
-            |        "accountingPeriodStartDate": "2001-01-01",
-            |        "accountingPeriodEndDate": "2001-01-01"
-            |      }],
-            |      "tradingName": "RCDTS",
-            |      "businessAddressDetails": {
-            |        "addressLine1": "100 SuttonStreet",
-            |        "addressLine2": "Wokingham",
-            |        "addressLine3": "Surrey",
-            |        "addressLine4": "London",
-            |        "postalCode": "DH14EJ",
-            |        "countryCode": "GB"
-            |      },
-            |      "businessContactDetails": {
-            |        "phoneNumber": "01332752856",
-            |        "mobileNumber": "07782565326",
-            |        "faxNumber": "01332754256",
-            |        "emailAddress": "stephen@manncorpone.co.uk"
-            |      },
-            |      "tradingStartDate": "2001-01-01",
-            |      "cashOrAccruals": "cash",
-            |      "seasonal": true,
-            |      "cessationDate": "2001-01-01",
-            |      "cessationReason": "002",
-            |      "paperLess": true
-            |    }
+            |{
+            |  "incomeSourceId": "XAIS12345678910",
+            |  "accountingPeriodStartDate": "2001-01-01",
+            |  "accountingPeriodEndDate": "2001-01-01",
+            |  "tradingName": "RCDTS",
+            |  "businessAddressDetails": {
+            |    "addressLine1": "100 SuttonStreet",
+            |    "addressLine2": "Wokingham",
+            |    "addressLine3": "Surrey",
+            |    "addressLine4": "London",
+            |    "postalCode": "DH14EJ",
+            |    "countryCode": "GB"
+            |  },
+            |  "businessContactDetails": {
+            |    "phoneNumber": "01332752856",
+            |    "mobileNumber": "07782565326",
+            |    "faxNumber": "01332754256",
+            |    "emailAddress": "stephen@manncorpone.co.uk"
+            |  },
+            |  "tradingStartDate": "2001-01-01",
+            |  "cashOrAccruals": "cash",
+            |  "seasonal": true,
+            |  "cessationDate": "2001-01-01",
+            |  "cessationReason": "002",
+            |  "paperLess": true
+            |}
             |""".stripMargin
         )
 
         val responseBody = BusinessDetails(
-            "X0IS123456789012",
+            "XAIS12345678910",
             TypeOfBusiness.`self-employment`,
             Some("RCDTS"),
-            Some(Seq(AccountingPeriod("2001-01-01", "2001-01-01"))),
+            Seq(AccountingPeriod("2001-01-01", "2001-01-01")),
             AccountingType.CASH,
             Some("2001-01-01"),
             Some("2001-01-01"),
@@ -78,8 +75,51 @@ class BusinessDetailsSpec extends UnitSpec {
             Some("DH14EJ"),
             Some("GB")
           )
+        businessDesJson.as[BusinessDetails](BusinessDetails.readsBusinessData) shouldBe responseBody
+      }
+    }
+    "read from property json" when {
+      "A full json is supplied" in {
 
-        responseBody shouldBe desJson.as[BusinessDetails]
+        val propertyDesJson: JsValue = Json.parse(
+          """
+            |{
+            |  "incomeSourceType": "foreign-property",
+            |  "incomeSourceId": "X0IS123456789012",
+            |  "accountingPeriodStartDate": "2019-04-06",
+            |  "accountingPeriodEndDate": "2020-04-05",
+            |  "tradingStartDate": "2017-07-24",
+            |  "cashOrAccrualsFlag": true,
+            |  "numPropRented": 0,
+            |  "numPropRentedUK": 0,
+            |  "numPropRentedEEA": 5,
+            |  "numPropRentedNONEEA": 1,
+            |  "emailAddress": "stephen@manncorpone.co.uk",
+            |  "cessationDate": "2020-01-01",
+            |  "cessationReason": "002",
+            |  "paperLess": true,
+            |  "incomeSourceStartDate": "2019-07-14"
+            |}
+            |""".stripMargin
+        )
+
+        val responseBody = BusinessDetails(
+            "X0IS123456789012",
+            TypeOfBusiness.`foreign-property`,
+            None,
+            Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+            AccountingType.ACCRUALS,
+            Some("2017-07-24"),
+            Some("2020-01-01"),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None
+          )
+
+        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
       }
     }
   }

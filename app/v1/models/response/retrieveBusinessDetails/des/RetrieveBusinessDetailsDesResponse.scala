@@ -17,13 +17,24 @@
 package v1.models.response.retrieveBusinessDetails.des
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Reads}
+import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 
 case class RetrieveBusinessDetailsDesResponse(businessDetails: Seq[BusinessDetails])
 
 object RetrieveBusinessDetailsDesResponse {
-  implicit val reads: Reads[RetrieveBusinessDetailsDesResponse] = (
-    (JsPath \ "businessData").read[Seq[BusinessDetails]] or
-      (JsPath \ "propertyData").read[Seq[BusinessDetails]]
-    ).map(RetrieveBusinessDetailsDesResponse(_))
+  implicit val reads: Reads[RetrieveBusinessDetailsDesResponse] = {
+    val businessDataReads: Reads[Seq[BusinessDetails]] =
+      (JsPath \ "businessData").readNullable[Seq[BusinessDetails]](BusinessDetails.readsSeqBusinessData).map(_.getOrElse(Nil))
+    val propertyDataReads: Reads[Seq[BusinessDetails]] =
+      (JsPath \ "propertyData").readNullable[Seq[BusinessDetails]](BusinessDetails.readsSeqPropertyData).map(_.getOrElse(Nil))
+
+    for {
+      businessData <- businessDataReads
+      propertyData <- propertyDataReads
+    } yield {
+      RetrieveBusinessDetailsDesResponse(businessData ++ propertyData)
+    }
+  }
+
+  implicit val writes: OWrites[RetrieveBusinessDetailsDesResponse] = Json.writes[RetrieveBusinessDetailsDesResponse]
 }

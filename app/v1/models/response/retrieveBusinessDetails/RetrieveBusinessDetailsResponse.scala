@@ -26,7 +26,7 @@ import v1.models.hateoas.{HateoasData, Link}
 case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,
                                            tradingName: Option[String],
-                                           accountingPeriods: Option[Seq[AccountingPeriod]],
+                                           accountingPeriods: Seq[AccountingPeriod],
                                            accountingType: AccountingType,
                                            commencementDate: Option[String],
                                            cessationDate: Option[String],
