@@ -19,21 +19,23 @@
         </tr>
         <tr>
             <td><p>PROPERTY</p></td>
-                <td><p>Simulate a successful response with a uk-property business.</p>
-                <p>Use the following businessId for this scenario:</p>
-                <ul>
-                    <li>XAIS123456789012</li>
-                </ul>
+            <td><p>Simulate a successful response with a uk-property business.
+            <p>Use the following businessId(s) for this scenario:</p>
+            <ul>
+              <li>XAIS123456789013</li>
+            </ul>
+            </p>
             </td>
         </tr>
         <tr>
-            <td><p>UNSPECIFIED</p></td>
-                <td><p>Simulate a successful response with a property-unspecified business.</p>
-                <p>Use the following businessId for this scenario:</p>
-                <ul>
-                    <li>XAIS123456789012</li>
-                </ul>
-            </td>            
+            <td><p>UNSPECIFIED</p></td>       
+            <td><p>Simulate a successful response with a property-unspecified business.
+            <p>Use the following businessId(s) for this scenario:</p>
+            <ul>
+              <li>XAIS123456789014</li>
+            </ul>
+            </p>
+            </td>
         </tr>
         <tr>
             <td><p>NOT_FOUND</p></td>

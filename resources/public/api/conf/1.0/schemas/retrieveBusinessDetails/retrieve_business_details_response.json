@@ -11,7 +11,7 @@
     },
     "typeOfBusiness": {
       "type": "string",
-      "description": "The type of business income source. ",
+      "description": "The type of business income source.",
       "enum": [
         "self-employment",
         "uk-property",
