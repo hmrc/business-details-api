@@ -1,6 +1,5 @@
 is:
   - headers.acceptJson
-  - headers.contentTypeJson
   - headers.testScenarioHeader
   - errors.formatNino
   - errors.clientOrAgentNotAuthorised
@@ -18,7 +17,7 @@ responses:
         examples:
           example-1:
             description: Example response
-            value: !include examples/listAllBusinesses/list_all_business_response.json
+            value: !include examples/listAllBusinesses/list_all_businesses_response.json
     headers:
       X-CorrelationId:
         example: c75f40a6-a3df-4429-a697-471eeec46435

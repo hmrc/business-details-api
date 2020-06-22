@@ -1,5 +1,5 @@
 {
-  "businessId": "XAIS12345678910",
+  "businessId": "XAIS123456789101",
   "typeOfBusiness": "self-employment",
   "tradingName": "Acme Ltd.",
   "accountingPeriods":
@@ -17,5 +17,12 @@
   "businessAddressLineThree": "Greater London",
   "businessAddressLineFour": "United Kingdom",
   "businessAddressPostcode": "M1 1AG",
-  "businessAddressCountryCode": "GB"
+  "businessAddressCountryCode": "GB",
+  "links": [
+    {
+      "href": "/individuals/business/details/ET009363D/XAIS123456789101",
+      "method": "GET",
+      "rel": "self"
+    }
+  ]
 }
