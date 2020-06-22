@@ -29,7 +29,7 @@
         </tr>
         <tr>
             <td><p>UNSPECIFIED</p></td>       
-            <td><p>Simulate a successful response with a property-unspecified business.
+            <td><p>Simulate a successful response with a property-unspecified business.</p>
             <p>Use the following businessId(s) for this scenario:</p>
             <ul>
               <li>XAIS123456789014</li>
