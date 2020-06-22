@@ -25,11 +25,77 @@
             "description": "The trading name of the business.",
             "type": "string",
             "example": "RCDTS"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "A list of endpoint links that indicate possible actions related to the current resource",
+              "properties": {
+                "href": {
+                  "description": "The relative url of the endpoint",
+                  "type": "string",
+                  "example": "/individuals/business/details/{nino}/{businessId}"
+                },
+                "rel": {
+                  "description": "A label for the endpoint, which describes how it is related to the current resource\nThe rel will be `self` where the action is retrieval of the same resource",
+                  "type": "string",
+                  "enum": [
+                    "retrieve-business-details"
+                  ]
+                },
+                "method": {
+                  "description": "The HTTP method type for the endpoint",
+                  "type": "string",
+                  "enum": [
+                    "GET"
+                  ]
+                }
+              },
+              "required": [
+                "href",
+                "rel",
+                "method"
+              ]
+            }
           }
         },
         "required": [
           "businessId",
           "typeOfBusiness"
+        ]
+      }
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "A list of endpoint links that indicate possible actions related to the current resource",
+        "properties": {
+          "href": {
+            "description": "The relative url of the endpoint",
+            "type": "string",
+            "example": "/individuals/business/details/{nino}/list"
+          },
+          "rel": {
+            "description": "A label for the endpoint, which describes how it is related to the current resource\nThe rel will be self where the action is retrieval of the same resource",
+            "type": "string",
+            "enum": [
+              "self"
+            ]
+          },
+          "method": {
+            "description": "The HTTP method type for the endpoint",
+            "type": "string",
+            "enum": [
+              "GET"
+            ]
+          }
+        },
+        "required": [
+          "href",
+          "rel",
+          "method"
         ]
       }
     }
