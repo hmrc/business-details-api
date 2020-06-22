@@ -9,20 +9,23 @@
     <tbody>
         <tr>
             <td><p>N/A - DEFAULT</p></td>
-            <td><p>Simulate a successful response.</p></td>
+            <td><p>Simulate a successful response with a self-employment business.</p></td>
+        </tr>
+        <tr>
+            <td><p>PROPERTY</p></td>
+            <td><p>Simulate a successful response with a uk-property business.</p></td>
+        </tr>
+        <tr>
+            <td><p>BUSINESS_AND_PROPERTY</p></td>
+            <td><p>Simulate a successful response with both a self-employment business and a uk-property business.</p></td>
+        </tr>
+        <tr>
+            <td><p>UNSPECIFIED</p></td>
+            <td><p>Simulate a successful response with a property-unspecified business.</p></td>
         </tr>
         <tr>
             <td><p>NOT_FOUND</p></td>
             <td><p>Simulate a scenario where no data is found.</p></td>
         </tr>
-        <tr>
-            <td><p>PROPERTY</p></td>
-            <td><p>Simulate a scenario .</p></td>
-        </tr>
-        <tr>
-            <td><p>UNSPECIFIED</p></td>
-            <td><p>Simulate a scenario .</p></td>
-        </tr>
     </tbody>
-    
 </table>

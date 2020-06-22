@@ -12,7 +12,12 @@
     "typeOfBusiness": {
       "type": "string",
       "description": "The type of business income source, one of: `self-employment`, `uk-property`, `foreign-property` or `property-unspecified`.",
-      "example": "self-employment"
+      "enum": [
+        "self-employment",
+        "uk-property",
+        "foreign-property",
+        "property-unspecified"
+      ]
     },
     "tradingName": {
       "type": "string",
@@ -45,7 +50,10 @@
     "accountingType": {
       "description": "CASH if you used the cash basis, money actually received and paid out, to calculate your income and expenses. Otherwise ACCRUALS.",
       "type": "string",
-      "example": "ACCRUALS"
+      "enum": [
+        "CASH",
+        "ACCRUALS"
+      ]
     },
     "commencementDate": {
       "description": "Business start date, must be in the past.",
