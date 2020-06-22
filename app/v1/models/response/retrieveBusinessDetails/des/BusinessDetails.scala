@@ -17,16 +17,16 @@
 package v1.models.response.retrieveBusinessDetails.des
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Reads}
+import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 import v1.models.domain.accountingType.{AccountingType, CashOrAccruals}
-import v1.models.domain.{IncomeSourceType, TypeOfBusiness}
+import v1.models.domain.TypeOfBusiness
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 case class BusinessDetails(businessId: String,
                            typeOfBusiness: TypeOfBusiness,
                            tradingName: Option[String],
-                           accountingPeriods: Option[Seq[AccountingPeriod]],
-                           accountingType: AccountingType,
+                           accountingPeriods: Seq[AccountingPeriod],
+                           accountingType: Option[AccountingType],
                            commencementDate: Option[String],
                            cessationDate: Option[String],
                            businessAddressLineOne: Option[String],
@@ -35,6 +35,7 @@ case class BusinessDetails(businessId: String,
                            businessAddressLineFour: Option[String],
                            businessAddressPostcode: Option[String],
                            businessAddressCountryCode: Option[String]) {
+
   def toMtd: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
     businessId = businessId,
     typeOfBusiness = typeOfBusiness,
@@ -53,12 +54,26 @@ case class BusinessDetails(businessId: String,
 }
 
 object BusinessDetails {
-  implicit val reads: Reads[BusinessDetails] = (
+
+  val cashOrAccrualsReads: Reads[Option[AccountingType]] = (JsPath \ "cashOrAccrualsFlag").readNullable[Boolean].map {
+    case Some(false) => Some(AccountingType.CASH)
+    case Some(true)  => Some(AccountingType.ACCRUALS)
+    case None        => None
+  }
+
+  val accountingPeriodReads: Reads[Seq[AccountingPeriod]] = (
+    (JsPath \ "accountingPeriodStartDate").read[String] and
+      (JsPath \ "accountingPeriodEndDate").read[String]
+    ).apply((start, end) =>  Seq(AccountingPeriod(start, end)))
+
+  implicit val writes: OWrites[BusinessDetails] = Json.writes[BusinessDetails]
+
+  val readsBusinessData: Reads[BusinessDetails] = (
     (JsPath \ "incomeSourceId").read[String] and
-      (JsPath \ "incomeSourceType").read[IncomeSourceType].map(_.toTypeOfBusiness) and
+      Reads.pure(TypeOfBusiness.`self-employment`) and
       (JsPath \ "tradingName").readNullable[String] and
-      (JsPath \ "accountingPeriods").readNullable[Seq[AccountingPeriod]] and
-      (JsPath \ "cashOrAccruals").read[CashOrAccruals].map(_.toMtd) and
+      accountingPeriodReads and
+      (JsPath \ "cashOrAccruals").readNullable[CashOrAccruals].map(_.map(_.toMtd)) and
       (JsPath \ "tradingStartDate").readNullable[String] and
       (JsPath \ "cessationDate").readNullable[String] and
       (JsPath \ "businessAddressDetails" \ "addressLine1").readNullable[String] and
@@ -68,4 +83,23 @@ object BusinessDetails {
       (JsPath \ "businessAddressDetails" \ "postalCode").readNullable[String] and
       (JsPath \ "businessAddressDetails" \ "countryCode").readNullable[String]
   )(BusinessDetails.apply _)
-}
+  val readsSeqBusinessData: Reads[Seq[BusinessDetails]] = Reads.traversableReads[Seq, BusinessDetails](implicitly, readsBusinessData)
+
+  val readsPropertyData: Reads[BusinessDetails] = (
+    (JsPath \ "incomeSourceId").read[String] and
+      (JsPath \ "incomeSourceType").readNullable[TypeOfBusiness].map(_.getOrElse(TypeOfBusiness.`property-unspecified`)) and
+      Reads.pure(None) and
+      accountingPeriodReads and
+      cashOrAccrualsReads and
+      (JsPath \ "tradingStartDate").readNullable[String] and
+      (JsPath \ "cessationDate").readNullable[String] and
+      Reads.pure(None) and
+      Reads.pure(None) and
+      Reads.pure(None) and
+      Reads.pure(None) and
+      Reads.pure(None) and
+      Reads.pure(None)
+    ) (BusinessDetails.apply _)
+  val readsSeqPropertyData: Reads[Seq[BusinessDetails]] = Reads.traversableReads[Seq, BusinessDetails](implicitly, readsPropertyData)
+
+  }
