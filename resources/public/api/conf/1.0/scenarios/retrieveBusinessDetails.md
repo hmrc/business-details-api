@@ -39,5 +39,14 @@
             <td><p>NOT_FOUND</p></td>
             <td><p>Simulate a scenario where no data is found.</p></td>
         </tr>
+        <tr>
+            <td><p>PROPERTY</p></td>
+            <td><p>Simulate a scenario .</p></td>
+        </tr>
+        <tr>
+            <td><p>UNSPECIFIED</p></td>
+            <td><p>Simulate a scenario .</p></td>
+        </tr>
     </tbody>
+    
 </table>
