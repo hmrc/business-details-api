@@ -9,44 +9,31 @@
     <tbody>
         <tr>
             <td><p>N/A - DEFAULT</p></td>
-            <td><p>Simulate a successful response with a self-employment business.
-            <p>Use the following businessId(s) for this scenario:</p>
-            <ul>
-              <li>XAIS123456789012</li>
-            </ul>
-            </p>
+            <td>
+                <p>Simulate a successful response with a self-employment business.</p>
+                <p>Use the following businessId for this scenario:</p>
+                <ul>
+                    <li>XAIS123456789012</li>
+                </ul>
             </td>
         </tr>
         <tr>
             <td><p>PROPERTY</p></td>
-            <td><p>Simulate a successful response with a uk-property business.
-            <p>Use the following businessId(s) for this scenario:</p>
-            <ul>
-              <li>XAIS123456789013</li>
-            </ul>
-            </p>
-            </td>
-        </tr>
-        <tr>
-            <td><p>BUSINESS_AND_PROPERTY</p></td>
-            <td><p>Simulate a successful response with both a self-employment business and a uk-property business.
-            <p>Use the following businessId(s) for this scenario:</p>
-            <ul>
-              <li>XAIS123456789012</li>
-              <li>XAIS123456789013</li>
-            </ul>
-            </p>
+                <td><p>Simulate a successful response with a uk-property business.
+                <p>Use the following businessId for this scenario:</p>
+                <ul>
+                    <li>XAIS123456789012</li>
+                </ul>
             </td>
         </tr>
         <tr>
             <td><p>UNSPECIFIED</p></td>
-            <td><p>Simulate a successful response with a property-unspecified business.
-            <p>Use the following businessId(s) for this scenario:</p>
-            <ul>
-              <li>XAIS123456789014</li>
-            </ul>
-            </p>
-            </td>
+                <td><p>Simulate a successful response with a property-unspecified business.
+                <p>Use the following businessId for this scenario:</p>
+                <ul>
+                    <li>XAIS123456789012</li>
+                </ul>
+            </td>            
         </tr>
         <tr>
             <td><p>NOT_FOUND</p></td>
