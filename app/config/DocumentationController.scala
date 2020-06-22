@@ -26,7 +26,8 @@ import uk.gov.hmrc.api.controllers.{DocumentationController => HmrcDocumentation
 
 @Singleton
 class DocumentationController @Inject()(selfAssessmentApiDefinition: ApiDefinitionFactory,
-                                        cc: ControllerComponents, assets: Assets, errorHandler: HttpErrorHandler)
+                                        cc: ControllerComponents, assets: Assets, errorHandler: HttpErrorHandler,
+                                        appConfig: AppConfig)
   extends HmrcDocumentationController(cc,assets , errorHandler ) {
 
   override def definition(): Action[AnyContent] = Action {
@@ -34,6 +35,10 @@ class DocumentationController @Inject()(selfAssessmentApiDefinition: ApiDefiniti
   }
 
   def raml(version: String, file: String): Action[AnyContent] = {
-    assets.at(s"/public/api/conf/$version", file)
+    file match {
+      case "application.raml" => assets.at(s"/public/api/conf/$version", s"${appConfig.environment}.raml")
+      case f => assets.at(s"/public/api/conf/$version", f)
+    }
+
   }
 }
