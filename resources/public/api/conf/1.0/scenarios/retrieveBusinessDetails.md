@@ -19,7 +19,7 @@
         </tr>
         <tr>
             <td><p>PROPERTY</p></td>
-                <td><p>Simulate a successful response with a uk-property business.
+                <td><p>Simulate a successful response with a uk-property business.</p>
                 <p>Use the following businessId for this scenario:</p>
                 <ul>
                     <li>XAIS123456789012</li>
@@ -28,7 +28,7 @@
         </tr>
         <tr>
             <td><p>UNSPECIFIED</p></td>
-                <td><p>Simulate a successful response with a property-unspecified business.
+                <td><p>Simulate a successful response with a property-unspecified business.</p>
                 <p>Use the following businessId for this scenario:</p>
                 <ul>
                     <li>XAIS123456789012</li>
