@@ -22,7 +22,7 @@
     "tradingName": {
       "type": "string",
       "description": "The trading name of the business.",
-      "example": "Acme Ltd."
+      "example": "ABC Ltd."
     },
     "accountingPeriods": {
       "type": "array",
@@ -68,7 +68,7 @@
     "businessAddressLineOne": {
       "description": "First line of the business address.",
       "type": "string",
-      "example": "1 Acme Rd."
+      "example": "1 ABC Rd."
     },
     "businessAddressLineTwo": {
       "description": "Second line of the business address.",
