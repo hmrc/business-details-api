@@ -16,28 +16,6 @@ traits:
                 description: The matching resource is not found.
                 value:
                   code: MATCHING_RESOURCE_NOT_FOUND
-  notFoundIncomeSource:
-    responses:
-      404:
-        body:
-          application/json:
-            type: types.errorResponse
-            examples:
-              notFoundIncomeSource:
-                description: The remote endpoint has indicated that the given income source could not be found
-                value:
-                  code: MATCHING_RESOURCE_NOT_FOUND
-  notFoundNino:
-    responses:
-      404:
-        body:
-          application/json:
-            type: types.errorResponse
-            examples:
-              notFoundNino:
-                description: The remote endpoint has indicated that no data can be found for the given NINO
-                value:
-                  code: MATCHING_RESOURCE_NOT_FOUND
   clientOrAgentNotAuthorised:
     responses:
       403:
@@ -46,7 +24,7 @@ traits:
             type: types.errorResponse
             examples:
               clientOrAgentNotAuthorised:
-                description: 'The client or agent is not authorised. This is because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services or the client has not authorised the agent to act on their behalf'
+                description: 'The client or agent is not authorised. This is because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services or the client has not authorised the agent to act on their behalf.'
                 value:
                   code: CLIENT_OR_AGENT_NOT_AUTHORISED
   formatNino:
@@ -57,86 +35,9 @@ traits:
             type: types.errorResponse
             examples:
               formatNino:
-                description: The format of the supplied NINO field is not valid
+                description: The format of the supplied NINO field is not valid.
                 value:
                   code: FORMAT_NINO
-  formatTaxYear:
-    responses:
-      400:
-        body:
-          application/json:
-            type: types.errorResponse
-            examples:
-              formatTaxYear:
-                description: The format of the supplied tax year field is not valid
-                value:
-                  code: FORMAT_TAX_YEAR
-  incorrectOrEmptyBody:
-    responses:
-      400:
-        body:
-          application/json:
-            type: types.errorResponse
-            examples:
-              incorrectOrEmptyBody:
-                description: An empty or non-matching body was submitted
-                value:
-                  code: RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED
-  ruleTaxYearNotSupported:
-    responses:
-      400:
-        body:
-          application/json:
-            type: types.errorResponse
-            examples:
-              rule_TaxYearNotSupported:
-                description: The specified tax year is not supported. That is, the tax year specified is before the minimum tax year value.
-                value:
-                  code: RULE_TAX_YEAR_NOT_SUPPORTED
-  ruleTaxYearRangeExceeded:
-    responses:
-      400:
-        body:
-          application/json:
-            type: types.errorResponse
-            examples:
-              ruleTaxYearRangeExceeded:
-                description: Tax year range exceeded. A tax year range of one year is required.
-                value:
-                  code: RULE_TAX_YEAR_RANGE_EXCEEDED
-  ruleTaxYearNotEnded:
-      responses:
-        400:
-          body:
-            application/json:
-              type: types.errorResponse
-              examples:
-                ruleTaxYearNotEnded:
-                  description: A brought forward loss is entered before the end of the tax year in which it was generated.
-                  value:
-                    code: RULE_TAX_YEAR_NOT_ENDED
-  formatSelfEmploymentId:
-    responses:
-      400:
-        body:
-          application/json:
-            type: types.errorResponse
-            examples:
-              formatSelfEmploymentId:
-                description: The format of the self-employment ID is not valid.
-                value:
-                  code: FORMAT_SELF_EMPLOYMENT_ID
-  ruleSelfEmploymentId:
-    responses:
-      400:
-        body:
-          application/json:
-            type: types.errorResponse
-            examples:
-              ruleSelfEmploymentId:
-                description: A self-employment ID can only be supplied for a self-employment business type
-                value:
-                  code: RULE_SELF_EMPLOYMENT_ID
   formatBusinessId:
     responses:
       400:
@@ -156,6 +57,6 @@ traits:
             type: types.errorResponse
             examples:
               notFoundbusiness:
-                description: No business found for given NINO with given Business ID
+                description: No business found for given NINO with given Business ID.
                 value:
                   code: NO_BUSINESS_FOUND
