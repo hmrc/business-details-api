@@ -13,7 +13,7 @@
                 <p>Simulate a successful response with a self-employment business.</p>
                 <p>Use the following businessId for this scenario:</p>
                 <ul>
-                    <li>XAIS123456789012</li>
+                    <li><p>XAIS123456789012</p></li>
                 </ul>
             </td>
         </tr>
@@ -22,7 +22,7 @@
             <td><p>Simulate a successful response with a uk-property business.</p>
             <p>Use the following businessId for this scenario:</p>
             <ul>
-              <li>XAIS123456789013</li>
+              <li><p>XAIS123456789013</p></li>
             </ul>
             </td>
         </tr>
@@ -31,7 +31,7 @@
             <td><p>Simulate a successful response with a property-unspecified business.</p>
             <p>Use the following businessId for this scenario:</p>
             <ul>
-              <li>XAIS123456789014</li>
+              <li><p>XAIS123456789014</p></li>
             </ul>
             </td>        
         </tr>
