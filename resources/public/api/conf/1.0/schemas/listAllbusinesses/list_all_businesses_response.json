@@ -12,7 +12,12 @@
         "properties": {
           "typeOfBusiness": {
             "description": "The type of business income source.",
-            "enum": ["self-employment", "uk-property", "foreign-property", "property-unspecified"],
+            "enum": [
+              "self-employment",
+              "uk-property",
+              "foreign-property",
+              "property-unspecified"
+            ],
             "type": "string",
             "example": "self-employment"
           },
@@ -56,14 +61,16 @@
                 "href",
                 "rel",
                 "method"
-              ]
+              ],
+              "additionalProperties": false
             }
           }
         },
         "required": [
           "businessId",
           "typeOfBusiness"
-        ]
+        ],
+        "additionalProperties": false
       }
     },
     "links": {
@@ -96,9 +103,13 @@
           "href",
           "rel",
           "method"
-        ]
+        ],
+        "additionalProperties": false
       }
     }
   },
-  "required": ["listOfBusinesses"]
+  "required": [
+    "listOfBusinesses"
+  ],
+  "additionalProperties": false
 }

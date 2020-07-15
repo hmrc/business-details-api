@@ -44,7 +44,8 @@
         "required": [
           "start",
           "end"
-        ]
+        ],
+        "additionalProperties": false
       }
     },
     "accountingType": {
@@ -125,7 +126,8 @@
           "href",
           "rel",
           "method"
-        ]
+        ],
+        "additionalProperties": false
       }
     }
   },
@@ -133,5 +135,6 @@
     "businessId",
     "typeOfBusiness",
     "accountingPeriods"
-  ]
+  ],
+  "additionalProperties": false
 }
