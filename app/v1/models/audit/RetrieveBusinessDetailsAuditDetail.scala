@@ -19,21 +19,21 @@ package v1.models.audit
 import play.api.libs.json.{Json, Writes}
 import v1.models.auth.UserDetails
 
-case class ListAllBusinessesAuditDetail(userType: String,
-                                         agentReferenceNumber: Option[String],
-                                         nino: String,
-                                         `X-CorrelationId`: String,
-                                         response: AuditResponse)
+case class RetrieveBusinessDetailsAuditDetail (userType: String,
+                                          agentReferenceNumber: Option[String],
+                                          nino: String,
+                                          `X-CorrelationId`: String,
+                                          response: AuditResponse)
 
-object ListAllBusinessesAuditDetail {
-  implicit val writes: Writes[ListAllBusinessesAuditDetail] = Json.writes[ListAllBusinessesAuditDetail]
+object RetrieveBusinessDetailsAuditDetail {
+  implicit val writes: Writes[RetrieveBusinessDetailsAuditDetail] = Json.writes[RetrieveBusinessDetailsAuditDetail]
 
   def apply(userDetails: UserDetails,
             nino: String,
             `X-CorrelationId`: String,
-            auditResponse: AuditResponse): ListAllBusinessesAuditDetail = {
+            auditResponse: AuditResponse): RetrieveBusinessDetailsAuditDetail = {
 
-    ListAllBusinessesAuditDetail(
+    RetrieveBusinessDetailsAuditDetail(
       userType = userDetails.userType,
       agentReferenceNumber = userDetails.agentReferenceNumber,
       nino = nino,
@@ -41,4 +41,3 @@ object ListAllBusinessesAuditDetail {
       response = auditResponse)
   }
 }
-
