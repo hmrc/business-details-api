@@ -22,7 +22,7 @@ import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockListAllBusinessesRequestParser
-import v1.mocks.services.{MockEnrolmentsAuthService, MockListAllBusinessesService, MockMtdIdLookupService}
+import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockListAllBusinessesService, MockMtdIdLookupService}
 import v1.models.domain.TypeOfBusiness
 import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, MtdError, NinoFormatError}
 import v1.models.hateoas.{HateoasWrapper, Link}
@@ -40,6 +40,7 @@ class ListAllBusinessesControllerSpec
     with MockMtdIdLookupService
     with MockListAllBusinessesService
     with MockHateoasFactory
+    with MockAuditService
     with MockListAllBusinessesRequestParser {
 
   trait Test {
@@ -51,6 +52,7 @@ class ListAllBusinessesControllerSpec
       requestDataParser = mockRequestParser,
       service = mockListAllBusinessesService,
       hateoasFactory = mockHateoasFactory,
+      auditService = mockAuditService,
       cc = cc
     )
     MockedMtdIdLookupService.lookup(validNino).returns(Future.successful(Right("test-mtd-id")))
