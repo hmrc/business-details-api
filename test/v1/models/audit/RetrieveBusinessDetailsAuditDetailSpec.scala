@@ -33,7 +33,7 @@ class RetrieveBusinessDetailsAuditDetailSpec extends UnitSpec {
                                  |    "nino": "$nino",
                                  |    "X-CorrelationId": "a1e8057e-fbbc-47a8-a8b478d9f015c253",
                                  |    "response": {
-                                 |      "httpStatus": 201,
+                                 |      "httpStatus": 200,
                                  |      "body": {
                                  |     "businessId": "XAIS123456789012",
                                  |     "typeOfBusiness": "self-employment",
@@ -71,7 +71,7 @@ class RetrieveBusinessDetailsAuditDetailSpec extends UnitSpec {
             nino = nino,
             `X-CorrelationId` = "a1e8057e-fbbc-47a8-a8b478d9f015c253",
             response = AuditResponse(
-              201,
+              200,
               Right(Some(Json.parse(s"""{
                                        |   "businessId": "XAIS123456789012",
                                        |   "typeOfBusiness": "self-employment",

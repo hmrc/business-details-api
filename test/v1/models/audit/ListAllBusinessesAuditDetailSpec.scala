@@ -32,7 +32,7 @@ class ListAllBusinessesAuditDetailSpec extends UnitSpec {
                                  |    "nino": "$nino",
                                  |    "X-CorrelationId": "a1e8057e-fbbc-47a8-a8b478d9f015c253",
                                  |    "response": {
-                                 |      "httpStatus": 201,
+                                 |      "httpStatus": 200,
                                  |      "body": {
                                  |        "listOfBusinesses":[
                                  |        {
@@ -66,7 +66,7 @@ class ListAllBusinessesAuditDetailSpec extends UnitSpec {
             nino = nino,
             `X-CorrelationId` = "a1e8057e-fbbc-47a8-a8b478d9f015c253",
             response = AuditResponse(
-              201,
+              200,
               Right(Some(Json.parse(s"""{
                                        |  "listOfBusinesses":[
                                        |    {
