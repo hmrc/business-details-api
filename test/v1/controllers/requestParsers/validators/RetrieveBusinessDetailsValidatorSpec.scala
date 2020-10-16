@@ -24,7 +24,7 @@ class RetrieveBusinessDetailsValidatorSpec extends UnitSpec {
 
   private val validNino = "AA123456A"
   private val invalidNino = "walrus"
-  private val validBusinessId = "X0IS123456789012"
+  private val validBusinessId = "X0IS12345678901"
   private val invalidBusinessId = "XWalrusX"
 
   val validator = new RetrieveBusinessDetailsValidator()
