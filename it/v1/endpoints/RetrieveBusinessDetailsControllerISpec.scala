@@ -30,12 +30,12 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
   private trait Test {
 
     val nino = "AA123456A"
-    val businessId = "XAIS123456789012"
+    val businessId = "XAIS12345678901"
 
     val responseBody: JsValue = Json.parse(
       s"""
         |{
-        |   "businessId": "XAIS123456789012",
+        |   "businessId": "XAIS12345678901",
         |   "typeOfBusiness": "self-employment",
         |   "tradingName": "RCDTS",
         |   "accountingPeriods": [
@@ -102,7 +102,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |  "mtdbsa": "123456789012345",
             |  "propertyIncome": false,
             |  "businessData": [{
-            |    "incomeSourceId": "XAIS123456789012",
+            |    "incomeSourceId": "XAIS12345678901",
             |    "accountingPeriodStartDate": "2001-01-01",
             |    "accountingPeriodEndDate": "2001-01-01",
             |    "tradingName": "RCDTS",
@@ -154,7 +154,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |  "mtdbsa": "123456789012345",
             |  "propertyIncome": false,
             |  "businessData": [{
-            |    "incomeSourceId": "XAIS123456789012",
+            |    "incomeSourceId": "XAIS12345678901",
             |    "accountingPeriodStartDate": "2001-01-01",
             |    "accountingPeriodEndDate": "2001-01-01",
             |    "tradingName": "RCDTS",
@@ -180,7 +180,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |    "paperLess": true
             |  },
             |  {
-            |    "incomeSourceId": "XAIS123456711112",
+            |    "incomeSourceId": "XAIS12345671111",
             |    "accountingPeriodStartDate": "2001-01-01",
             |    "accountingPeriodEndDate": "2001-01-01",
             |    "tradingName": "RCDTS",
@@ -207,7 +207,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |  }],
             |    "propertyData": [{
             |    "incomeSourceType": "foreign-property",
-            |    "incomeSourceId": "XAIS176546789012",
+            |    "incomeSourceId": "XAIS17654678901",
             |    "accountingPeriodStartDate": "2019-04-06",
             |    "accountingPeriodEndDate": "2020-04-05",
             |    "tradingStartDate": "2017-07-24",

@@ -20,7 +20,7 @@ import v1.models.errors.{BusinessIdFormatError, MtdError}
 
 object BusinessIdValidation {
 
-  private val businessIdRegex = "^X[a-zA-Z0-9]{1}IS[0-9]{12}$"
+  private val businessIdRegex = "^X[a-zA-Z0-9]{1}IS[0-9]{11}$"
 
   def validate(businessId: String): List[MtdError] = {
     if (businessId.matches(businessIdRegex)) NoValidationErrors else List(BusinessIdFormatError)
