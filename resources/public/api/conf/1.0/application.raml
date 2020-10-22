@@ -41,7 +41,7 @@ uses:
     /{businessId}:
       uriParameters:
         businessId:
-          description: 'A unique identifier for the business income source.<p>It must conform to the following regular expression: `^X[a-zA-Z0-9]{1}IS[0-9]{12}$`'
+          description: 'A unique identifier for the business income source.<p>It must conform to the following regular expression: `^X[a-zA-Z0-9]{1}IS[0-9]{11}$`'
           type: string
-          example: XAIS123456789012
+          example: XAIS12345678901
       get: !include retrieve.raml

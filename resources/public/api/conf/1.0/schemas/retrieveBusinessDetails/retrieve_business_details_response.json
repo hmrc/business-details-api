@@ -105,7 +105,7 @@
           "href": {
             "description": "The relative url of the endpoint.",
             "type": "string",
-            "example": "/individuals/business/details/CX897463D/XAIS123456789012"
+            "example": "/individuals/business/details/CX897463D/XAIS12345678910"
           },
           "rel": {
             "description": "A label for the endpoint, which describes how it is related to the current resource\nThe rel will be self where the action is retrieval of the same resource.",
