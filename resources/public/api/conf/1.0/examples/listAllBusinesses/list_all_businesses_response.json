@@ -2,11 +2,11 @@
   "listOfBusinesses":[
     {
       "typeOfBusiness": "self-employment",
-      "businessId": "XAIS123456789102",
+      "businessId": "XAIS12345678910",
       "tradingName": "RCDTS",
       "links": [
         {
-          "href": "/individuals/business/details/NZ345734C/XAIS123456789102",
+          "href": "/individuals/business/details/NZ345734C/XAIS12345678910",
           "method": "GET",
           "rel": "retrieve-business-details"
         }
@@ -14,10 +14,10 @@
     },
     {
       "typeOfBusiness": "foreign-property",
-      "businessId": "XAIS234567891012",
+      "businessId": "XAIS23456789101",
       "links": [
         {
-          "href": "/individuals/business/details/NZ345734C/XAIS234567891012",
+          "href": "/individuals/business/details/NZ345734C/XAIS23456789101",
           "method": "GET",
           "rel": "retrieve-business-details"
         }
