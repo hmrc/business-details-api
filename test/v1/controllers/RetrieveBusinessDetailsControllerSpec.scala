@@ -23,6 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockRetrieveBusinessDetailsRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService, MockRetrieveBusinessDetailsService}
+import v1.models.audit.{AuditError, AuditEvent, AuditResponse, RetrieveBusinessDetailsAuditDetail}
 import v1.models.domain.TypeOfBusiness
 import v1.models.domain.accountingType.AccountingType
 import v1.models.errors._
@@ -96,6 +97,19 @@ class RetrieveBusinessDetailsControllerSpec
       |}
         """.stripMargin
   )
+
+  def event(auditResponse: AuditResponse): AuditEvent[RetrieveBusinessDetailsAuditDetail] =
+    AuditEvent(
+      auditType = "ListAllBusinesses",
+      transactionName = "list-all-businesses",
+      detail = RetrieveBusinessDetailsAuditDetail(
+        userType = "Individual",
+        agentReferenceNumber = None,
+        validNino,
+        correlationId,
+        auditResponse
+      )
+    )
 
   private val responseData = RetrieveBusinessDetailsResponse(
     "XAIS12345678910",
@@ -183,6 +197,9 @@ class RetrieveBusinessDetailsControllerSpec
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(mtdError)
             header("X-CorrelationId", result) shouldBe Some(correlationId)
+
+            val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(mtdError.code))), None)
+            MockedAuditService.verifyAuditEvent(event(auditResponse)).once
 
           }
         }
