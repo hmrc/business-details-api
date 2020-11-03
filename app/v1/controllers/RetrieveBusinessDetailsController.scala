@@ -74,7 +74,11 @@ extends AuthorisedController(cc) with BaseController with Logging {
 
       result.leftMap { errorWrapper =>
         val correlationId = getCorrelationId(errorWrapper)
-        errorResult(errorWrapper).withApiHeaders(correlationId)
+        val result = errorResult(errorWrapper).withApiHeaders(correlationId)
+
+        auditSubmission(RetrieveBusinessDetailsAuditDetail(request.userDetails, nino,
+          correlationId, AuditResponse(result.header.status, Left(errorWrapper.auditErrors))))
+        result
       }.merge
     }
 

@@ -77,7 +77,11 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
 
       result.leftMap { errorWrapper =>
         val correlationId = getCorrelationId(errorWrapper)
-        errorResult(errorWrapper).withApiHeaders(correlationId)
+        val result = errorResult(errorWrapper).withApiHeaders(correlationId)
+
+        auditSubmission(ListAllBusinessesAuditDetail(request.userDetails, nino,
+          correlationId, AuditResponse(result.header.status, Left(errorWrapper.auditErrors))))
+        result
       }.merge
     }
 
