@@ -100,8 +100,8 @@ class RetrieveBusinessDetailsControllerSpec
 
   def event(auditResponse: AuditResponse): AuditEvent[RetrieveBusinessDetailsAuditDetail] =
     AuditEvent(
-      auditType = "ListAllBusinesses",
-      transactionName = "list-all-businesses",
+      auditType = "RetrieveBusinessDetails",
+      transactionName = "retrieve-business-details",
       detail = RetrieveBusinessDetailsAuditDetail(
         userType = "Individual",
         agentReferenceNumber = None,
