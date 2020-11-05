@@ -35,7 +35,8 @@ class ListAllBusinessesService @Inject()(listAllBusinessesConnector: ListAllBusi
   def listAllBusinessesService(request: ListAllBusinessesRequest)(
     implicit hc: HeaderCarrier,
     ec: ExecutionContext,
-    logContext: EndpointLogContext): Future[ListAllBusinessesServiceOutcome] = {
+    logContext: EndpointLogContext,
+    correlationId: String): Future[ListAllBusinessesServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(listAllBusinessesConnector.listAllBusinesses(request)).leftMap(mapDesErrors(desErrorMap))

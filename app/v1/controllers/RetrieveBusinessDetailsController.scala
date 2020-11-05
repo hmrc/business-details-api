@@ -22,7 +22,8 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.Logging
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
+import utils.{IdGenerator, Logging}
 import v1.controllers.requestParsers.RetrieveBusinessDetailsRequestParser
 import v1.hateoas.HateoasFactory
 import v1.models.audit.{AuditEvent, AuditResponse, RetrieveBusinessDetailsAuditDetail}
@@ -36,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RetrieveBusinessDetailsController @Inject()(val authService: EnrolmentsAuthService,
                                                   val lookupService: MtdIdLookupService,
+                                                  val idGenerator: IdGenerator,
                                                   parser: RetrieveBusinessDetailsRequestParser,
                                                   service: RetrieveBusinessDetailsService,
                                                   hateoasFactory: HateoasFactory,
@@ -48,6 +50,11 @@ extends AuthorisedController(cc) with BaseController with Logging {
 
   def handleRequest(nino: String, businessId: String): Action[AnyContent] =
     authorisedAction(nino).async {implicit request =>
+
+      implicit val correlationId: String = idGenerator.getCorrelationId
+      logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
+        s"with correlationId : $correlationId")
+
       val rawData = RetrieveBusinessDetailsRawData(nino, businessId)
       val result =
         for {
@@ -73,11 +80,14 @@ extends AuthorisedController(cc) with BaseController with Logging {
         }
 
       result.leftMap { errorWrapper =>
-        val correlationId = getCorrelationId(errorWrapper)
-        val result = errorResult(errorWrapper).withApiHeaders(correlationId)
+        val resCorrelationId = errorWrapper.correlationId
+        val result = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
+        logger.info(
+          s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
+            s"Error response received with CorrelationId: $resCorrelationId")
 
         auditSubmission(RetrieveBusinessDetailsAuditDetail(request.userDetails, nino,
-          correlationId, AuditResponse(result.header.status, Left(errorWrapper.auditErrors))))
+          resCorrelationId, AuditResponse(result.header.status, Left(errorWrapper.auditErrors))))
         result
       }.merge
     }
@@ -92,7 +102,7 @@ extends AuthorisedController(cc) with BaseController with Logging {
 
   private def auditSubmission(details: RetrieveBusinessDetailsAuditDetail)
                              (implicit hc: HeaderCarrier,
-                              ec: ExecutionContext) = {
+                              ec: ExecutionContext): Future[AuditResult] = {
     val event = AuditEvent("RetrieveBusinessDetails", "retrieve-business-details", details)
     auditService.auditEvent(event)
   }

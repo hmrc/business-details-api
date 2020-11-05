@@ -27,6 +27,7 @@ class ListAllBusinessesRequestParserSpec extends UnitSpec {
   private val nino   = "AA123456A"
   private val data   = ListAllBusinessesRawData(nino)
   private val invalidNinoData = ListAllBusinessesRawData("beans")
+  implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
   trait Test extends ListAllBusinessesMockValidator {
     lazy val parser = new ListAllBusinessesRequestParser(mockValidator)
@@ -42,7 +43,7 @@ class ListAllBusinessesRequestParserSpec extends UnitSpec {
     "return an error wrapper" when {
       "the validator returns a single error" in new Test {
         ListAllBusinessesMockValidator.validate(invalidNinoData).returns(List(NinoFormatError))
-        parser.parseRequest(invalidNinoData) shouldBe Left(ErrorWrapper(None, NinoFormatError, None))
+        parser.parseRequest(invalidNinoData) shouldBe Left(ErrorWrapper(correlationId, NinoFormatError, None))
       }
     }
   }

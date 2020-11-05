@@ -31,7 +31,7 @@ trait MockRetrieveBusinessDetailsRequestParser extends MockFactory {
 
   object MockRetrieveBusinessDetailsRequestParser {
     def parse(data: RetrieveBusinessDetailsRawData): CallHandler[Either[ErrorWrapper, RetrieveBusinessDetailsRequest]] = {
-      (mockRequestParser.parseRequest(_: RetrieveBusinessDetailsRawData)).expects(data)
+      (mockRequestParser.parseRequest(_: RetrieveBusinessDetailsRawData)(_: String)).expects(data, *)
     }
   }
 

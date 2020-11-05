@@ -20,13 +20,14 @@ import cats.data.EitherT
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import utils.Logging
+import utils.{IdGenerator, Logging}
 import v1.controllers.requestParsers.ListAllBusinessesRequestParser
 import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, NinoFormatError, NotFoundError}
 import v1.models.request.listAllBusinesses.ListAllBusinessesRawData
 import v1.services.{AuditService, EnrolmentsAuthService, ListAllBusinessesService, MtdIdLookupService}
 import cats.implicits._
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import v1.hateoas.HateoasFactory
 import v1.models.audit.{AuditEvent, AuditResponse, ListAllBusinessesAuditDetail}
 import v1.models.response.listAllBusiness.ListAllBusinessesHateoasData
@@ -36,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthService,
                                             val lookupService: MtdIdLookupService,
+                                            val idGenerator: IdGenerator,
                                             requestDataParser: ListAllBusinessesRequestParser,
                                             service: ListAllBusinessesService,
                                             hateoasFactory: HateoasFactory,
@@ -48,6 +50,11 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
 
   def handleRequest(nino: String): Action[AnyContent] =
     authorisedAction(nino).async {implicit request =>
+
+      implicit val correlationId: String = idGenerator.getCorrelationId
+      logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
+        s"with correlationId : $correlationId")
+
       val rawData = ListAllBusinessesRawData(nino)
       val result =
         for {
@@ -76,11 +83,14 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
         }
 
       result.leftMap { errorWrapper =>
-        val correlationId = getCorrelationId(errorWrapper)
-        val result = errorResult(errorWrapper).withApiHeaders(correlationId)
+        val resCorrelationId = errorWrapper.correlationId
+        val result = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
+        logger.info(
+          s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
+            s"Error response received with CorrelationId: $resCorrelationId")
 
         auditSubmission(ListAllBusinessesAuditDetail(request.userDetails, nino,
-          correlationId, AuditResponse(result.header.status, Left(errorWrapper.auditErrors))))
+          resCorrelationId, AuditResponse(result.header.status, Left(errorWrapper.auditErrors))))
         result
       }.merge
     }
@@ -95,7 +105,7 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
 
   private def auditSubmission(details: ListAllBusinessesAuditDetail)
                              (implicit hc: HeaderCarrier,
-                              ec: ExecutionContext) = {
+                              ec: ExecutionContext): Future[AuditResult] = {
     val event = AuditEvent("ListAllBusinesses", "list-all-businesses", details)
     auditService.auditEvent(event)
   }

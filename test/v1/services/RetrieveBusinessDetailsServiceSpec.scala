@@ -16,7 +16,6 @@
 
 package v1.services
 
-import support.UnitSpec
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.controllers.EndpointLogContext
@@ -30,9 +29,8 @@ import v1.models.response.retrieveBusinessDetails.des.{BusinessDetails, Retrieve
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 
-class RetrieveBusinessDetailsServiceSpec extends UnitSpec {
+class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
 
   private val validNino = Nino("AA123456A")
   private val validId = "XAIS12345678910"
@@ -114,32 +112,32 @@ class RetrieveBusinessDetailsServiceSpec extends UnitSpec {
     "a connector call is successful" should {
       "return a mapped result from a single des response" in new Test {
         MockRetrieveBusinessDetailsConnector.retrieveBusinessDetails(requestData)
-          .returns(Future.successful(Right(ResponseWrapper("resultId", desSingleResponseBody))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, desSingleResponseBody))))
 
-        await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper("resultId", responseBody))
+        await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
       }
       "return a mapped result from multiple des responses" in new Test {
         MockRetrieveBusinessDetailsConnector.retrieveBusinessDetails(requestData)
-          .returns(Future.successful(Right(ResponseWrapper("resultId", desMultiResponseBody))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, desMultiResponseBody))))
 
-        await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper("resultId", responseBody))
+        await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
       }
     }
     "a connector call is unsuccessful" should {
       "return not found error for no matching id" in new Test {
         MockRetrieveBusinessDetailsConnector.retrieveBusinessDetails(badRequestData)
-          .returns(Future.successful(Right(ResponseWrapper("resultId", desMultiResponseBody))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, desMultiResponseBody))))
 
-        await(service.retrieveBusinessDetailsService(badRequestData)) shouldBe Left(ErrorWrapper(Some("resultId"), NoBusinessFoundError))
+        await(service.retrieveBusinessDetailsService(badRequestData)) shouldBe Left(ErrorWrapper(correlationId, NoBusinessFoundError))
     }
     "a connector call is unsuccessful" should {
         def serviceError(desErrorCode: String, error: MtdError): Unit =
           s"return ${error.code} when $desErrorCode error is returned from the service" in new Test {
 
             MockRetrieveBusinessDetailsConnector.retrieveBusinessDetails(requestData)
-              .returns(Future.successful(Left(ResponseWrapper("resultId", DesErrors.single(DesErrorCode(desErrorCode))))))
+              .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
-            await(service.retrieveBusinessDetailsService(requestData)) shouldBe Left(ErrorWrapper(Some("resultId"), error))
+            await(service.retrieveBusinessDetailsService(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
           }
 
         val input = Seq(

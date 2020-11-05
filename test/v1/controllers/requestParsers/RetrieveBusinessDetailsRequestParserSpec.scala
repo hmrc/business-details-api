@@ -26,6 +26,7 @@ class RetrieveBusinessDetailsRequestParserSpec extends UnitSpec {
 
   private val nino = "AA123456A"
   private val businessId = "X0IS123456789012"
+  implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
   private val data = RetrieveBusinessDetailsRawData(nino, businessId)
   private val invalidSingleData = RetrieveBusinessDetailsRawData(nino, "Walrus")
   private val invalidMultipleData = RetrieveBusinessDetailsRawData("Beans", "Walrus")
@@ -44,11 +45,11 @@ class RetrieveBusinessDetailsRequestParserSpec extends UnitSpec {
     "return an error wrapper" when {
       "the validator returns a single error" in new Test {
         RetrieveBusinessDetailsMockValidator.validate(invalidSingleData).returns(List(NinoFormatError))
-        parser.parseRequest(invalidSingleData) shouldBe Left(ErrorWrapper(None, NinoFormatError, None))
+        parser.parseRequest(invalidSingleData) shouldBe Left(ErrorWrapper(correlationId, NinoFormatError, None))
       }
       "the validator returns multiple errors" in new Test {
         RetrieveBusinessDetailsMockValidator.validate(invalidMultipleData).returns(List(NinoFormatError, BusinessIdFormatError))
-        parser.parseRequest(invalidMultipleData) shouldBe Left(ErrorWrapper(None, BadRequestError, Some(Seq(NinoFormatError, BusinessIdFormatError))))
+        parser.parseRequest(invalidMultipleData) shouldBe Left(ErrorWrapper(correlationId, BadRequestError, Some(Seq(NinoFormatError, BusinessIdFormatError))))
       }
     }
   }
