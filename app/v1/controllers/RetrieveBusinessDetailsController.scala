@@ -16,7 +16,6 @@
 
 package v1.controllers
 
-import akka.pattern.FutureRef
 import cats.data.EitherT
 import cats.implicits._
 import javax.inject.{Inject, Singleton}
