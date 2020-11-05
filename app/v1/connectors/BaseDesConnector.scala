@@ -29,31 +29,33 @@ trait BaseDesConnector {
   val http: HttpClient
   val appConfig: AppConfig
 
-  val logger = Logger(this.getClass)
+  val logger: Logger = Logger(this.getClass)
 
-  private[connectors] def desHeaderCarrier(implicit hc: HeaderCarrier): HeaderCarrier =
+  private[connectors] def desHeaderCarrier(implicit hc: HeaderCarrier, correlationId: String): HeaderCarrier =
     hc.copy(authorization = Some(Authorization(s"Bearer ${appConfig.desToken}")))
-      .withExtraHeaders("Environment" -> appConfig.desEnv)
+      .withExtraHeaders("Environment" -> appConfig.desEnv, "CorrelationId" -> correlationId)
 
   def post[Body: Writes, Resp](body: Body, uri: DesUri[Resp])(implicit ec: ExecutionContext,
                                                               hc: HeaderCarrier,
-                                                              httpReads: HttpReads[DesOutcome[Resp]]): Future[DesOutcome[Resp]] = {
+                                                              httpReads: HttpReads[DesOutcome[Resp]],
+                                                              correlationId: String): Future[DesOutcome[Resp]] = {
 
-    def doPost(implicit hc: HeaderCarrier): Future[DesOutcome[Resp]] = {
+    def doPost(implicit hc: HeaderCarrier): Future[DesOutcome[Resp]] =
       http.POST(s"${appConfig.desBaseUrl}/${uri.value}", body)
-    }
 
-    doPost(desHeaderCarrier(hc))
+
+    doPost(desHeaderCarrier(hc, correlationId))
   }
 
   def get[Resp](uri: DesUri[Resp])(implicit ec: ExecutionContext,
                                    hc: HeaderCarrier,
-                                   httpReads: HttpReads[DesOutcome[Resp]]): Future[DesOutcome[Resp]] = {
+                                   httpReads: HttpReads[DesOutcome[Resp]],
+                                   correlationId: String): Future[DesOutcome[Resp]] = {
 
     def doGet(implicit hc: HeaderCarrier): Future[DesOutcome[Resp]] =
       http.GET(s"${appConfig.desBaseUrl}/${uri.value}")
 
-    doGet(desHeaderCarrier(hc))
+    doGet(desHeaderCarrier(hc, correlationId))
   }
 
 }

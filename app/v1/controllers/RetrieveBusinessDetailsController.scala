@@ -16,12 +16,14 @@
 
 package v1.controllers
 
+import akka.pattern.FutureRef
 import cats.data.EitherT
 import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.{IdGenerator, Logging}
 import v1.controllers.requestParsers.RetrieveBusinessDetailsRequestParser
 import v1.hateoas.HateoasFactory
@@ -79,11 +81,14 @@ extends AuthorisedController(cc) with BaseController with Logging {
         }
 
       result.leftMap { errorWrapper =>
-        val correlationId = getCorrelationId(errorWrapper)
-        val result = errorResult(errorWrapper).withApiHeaders(correlationId)
+        val resCorrelationId = errorWrapper.correlationId
+        val result = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
+        logger.info(
+          s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
+            s"Error response received with CorrelationId: $resCorrelationId")
 
         auditSubmission(RetrieveBusinessDetailsAuditDetail(request.userDetails, nino,
-          correlationId, AuditResponse(result.header.status, Left(errorWrapper.auditErrors))))
+          resCorrelationId, AuditResponse(result.header.status, Left(errorWrapper.auditErrors))))
         result
       }.merge
     }
@@ -98,7 +103,7 @@ extends AuthorisedController(cc) with BaseController with Logging {
 
   private def auditSubmission(details: RetrieveBusinessDetailsAuditDetail)
                              (implicit hc: HeaderCarrier,
-                              ec: ExecutionContext) = {
+                              ec: ExecutionContext): Future[AuditResult] = {
     val event = AuditEvent("RetrieveBusinessDetails", "retrieve-business-details", details)
     auditService.auditEvent(event)
   }

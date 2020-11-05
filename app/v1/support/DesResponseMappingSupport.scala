@@ -36,8 +36,8 @@ trait DesResponseMappingSupport {
 
     filteredBusinesses match {
       case business :: Nil => Right(ResponseWrapper(responseWrapper.correlationId, business.toMtd))
-      case Nil => Left(ErrorWrapper(Some(responseWrapper.correlationId), NoBusinessFoundError))
-      case _ :: _ => Left(ErrorWrapper(Some(responseWrapper.correlationId), DownstreamError))
+      case Nil => Left(ErrorWrapper(responseWrapper.correlationId, NoBusinessFoundError))
+      case _ :: _ => Left(ErrorWrapper(responseWrapper.correlationId, DownstreamError))
     }
   }
 
@@ -51,7 +51,7 @@ trait DesResponseMappingSupport {
 
     desResponseWrapper match {
       case ResponseWrapper(correlationId, DesErrors(error :: Nil)) =>
-        ErrorWrapper(Some(correlationId), errorCodeMap.applyOrElse(error.code, defaultErrorCodeMapping), None)
+        ErrorWrapper(correlationId, errorCodeMap.applyOrElse(error.code, defaultErrorCodeMapping), None)
 
       case ResponseWrapper(correlationId, DesErrors(errorCodes)) =>
         val mtdErrors = errorCodes.map(error => errorCodeMap.applyOrElse(error.code, defaultErrorCodeMapping))
@@ -60,13 +60,13 @@ trait DesResponseMappingSupport {
           logger.info(
             s"[${logContext.controllerName}] [${logContext.endpointName}] [CorrelationId - $correlationId]" +
               s" - downstream returned ${errorCodes.map(_.code).mkString(",")}. Revert to ISE")
-          ErrorWrapper(Some(correlationId), DownstreamError, None)
+          ErrorWrapper(correlationId, DownstreamError, None)
         } else {
-          ErrorWrapper(Some(correlationId), BadRequestError, Some(mtdErrors))
+          ErrorWrapper(correlationId, BadRequestError, Some(mtdErrors))
         }
 
       case ResponseWrapper(correlationId, OutboundError(error, errors)) =>
-        ErrorWrapper(Some(correlationId), error, errors)
+        ErrorWrapper(correlationId, error, errors)
     }
   }
 }

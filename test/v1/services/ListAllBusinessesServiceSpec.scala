@@ -16,7 +16,6 @@
 
 package v1.services
 
-import support.UnitSpec
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.controllers.EndpointLogContext
@@ -27,10 +26,9 @@ import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
 
 
-class ListAllBusinessesServiceSpec extends UnitSpec {
+class ListAllBusinessesServiceSpec extends ServiceSpec {
 
   private val validNino = Nino("AA123456A")
   private val requestData = ListAllBusinessesRequest(validNino)
@@ -49,9 +47,9 @@ class ListAllBusinessesServiceSpec extends UnitSpec {
     "a connector call is successful" should {
       "return a mapped result" in new Test {
         MockListAllBusinessesConnector.listAllBusinesses(requestData)
-          .returns(Future.successful(Right(ResponseWrapper("resultId", responseBody))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseBody))))
 
-        await(service.listAllBusinessesService(requestData)) shouldBe Right(ResponseWrapper("resultId", responseBody))
+        await(service.listAllBusinessesService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
       }
     }
     "a connector call is unsuccessful" should {
@@ -59,9 +57,9 @@ class ListAllBusinessesServiceSpec extends UnitSpec {
         s"return ${error.code} when $desErrorCode error is returned from the service" in new Test {
 
           MockListAllBusinessesConnector.listAllBusinesses(requestData)
-            .returns(Future.successful(Left(ResponseWrapper("resultId", DesErrors.single(DesErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
-          await(service.listAllBusinessesService(requestData)) shouldBe Left(ErrorWrapper(Some("resultId"), error))
+          await(service.listAllBusinessesService(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
       val input = Seq(

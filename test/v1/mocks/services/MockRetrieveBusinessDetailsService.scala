@@ -37,8 +37,8 @@ trait MockRetrieveBusinessDetailsService extends MockFactory {
     def retrieveBusinessDetailsService(request: RetrieveBusinessDetailsRequest):
     CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]]]] = {
       (mockRetrieveBusinessDetailsService
-        .retrieveBusinessDetailsService(_: RetrieveBusinessDetailsRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext))
-        .expects(request, *, *, *)
+        .retrieveBusinessDetailsService(_: RetrieveBusinessDetailsRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext, _: String))
+        .expects(request, *, *, *, *)
     }
   }
 }

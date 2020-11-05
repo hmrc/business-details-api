@@ -16,7 +16,7 @@
 
 package v1.mocks.connectors
 
-import org.scalamock.handlers.CallHandler3
+import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.{DesOutcome, RetrieveBusinessDetailsConnector}
@@ -25,17 +25,17 @@ import v1.models.response.retrieveBusinessDetails.des.RetrieveBusinessDetailsDes
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MockRetrieveBusinessDetailsConnector  extends MockFactory{
+trait MockRetrieveBusinessDetailsConnector  extends MockFactory{
 
   val mockRetrieveBusinessDetailsConnector: RetrieveBusinessDetailsConnector = mock[RetrieveBusinessDetailsConnector]
 
   object MockRetrieveBusinessDetailsConnector {
 
     def retrieveBusinessDetails(requestData: RetrieveBusinessDetailsRequest):
-    CallHandler3[RetrieveBusinessDetailsRequest, HeaderCarrier, ExecutionContext, Future[DesOutcome[RetrieveBusinessDetailsDesResponse]]] = {
+    CallHandler[Future[DesOutcome[RetrieveBusinessDetailsDesResponse]]] = {
       (mockRetrieveBusinessDetailsConnector
-        .retrieveBusinessDetails(_: RetrieveBusinessDetailsRequest)(_: HeaderCarrier, _: ExecutionContext))
-        .expects(requestData, *, *)
+        .retrieveBusinessDetails(_: RetrieveBusinessDetailsRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
+        .expects(requestData, *, *, *)
     }
   }
 }

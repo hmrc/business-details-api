@@ -37,8 +37,8 @@ trait MockListAllBusinessesService extends MockFactory {
     def listAllBusinessesService(request: ListAllBusinessesRequest):
     CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[ListAllBusinessesResponse[Business]]]]] = {
       (mockListAllBusinessesService
-        .listAllBusinessesService(_: ListAllBusinessesRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext))
-        .expects(request, *, *, *)
+        .listAllBusinessesService(_: ListAllBusinessesRequest)(_: HeaderCarrier, _: ExecutionContext, _: EndpointLogContext, _: String))
+        .expects(request, *, *, *, *)
     }
   }
 }

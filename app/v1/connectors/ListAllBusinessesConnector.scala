@@ -17,7 +17,7 @@
 package v1.connectors
 
 import config.AppConfig
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
@@ -26,9 +26,11 @@ import v1.connectors.httpparsers.StandardDesHttpParser._
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class ListAllBusinessesConnector @Inject()(val http: HttpClient,
                                            val appConfig: AppConfig) extends BaseDesConnector {
-  def listAllBusinesses(request: ListAllBusinessesRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ListConnectorOutcome] = {
+  def listAllBusinesses(request: ListAllBusinessesRequest)
+                       (implicit hc: HeaderCarrier, ec: ExecutionContext, correlationId: String): Future[ListConnectorOutcome] = {
 
     val url = s"registration/business-details/nino/${request.nino}"
     get(

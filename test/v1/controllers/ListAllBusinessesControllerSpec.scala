@@ -20,6 +20,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockListAllBusinessesRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockListAllBusinessesService, MockMtdIdLookupService}
@@ -42,7 +43,8 @@ class ListAllBusinessesControllerSpec
     with MockListAllBusinessesService
     with MockHateoasFactory
     with MockAuditService
-    with MockListAllBusinessesRequestParser {
+    with MockListAllBusinessesRequestParser
+    with MockIdGenerator{
 
   trait Test {
     val hc = HeaderCarrier()
@@ -54,14 +56,16 @@ class ListAllBusinessesControllerSpec
       service = mockListAllBusinessesService,
       hateoasFactory = mockHateoasFactory,
       auditService = mockAuditService,
-      cc = cc
+      cc = cc,
+      idGenerator = mockIdGenerator
     )
     MockedMtdIdLookupService.lookup(validNino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
+    MockIdGenerator.getCorrelationId.returns(correlationId)
   }
 
   private val validNino = "AA123456A"
-  private val correlationId = "X-123"
+  val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
   private val testHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
   private val testInnerHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-inner-relationship")
 
@@ -147,7 +151,7 @@ class ListAllBusinessesControllerSpec
 
             MockListAllBusinessesRequestParser
               .parse(rawData)
-              .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
+              .returns(Left(ErrorWrapper(correlationId, error, None)))
 
             val result: Future[Result] = controller.handleRequest(validNino)(fakeRequest)
 
@@ -179,7 +183,7 @@ class ListAllBusinessesControllerSpec
 
             MockListAllBusinessesService
               .listAllBusinessesService(requestData)
-              .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
+              .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 
             val result: Future[Result] = controller.handleRequest(validNino)(fakeRequest)
 

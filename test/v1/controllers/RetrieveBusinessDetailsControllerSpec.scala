@@ -48,7 +48,7 @@ class RetrieveBusinessDetailsControllerSpec
     with MockIdGenerator {
 
   trait Test {
-    val hc = HeaderCarrier()
+    val hc: HeaderCarrier = HeaderCarrier()
 
     val controller = new RetrieveBusinessDetailsController(
       authService = mockEnrolmentsAuthService,
@@ -68,7 +68,7 @@ class RetrieveBusinessDetailsControllerSpec
 
   private val validNino = "AA123456A"
   private val validBusinessId = "XAIS12345678910"
-  private val correlationId = "X-123"
+  val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
   private val testHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
 
   private val responseBody = Json.parse(
@@ -167,7 +167,7 @@ class RetrieveBusinessDetailsControllerSpec
 
             MockRetrieveBusinessDetailsRequestParser
               .parse(rawData)
-              .returns(Left(ErrorWrapper(Some(correlationId), error, None)))
+              .returns(Left(ErrorWrapper(correlationId, error, None)))
 
             val result: Future[Result] = controller.handleRequest(validNino, validBusinessId)(fakeRequest)
 
@@ -194,7 +194,7 @@ class RetrieveBusinessDetailsControllerSpec
 
             MockRetrieveBusinessDetailsService
               .retrieveBusinessDetailsService(requestData)
-              .returns(Future.successful(Left(ErrorWrapper(Some(correlationId), mtdError))))
+              .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
 
             val result: Future[Result] = controller.handleRequest(validNino, validBusinessId)(fakeRequest)
 

@@ -16,7 +16,7 @@
 
 package v1.mocks.connectors
 
-import org.scalamock.handlers.CallHandler3
+import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.{DesOutcome, ListAllBusinessesConnector}
@@ -32,10 +32,10 @@ trait MockListAllBusinessesConnector extends MockFactory{
   object MockListAllBusinessesConnector {
 
     def listAllBusinesses(requestData: ListAllBusinessesRequest):
-    CallHandler3[ListAllBusinessesRequest, HeaderCarrier, ExecutionContext, Future[DesOutcome[ListAllBusinessesResponse[Business]]]] = {
+    CallHandler[Future[DesOutcome[ListAllBusinessesResponse[Business]]]] = {
       (mockListAllBusinessesConnector
-        .listAllBusinesses(_: ListAllBusinessesRequest)(_: HeaderCarrier, _: ExecutionContext))
-        .expects(requestData, *, *)
+        .listAllBusinesses(_: ListAllBusinessesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
+        .expects(requestData, *, *, *)
     }
   }
 }
