@@ -22,7 +22,7 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.Logging
+import utils.{IdGenerator, Logging}
 import v1.controllers.requestParsers.RetrieveBusinessDetailsRequestParser
 import v1.hateoas.HateoasFactory
 import v1.models.audit.{AuditEvent, AuditResponse, RetrieveBusinessDetailsAuditDetail}
@@ -36,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RetrieveBusinessDetailsController @Inject()(val authService: EnrolmentsAuthService,
                                                   val lookupService: MtdIdLookupService,
+                                                  val idGenerator: IdGenerator,
                                                   parser: RetrieveBusinessDetailsRequestParser,
                                                   service: RetrieveBusinessDetailsService,
                                                   hateoasFactory: HateoasFactory,
@@ -48,6 +49,11 @@ extends AuthorisedController(cc) with BaseController with Logging {
 
   def handleRequest(nino: String, businessId: String): Action[AnyContent] =
     authorisedAction(nino).async {implicit request =>
+
+      implicit val correlationId: String = idGenerator.getCorrelationId
+      logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
+        s"with correlationId : $correlationId")
+
       val rawData = RetrieveBusinessDetailsRawData(nino, businessId)
       val result =
         for {

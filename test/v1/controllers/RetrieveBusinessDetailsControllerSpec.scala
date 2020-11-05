@@ -20,6 +20,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockRetrieveBusinessDetailsRequestParser
 import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService, MockRetrieveBusinessDetailsService}
@@ -43,7 +44,8 @@ class RetrieveBusinessDetailsControllerSpec
     with MockRetrieveBusinessDetailsService
     with MockHateoasFactory
     with MockAuditService
-    with MockRetrieveBusinessDetailsRequestParser {
+    with MockRetrieveBusinessDetailsRequestParser
+    with MockIdGenerator {
 
   trait Test {
     val hc = HeaderCarrier()
@@ -55,8 +57,11 @@ class RetrieveBusinessDetailsControllerSpec
       service = mockRetrieveBusinessDetailsService,
       hateoasFactory = mockHateoasFactory,
       auditService = mockAuditService,
-      cc = cc
+      cc = cc,
+      idGenerator = mockIdGenerator
     )
+
+    MockIdGenerator.getCorrelationId.returns(correlationId)
     MockedMtdIdLookupService.lookup(validNino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
   }
