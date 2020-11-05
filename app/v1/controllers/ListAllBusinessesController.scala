@@ -37,7 +37,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthService,
                                             val lookupService: MtdIdLookupService,
-                                            val idGenerator: IdGenerator,                                            requestDataParser: ListAllBusinessesRequestParser,
+                                            val idGenerator: IdGenerator,
+                                            requestDataParser: ListAllBusinessesRequestParser,
                                             service: ListAllBusinessesService,
                                             hateoasFactory: HateoasFactory,
                                             auditService: AuditService,
