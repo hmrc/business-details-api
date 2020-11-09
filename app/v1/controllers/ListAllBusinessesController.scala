@@ -52,7 +52,7 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
     authorisedAction(nino).async {implicit request =>
 
       implicit val correlationId: String = idGenerator.getCorrelationId
-      logger.warn(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
+      logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
 
       val rawData = ListAllBusinessesRawData(nino)
@@ -66,7 +66,7 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
               .asRight[ErrorWrapper]
           )
         } yield {
-          logger.warn(
+          logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
               s"Success response received with CorrelationId: ${serviceResponse.correlationId}")
 

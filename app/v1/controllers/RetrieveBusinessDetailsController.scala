@@ -63,7 +63,7 @@ extends AuthorisedController(cc) with BaseController with Logging {
           vendorResponse <- EitherT.fromEither[Future](
             hateoasFactory.wrap(serviceResponse.responseData, RetrieveBusinessDetailsHateoasData(nino, businessId)).asRight[ErrorWrapper])
         } yield {
-          logger.warn(
+          logger.info(
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
               s"Success response received with CorrelationId: ${serviceResponse.correlationId}")
 
