@@ -23,8 +23,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockRetrieveBusinessDetailsRequestParser
-import v1.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdIdLookupService, MockRetrieveBusinessDetailsService}
-import v1.models.audit.{AuditError, AuditEvent, AuditResponse, RetrieveBusinessDetailsAuditDetail}
+import v1.mocks.services.{MockEnrolmentsAuthService, MockMtdIdLookupService, MockRetrieveBusinessDetailsService}
 import v1.models.domain.TypeOfBusiness
 import v1.models.domain.accountingType.AccountingType
 import v1.models.errors._
@@ -43,7 +42,6 @@ class RetrieveBusinessDetailsControllerSpec
     with MockMtdIdLookupService
     with MockRetrieveBusinessDetailsService
     with MockHateoasFactory
-    with MockAuditService
     with MockRetrieveBusinessDetailsRequestParser
     with MockIdGenerator {
 
@@ -56,7 +54,6 @@ class RetrieveBusinessDetailsControllerSpec
       parser = mockRequestParser,
       service = mockRetrieveBusinessDetailsService,
       hateoasFactory = mockHateoasFactory,
-      auditService = mockAuditService,
       cc = cc,
       idGenerator = mockIdGenerator
     )
@@ -101,19 +98,6 @@ class RetrieveBusinessDetailsControllerSpec
       |   ]
       |}
         """.stripMargin
-  )
-
-  def event(auditResponse: AuditResponse): AuditEvent[RetrieveBusinessDetailsAuditDetail] =
-    AuditEvent(
-      auditType = "RetrieveBusinessDetails",
-      transactionName = "retrieve-business-details",
-      detail = RetrieveBusinessDetailsAuditDetail(
-        userType = "Individual",
-        agentReferenceNumber = None,
-        validNino,
-        correlationId,
-        auditResponse
-      )
     )
 
   private val responseData = RetrieveBusinessDetailsResponse(
@@ -202,10 +186,6 @@ class RetrieveBusinessDetailsControllerSpec
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(mtdError)
             header("X-CorrelationId", result) shouldBe Some(correlationId)
-
-            val auditResponse: AuditResponse = AuditResponse(expectedStatus, Some(Seq(AuditError(mtdError.code))), None)
-            MockedAuditService.verifyAuditEvent(event(auditResponse)).once
-
           }
         }
         val input = Seq(

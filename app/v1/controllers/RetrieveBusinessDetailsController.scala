@@ -21,16 +21,13 @@ import cats.implicits._
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.{IdGenerator, Logging}
 import v1.controllers.requestParsers.RetrieveBusinessDetailsRequestParser
 import v1.hateoas.HateoasFactory
-import v1.models.audit.{AuditEvent, AuditResponse, RetrieveBusinessDetailsAuditDetail}
 import v1.models.errors._
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRawData
 import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsHateoasData
-import v1.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService, RetrieveBusinessDetailsService}
+import v1.services.{EnrolmentsAuthService, MtdIdLookupService, RetrieveBusinessDetailsService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,7 +38,6 @@ class RetrieveBusinessDetailsController @Inject()(val authService: EnrolmentsAut
                                                   parser: RetrieveBusinessDetailsRequestParser,
                                                   service: RetrieveBusinessDetailsService,
                                                   hateoasFactory: HateoasFactory,
-                                                  auditService: AuditService,
                                                   cc: ControllerComponents)(implicit ec: ExecutionContext)
 extends AuthorisedController(cc) with BaseController with Logging {
 
@@ -67,14 +63,6 @@ extends AuthorisedController(cc) with BaseController with Logging {
             s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
               s"Success response received with CorrelationId: ${serviceResponse.correlationId}")
 
-          val response = Json.toJson(vendorResponse)
-
-          auditSubmission(RetrieveBusinessDetailsAuditDetail(
-            userDetails = request.userDetails,
-            nino = nino,
-            `X-CorrelationId` = serviceResponse.correlationId,
-            AuditResponse(OK, Right(Some(response)))))
-
           Ok(Json.toJson(vendorResponse))
             .withApiHeaders(serviceResponse.correlationId)
         }
@@ -86,8 +74,6 @@ extends AuthorisedController(cc) with BaseController with Logging {
           s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
             s"Error response received with CorrelationId: $resCorrelationId")
 
-        auditSubmission(RetrieveBusinessDetailsAuditDetail(request.userDetails, nino,
-          resCorrelationId, AuditResponse(result.header.status, Left(errorWrapper.auditErrors))))
         result
       }.merge
     }
@@ -98,13 +84,6 @@ extends AuthorisedController(cc) with BaseController with Logging {
       case NotFoundError | NoBusinessFoundError                      => NotFound(Json.toJson(errorWrapper))
       case DownstreamError                                           => InternalServerError(Json.toJson(errorWrapper))
     }
-  }
-
-  private def auditSubmission(details: RetrieveBusinessDetailsAuditDetail)
-                             (implicit hc: HeaderCarrier,
-                              ec: ExecutionContext): Future[AuditResult] = {
-    val event = AuditEvent("RetrieveBusinessDetails", "retrieve-business-details", details)
-    auditService.auditEvent(event)
   }
 
 }
