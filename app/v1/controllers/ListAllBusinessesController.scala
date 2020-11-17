@@ -24,12 +24,9 @@ import utils.{IdGenerator, Logging}
 import v1.controllers.requestParsers.ListAllBusinessesRequestParser
 import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, NinoFormatError, NotFoundError}
 import v1.models.request.listAllBusinesses.ListAllBusinessesRawData
-import v1.services.{AuditService, EnrolmentsAuthService, ListAllBusinessesService, MtdIdLookupService}
+import v1.services.{EnrolmentsAuthService, ListAllBusinessesService, MtdIdLookupService}
 import cats.implicits._
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import v1.hateoas.HateoasFactory
-import v1.models.audit.{AuditEvent, AuditResponse, ListAllBusinessesAuditDetail}
 import v1.models.response.listAllBusiness.ListAllBusinessesHateoasData
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +38,6 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
                                             requestDataParser: ListAllBusinessesRequestParser,
                                             service: ListAllBusinessesService,
                                             hateoasFactory: HateoasFactory,
-                                            auditService: AuditService,
                                             cc: ControllerComponents)(implicit ec: ExecutionContext)
   extends AuthorisedController(cc) with BaseController with Logging {
 
@@ -72,12 +68,6 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
 
           val response = Json.toJson(vendorResponse)
 
-          auditSubmission(ListAllBusinessesAuditDetail(
-            userDetails = request.userDetails,
-            nino = nino,
-            `X-CorrelationId` = serviceResponse.correlationId,
-            AuditResponse(OK, Right(Some(response)))))
-
           Ok(Json.toJson(vendorResponse))
             .withApiHeaders(serviceResponse.correlationId)
         }
@@ -89,8 +79,6 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
           s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
             s"Error response received with CorrelationId: $resCorrelationId")
 
-        auditSubmission(ListAllBusinessesAuditDetail(request.userDetails, nino,
-          resCorrelationId, AuditResponse(result.header.status, Left(errorWrapper.auditErrors))))
         result
       }.merge
     }
@@ -101,13 +89,7 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
       case NotFoundError                     => NotFound(Json.toJson(errorWrapper))
       case DownstreamError                   => InternalServerError(Json.toJson(errorWrapper))
     }
-  }
 
-  private def auditSubmission(details: ListAllBusinessesAuditDetail)
-                             (implicit hc: HeaderCarrier,
-                              ec: ExecutionContext): Future[AuditResult] = {
-    val event = AuditEvent("ListAllBusinesses", "list-all-businesses", details)
-    auditService.auditEvent(event)
   }
 
 }
