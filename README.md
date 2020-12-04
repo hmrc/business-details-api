@@ -2,20 +2,17 @@ API Example Microservice
 ========================
 
 ## Description 
-
 The business details API allows a developer to:
 - list all businesses
 - retrieve additional information for a user's business details
 
 ## requirements
-                
 - Scala 2.12.x
 - Java 8
 - sbt 1.3.7
 - [Service Manager](https://github.com/hmrc/service-manager)         
       
 ## running the micro-service
-
 Run from the console using: `sbt run` (starts on port 7792 by default)
 
 Start the service manager profile: `sm --start MTDFB_SA`
@@ -27,7 +24,7 @@ sbt it:test
 ```
 
 ## viewing RAML
-To view documentation locally run api-documentation-frontend:
+To view documentation locally ensure the business details API is running and run api-documentation-frontend:
 ```
 ./run_local_with_dependencies.sh
 ```
