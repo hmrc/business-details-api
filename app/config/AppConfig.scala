@@ -16,9 +16,10 @@
 
 package config
 
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+import javax.inject.{Inject, Singleton}
 
 trait AppConfig {
 
@@ -37,6 +38,8 @@ trait AppConfig {
   def featureSwitch: Option[Configuration]
 
   def endpointsEnabled(version: String): Boolean
+
+  def confidenceLevelCheckEnabled: Boolean
 }
 
 @Singleton
@@ -53,6 +56,8 @@ class AppConfigImpl @Inject()(config: ServicesConfig, configuration: Configurati
   def featureSwitch: Option[Configuration] = configuration.getOptional[Configuration](s"feature-switch")
 
   def endpointsEnabled(version: String): Boolean = config.getBoolean(s"api.$version.endpoints.enabled")
+
+  val confidenceLevelCheckEnabled: Boolean = config.getBoolean(s"api.confidence-level-check.enabled")
 }
 
 trait FixedConfig {

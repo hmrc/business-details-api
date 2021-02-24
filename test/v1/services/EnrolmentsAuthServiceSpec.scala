@@ -16,10 +16,11 @@
 
 package v1.services
 
+import mocks.MockAppConfig
 import org.scalamock.handlers.CallHandler
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
+import uk.gov.hmrc.auth.core.authorise.{CompositePredicate, EmptyPredicate, Predicate}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -28,7 +29,7 @@ import v1.models.errors.{DownstreamError, UnauthorisedError}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EnrolmentsAuthServiceSpec extends ServiceSpec {
+class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
 
   trait Test {
     val mockAuthConnector: AuthConnector = mock[AuthConnector]
@@ -42,13 +43,65 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec {
       }
     }
 
-    lazy val target = new EnrolmentsAuthService(mockAuthConnector)
+    lazy val target = new EnrolmentsAuthService(mockAuthConnector, mockAppConfig)
+  }
+
+  "calling .buildPredicate" when {
+    "confidence level checks are on" should {
+      "return a Predicate containing confidence level 200 on top of the provided Predicate" when {
+        "passed a simple Predicate" in new Test {
+          MockedAppConfig.confidenceLevelCheckEnabled.returns(true)
+
+          target.buildPredicate(EmptyPredicate) shouldBe CompositePredicate(EmptyPredicate, ConfidenceLevel.L200)
+        }
+        "passed a complex Predicate" in new Test {
+          MockedAppConfig.confidenceLevelCheckEnabled.returns(true)
+
+          target.buildPredicate(CompositePredicate(AffinityGroup.Agent, Enrolment("HMRC-AS-AGENT"))) shouldBe {
+            CompositePredicate(CompositePredicate(AffinityGroup.Agent, Enrolment("HMRC-AS-AGENT")), ConfidenceLevel.L200)
+          }
+        }
+      }
+    }
+    "confidence level checks are off" should {
+      "return a Predicate containing only the provided Predicate" when {
+        "passed a simple Predicate" in new Test {
+          MockedAppConfig.confidenceLevelCheckEnabled.returns(false)
+
+          target.buildPredicate(EmptyPredicate) shouldBe EmptyPredicate
+        }
+        "passed a complex Predicate" in new Test {
+          MockedAppConfig.confidenceLevelCheckEnabled.returns(false)
+
+          target.buildPredicate(CompositePredicate(AffinityGroup.Agent, Enrolment("HMRC-AS-AGENT"))) shouldBe {
+            CompositePredicate(AffinityGroup.Agent, Enrolment("HMRC-AS-AGENT"))
+          }
+        }
+      }
+    }
   }
 
   "calling .authorised" when {
+    "confidence level checks are on" should {
+      "return user details" in new Test {
+        MockedAppConfig.confidenceLevelCheckEnabled.returns(true)
+
+        val retrievalsResult = new ~(Some(Individual), Enrolments(Set.empty))
+        val expected = Right(UserDetails("", "Individual", None))
+
+        MockedAuthConnector.authorised(CompositePredicate(EmptyPredicate, ConfidenceLevel.L200), authRetrievals)
+          .returns(Future.successful(retrievalsResult))
+
+        private val result = await(target.authorised(EmptyPredicate))
+
+        result shouldBe expected
+      }
+    }
 
     "the user is an authorised individual" should {
       "return the 'Individual' user type in the user details" in new Test {
+
+        MockedAppConfig.confidenceLevelCheckEnabled.returns(false)
 
         val retrievalsResult = new ~(Some(Individual), Enrolments(Set.empty))
         val expected = Right(UserDetails("", "Individual", None))
@@ -64,6 +117,8 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec {
 
     "the user is an authorised organisation" should {
       "return the 'Organisation' user type in the user details" in new Test {
+
+        MockedAppConfig.confidenceLevelCheckEnabled.returns(false)
 
         val retrievalsResult = new ~(Some(Organisation), Enrolments(Set.empty))
         val expected = Right(UserDetails("", "Organisation", None))
@@ -93,6 +148,8 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec {
 
       "return an error" in new Test {
 
+        MockedAppConfig.confidenceLevelCheckEnabled.returns(false)
+
         val expected = Left(DownstreamError)
 
         MockedAuthConnector.authorised(EmptyPredicate, authRetrievals)
@@ -106,6 +163,8 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec {
 
     "the user is not logged in" should {
       "return an unauthenticated error" in new Test {
+
+        MockedAppConfig.confidenceLevelCheckEnabled.returns(false)
 
         val expected = Left(UnauthorisedError)
 
@@ -121,6 +180,8 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec {
     "the user is not authorised" should {
       "return an unauthorised error" in new Test {
 
+        MockedAppConfig.confidenceLevelCheckEnabled.returns(false)
+
         val expected = Left(UnauthorisedError)
 
         MockedAuthConnector.authorised(EmptyPredicate, authRetrievals)
@@ -134,7 +195,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec {
 
     "calling getAgentReferenceFromEnrolments" should {
       "return a valid AgentReferenceNumber" when {
-        "a valid agent Enrolment is supplied" in new Test{
+        "a valid agent Enrolment is supplied" in new Test {
           val expectedArn = "123567890"
           val actualArn: Option[String] = target.getAgentReferenceFromEnrolments(Enrolments(
             Set(

@@ -27,12 +27,22 @@ trait MockAppConfig extends MockFactory {
 
   object MockedAppConfig {
     def desBaseUrl: CallHandler[String] = (mockAppConfig.desBaseUrl _: () => String).expects()
+
     def desToken: CallHandler[String] = (mockAppConfig.desToken _).expects()
+
     def desEnvironment: CallHandler[String] = (mockAppConfig.desEnv _).expects()
+
     def mtdIdBaseUrl: CallHandler[String] = (mockAppConfig.mtdIdBaseUrl _: () => String).expects()
+
     def featureSwitch: CallHandler[Option[Configuration]] = (mockAppConfig.featureSwitch _: () => Option[Configuration]).expects()
-    def apiGatewayContext: CallHandler[String]            = (mockAppConfig.apiGatewayContext _: () => String).expects()
+
+    def apiGatewayContext: CallHandler[String] = (mockAppConfig.apiGatewayContext _: () => String).expects()
+
     def apiStatus: CallHandler[String] = (mockAppConfig.apiStatus: String => String).expects("1.0")
+
     def endpointsEnabled: CallHandler[Boolean] = (mockAppConfig.endpointsEnabled: String => Boolean).expects("1.0")
+
+    def confidenceLevelCheckEnabled: CallHandler[Boolean] = (mockAppConfig.confidenceLevelCheckEnabled _: () => Boolean).expects()
   }
+
 }
