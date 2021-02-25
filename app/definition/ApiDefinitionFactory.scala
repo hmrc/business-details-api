@@ -29,7 +29,7 @@ class ApiDefinitionFactory @Inject()(appConfig: AppConfig) {
   private val readScope = "read:self-assessment"
   private val writeScope = "write:self-assessment"
 
-  def confidenceLevel: Option[Int] = if(appConfig.confidenceLevelCheckEnabled) Some(ConfidenceLevel.L200.level) else None
+  def confidenceLevel: Option[Int] = if(appConfig.confidenceLevelConfig.definitionEnabled) Some(ConfidenceLevel.L200.level) else None
 
   lazy val definition: Definition =
     Definition(

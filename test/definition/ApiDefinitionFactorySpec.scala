@@ -17,6 +17,7 @@
 package definition
 
 import com.typesafe.config.ConfigFactory
+import config.ConfidenceLevelConfig
 import definition.APIStatus.{ALPHA, BETA}
 import definition.Versions.VERSION_1
 import mocks.MockAppConfig
@@ -40,7 +41,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
         MockedAppConfig.featureSwitch returns None
         MockedAppConfig.apiStatus returns "1.0"
         MockedAppConfig.endpointsEnabled returns true
-        MockedAppConfig.confidenceLevelCheckEnabled returns true anyNumberOfTimes()
+        MockedAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(definitionEnabled = true, authValidationEnabled = true) anyNumberOfTimes()
 
         private val readScope = "read:self-assessment"
         private val writeScope = "write:self-assessment"
@@ -86,10 +87,10 @@ class ApiDefinitionFactorySpec extends UnitSpec {
       (true, Some(confidenceLevel)),
       (false, None)
     ).foreach {
-      case (confidenceLevelCheck, cl) =>
-        s"confidence-level-check is $confidenceLevelCheck in config" should {
+      case (definitionEnabled, cl) =>
+        s"confidence-level-check.definition.enabled is $definitionEnabled in config" should {
           s"return $cl" in new Test {
-            MockedAppConfig.confidenceLevelCheckEnabled returns confidenceLevelCheck
+            MockedAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(definitionEnabled = definitionEnabled, authValidationEnabled = true)
             apiDefinitionFactory.confidenceLevel shouldBe cl
           }
         }

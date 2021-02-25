@@ -45,7 +45,7 @@ class EnrolmentsAuthService @Inject()(val connector: AuthConnector, val appConfi
     .map(_.value)
 
   def buildPredicate(predicate: Predicate): Predicate = {
-    if(appConfig.confidenceLevelCheckEnabled) predicate and ConfidenceLevel.L200 else predicate
+    if(appConfig.confidenceLevelConfig.authValidationEnabled) predicate and ConfidenceLevel.L200 else predicate
   }
 
   def authorised(predicate: Predicate)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AuthOutcome] = {
