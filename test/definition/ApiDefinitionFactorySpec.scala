@@ -33,7 +33,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
     MockedAppConfig.apiGatewayContext returns "individuals/business/details"
   }
 
-  private val confidenceLevel: Int = ConfidenceLevel.L200.level
+  private val confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200
 
   "definition" when {
     "called" should {
@@ -53,13 +53,13 @@ class ApiDefinitionFactorySpec extends UnitSpec {
                 key = readScope,
                 name = "View your Self Assessment information",
                 description = "Allow read access to self assessment data",
-                Some(confidenceLevel)
+                confidenceLevel
               ),
               Scope(
                 key = writeScope,
                 name = "Change your Self Assessment information",
                 description = "Allow write access to self assessment data",
-                Some(confidenceLevel)
+                confidenceLevel
               )
             ),
             api = APIDefinition(
@@ -84,8 +84,8 @@ class ApiDefinitionFactorySpec extends UnitSpec {
 
   "confidenceLevel" when {
     Seq(
-      (true, Some(confidenceLevel)),
-      (false, None)
+      (true, ConfidenceLevel.L200),
+      (false, ConfidenceLevel.L50)
     ).foreach {
       case (definitionEnabled, cl) =>
         s"confidence-level-check.definition.enabled is $definitionEnabled in config" should {

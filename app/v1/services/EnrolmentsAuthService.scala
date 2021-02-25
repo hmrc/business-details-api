@@ -44,9 +44,14 @@ class EnrolmentsAuthService @Inject()(val connector: AuthConnector, val appConfi
     .flatMap(_.getIdentifier("AgentReferenceNumber"))
     .map(_.value)
 
-  def buildPredicate(predicate: Predicate): Predicate = {
-    if(appConfig.confidenceLevelConfig.authValidationEnabled) predicate and ConfidenceLevel.L200 else predicate
-  }
+  def buildPredicate(predicate: Predicate): Predicate =
+    predicate and {
+      if (appConfig.confidenceLevelConfig.authValidationEnabled) {
+        (Individual and ConfidenceLevel.L200) or Organisation or Agent
+      } else {
+        Individual or Organisation or Agent
+      }
+    }
 
   def authorised(predicate: Predicate)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AuthOutcome] = {
     authFunction.authorised(buildPredicate(predicate)).retrieve(affinityGroup and authorisedEnrolments) {
@@ -74,11 +79,10 @@ class EnrolmentsAuthService @Inject()(val connector: AuthConnector, val appConfi
     }
   }
 
-  private def retrieveAgentDetails()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] = {
-    authFunction.authorised(buildPredicate(AffinityGroup.Agent and Enrolment("HMRC-AS-AGENT")))
+  private def retrieveAgentDetails()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[String]] =
+    authFunction.authorised(AffinityGroup.Agent and Enrolment("HMRC-AS-AGENT"))
       .retrieve(Retrievals.agentCode and Retrievals.authorisedEnrolments) {
         case _ ~ enrolments => Future.successful(getAgentReferenceFromEnrolments(enrolments))
         case _              => Future.successful(None)
       }
-  }
 }

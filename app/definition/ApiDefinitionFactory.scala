@@ -18,10 +18,10 @@ package definition
 
 import config.{AppConfig, FeatureSwitch}
 import definition.Versions._
-
-import javax.inject.{Inject, Singleton}
 import play.api.Logger
 import uk.gov.hmrc.auth.core.ConfidenceLevel
+
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ApiDefinitionFactory @Inject()(appConfig: AppConfig) {
@@ -29,7 +29,7 @@ class ApiDefinitionFactory @Inject()(appConfig: AppConfig) {
   private val readScope = "read:self-assessment"
   private val writeScope = "write:self-assessment"
 
-  def confidenceLevel: Option[Int] = if(appConfig.confidenceLevelConfig.definitionEnabled) Some(ConfidenceLevel.L200.level) else None
+  def confidenceLevel: ConfidenceLevel = if (appConfig.confidenceLevelConfig.definitionEnabled) ConfidenceLevel.L200 else ConfidenceLevel.L50
 
   lazy val definition: Definition =
     Definition(
