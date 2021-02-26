@@ -45,13 +45,9 @@ class EnrolmentsAuthService @Inject()(val connector: AuthConnector, val appConfi
     .map(_.value)
 
   def buildPredicate(predicate: Predicate): Predicate =
-    predicate and {
-      if (appConfig.confidenceLevelConfig.authValidationEnabled) {
-        (Individual and ConfidenceLevel.L200) or Organisation or Agent
-      } else {
-        Individual or Organisation or Agent
-      }
-    }
+    if (appConfig.confidenceLevelConfig.authValidationEnabled) {
+      predicate and ((Individual and ConfidenceLevel.L200) or Organisation or Agent)
+    } else predicate
 
   def authorised(predicate: Predicate)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AuthOutcome] = {
     authFunction.authorised(buildPredicate(predicate)).retrieve(affinityGroup and authorisedEnrolments) {
