@@ -28,6 +28,7 @@ class ApiDefinitionFactory @Inject()(appConfig: AppConfig) {
 
   private val readScope = "read:self-assessment"
   private val writeScope = "write:self-assessment"
+  private val logger: Logger = Logger(this.getClass)
 
   def confidenceLevel: ConfidenceLevel = if (appConfig.confidenceLevelConfig.definitionEnabled) ConfidenceLevel.L200 else ConfidenceLevel.L50
 
@@ -67,7 +68,7 @@ class ApiDefinitionFactory @Inject()(appConfig: AppConfig) {
   private[definition] def buildAPIStatus(version: String): APIStatus = {
     APIStatus.parser.lift(appConfig.apiStatus(version))
       .getOrElse {
-        Logger.error(s"[ApiDefinition][buildApiStatus] no API Status found in config.  Reverting to Alpha")
+        logger.error(s"[ApiDefinition][buildApiStatus] no API Status found in config.  Reverting to Alpha")
         APIStatus.ALPHA
       }
   }
