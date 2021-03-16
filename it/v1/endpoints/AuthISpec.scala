@@ -88,7 +88,6 @@ class AuthISpec extends IntegrationBaseSpec {
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
-          AuthStub.authorised()
           MtdIdLookupStub.internalServerError(nino)
         }
 
