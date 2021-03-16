@@ -34,7 +34,7 @@ trait DesResponseMappingSupport {
       businessDetails => businessId == businessDetails.businessId
     }
 
-    filteredBusinesses match {
+    filteredBusinesses.toList match {
       case business :: Nil => Right(ResponseWrapper(responseWrapper.correlationId, business.toMtd))
       case Nil => Left(ErrorWrapper(responseWrapper.correlationId, NoBusinessFoundError))
       case _ :: _ => Left(ErrorWrapper(responseWrapper.correlationId, DownstreamError))
