@@ -32,9 +32,9 @@ trait MockHttpClient extends MockFactory {
 
     def get[T](url: String, requiredHeaders: (String, String)*): CallHandler[Future[T]] = {
       (mockHttpClient
-        .GET(_: String)(_: HttpReads[T], _: HeaderCarrier, _: ExecutionContext))
-        .expects(where { (actualUrl, _, hc, _) =>
-          url == actualUrl && requiredHeaders.forall(h => hc.headers(Seq()).contains(h))
+        .GET(_: String, _: Seq[(String, String)], _: Seq[(String, String)])(_: HttpReads[T], _: HeaderCarrier, _: ExecutionContext))
+        .expects(where { (actualUrl, _, _, _, hc, _) =>
+          url == actualUrl && requiredHeaders.forall((hc.extraHeaders ++ hc.headers(requiredHeaders.map(_._1))).contains)
         })
     }
 
@@ -42,7 +42,7 @@ trait MockHttpClient extends MockFactory {
       (mockHttpClient
         .POST[I, T](_: String, _: I, _: Seq[(String, String)])(_: Writes[I], _: HttpReads[T], _: HeaderCarrier, _: ExecutionContext))
         .expects(where { (actualUrl, actualBody, _, _, _, hc, _) =>
-          url == actualUrl && body == actualBody && requiredHeaders.forall(h => hc.headers(Seq()).contains(h))
+          url == actualUrl && body == actualBody && requiredHeaders.forall((hc.extraHeaders ++ hc.headers(requiredHeaders.map(_._1))).contains)
         })
     }
   }
