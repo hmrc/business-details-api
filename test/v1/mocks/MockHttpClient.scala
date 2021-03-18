@@ -34,7 +34,7 @@ trait MockHttpClient extends MockFactory {
       (mockHttpClient
         .GET(_: String)(_: HttpReads[T], _: HeaderCarrier, _: ExecutionContext))
         .expects(where { (actualUrl, _, hc, _) =>
-          url == actualUrl && requiredHeaders.forall(h => hc.headers.contains(h))
+          url == actualUrl && requiredHeaders.forall(h => hc.headers(Seq()).contains(h))
         })
     }
 
@@ -42,7 +42,7 @@ trait MockHttpClient extends MockFactory {
       (mockHttpClient
         .POST[I, T](_: String, _: I, _: Seq[(String, String)])(_: Writes[I], _: HttpReads[T], _: HeaderCarrier, _: ExecutionContext))
         .expects(where { (actualUrl, actualBody, _, _, _, hc, _) =>
-          url == actualUrl && body == actualBody && requiredHeaders.forall(h => hc.headers.contains(h))
+          url == actualUrl && body == actualBody && requiredHeaders.forall(h => hc.headers(Seq()).contains(h))
         })
     }
   }
