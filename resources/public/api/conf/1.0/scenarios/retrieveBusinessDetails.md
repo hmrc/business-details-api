@@ -27,6 +27,15 @@
             </td>
         </tr>
         <tr>
+            <td><p>FOREIGN_PROPERTY</p></td>
+            <td><p>Simulate a successful response with a foreign-property business.</p>
+            <p>Use the following businessId for this scenario:</p>
+            <ul>
+              <li><p>XAIS12345678903</p></li>
+            </ul>
+            </td>
+        </tr>        
+        <tr>
             <td><p>UNSPECIFIED</p></td>       
             <td><p>Simulate a successful response with a property-unspecified business.</p>
             <p>Use the following businessId for this scenario:</p>
