@@ -16,8 +16,12 @@
             <td><p>Simulate a successful response with a uk-property business.</p></td>
         </tr>
         <tr>
+            <td><p>FOREIGN_PROPERTY</p></td>
+            <td><p>Simulate a successful response with a foreign-property business.</p></td>
+        </tr>
+        <tr>
             <td><p>BUSINESS_AND_PROPERTY</p></td>
-            <td><p>Simulate a successful response with both a self-employment business and a uk-property business.</p></td>
+            <td><p>Simulate a successful response with a self-employment, uk-property and foreign-property business.</p></td>
         </tr>
         <tr>
             <td><p>UNSPECIFIED</p></td>
