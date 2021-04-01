@@ -18,8 +18,7 @@ package v1.connectors
 
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 import v1.connectors.httpparsers.StandardDesHttpParser._

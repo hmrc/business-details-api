@@ -27,7 +27,7 @@ import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
-import uk.gov.hmrc.play.bootstrap.http.JsonErrorHandler
+import uk.gov.hmrc.play.bootstrap.backend.http.JsonErrorHandler
 import v1.models.errors._
 
 import scala.concurrent._
@@ -37,7 +37,7 @@ class ErrorHandler @Inject()(
                               config: Configuration,
                               auditConnector: AuditConnector,
                               httpAuditEvent: HttpAuditEvent
-                            )(implicit ec: ExecutionContext) extends JsonErrorHandler(auditConnector, httpAuditEvent, config) {
+                            )(implicit ec: ExecutionContext) extends JsonErrorHandler(auditConnector, httpAuditEvent, config) with Logging {
 
   import httpAuditEvent.dataEvent
 
@@ -45,7 +45,7 @@ class ErrorHandler @Inject()(
 
     implicit val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    Logger.warn(s"[ErrorHandler][onClientError] error in version 1, for (${request.method}) [${request.uri}] with status:" +
+    logger.warn(s"[ErrorHandler][onClientError] error in version 1, for (${request.method}) [${request.uri}] with status:" +
       s" $statusCode and message: $message")
     statusCode match {
       case BAD_REQUEST =>
@@ -79,7 +79,7 @@ class ErrorHandler @Inject()(
   override def onServerError(request: RequestHeader, ex: Throwable): Future[Result] = {
     implicit val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    Logger.warn(s"[ErrorHandler][onServerError] Internal server error in version 1, for (${request.method}) [${request.uri}] -> ", ex)
+    logger.warn(s"[ErrorHandler][onServerError] Internal server error in version 1, for (${request.method}) [${request.uri}] -> ", ex)
 
     val (status, errorCode, eventType) = ex match {
       case _: NotFoundException => (NOT_FOUND, NotFoundError, "ResourceNotFound")
