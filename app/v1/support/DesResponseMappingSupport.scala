@@ -21,7 +21,7 @@ import v1.controllers.EndpointLogContext
 import v1.models.errors._
 import v1.models.outcomes.ResponseWrapper
 import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponse
-import v1.models.response.retrieveBusinessDetails.des.RetrieveBusinessDetailsDesResponse
+import v1.models.response.retrieveBusinessDetails.des.{BusinessDetails, RetrieveBusinessDetailsDesResponse}
 
 trait DesResponseMappingSupport {
   self: Logging =>
@@ -30,8 +30,13 @@ trait DesResponseMappingSupport {
     responseWrapper: ResponseWrapper[RetrieveBusinessDetailsDesResponse],
     businessId: String
   ): Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]] = {
-    val filteredBusinesses = responseWrapper.responseData.businessDetails.filter {
+    val filteredBusinesses: Seq[BusinessDetails] = responseWrapper.responseData.businessDetails.filter {
       businessDetails => businessId == businessDetails.businessId
+    }
+
+    logger.error{
+      filteredBusinesses.toString()
+
     }
 
     filteredBusinesses match {

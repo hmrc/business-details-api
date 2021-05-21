@@ -27,11 +27,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ListAllBusinessesConnector @Inject()(val http: HttpClient,
-                                           val appConfig: AppConfig) extends BaseDesConnector {
+                                           val appConfig: AppConfig) extends BaseDownstreamConnector {
   def listAllBusinesses(request: ListAllBusinessesRequest)
                        (implicit hc: HeaderCarrier, ec: ExecutionContext, correlationId: String): Future[ListConnectorOutcome] = {
 
-    val url = s"registration/business-details/nino/${request.nino}"
+    val url = s"registration/business-details/nino/${request.nino.nino}"
     get(
       DesUri[ListAllBusinessesResponse[Business]](s"$url")
     )

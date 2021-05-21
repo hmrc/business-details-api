@@ -16,7 +16,7 @@
 
 package definition
 
-import config.{AppConfig, FeatureSwitch}
+import config.AppConfig
 import definition.Versions._
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 import javax.inject.{Inject, Singleton}
@@ -24,7 +24,6 @@ import utils.Logging
 
 @Singleton
 class ApiDefinitionFactory @Inject()(appConfig: AppConfig) extends Logging {
-
   private val readScope = "read:self-assessment"
   private val writeScope = "write:self-assessment"
 
@@ -54,7 +53,6 @@ class ApiDefinitionFactory @Inject()(appConfig: AppConfig) extends Logging {
         versions = Seq(
           APIVersion(
             version = VERSION_1,
-            access = buildAllowListingAccess(),
             status = buildAPIStatus(VERSION_1),
             endpointsEnabled = appConfig.endpointsEnabled(VERSION_1)
           )
@@ -69,10 +67,5 @@ class ApiDefinitionFactory @Inject()(appConfig: AppConfig) extends Logging {
         logger.error(s"[ApiDefinition][buildApiStatus] no API Status found in config.  Reverting to Alpha")
         APIStatus.ALPHA
       }
-  }
-
-  private[definition] def buildAllowListingAccess(): Option[Access] = {
-    val featureSwitch = FeatureSwitch(appConfig.featureSwitch)
-    if (featureSwitch.isAllowListingEnabled) Some(Access("PRIVATE", featureSwitch.allowListedApplicationIds)) else None
   }
 }

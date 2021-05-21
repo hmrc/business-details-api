@@ -25,7 +25,7 @@ class ListAllBusinessesValidatorSpec extends UnitSpec{
   private val validNino     = "AA123456A"
   private val invalidNino   = "beans"
 
-  private val listAllBusinessesRawData: (String) => ListAllBusinessesRawData = (nino) => ListAllBusinessesRawData(nino)
+  private val listAllBusinessesRawData: String => ListAllBusinessesRawData = (nino) => ListAllBusinessesRawData(nino)
 
   val validator = new ListAllBusinessesValidator
 

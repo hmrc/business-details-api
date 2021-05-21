@@ -17,7 +17,7 @@
 package v1.connectors
 
 import mocks.MockAppConfig
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 import v1.mocks.MockHttpClient
 import v1.models.domain.TypeOfBusiness
 import v1.models.domain.accountingType.AccountingType
@@ -35,9 +35,11 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
   class Test extends MockHttpClient with MockAppConfig {
     val connector: RetrieveBusinessDetailsConnector = new RetrieveBusinessDetailsConnector(http = mockHttpClient, appConfig = mockAppConfig)
     val desRequestHeaders: Seq[(String, String)] = Seq("Environment" -> "des-environment", "Authorization" -> s"Bearer des-token")
-    MockedAppConfig.desBaseUrl returns baseUrl
-    MockedAppConfig.desToken returns "des-token"
-    MockedAppConfig.desEnvironment returns "des-environment"
+
+    MockAppConfig.desBaseUrl returns baseUrl
+    MockAppConfig.desToken returns "des-token"
+    MockAppConfig.desEnvironment returns "des-environment"
+    MockAppConfig.desEnvironmentHeaders returns Some(allowedDesHeaders)
   }
 
   "retrieve business details" should {
@@ -61,8 +63,10 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
         ))))
         MockedHttpClient.
           get(
-            url = s"$baseUrl/registration/business-details/nino/${request.nino}",
-            requiredHeaders = "Environment" -> "des-environment", "Authorization" -> s"Bearer des-token"
+            url = s"$baseUrl/registration/business-details/nino/${request.nino.nino}",
+            config = dummyDesHeaderCarrierConfig,
+            requiredHeaders = requiredDesHeaders,
+            excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
           ).returns(Future.successful(outcome))
         await(connector.retrieveBusinessDetails(request)) shouldBe outcome
       }
