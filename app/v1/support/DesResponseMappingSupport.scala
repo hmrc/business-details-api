@@ -30,14 +30,9 @@ trait DesResponseMappingSupport {
     responseWrapper: ResponseWrapper[RetrieveBusinessDetailsDesResponse],
     businessId: String
   ): Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]] = {
-    val filteredBusinesses: Seq[BusinessDetails] = responseWrapper.responseData.businessDetails.filter {
+    val filteredBusinesses: List[BusinessDetails] = responseWrapper.responseData.businessDetails.filter {
       businessDetails => businessId == businessDetails.businessId
-    }
-
-    logger.error{
-      filteredBusinesses.toString()
-
-    }
+    }.toList
 
     filteredBusinesses match {
       case business :: Nil => Right(ResponseWrapper(responseWrapper.correlationId, business.toMtd))
