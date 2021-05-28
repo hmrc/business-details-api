@@ -17,32 +17,30 @@
 package v1.connectors
 
 import config.AppConfig
-import play.api.libs.json.Writes
-import uk.gov.hmrc.http.logging.Authorization
+import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
-import utils.Logging
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait BaseDesConnector extends Logging {
+trait BaseDownstreamConnector {
   val http: HttpClient
   val appConfig: AppConfig
 
-  private[connectors] def desHeaderCarrier(implicit hc: HeaderCarrier, correlationId: String): HeaderCarrier =
-    hc.copy(authorization = Some(Authorization(s"Bearer ${appConfig.desToken}")))
-      .withExtraHeaders("Environment" -> appConfig.desEnv, "CorrelationId" -> correlationId)
+  val logger: Logger = Logger(this.getClass)
 
-  def post[Body: Writes, Resp](body: Body, uri: DesUri[Resp])(implicit ec: ExecutionContext,
-                                                              hc: HeaderCarrier,
-                                                              httpReads: HttpReads[DesOutcome[Resp]],
-                                                              correlationId: String): Future[DesOutcome[Resp]] = {
-
-    def doPost(implicit hc: HeaderCarrier): Future[DesOutcome[Resp]] =
-      http.POST(s"${appConfig.desBaseUrl}/${uri.value}", body)
-
-
-    doPost(desHeaderCarrier(hc, correlationId))
-  }
+  private def downstreamHeaderCarrier(additionalHeaders: Seq[String] = Seq.empty)(implicit hc: HeaderCarrier,
+                                                                                  correlationId: String): HeaderCarrier =
+    HeaderCarrier(
+      extraHeaders = hc.extraHeaders ++
+        // Contract headers
+        Seq(
+          "Authorization" -> s"Bearer ${appConfig.desToken}",
+          "Environment" -> appConfig.desEnv,
+          "CorrelationId" -> correlationId
+        ) ++
+        // Other headers (i.e Gov-Test-Scenario, Content-Type)
+        hc.headers(additionalHeaders ++ appConfig.desEnvironmentHeaders.getOrElse(Seq.empty))
+    )
 
   def get[Resp](uri: DesUri[Resp])(implicit ec: ExecutionContext,
                                    hc: HeaderCarrier,
@@ -50,9 +48,8 @@ trait BaseDesConnector extends Logging {
                                    correlationId: String): Future[DesOutcome[Resp]] = {
 
     def doGet(implicit hc: HeaderCarrier): Future[DesOutcome[Resp]] =
-      http.GET(s"${appConfig.desBaseUrl}/${uri.value}")
+      http.GET(url = s"${appConfig.desBaseUrl}/${uri.value}")
 
-    doGet(desHeaderCarrier(hc, correlationId))
+    doGet(downstreamHeaderCarrier())
   }
-
 }

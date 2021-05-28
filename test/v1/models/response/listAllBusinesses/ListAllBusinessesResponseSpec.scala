@@ -301,7 +301,7 @@ class ListAllBusinessesResponseSpec  extends UnitSpec {
     class Test extends MockAppConfig {
       val hateoasFactory = new HateoasFactory(mockAppConfig)
       val nino           = "someNino"
-      MockedAppConfig.apiGatewayContext.returns("individuals/business/details").anyNumberOfTimes
+      MockAppConfig.apiGatewayContext.returns("individuals/business/details").anyNumberOfTimes
     }
 
     "expose the correct links for list" in new Test {

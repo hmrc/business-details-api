@@ -18,7 +18,7 @@ package v1.controllers
 
 import play.api.libs.json.Json
 import play.api.mvc.Result
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
@@ -42,10 +42,15 @@ class ListAllBusinessesControllerSpec
     with MockListAllBusinessesService
     with MockHateoasFactory
     with MockListAllBusinessesRequestParser
-    with MockIdGenerator{
+    with MockIdGenerator {
+
+  private val validNino = "AA123456A"
+  val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  private val testHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
+  private val testInnerHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-inner-relationship")
 
   trait Test {
-    val hc = HeaderCarrier()
+    val hc: HeaderCarrier = HeaderCarrier()
 
     val controller = new ListAllBusinessesController(
       authService = mockEnrolmentsAuthService,
@@ -56,15 +61,10 @@ class ListAllBusinessesControllerSpec
       cc = cc,
       idGenerator = mockIdGenerator
     )
-    MockedMtdIdLookupService.lookup(validNino).returns(Future.successful(Right("test-mtd-id")))
+    MockMtdIdLookupService.lookup(validNino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
     MockIdGenerator.getCorrelationId.returns(correlationId)
   }
-
-  private val validNino = "AA123456A"
-  val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-  private val testHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
-  private val testInnerHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-inner-relationship")
 
   private val responseBody = Json.parse(
     """
@@ -97,7 +97,7 @@ class ListAllBusinessesControllerSpec
   private val business = Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS"))
   private val responseData = ListAllBusinessesResponse(Seq(business))
 
-  val hateoasResponse = ListAllBusinessesResponse(Seq(HateoasWrapper(business, Seq(testInnerHateoasLink))))
+  val hateoasResponse: ListAllBusinessesResponse[HateoasWrapper[Business]] = ListAllBusinessesResponse(Seq(HateoasWrapper(business, Seq(testInnerHateoasLink))))
 
   private val requestData = ListAllBusinessesRequest(Nino(validNino))
 

@@ -18,7 +18,7 @@ package v1.controllers
 
 import play.api.libs.json.Json
 import play.api.mvc.Result
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.MockIdGenerator
 import v1.mocks.hateoas.MockHateoasFactory
@@ -45,6 +45,11 @@ class RetrieveBusinessDetailsControllerSpec
     with MockRetrieveBusinessDetailsRequestParser
     with MockIdGenerator {
 
+  private val validNino = "AA123456A"
+  private val validBusinessId = "XAIS12345678910"
+  val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  private val testHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
+
   trait Test {
     val hc: HeaderCarrier = HeaderCarrier()
 
@@ -59,14 +64,9 @@ class RetrieveBusinessDetailsControllerSpec
     )
 
     MockIdGenerator.getCorrelationId.returns(correlationId)
-    MockedMtdIdLookupService.lookup(validNino).returns(Future.successful(Right("test-mtd-id")))
+    MockMtdIdLookupService.lookup(validNino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
   }
-
-  private val validNino = "AA123456A"
-  private val validBusinessId = "XAIS12345678910"
-  val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-  private val testHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
 
   private val responseBody = Json.parse(
     """

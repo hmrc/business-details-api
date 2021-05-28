@@ -16,6 +16,6 @@
 
 package v1.models.request.retrieveBusinessDetails
 
-import uk.gov.hmrc.domain.Nino
+import v1.models.domain.Nino
 
 case class RetrieveBusinessDetailsRequest(nino: Nino, businessId: String)

@@ -26,13 +26,11 @@ import v1.models.response.retrieveBusinessDetails.des.RetrieveBusinessDetailsDes
 import scala.concurrent.{ExecutionContext, Future}
 
 class RetrieveBusinessDetailsConnector @Inject()(val http: HttpClient,
-                                                 val appConfig: AppConfig) extends BaseDesConnector {
+                                                 val appConfig: AppConfig) extends BaseDownstreamConnector {
 def retrieveBusinessDetails(request: RetrieveBusinessDetailsRequest)
                            (implicit hc: HeaderCarrier, ec: ExecutionContext, correlationId: String): Future[DesOutcome[RetrieveBusinessDetailsDesResponse]] = {
 
-    val url = s"registration/business-details/nino/${request.nino}"
-    get(
-      DesUri[RetrieveBusinessDetailsDesResponse](s"$url")
-    )
+    val url = s"registration/business-details/nino/${request.nino.nino}"
+    get(DesUri[RetrieveBusinessDetailsDesResponse](s"$url"))
   }
 }
