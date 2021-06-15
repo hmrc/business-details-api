@@ -22,9 +22,10 @@
             "example": "self-employment"
           },
           "businessId": {
-            "description": "A unique identifier for the business income source.",
+            "description": "A unique identifier for the business income source. Previously known as selfEmploymentId.",
             "type": "string",
-            "example": "XAIS12345678910"
+            "example": "XAIS12345678910",
+            "pattern": "^X[a-zA-Z0-9]{1}IS[0-9]{11}$"
           },
           "tradingName": {
             "description": "The trading name of the business.",
