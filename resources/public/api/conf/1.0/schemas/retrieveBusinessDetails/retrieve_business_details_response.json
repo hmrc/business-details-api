@@ -6,8 +6,9 @@
   "properties": {
     "businessId": {
       "type": "string",
-      "description": "A unique identifier for the business income source.",
-      "example": "XAIS12345678910"
+      "description": "A unique identifier for the business income source. Previously known as selfEmploymentId.",
+      "example": "XAIS12345678910",
+      "pattern": "^X[a-zA-Z0-9]{1}IS[0-9]{11}$"
     },
     "typeOfBusiness": {
       "type": "string",
