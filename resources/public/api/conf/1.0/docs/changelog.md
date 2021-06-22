@@ -1,1 +1,1 @@
-You can find the changelog in the [business-details-api](https://github.com/hmrc/business-details-api/wiki/Changelog) GitHub wiki.
+You can find the changelog in the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/wiki) GitHub wiki.

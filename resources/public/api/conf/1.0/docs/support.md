@@ -1,2 +1,2 @@
 * Raise non-technical or platform-related issues with the [Software Development Support Team (SDST)](https://developer.service.hmrc.gov.uk/developer/support).
-* Raise technical issues on the [business-details-api](https://github.com/hmrc/business-details-api/issues) GitHub page.
+* Raise technical issues on the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/issues) GitHub page.
