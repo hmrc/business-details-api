@@ -23,8 +23,13 @@ To view documentation locally ensure the Business Details API is running, and ru
 `./run_local_with_dependencies.sh`
 Then go to http://localhost:9680/api-documentation/docs/api/preview and use this port and version:
 `http://localhost:7792/api/conf/1.0/application.raml`
-## Reporting Issues
-You can create a GitHub issue [here](https://github.com/hmrc/business-details-api/issues)
+
+## Changelog
+You can see our changelog [here](https://github.com/hmrc/income-tax-mtd-changelog/wiki)
+
+## Support and Reporting Issues
+You can create a GitHub issue [here](https://github.com/hmrc/income-tax-mtd-changelog/issues)
+
 ## API Reference / Documentation 
 Available at [HMRC Developer Hub](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api/1.0)
 ## License
