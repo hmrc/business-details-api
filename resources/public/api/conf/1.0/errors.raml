@@ -38,6 +38,17 @@ traits:
                 description: The format of the supplied NINO field is not valid.
                 value:
                   code: FORMAT_NINO
+  sandboxError:
+    responses:
+      400:
+        body:
+          application/json:
+            type: types.errorResponse
+            examples:
+              sandboxError:
+                description: The request did not match any available Sandbox data. Check that the request URI, API version and Gov-Test-Scenario are correct. This error will only be returned in the Sandbox environment.
+                value:
+                  code: SANDBOX_ERROR
   formatBusinessId:
     responses:
       400:

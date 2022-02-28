@@ -192,7 +192,8 @@ class RetrieveBusinessDetailsControllerSpec
           (NinoFormatError, BAD_REQUEST),
           (NotFoundError, NOT_FOUND),
           (DownstreamError, INTERNAL_SERVER_ERROR),
-          (NoBusinessFoundError, NOT_FOUND)
+          (NoBusinessFoundError, NOT_FOUND),
+          (UnmatchedStubError, BAD_REQUEST)
         )
 
         input.foreach(args => (serviceErrors _).tupled(args))

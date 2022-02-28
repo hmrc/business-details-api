@@ -25,7 +25,7 @@ import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockListAllBusinessesRequestParser
 import v1.mocks.services.{MockEnrolmentsAuthService, MockListAllBusinessesService, MockMtdIdLookupService}
 import v1.models.domain.TypeOfBusiness
-import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, MtdError, NinoFormatError}
+import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, MtdError, NinoFormatError, UnmatchedStubError}
 import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.hateoas.Method.GET
 import v1.models.outcomes.ResponseWrapper
@@ -181,6 +181,7 @@ class ListAllBusinessesControllerSpec
           (NinoFormatError, BAD_REQUEST),
           (BadRequestError, BAD_REQUEST),
           (DownstreamError, INTERNAL_SERVER_ERROR),
+          (UnmatchedStubError, BAD_REQUEST)
         )
 
         input.foreach(args => (serviceErrors _).tupled(args))

@@ -289,7 +289,8 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           (Status.NOT_FOUND, "NOT_FOUND_NINO", Status.NOT_FOUND, NotFoundError),
           (Status.NOT_FOUND, "NOT_FOUND_MTDBSA", Status.INTERNAL_SERVER_ERROR, DownstreamError),
           (Status.INTERNAL_SERVER_ERROR, "SERVER_ERROR", Status.INTERNAL_SERVER_ERROR, DownstreamError),
-          (Status.SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", Status.INTERNAL_SERVER_ERROR, DownstreamError)
+          (Status.SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", Status.INTERNAL_SERVER_ERROR, DownstreamError),
+          (Status.NOT_FOUND, "UNMATCHED_STUB_ERROR", Status.BAD_REQUEST, UnmatchedStubError)
         )
 
         input.foreach(args => (serviceErrorTest _).tupled(args))

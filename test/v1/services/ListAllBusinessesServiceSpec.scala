@@ -68,7 +68,8 @@ class ListAllBusinessesServiceSpec extends ServiceSpec {
         ("NOT_FOUND_NINO", NotFoundError),
         ("NOT_FOUND_MTDBSA", DownstreamError),
         ("SERVER_ERROR", DownstreamError),
-        ("SERVICE_UNAVAILABLE", DownstreamError)
+        ("SERVICE_UNAVAILABLE", DownstreamError),
+        ("UNMATCHED_STUB_ERROR", UnmatchedStubError)
       )
       input.foreach(args => (serviceError _).tupled(args))
     }
