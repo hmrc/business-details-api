@@ -17,18 +17,18 @@
 package v1.controllers
 
 import cats.data.EitherT
-import javax.inject.{Inject, Singleton}
+import cats.implicits._
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.{IdGenerator, Logging}
 import v1.controllers.requestParsers.ListAllBusinessesRequestParser
-import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, NinoFormatError, NotFoundError}
-import v1.models.request.listAllBusinesses.ListAllBusinessesRawData
-import v1.services.{EnrolmentsAuthService, ListAllBusinessesService, MtdIdLookupService}
-import cats.implicits._
 import v1.hateoas.HateoasFactory
+import v1.models.errors._
+import v1.models.request.listAllBusinesses.ListAllBusinessesRawData
 import v1.models.response.listAllBusiness.ListAllBusinessesHateoasData
+import v1.services.{EnrolmentsAuthService, ListAllBusinessesService, MtdIdLookupService}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -39,22 +39,24 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
                                             service: ListAllBusinessesService,
                                             hateoasFactory: HateoasFactory,
                                             cc: ControllerComponents)(implicit ec: ExecutionContext)
-  extends AuthorisedController(cc) with BaseController with Logging {
+    extends AuthorisedController(cc)
+    with BaseController
+    with Logging {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "ListAllBusinessesController", endpointName = "List All Businesses")
 
   def handleRequest(nino: String): Action[AnyContent] =
-    authorisedAction(nino).async {implicit request =>
-
+    authorisedAction(nino).async { implicit request =>
       implicit val correlationId: String = idGenerator.getCorrelationId
-      logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
-        s"with correlationId : $correlationId")
+      logger.info(
+        message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
+          s"with correlationId : $correlationId")
 
       val rawData = ListAllBusinessesRawData(nino)
       val result =
         for {
-          parsedRequest <- EitherT.fromEither[Future](requestDataParser.parseRequest(rawData))
+          parsedRequest   <- EitherT.fromEither[Future](requestDataParser.parseRequest(rawData))
           serviceResponse <- EitherT(service.listAllBusinessesService(parsedRequest))
           vendorResponse <- EitherT.fromEither[Future](
             hateoasFactory
@@ -72,7 +74,7 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
 
       result.leftMap { errorWrapper =>
         val resCorrelationId = errorWrapper.correlationId
-        val result = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
+        val result           = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
         logger.warn(
           s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
             s"Error response received with CorrelationId: $resCorrelationId")
@@ -83,9 +85,9 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
     (errorWrapper.error: @unchecked) match {
-      case NinoFormatError | BadRequestError => BadRequest(Json.toJson(errorWrapper))
-      case NotFoundError                     => NotFound(Json.toJson(errorWrapper))
-      case DownstreamError                   => InternalServerError(Json.toJson(errorWrapper))
+      case NinoFormatError | BadRequestError | UnmatchedStubError => BadRequest(Json.toJson(errorWrapper))
+      case NotFoundError                                          => NotFound(Json.toJson(errorWrapper))
+      case DownstreamError                                        => InternalServerError(Json.toJson(errorWrapper))
     }
 
   }

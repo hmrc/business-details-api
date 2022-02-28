@@ -51,5 +51,6 @@ class ListAllBusinessesService @Inject()(listAllBusinessesConnector: ListAllBusi
       "NOT_FOUND_MTDBSA" -> DownstreamError,
       "SERVER_ERROR" -> DownstreamError,
       "SERVICE_UNAVAILABLE" -> DownstreamError,
+      "UNMATCHED_STUB_ERROR" -> UnmatchedStubError
     )
 }

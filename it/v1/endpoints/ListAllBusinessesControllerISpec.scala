@@ -22,7 +22,7 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import support.IntegrationBaseSpec
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status
-import v1.models.errors.{DownstreamError, MtdError, NinoFormatError, NotFoundError}
+import v1.models.errors.{DownstreamError, MtdError, NinoFormatError, NotFoundError, UnmatchedStubError}
 import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 
 class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
@@ -368,7 +368,8 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
           (Status.BAD_REQUEST, "INVALID_NINO", Status.BAD_REQUEST, NinoFormatError),
           (Status.NOT_FOUND, "NOT_FOUND_NINO", Status.NOT_FOUND, NotFoundError),
           (Status.INTERNAL_SERVER_ERROR, "SERVER_ERROR", Status.INTERNAL_SERVER_ERROR, DownstreamError),
-          (Status.SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", Status.INTERNAL_SERVER_ERROR, DownstreamError)
+          (Status.SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", Status.INTERNAL_SERVER_ERROR, DownstreamError),
+          (Status.NOT_FOUND, "UNMATCHED_STUB_ERROR", Status.BAD_REQUEST, UnmatchedStubError)
         )
 
         input.foreach(args => (serviceErrorTest _).tupled(args))

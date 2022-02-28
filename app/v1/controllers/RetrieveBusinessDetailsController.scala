@@ -18,7 +18,6 @@ package v1.controllers
 
 import cats.data.EitherT
 import cats.implicits._
-import javax.inject.{Inject, Singleton}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.{IdGenerator, Logging}
@@ -29,6 +28,7 @@ import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRawData
 import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsHateoasData
 import v1.services.{EnrolmentsAuthService, MtdIdLookupService, RetrieveBusinessDetailsService}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -39,22 +39,24 @@ class RetrieveBusinessDetailsController @Inject()(val authService: EnrolmentsAut
                                                   service: RetrieveBusinessDetailsService,
                                                   hateoasFactory: HateoasFactory,
                                                   cc: ControllerComponents)(implicit ec: ExecutionContext)
-extends AuthorisedController(cc) with BaseController with Logging {
+    extends AuthorisedController(cc)
+    with BaseController
+    with Logging {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "RetrieveBusinessDetailsController", endpointName = "Retrieve Business Details")
 
   def handleRequest(nino: String, businessId: String): Action[AnyContent] =
-    authorisedAction(nino).async {implicit request =>
-
+    authorisedAction(nino).async { implicit request =>
       implicit val correlationId: String = idGenerator.getCorrelationId
-      logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
-        s"with correlationId : $correlationId")
+      logger.info(
+        message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
+          s"with correlationId : $correlationId")
 
       val rawData = RetrieveBusinessDetailsRawData(nino, businessId)
       val result =
         for {
-          parsedRequest <- EitherT.fromEither[Future](parser.parseRequest(rawData))
+          parsedRequest   <- EitherT.fromEither[Future](parser.parseRequest(rawData))
           serviceResponse <- EitherT(service.retrieveBusinessDetailsService(parsedRequest))
           vendorResponse <- EitherT.fromEither[Future](
             hateoasFactory.wrap(serviceResponse.responseData, RetrieveBusinessDetailsHateoasData(nino, businessId)).asRight[ErrorWrapper])
@@ -69,7 +71,7 @@ extends AuthorisedController(cc) with BaseController with Logging {
 
       result.leftMap { errorWrapper =>
         val resCorrelationId = errorWrapper.correlationId
-        val result = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
+        val result           = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
         logger.warn(
           s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
             s"Error response received with CorrelationId: $resCorrelationId")
@@ -80,9 +82,9 @@ extends AuthorisedController(cc) with BaseController with Logging {
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
     (errorWrapper.error: @unchecked) match {
-      case NinoFormatError | BadRequestError | BusinessIdFormatError => BadRequest(Json.toJson(errorWrapper))
-      case NotFoundError | NoBusinessFoundError                      => NotFound(Json.toJson(errorWrapper))
-      case DownstreamError                                           => InternalServerError(Json.toJson(errorWrapper))
+      case NinoFormatError | BadRequestError | BusinessIdFormatError | UnmatchedStubError => BadRequest(Json.toJson(errorWrapper))
+      case NotFoundError | NoBusinessFoundError                                           => NotFound(Json.toJson(errorWrapper))
+      case DownstreamError                                                                => InternalServerError(Json.toJson(errorWrapper))
     }
   }
 
