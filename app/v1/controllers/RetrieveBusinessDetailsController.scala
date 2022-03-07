@@ -79,10 +79,11 @@ extends AuthorisedController(cc) with BaseController with Logging {
     }
 
   private def errorResult(errorWrapper: ErrorWrapper) = {
-    (errorWrapper.error: @unchecked) match {
+    (errorWrapper.error) match {
       case NinoFormatError | BadRequestError | BusinessIdFormatError => BadRequest(Json.toJson(errorWrapper))
       case NotFoundError | NoBusinessFoundError                      => NotFound(Json.toJson(errorWrapper))
       case DownstreamError                                           => InternalServerError(Json.toJson(errorWrapper))
+      case _                                                         => unhandledError(errorWrapper)
     }
   }
 

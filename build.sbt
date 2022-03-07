@@ -55,6 +55,5 @@ lazy val microservice = Project(appName, file("."))
     resolvers += Resolver.jcenterRepo
   )
   .settings(PlayKeys.playDefaultPort := 7792)
-  .settings(SilencerSettings())
 
 scalacOptions ++= Seq("-Xfatal-warnings", "-Wconf:src=routes/.*:silent")
