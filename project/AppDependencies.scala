@@ -24,7 +24,8 @@ object AppDependencies {
     ws,
     "uk.gov.hmrc"   %% "bootstrap-backend-play-28" % "5.20.0",
     "org.typelevel" %% "cats-core"                 % "2.7.0",
-    "com.chuusai"   %% "shapeless"                 % "2.4.0-M1"
+    "com.chuusai"   %% "shapeless"                 % "2.4.0-M1",
+    "com.fasterxml.jackson.module" %% "jackson-module-scala"      % "2.13.1"
   )
 
   def test(scope: String = "test, it"): Seq[sbt.ModuleID] = Seq(
@@ -34,6 +35,6 @@ object AppDependencies {
     "org.scalamock"          %% "scalamock"          % "5.2.0"             % scope,
     "com.typesafe.play"      %% "play-test"          % PlayVersion.current % scope,
     "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0"             % scope,
-    "com.github.tomakehurst" % "wiremock-jre8"       % "2.27.2"            % scope
+    "com.github.tomakehurst" % "wiremock-jre8"       % "2.32.0"            % scope
   )
 }
