@@ -32,21 +32,22 @@ import v1.models.response.listAllBusiness.ListAllBusinessesHateoasData
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthService,
-                                            val lookupService: MtdIdLookupService,
-                                            val idGenerator: IdGenerator,
-                                            requestDataParser: ListAllBusinessesRequestParser,
-                                            service: ListAllBusinessesService,
-                                            hateoasFactory: HateoasFactory,
-                                            cc: ControllerComponents)(implicit ec: ExecutionContext)
-  extends AuthorisedController(cc) with BaseController with Logging {
+class ListAllBusinessesController @Inject() (val authService: EnrolmentsAuthService,
+                                             val lookupService: MtdIdLookupService,
+                                             val idGenerator: IdGenerator,
+                                             requestDataParser: ListAllBusinessesRequestParser,
+                                             service: ListAllBusinessesService,
+                                             hateoasFactory: HateoasFactory,
+                                             cc: ControllerComponents)(implicit ec: ExecutionContext)
+    extends AuthorisedController(cc)
+    with BaseController
+    with Logging {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "ListAllBusinessesController", endpointName = "List All Businesses")
 
   def handleRequest(nino: String): Action[AnyContent] =
-    authorisedAction(nino).async {implicit request =>
-
+    authorisedAction(nino).async { implicit request =>
       implicit val correlationId: String = idGenerator.getCorrelationId
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
@@ -54,7 +55,7 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
       val rawData = ListAllBusinessesRawData(nino)
       val result =
         for {
-          parsedRequest <- EitherT.fromEither[Future](requestDataParser.parseRequest(rawData))
+          parsedRequest   <- EitherT.fromEither[Future](requestDataParser.parseRequest(rawData))
           serviceResponse <- EitherT(service.listAllBusinessesService(parsedRequest))
           vendorResponse <- EitherT.fromEither[Future](
             hateoasFactory
@@ -72,7 +73,7 @@ class ListAllBusinessesController @Inject()(val authService: EnrolmentsAuthServi
 
       result.leftMap { errorWrapper =>
         val resCorrelationId = errorWrapper.correlationId
-        val result = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
+        val result           = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
         logger.warn(
           s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
             s"Error response received with CorrelationId: $resCorrelationId")

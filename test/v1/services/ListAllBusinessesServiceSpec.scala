@@ -27,26 +27,28 @@ import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.Future
 
-
 class ListAllBusinessesServiceSpec extends ServiceSpec {
 
-  private val validNino = Nino("AA123456A")
+  private val validNino   = Nino("AA123456A")
   private val requestData = ListAllBusinessesRequest(validNino)
 
   private val responseBody: ListAllBusinessesResponse[Business] = ListAllBusinessesResponse(Seq())
 
   trait Test extends MockListAllBusinessesConnector {
-    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val hc: HeaderCarrier              = HeaderCarrier()
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
+
     val service = new ListAllBusinessesService(
       listAllBusinessesConnector = mockListAllBusinessesConnector
     )
+
   }
 
   "service" when {
     "a connector call is successful" should {
       "return a mapped result" in new Test {
-        MockListAllBusinessesConnector.listAllBusinesses(requestData)
+        MockListAllBusinessesConnector
+          .listAllBusinesses(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseBody))))
 
         await(service.listAllBusinessesService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
@@ -56,7 +58,8 @@ class ListAllBusinessesServiceSpec extends ServiceSpec {
       def serviceError(desErrorCode: String, error: MtdError): Unit =
         s"return ${error.code} when $desErrorCode error is returned from the service" in new Test {
 
-          MockListAllBusinessesConnector.listAllBusinesses(requestData)
+          MockListAllBusinessesConnector
+            .listAllBusinesses(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
           await(service.listAllBusinessesService(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
@@ -73,4 +76,5 @@ class ListAllBusinessesServiceSpec extends ServiceSpec {
       input.foreach(args => (serviceError _).tupled(args))
     }
   }
+
 }

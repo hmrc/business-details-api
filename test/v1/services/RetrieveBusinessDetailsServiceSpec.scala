@@ -32,9 +32,9 @@ import scala.concurrent.Future
 
 class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
 
-  private val validNino = Nino("AA123456A")
-  private val validId = "XAIS12345678910"
-  private val requestData = RetrieveBusinessDetailsRequest(validNino, validId)
+  private val validNino      = Nino("AA123456A")
+  private val validId        = "XAIS12345678910"
+  private val requestData    = RetrieveBusinessDetailsRequest(validNino, validId)
   private val badRequestData = RetrieveBusinessDetailsRequest(validNino, "SDFG3456782190")
 
   private val responseBody = RetrieveBusinessDetailsResponse(
@@ -53,71 +53,80 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     Some("GB")
   )
 
-  private val desSingleResponseBody = RetrieveBusinessDetailsDesResponse(Seq(BusinessDetails(
-    "XAIS12345678910",
-    TypeOfBusiness.`self-employment`,
-    Some("Aardvark Window Cleaning Services"),
-    Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-    Some(AccountingType.ACCRUALS),
-    Some("2016-09-24"),
-    Some("2020-03-24"),
-    Some("6 Harpic Drive"),
-    Some("Domestos Wood"),
-    Some("ToiletDucktown"),
-    Some("CIFSHIRE"),
-    Some("SW4F 3GA"),
-    Some("GB")
-  )))
+  private val desSingleResponseBody = RetrieveBusinessDetailsDesResponse(
+    Seq(
+      BusinessDetails(
+        "XAIS12345678910",
+        TypeOfBusiness.`self-employment`,
+        Some("Aardvark Window Cleaning Services"),
+        Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+        Some(AccountingType.ACCRUALS),
+        Some("2016-09-24"),
+        Some("2020-03-24"),
+        Some("6 Harpic Drive"),
+        Some("Domestos Wood"),
+        Some("ToiletDucktown"),
+        Some("CIFSHIRE"),
+        Some("SW4F 3GA"),
+        Some("GB")
+      )))
 
-  private val desMultiResponseBody = RetrieveBusinessDetailsDesResponse(Seq(BusinessDetails(
-    "XAIS12345678910",
-    TypeOfBusiness.`self-employment`,
-    Some("Aardvark Window Cleaning Services"),
-    Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-    Some(AccountingType.ACCRUALS),
-    Some("2016-09-24"),
-    Some("2020-03-24"),
-    Some("6 Harpic Drive"),
-    Some("Domestos Wood"),
-    Some("ToiletDucktown"),
-    Some("CIFSHIRE"),
-    Some("SW4F 3GA"),
-    Some("GB")
-  ),
-    BusinessDetails(
-    "XAIS0987654321",
-    TypeOfBusiness.`self-employment`,
-    Some("Aardvark Window Cleaning Services"),
-    Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-      Some(AccountingType.ACCRUALS),
-    Some("2016-09-24"),
-    Some("2020-03-24"),
-    Some("6 Harpic Drive"),
-    Some("Domestos Wood"),
-    Some("ToiletDucktown"),
-    Some("CIFSHIRE"),
-    Some("SW4F 3GA"),
-    Some("GB")
-  )))
+  private val desMultiResponseBody = RetrieveBusinessDetailsDesResponse(
+    Seq(
+      BusinessDetails(
+        "XAIS12345678910",
+        TypeOfBusiness.`self-employment`,
+        Some("Aardvark Window Cleaning Services"),
+        Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+        Some(AccountingType.ACCRUALS),
+        Some("2016-09-24"),
+        Some("2020-03-24"),
+        Some("6 Harpic Drive"),
+        Some("Domestos Wood"),
+        Some("ToiletDucktown"),
+        Some("CIFSHIRE"),
+        Some("SW4F 3GA"),
+        Some("GB")
+      ),
+      BusinessDetails(
+        "XAIS0987654321",
+        TypeOfBusiness.`self-employment`,
+        Some("Aardvark Window Cleaning Services"),
+        Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+        Some(AccountingType.ACCRUALS),
+        Some("2016-09-24"),
+        Some("2020-03-24"),
+        Some("6 Harpic Drive"),
+        Some("Domestos Wood"),
+        Some("ToiletDucktown"),
+        Some("CIFSHIRE"),
+        Some("SW4F 3GA"),
+        Some("GB")
+      )
+    ))
 
   trait Test extends MockRetrieveBusinessDetailsConnector {
-    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val hc: HeaderCarrier              = HeaderCarrier()
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
+
     val service = new RetrieveBusinessDetailsService(
       retrieveBusinessDetailsConnector = mockRetrieveBusinessDetailsConnector
     )
+
   }
 
   "service" when {
     "a connector call is successful" should {
       "return a mapped result from a single des response" in new Test {
-        MockRetrieveBusinessDetailsConnector.retrieveBusinessDetails(requestData)
+        MockRetrieveBusinessDetailsConnector
+          .retrieveBusinessDetails(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, desSingleResponseBody))))
 
         await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
       }
       "return a mapped result from multiple des responses" in new Test {
-        MockRetrieveBusinessDetailsConnector.retrieveBusinessDetails(requestData)
+        MockRetrieveBusinessDetailsConnector
+          .retrieveBusinessDetails(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, desMultiResponseBody))))
 
         await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
@@ -125,16 +134,18 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     }
     "a connector call is unsuccessful" should {
       "return not found error for no matching id" in new Test {
-        MockRetrieveBusinessDetailsConnector.retrieveBusinessDetails(badRequestData)
+        MockRetrieveBusinessDetailsConnector
+          .retrieveBusinessDetails(badRequestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, desMultiResponseBody))))
 
         await(service.retrieveBusinessDetailsService(badRequestData)) shouldBe Left(ErrorWrapper(correlationId, NoBusinessFoundError))
-    }
-    "a connector call is unsuccessful" should {
+      }
+      "a connector call is unsuccessful" should {
         def serviceError(desErrorCode: String, error: MtdError): Unit =
           s"return ${error.code} when $desErrorCode error is returned from the service" in new Test {
 
-            MockRetrieveBusinessDetailsConnector.retrieveBusinessDetails(requestData)
+            MockRetrieveBusinessDetailsConnector
+              .retrieveBusinessDetails(requestData)
               .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
 
             await(service.retrieveBusinessDetailsService(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
@@ -146,10 +157,11 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
           ("NOT_FOUND_NINO", NotFoundError),
           ("NOT_FOUND_MTDBSA", DownstreamError),
           ("SERVER_ERROR", DownstreamError),
-          ("SERVICE_UNAVAILABLE", DownstreamError),
+          ("SERVICE_UNAVAILABLE", DownstreamError)
         )
         input.foreach(args => (serviceError _).tupled(args))
       }
     }
   }
+
 }

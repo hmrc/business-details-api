@@ -20,14 +20,14 @@ import support.UnitSpec
 import utils.enums.EnumJsonSpecSupport
 
 class CashOrAccrualsSpec extends UnitSpec with EnumJsonSpecSupport {
+
   testRoundTrip[CashOrAccruals](
     ("cash", CashOrAccruals.`cash`),
-    ("accruals", CashOrAccruals.`accruals`),
+    ("accruals", CashOrAccruals.`accruals`)
   )
 
   "toMtd" should {
-    Seq((CashOrAccruals.`cash`, AccountingType.CASH),
-      (CashOrAccruals.`accruals`, AccountingType.ACCRUALS)).foreach {
+    Seq((CashOrAccruals.`cash`, AccountingType.CASH), (CashOrAccruals.`accruals`, AccountingType.ACCRUALS)).foreach {
       case (cashOrAccruals, accountingType) =>
         s"convert $cashOrAccruals to $accountingType" in {
           cashOrAccruals.toMtd shouldBe accountingType

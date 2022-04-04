@@ -32,21 +32,22 @@ import v1.services.{EnrolmentsAuthService, MtdIdLookupService, RetrieveBusinessD
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveBusinessDetailsController @Inject()(val authService: EnrolmentsAuthService,
-                                                  val lookupService: MtdIdLookupService,
-                                                  val idGenerator: IdGenerator,
-                                                  parser: RetrieveBusinessDetailsRequestParser,
-                                                  service: RetrieveBusinessDetailsService,
-                                                  hateoasFactory: HateoasFactory,
-                                                  cc: ControllerComponents)(implicit ec: ExecutionContext)
-extends AuthorisedController(cc) with BaseController with Logging {
+class RetrieveBusinessDetailsController @Inject() (val authService: EnrolmentsAuthService,
+                                                   val lookupService: MtdIdLookupService,
+                                                   val idGenerator: IdGenerator,
+                                                   parser: RetrieveBusinessDetailsRequestParser,
+                                                   service: RetrieveBusinessDetailsService,
+                                                   hateoasFactory: HateoasFactory,
+                                                   cc: ControllerComponents)(implicit ec: ExecutionContext)
+    extends AuthorisedController(cc)
+    with BaseController
+    with Logging {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "RetrieveBusinessDetailsController", endpointName = "Retrieve Business Details")
 
   def handleRequest(nino: String, businessId: String): Action[AnyContent] =
-    authorisedAction(nino).async {implicit request =>
-
+    authorisedAction(nino).async { implicit request =>
       implicit val correlationId: String = idGenerator.getCorrelationId
       logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
         s"with correlationId : $correlationId")
@@ -54,7 +55,7 @@ extends AuthorisedController(cc) with BaseController with Logging {
       val rawData = RetrieveBusinessDetailsRawData(nino, businessId)
       val result =
         for {
-          parsedRequest <- EitherT.fromEither[Future](parser.parseRequest(rawData))
+          parsedRequest   <- EitherT.fromEither[Future](parser.parseRequest(rawData))
           serviceResponse <- EitherT(service.retrieveBusinessDetailsService(parsedRequest))
           vendorResponse <- EitherT.fromEither[Future](
             hateoasFactory.wrap(serviceResponse.responseData, RetrieveBusinessDetailsHateoasData(nino, businessId)).asRight[ErrorWrapper])
@@ -69,7 +70,7 @@ extends AuthorisedController(cc) with BaseController with Logging {
 
       result.leftMap { errorWrapper =>
         val resCorrelationId = errorWrapper.correlationId
-        val result = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
+        val result           = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
         logger.warn(
           s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
             s"Error response received with CorrelationId: $resCorrelationId")

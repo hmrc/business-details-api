@@ -21,10 +21,11 @@ import v1.models.domain.Nino
 import v1.controllers.requestParsers.validators.ListAllBusinessesValidator
 import v1.models.request.listAllBusinesses.{ListAllBusinessesRawData, ListAllBusinessesRequest}
 
-class ListAllBusinessesRequestParser @Inject()(val validator: ListAllBusinessesValidator)
-  extends RequestParser[ListAllBusinessesRawData, ListAllBusinessesRequest] {
+class ListAllBusinessesRequestParser @Inject() (val validator: ListAllBusinessesValidator)
+    extends RequestParser[ListAllBusinessesRawData, ListAllBusinessesRequest] {
 
   override protected def requestFor(data: ListAllBusinessesRawData): ListAllBusinessesRequest = {
     ListAllBusinessesRequest(Nino(data.nino))
   }
+
 }

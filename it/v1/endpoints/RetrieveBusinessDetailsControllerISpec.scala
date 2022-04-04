@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIED OR CONDITIONS OF ANY KIND, either express or implied.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
@@ -29,7 +29,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
-    val nino = "AA123456A"
+    val nino       = "AA123456A"
     val businessId = "XAIS12345678901"
 
     val responseBody: JsValue = Json.parse(
@@ -81,6 +81,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
          |        "reason": "des message"
          |      }
     """.stripMargin
+
   }
 
   "Calling the retrieve business details endpoint" should {
@@ -244,7 +245,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         def validationErrorTest(requestNino: String, requestBusinessId: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
           s"validation fails with ${expectedBody.code} error" in new RetrieveBusinessDetailsControllerTest {
 
-            override val nino: String = requestNino
+            override val nino: String       = requestNino
             override val businessId: String = requestBusinessId
 
             override def setupStubs(): StubMapping = {
@@ -296,4 +297,5 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
       }
     }
   }
+
 }

@@ -23,8 +23,10 @@ case class AccountingPeriod(start: String, end: String)
 
 object AccountingPeriod {
   implicit val writes: OWrites[AccountingPeriod] = Json.writes[AccountingPeriod]
+
   implicit val reads: Reads[AccountingPeriod] = (
     (JsPath \ "accountingPeriodStartDate").read[String] and
-    (JsPath \ "accountingPeriodEndDate").read[String]
+      (JsPath \ "accountingPeriodEndDate").read[String]
   )(AccountingPeriod.apply _)
+
 }

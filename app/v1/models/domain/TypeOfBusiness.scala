@@ -22,11 +22,11 @@ import utils.enums.Enums
 sealed trait TypeOfBusiness
 
 object TypeOfBusiness {
-  case object `self-employment` extends TypeOfBusiness
-  case object `uk-property` extends TypeOfBusiness
-  case object `foreign-property` extends TypeOfBusiness
+  case object `self-employment`      extends TypeOfBusiness
+  case object `uk-property`          extends TypeOfBusiness
+  case object `foreign-property`     extends TypeOfBusiness
   case object `property-unspecified` extends TypeOfBusiness
 
-  implicit val format: Format[TypeOfBusiness] = Enums.format[TypeOfBusiness]
+  implicit val format: Format[TypeOfBusiness]         = Enums.format[TypeOfBusiness]
   val parser: PartialFunction[String, TypeOfBusiness] = Enums.parser[TypeOfBusiness]
 }

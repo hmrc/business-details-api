@@ -25,17 +25,18 @@ import v1.models.response.retrieveBusinessDetails.des.RetrieveBusinessDetailsDes
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockRetrieveBusinessDetailsConnector  extends MockFactory{
+trait MockRetrieveBusinessDetailsConnector extends MockFactory {
 
   val mockRetrieveBusinessDetailsConnector: RetrieveBusinessDetailsConnector = mock[RetrieveBusinessDetailsConnector]
 
   object MockRetrieveBusinessDetailsConnector {
 
-    def retrieveBusinessDetails(requestData: RetrieveBusinessDetailsRequest):
-    CallHandler[Future[DesOutcome[RetrieveBusinessDetailsDesResponse]]] = {
+    def retrieveBusinessDetails(requestData: RetrieveBusinessDetailsRequest): CallHandler[Future[DesOutcome[RetrieveBusinessDetailsDesResponse]]] = {
       (mockRetrieveBusinessDetailsConnector
         .retrieveBusinessDetails(_: RetrieveBusinessDetailsRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)
     }
+
   }
+
 }

@@ -20,7 +20,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.mvc.Results.InternalServerError
 import utils.Logging
-import v1.models.errors.{ DownstreamError, ErrorWrapper }
+import v1.models.errors.{DownstreamError, ErrorWrapper}
 
 trait BaseController {
   self: Logging =>
@@ -37,14 +37,14 @@ trait BaseController {
     def withApiHeaders(correlationId: String, responseHeaders: (String, String)*): Result = {
 
       val newHeaders: Seq[(String, String)] = responseHeaders ++ Seq(
-        "X-CorrelationId" -> correlationId,
+        "X-CorrelationId"        -> correlationId,
         "X-Content-Type-Options" -> "nosniff",
-        "Content-Type" -> "application/json"
+        "Content-Type"           -> "application/json"
       )
 
       result.copy(header = result.header.copy(headers = result.header.headers ++ newHeaders))
     }
+
   }
+
 }
-
-

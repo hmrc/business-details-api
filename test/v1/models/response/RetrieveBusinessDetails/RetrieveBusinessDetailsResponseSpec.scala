@@ -154,11 +154,10 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
   "LinksFactory" should {
     "expose the correct links" when {
       "called" in {
-        val nino = "mynino"
+        val nino       = "mynino"
         val businessId = "myid"
         MockAppConfig.apiGatewayContext.returns("individuals/business/details").anyNumberOfTimes
-        RetrieveBusinessDetailsResponse
-          .RetrieveBusinessDetailsLinksFactory
+        RetrieveBusinessDetailsResponse.RetrieveBusinessDetailsLinksFactory
           .links(mockAppConfig, RetrieveBusinessDetailsHateoasData(nino, businessId)) shouldBe Seq(
           Link(s"/individuals/business/details/$nino/$businessId", GET, "self")
         )
@@ -166,4 +165,5 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
       }
     }
   }
+
 }

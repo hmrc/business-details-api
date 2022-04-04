@@ -30,14 +30,15 @@ import v1.support.DesResponseMappingSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveBusinessDetailsService @Inject()(retrieveBusinessDetailsConnector: RetrieveBusinessDetailsConnector)
-  extends DesResponseMappingSupport with Logging {
+class RetrieveBusinessDetailsService @Inject() (retrieveBusinessDetailsConnector: RetrieveBusinessDetailsConnector)
+    extends DesResponseMappingSupport
+    with Logging {
 
-  def retrieveBusinessDetailsService(request: RetrieveBusinessDetailsRequest)(
-                                    implicit hc: HeaderCarrier,
-                                    ec: ExecutionContext,
-                                    logContext: EndpointLogContext,
-                                    correlationId: String): Future[RetrieveBusinessDetailsServiceOutcome] = {
+  def retrieveBusinessDetailsService(request: RetrieveBusinessDetailsRequest)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      logContext: EndpointLogContext,
+      correlationId: String): Future[RetrieveBusinessDetailsServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(retrieveBusinessDetailsConnector.retrieveBusinessDetails(request)).leftMap(mapDesErrors(desErrorMap))
@@ -45,13 +46,15 @@ class RetrieveBusinessDetailsService @Inject()(retrieveBusinessDetailsConnector:
     } yield mtdResponseWrapper
     result.value
   }
+
   private def desErrorMap: Map[String, MtdError] =
     Map(
-      "INVALID_NINO" -> NinoFormatError,
-      "INVALID_MTDBSA" -> DownstreamError,
-      "NOT_FOUND_NINO" -> NotFoundError,
-      "NOT_FOUND_MTDBSA" -> DownstreamError,
-      "SERVER_ERROR" -> DownstreamError,
+      "INVALID_NINO"        -> NinoFormatError,
+      "INVALID_MTDBSA"      -> DownstreamError,
+      "NOT_FOUND_NINO"      -> NotFoundError,
+      "NOT_FOUND_MTDBSA"    -> DownstreamError,
+      "SERVER_ERROR"        -> DownstreamError,
       "SERVICE_UNAVAILABLE" -> DownstreamError
     )
+
 }

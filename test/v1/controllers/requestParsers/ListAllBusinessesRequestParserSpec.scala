@@ -24,9 +24,9 @@ import v1.models.request.listAllBusinesses.{ListAllBusinessesRawData, ListAllBus
 
 class ListAllBusinessesRequestParserSpec extends UnitSpec {
 
-  private val nino   = "AA123456A"
-  private val data   = ListAllBusinessesRawData(nino)
-  private val invalidNinoData = ListAllBusinessesRawData("beans")
+  private val nino                   = "AA123456A"
+  private val data                   = ListAllBusinessesRawData(nino)
+  private val invalidNinoData        = ListAllBusinessesRawData("beans")
   implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
   trait Test extends ListAllBusinessesMockValidator {

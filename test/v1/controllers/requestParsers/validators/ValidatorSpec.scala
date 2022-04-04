@@ -58,7 +58,7 @@ class ValidatorSpec extends UnitSpec with MockFactory {
         // Set up the mock validations
         val levelOneValidationOne = new MockFunctionObject("Level: 1    Validation 1")
         val levelOneValidationTwo = new MockFunctionObject("Level: 1    Validation 2")
-        val mockError: MtdError = MtdError("MOCK", "SOME ERROR")
+        val mockError: MtdError   = MtdError("MOCK", "SOME ERROR")
 
         def levelOneValidations: TestRawData => List[List[MtdError]] = (_: TestRawData) => {
           List(
@@ -86,7 +86,7 @@ class ValidatorSpec extends UnitSpec with MockFactory {
         val levelOneValidationTwo = new MockFunctionObject("Level: 1    Validation 2")
         val levelTwoValidationOne = new MockFunctionObject("Level: 2    Validation 1")
         val levelTwoValidationTwo = new MockFunctionObject("Level: 2    Validation 2")
-        val mockError: MtdError = MtdError("MOCK", "SOME ERROR ON LEVEL 2")
+        val mockError: MtdError   = MtdError("MOCK", "SOME ERROR ON LEVEL 2")
 
         def levelOneValidations: TestRawData => List[List[MtdError]] = (_: TestRawData) => {
           List(
@@ -133,6 +133,7 @@ private case class TestRawData(fieldOne: String, fieldTwo: String) extends RawDa
 
 // Create a Validator based off the trait to be able to test it
 private class TestValidator extends Validator[TestRawData] {
+
   override def validate(data: TestRawData): List[MtdError] = {
     run(List(), data) match {
       case Nil        => List()
@@ -140,4 +141,5 @@ private class TestValidator extends Validator[TestRawData] {
       case errs       => errs
     }
   }
+
 }

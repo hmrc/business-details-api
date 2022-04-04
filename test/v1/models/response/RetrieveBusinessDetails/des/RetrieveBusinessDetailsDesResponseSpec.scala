@@ -68,20 +68,20 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
 
         val responseBody: RetrieveBusinessDetailsDesResponse = RetrieveBusinessDetailsDesResponse(
           Seq(BusinessDetails(
-          "XAIS12345678910",
-          TypeOfBusiness.`self-employment`,
-          Some("RCDTS"),
-          Seq(AccountingPeriod("2001-01-01", "2001-01-01")),
-          Some(AccountingType.CASH),
-          Some("2001-01-01"),
-          Some("2001-01-01"),
-          Some("100 SuttonStreet"),
-          Some("Wokingham"),
-          Some("Surrey"),
-          Some("London"),
-          Some("DH14EJ"),
-          Some("GB")
-        )))
+            "XAIS12345678910",
+            TypeOfBusiness.`self-employment`,
+            Some("RCDTS"),
+            Seq(AccountingPeriod("2001-01-01", "2001-01-01")),
+            Some(AccountingType.CASH),
+            Some("2001-01-01"),
+            Some("2001-01-01"),
+            Some("100 SuttonStreet"),
+            Some("Wokingham"),
+            Some("Surrey"),
+            Some("London"),
+            Some("DH14EJ"),
+            Some("GB")
+          )))
 
         responseBody shouldBe desJson.as[RetrieveBusinessDetailsDesResponse]
       }
@@ -138,6 +138,5 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
       }
     }
   }
-
 
 }

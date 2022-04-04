@@ -24,9 +24,11 @@ sealed trait CashOrAccruals {
 }
 
 object CashOrAccruals {
+
   case object `cash` extends CashOrAccruals {
     override def toMtd: AccountingType = AccountingType.CASH
   }
+
   case object `accruals` extends CashOrAccruals {
     override def toMtd: AccountingType = AccountingType.ACCRUALS
   }

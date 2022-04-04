@@ -19,6 +19,7 @@ package v1.models.outcomes
 import support.UnitSpec
 
 class ResponseWrapperSpec extends UnitSpec {
+
   "map" should {
     "apply the partial function to the responseData" in {
       val partialFunction: Int => String = _.toString
@@ -26,4 +27,5 @@ class ResponseWrapperSpec extends UnitSpec {
       ResponseWrapper("", 1).map(partialFunction) shouldBe ResponseWrapper("", "1")
     }
   }
+
 }

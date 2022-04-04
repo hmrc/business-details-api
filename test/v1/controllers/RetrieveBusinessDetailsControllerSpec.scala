@@ -37,7 +37,7 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class RetrieveBusinessDetailsControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockRetrieveBusinessDetailsService
@@ -45,9 +45,9 @@ class RetrieveBusinessDetailsControllerSpec
     with MockRetrieveBusinessDetailsRequestParser
     with MockIdGenerator {
 
-  private val validNino = "AA123456A"
+  private val validNino       = "AA123456A"
   private val validBusinessId = "XAIS12345678910"
-  val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  val correlationId: String   = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
   private val testHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
 
   trait Test {
@@ -98,7 +98,7 @@ class RetrieveBusinessDetailsControllerSpec
       |   ]
       |}
         """.stripMargin
-    )
+  )
 
   private val responseData = RetrieveBusinessDetailsResponse(
     "XAIS12345678910",
@@ -182,7 +182,6 @@ class RetrieveBusinessDetailsControllerSpec
 
             val result: Future[Result] = controller.handleRequest(validNino, validBusinessId)(fakeRequest)
 
-
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(mtdError)
             header("X-CorrelationId", result) shouldBe Some(correlationId)
@@ -200,4 +199,5 @@ class RetrieveBusinessDetailsControllerSpec
 
     }
   }
+
 }
