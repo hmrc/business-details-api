@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIED OR CONDITIONS OF ANY KIND, either express or implied.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
@@ -269,12 +269,13 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
          |        "reason": "des message"
          |      }
     """.stripMargin
+
   }
 
   "Calling the list all businesses endpoint" should {
 
     trait ListAllBusinessesControllerTest extends Test {
-      def uri: String = s"/$nino/list"
+      def uri: String    = s"/$nino/list"
       def desUri: String = s"/registration/business-details/nino/$nino"
     }
 
@@ -375,4 +376,5 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
       }
     }
   }
+
 }

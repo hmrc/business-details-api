@@ -25,17 +25,18 @@ import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockListAllBusinessesConnector extends MockFactory{
+trait MockListAllBusinessesConnector extends MockFactory {
 
   val mockListAllBusinessesConnector: ListAllBusinessesConnector = mock[ListAllBusinessesConnector]
 
   object MockListAllBusinessesConnector {
 
-    def listAllBusinesses(requestData: ListAllBusinessesRequest):
-    CallHandler[Future[DesOutcome[ListAllBusinessesResponse[Business]]]] = {
+    def listAllBusinesses(requestData: ListAllBusinessesRequest): CallHandler[Future[DesOutcome[ListAllBusinessesResponse[Business]]]] = {
       (mockListAllBusinessesConnector
         .listAllBusinesses(_: ListAllBusinessesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)
     }
+
   }
+
 }

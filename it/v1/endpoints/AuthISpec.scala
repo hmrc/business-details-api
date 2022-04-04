@@ -9,7 +9,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIED OR CONDITIONS OF ANY KIND, either express or implied.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
@@ -27,7 +27,7 @@ import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 class AuthISpec extends IntegrationBaseSpec {
 
   private trait Test {
-    val nino          = "AA123456A"
+    val nino = "AA123456A"
 
     def setupStubs(): StubMapping
 
@@ -39,8 +39,7 @@ class AuthISpec extends IntegrationBaseSpec {
 
     def desUri: String = s"/registration/business-details/nino/$nino"
 
-    val desResponse: JsValue = Json.parse(
-      """
+    val desResponse: JsValue = Json.parse("""
         |{
         |   "safeId": "XE00001234567890",
         |   "nino": "AA123456A",
@@ -77,6 +76,7 @@ class AuthISpec extends IntegrationBaseSpec {
         |   ]
         |}
         |""".stripMargin)
+
   }
 
   "Calling the list endpoint" when {

@@ -20,8 +20,10 @@ import support.UnitSpec
 import utils.enums.EnumJsonSpecSupport
 
 class AccountingTypeSpec extends UnitSpec with EnumJsonSpecSupport {
+
   testRoundTrip[AccountingType](
     ("CASH", AccountingType.CASH),
-    ("ACCRUALS", AccountingType.ACCRUALS),
+    ("ACCRUALS", AccountingType.ACCRUALS)
   )
+
 }

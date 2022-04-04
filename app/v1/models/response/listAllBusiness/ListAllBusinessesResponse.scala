@@ -26,6 +26,7 @@ import v1.models.hateoas.RelType.RETRIEVE_BUSINESS_DETAILS
 case class ListAllBusinessesResponse[I](listOfBusinesses: Seq[I])
 
 object ListAllBusinessesResponse extends HateoasLinks {
+
   implicit def reads: Reads[ListAllBusinessesResponse[Business]] = {
     val businessDataReads: Reads[Seq[Business]] =
       (JsPath \ "businessData").readNullable[Seq[Business]](Business.readsSeqBusinessData).map(_.getOrElse(Nil))
@@ -43,6 +44,7 @@ object ListAllBusinessesResponse extends HateoasLinks {
   implicit def writes[I: Writes]: OWrites[ListAllBusinessesResponse[I]] = Json.writes[ListAllBusinessesResponse[I]]
 
   implicit object LinksFactory extends HateoasListLinksFactory[ListAllBusinessesResponse, Business, ListAllBusinessesHateoasData] {
+
     override def links(appConfig: AppConfig, data: ListAllBusinessesHateoasData): Seq[Link] = {
       Seq(
         listAllBusinesses(appConfig, data.nino)
@@ -51,12 +53,16 @@ object ListAllBusinessesResponse extends HateoasLinks {
 
     override def itemLinks(appConfig: AppConfig, data: ListAllBusinessesHateoasData, item: Business): Seq[Link] =
       Seq(retrieveBusinessDetails(appConfig, data.nino, item.businessId, rel = RETRIEVE_BUSINESS_DETAILS))
+
   }
 
   implicit object ResponseFunctor extends Functor[ListAllBusinessesResponse] {
+
     override def map[A, B](fa: ListAllBusinessesResponse[A])(f: A => B): ListAllBusinessesResponse[B] =
       ListAllBusinessesResponse(fa.listOfBusinesses.map(f))
+
   }
+
 }
 
 case class ListAllBusinessesHateoasData(nino: String) extends HateoasData

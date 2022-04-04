@@ -28,7 +28,7 @@ import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBus
 
 class DesResponseMappingSupportSpec extends UnitSpec {
 
-  implicit val logContext: EndpointLogContext = EndpointLogContext("ctrl", "ep")
+  implicit val logContext: EndpointLogContext         = EndpointLogContext("ctrl", "ep")
   val mapping: DesResponseMappingSupport with Logging = new DesResponseMappingSupport with Logging {}
 
   val correlationId = "someCorrelationId"
@@ -44,7 +44,7 @@ class DesResponseMappingSupportSpec extends UnitSpec {
   val errorCodeMap: PartialFunction[String, MtdError] = {
     case "ERR1" => Error1
     case "ERR2" => Error2
-    case "DS" => DownstreamError
+    case "DS"   => DownstreamError
   }
 
   "mapping Des errors" when {
@@ -101,69 +101,10 @@ class DesResponseMappingSupportSpec extends UnitSpec {
       }
     }
   }
-  "filterId" should {
-    val desSingleBusiness: RetrieveBusinessDetailsDesResponse = RetrieveBusinessDetailsDesResponse(Seq(BusinessDetails(
-      "XAIS12345678910",
-      TypeOfBusiness.`self-employment`,
-      Some("Aardvark Window Cleaning Services"),
-      Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-      Some(AccountingType.ACCRUALS),
-      Some("2016-09-24"),
-      Some("2020-03-24"),
-      Some("6 Harpic Drive"),
-      Some("Domestos Wood"),
-      Some("ToiletDucktown"),
-      Some("CIFSHIRE"),
-      Some("SW4F 3GA"),
-      Some("GB")
-    )))
-    val desMultipleBusinessInSeq = RetrieveBusinessDetailsDesResponse(Seq(BusinessDetails(
-      "XAIS12345678910",
-      TypeOfBusiness.`self-employment`,
-      Some("Aardvark Window Cleaning Services"),
-      Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-      Some(AccountingType.ACCRUALS),
-      Some("2016-09-24"),
-      Some("2020-03-24"),
-      Some("6 Harpic Drive"),
-      Some("Domestos Wood"),
-      Some("ToiletDucktown"),
-      Some("CIFSHIRE"),
-      Some("SW4F 3GA"),
-      Some("GB")
-    ),
-      BusinessDetails(
-        "XAIS0987654321",
-        TypeOfBusiness.`self-employment`,
-        Some("Aardvark Window Cleaning Services"),
-        Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-        Some(AccountingType.ACCRUALS),
-        Some("2016-09-24"),
-        Some("2020-03-24"),
-        Some("6 Test Drive"),
-        Some("Test Wood"),
-        Some("Test Town"),
-        Some("TESTSHIRE"),
-        Some("TE4 3ST"),
-        Some("FR")
-      )))
 
-    val DesSingleBusinessDetailsRepeated = RetrieveBusinessDetailsDesResponse(Seq(BusinessDetails(
-      "XAIS12345678910",
-      TypeOfBusiness.`self-employment`,
-      Some("Aardvark Window Cleaning Services"),
-      Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-      Some(AccountingType.ACCRUALS),
-      Some("2016-09-24"),
-      Some("2020-03-24"),
-      Some("6 Harpic Drive"),
-      Some("Domestos Wood"),
-      Some("ToiletDucktown"),
-      Some("CIFSHIRE"),
-      Some("SW4F 3GA"),
-      Some("GB")
-    ),
-      BusinessDetails(
+  "filterId" should {
+    val desSingleBusiness: RetrieveBusinessDetailsDesResponse = RetrieveBusinessDetailsDesResponse(
+      Seq(BusinessDetails(
         "XAIS12345678910",
         TypeOfBusiness.`self-employment`,
         Some("Aardvark Window Cleaning Services"),
@@ -178,6 +119,73 @@ class DesResponseMappingSupportSpec extends UnitSpec {
         Some("SW4F 3GA"),
         Some("GB")
       )))
+    val desMultipleBusinessInSeq = RetrieveBusinessDetailsDesResponse(
+      Seq(
+        BusinessDetails(
+          "XAIS12345678910",
+          TypeOfBusiness.`self-employment`,
+          Some("Aardvark Window Cleaning Services"),
+          Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+          Some(AccountingType.ACCRUALS),
+          Some("2016-09-24"),
+          Some("2020-03-24"),
+          Some("6 Harpic Drive"),
+          Some("Domestos Wood"),
+          Some("ToiletDucktown"),
+          Some("CIFSHIRE"),
+          Some("SW4F 3GA"),
+          Some("GB")
+        ),
+        BusinessDetails(
+          "XAIS0987654321",
+          TypeOfBusiness.`self-employment`,
+          Some("Aardvark Window Cleaning Services"),
+          Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+          Some(AccountingType.ACCRUALS),
+          Some("2016-09-24"),
+          Some("2020-03-24"),
+          Some("6 Test Drive"),
+          Some("Test Wood"),
+          Some("Test Town"),
+          Some("TESTSHIRE"),
+          Some("TE4 3ST"),
+          Some("FR")
+        )
+      ))
+
+    val DesSingleBusinessDetailsRepeated = RetrieveBusinessDetailsDesResponse(
+      Seq(
+        BusinessDetails(
+          "XAIS12345678910",
+          TypeOfBusiness.`self-employment`,
+          Some("Aardvark Window Cleaning Services"),
+          Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+          Some(AccountingType.ACCRUALS),
+          Some("2016-09-24"),
+          Some("2020-03-24"),
+          Some("6 Harpic Drive"),
+          Some("Domestos Wood"),
+          Some("ToiletDucktown"),
+          Some("CIFSHIRE"),
+          Some("SW4F 3GA"),
+          Some("GB")
+        ),
+        BusinessDetails(
+          "XAIS12345678910",
+          TypeOfBusiness.`self-employment`,
+          Some("Aardvark Window Cleaning Services"),
+          Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+          Some(AccountingType.ACCRUALS),
+          Some("2016-09-24"),
+          Some("2020-03-24"),
+          Some("6 Harpic Drive"),
+          Some("Domestos Wood"),
+          Some("ToiletDucktown"),
+          Some("CIFSHIRE"),
+          Some("SW4F 3GA"),
+          Some("GB")
+        )
+      ))
 
     val responseBusiness = RetrieveBusinessDetailsResponse(
       "XAIS12345678910",
@@ -217,4 +225,5 @@ class DesResponseMappingSupportSpec extends UnitSpec {
       }
     }
   }
+
 }

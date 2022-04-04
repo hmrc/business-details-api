@@ -30,26 +30,28 @@ import v1.support.DesResponseMappingSupport
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ListAllBusinessesService @Inject()(listAllBusinessesConnector: ListAllBusinessesConnector) extends DesResponseMappingSupport with Logging {
+class ListAllBusinessesService @Inject() (listAllBusinessesConnector: ListAllBusinessesConnector) extends DesResponseMappingSupport with Logging {
 
-  def listAllBusinessesService(request: ListAllBusinessesRequest)(
-    implicit hc: HeaderCarrier,
-    ec: ExecutionContext,
-    logContext: EndpointLogContext,
-    correlationId: String): Future[ListAllBusinessesServiceOutcome] = {
+  def listAllBusinessesService(request: ListAllBusinessesRequest)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      logContext: EndpointLogContext,
+      correlationId: String): Future[ListAllBusinessesServiceOutcome] = {
 
     val result = for {
       desResponseWrapper <- EitherT(listAllBusinessesConnector.listAllBusinesses(request)).leftMap(mapDesErrors(desErrorMap))
     } yield desResponseWrapper
     result.value
   }
+
   private def desErrorMap: Map[String, MtdError] =
     Map(
-      "INVALID_NINO" -> NinoFormatError,
-      "INVALID_MTDBSA" -> DownstreamError,
-      "NOT_FOUND_NINO" -> NotFoundError,
-      "NOT_FOUND_MTDBSA" -> DownstreamError,
-      "SERVER_ERROR" -> DownstreamError,
-      "SERVICE_UNAVAILABLE" -> DownstreamError,
+      "INVALID_NINO"        -> NinoFormatError,
+      "INVALID_MTDBSA"      -> DownstreamError,
+      "NOT_FOUND_NINO"      -> NotFoundError,
+      "NOT_FOUND_MTDBSA"    -> DownstreamError,
+      "SERVER_ERROR"        -> DownstreamError,
+      "SERVICE_UNAVAILABLE" -> DownstreamError
     )
+
 }

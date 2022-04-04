@@ -194,5 +194,4 @@ class BusinessDetailsSpec extends UnitSpec {
     }
   }
 
-
 }

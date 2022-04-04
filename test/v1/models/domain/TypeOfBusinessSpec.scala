@@ -20,6 +20,7 @@ import support.UnitSpec
 import utils.enums.EnumJsonSpecSupport
 
 class TypeOfBusinessSpec extends UnitSpec with EnumJsonSpecSupport {
+
   testRoundTrip[TypeOfBusiness](
     ("self-employment", TypeOfBusiness.`self-employment`),
     ("uk-property", TypeOfBusiness.`uk-property`),

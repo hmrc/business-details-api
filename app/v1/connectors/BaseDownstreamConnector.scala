@@ -28,28 +28,29 @@ trait BaseDownstreamConnector {
 
   val logger: Logger = Logger(this.getClass)
 
-  private def downstreamHeaderCarrier(additionalHeaders: Seq[String] = Seq.empty)(implicit hc: HeaderCarrier,
-                                                                                  correlationId: String): HeaderCarrier =
+  private def downstreamHeaderCarrier(additionalHeaders: Seq[String] = Seq.empty)(implicit hc: HeaderCarrier, correlationId: String): HeaderCarrier =
     HeaderCarrier(
       extraHeaders = hc.extraHeaders ++
         // Contract headers
         Seq(
           "Authorization" -> s"Bearer ${appConfig.desToken}",
-          "Environment" -> appConfig.desEnv,
+          "Environment"   -> appConfig.desEnv,
           "CorrelationId" -> correlationId
         ) ++
         // Other headers (i.e Gov-Test-Scenario, Content-Type)
         hc.headers(additionalHeaders ++ appConfig.desEnvironmentHeaders.getOrElse(Seq.empty))
     )
 
-  def get[Resp](uri: DesUri[Resp])(implicit ec: ExecutionContext,
-                                   hc: HeaderCarrier,
-                                   httpReads: HttpReads[DesOutcome[Resp]],
-                                   correlationId: String): Future[DesOutcome[Resp]] = {
+  def get[Resp](uri: DesUri[Resp])(implicit
+      ec: ExecutionContext,
+      hc: HeaderCarrier,
+      httpReads: HttpReads[DesOutcome[Resp]],
+      correlationId: String): Future[DesOutcome[Resp]] = {
 
     def doGet(implicit hc: HeaderCarrier): Future[DesOutcome[Resp]] =
       http.GET(url = s"${appConfig.desBaseUrl}/${uri.value}")
 
     doGet(downstreamHeaderCarrier())
   }
+
 }

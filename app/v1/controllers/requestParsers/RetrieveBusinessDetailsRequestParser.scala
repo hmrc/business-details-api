@@ -21,8 +21,8 @@ import v1.models.domain.Nino
 import v1.controllers.requestParsers.validators.RetrieveBusinessDetailsValidator
 import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest}
 
-class RetrieveBusinessDetailsRequestParser @Inject()(val validator: RetrieveBusinessDetailsValidator)
-  extends RequestParser[RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest] {
+class RetrieveBusinessDetailsRequestParser @Inject() (val validator: RetrieveBusinessDetailsValidator)
+    extends RequestParser[RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest] {
 
   override protected def requestFor(data: RetrieveBusinessDetailsRawData): RetrieveBusinessDetailsRequest = {
     RetrieveBusinessDetailsRequest(Nino(data.nino), data.businessId)

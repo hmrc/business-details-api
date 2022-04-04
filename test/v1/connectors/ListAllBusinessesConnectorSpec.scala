@@ -31,7 +31,7 @@ class ListAllBusinessesConnectorSpec extends ConnectorSpec {
   private val nino = Nino("AA123456A")
 
   class Test extends MockHttpClient with MockAppConfig {
-    val connector: ListAllBusinessesConnector = new ListAllBusinessesConnector(http = mockHttpClient, appConfig = mockAppConfig)
+    val connector: ListAllBusinessesConnector    = new ListAllBusinessesConnector(http = mockHttpClient, appConfig = mockAppConfig)
     val desRequestHeaders: Seq[(String, String)] = Seq("Environment" -> "des-environment", "Authorization" -> s"Bearer des-token")
 
     MockAppConfig.desBaseUrl returns baseUrl
@@ -44,16 +44,19 @@ class ListAllBusinessesConnectorSpec extends ConnectorSpec {
     val request = ListAllBusinessesRequest(nino)
     "return a result" when {
       "the downstream call is successful" in new Test {
-        val outcome = Right(ResponseWrapper(correlationId, ListAllBusinessesResponse(Seq(Business(`self-employment`, "123456789012345", Some("RCDTS"))))))
-        MockedHttpClient.
-          get(
+        val outcome =
+          Right(ResponseWrapper(correlationId, ListAllBusinessesResponse(Seq(Business(`self-employment`, "123456789012345", Some("RCDTS"))))))
+        MockedHttpClient
+          .get(
             url = s"$baseUrl/registration/business-details/nino/${request.nino.nino}",
             config = dummyDesHeaderCarrierConfig,
             requiredHeaders = requiredDesHeaders,
             excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
-          ).returns(Future.successful(outcome))
+          )
+          .returns(Future.successful(outcome))
         await(connector.listAllBusinesses(request)) shouldBe outcome
       }
     }
   }
+
 }

@@ -25,7 +25,8 @@ import v1.models.hateoas.{HateoasWrapper, Link}
 import v1.models.hateoas.Method.GET
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesHateoasData, ListAllBusinessesResponse}
 
-class ListAllBusinessesResponseSpec  extends UnitSpec {
+class ListAllBusinessesResponseSpec extends UnitSpec {
+
   "reads" should {
     "output a model" when {
       "passed DES json with businessData" in {
@@ -95,10 +96,11 @@ class ListAllBusinessesResponseSpec  extends UnitSpec {
             |}
             |""".stripMargin
         )
-        val model = ListAllBusinessesResponse(Seq(
-          Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS")),
-          Business(TypeOfBusiness.`self-employment`, "098765432109876", Some("RCDTS 2"))
-        ))
+        val model = ListAllBusinessesResponse(
+          Seq(
+            Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS")),
+            Business(TypeOfBusiness.`self-employment`, "098765432109876", Some("RCDTS 2"))
+          ))
         desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
       }
       "passed DES json with propertyData" in {
@@ -148,10 +150,11 @@ class ListAllBusinessesResponseSpec  extends UnitSpec {
             |}
             |""".stripMargin
         )
-        val model = ListAllBusinessesResponse(Seq(
-          Business(TypeOfBusiness.`uk-property` ,"123456789012345", None),
-          Business(TypeOfBusiness.`foreign-property` ,"098765432109876", None)
-        ))
+        val model = ListAllBusinessesResponse(
+          Seq(
+            Business(TypeOfBusiness.`uk-property`, "123456789012345", None),
+            Business(TypeOfBusiness.`foreign-property`, "098765432109876", None)
+          ))
         desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
       }
       "passed DES json with businessData and propertyData" in {
@@ -257,12 +260,13 @@ class ListAllBusinessesResponseSpec  extends UnitSpec {
             |}
             |""".stripMargin
         )
-        val model = ListAllBusinessesResponse(Seq(
-          Business(TypeOfBusiness.`self-employment`,"123456789012345", Some("RCDTS")),
-          Business(TypeOfBusiness.`self-employment`,"098765432109876", Some("RCDTS 2")),
-          Business(TypeOfBusiness.`uk-property` ,"123456789012345", None),
-          Business(TypeOfBusiness.`foreign-property` ,"098765432109876", None)
-        ))
+        val model = ListAllBusinessesResponse(
+          Seq(
+            Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS")),
+            Business(TypeOfBusiness.`self-employment`, "098765432109876", Some("RCDTS 2")),
+            Business(TypeOfBusiness.`uk-property`, "123456789012345", None),
+            Business(TypeOfBusiness.`foreign-property`, "098765432109876", None)
+          ))
         desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
       }
     }
@@ -271,12 +275,12 @@ class ListAllBusinessesResponseSpec  extends UnitSpec {
   "writes" when {
     "passed a model" should {
       "return mtd JSON" in {
-        val model = ListAllBusinessesResponse(Seq(
-          Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("name")),
-          Business(TypeOfBusiness.`uk-property`, "123456789012346", None)
-        ))
-        val mtdJson = Json.parse(
-          s"""
+        val model = ListAllBusinessesResponse(
+          Seq(
+            Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("name")),
+            Business(TypeOfBusiness.`uk-property`, "123456789012346", None)
+          ))
+        val mtdJson = Json.parse(s"""
              |{
              |  "listOfBusinesses": [
              |    {
@@ -296,7 +300,6 @@ class ListAllBusinessesResponseSpec  extends UnitSpec {
     }
   }
 
-
   "HateoasFactory" must {
     class Test extends MockAppConfig {
       val hateoasFactory = new HateoasFactory(mockAppConfig)
@@ -305,14 +308,20 @@ class ListAllBusinessesResponseSpec  extends UnitSpec {
     }
 
     "expose the correct links for list" in new Test {
-      hateoasFactory.wrapList(ListAllBusinessesResponse(Seq(Business(TypeOfBusiness.`self-employment`, "myid", None))), ListAllBusinessesHateoasData(nino)) shouldBe
+      hateoasFactory.wrapList(
+        ListAllBusinessesResponse(Seq(Business(TypeOfBusiness.`self-employment`, "myid", None))),
+        ListAllBusinessesHateoasData(nino)) shouldBe
         HateoasWrapper(
           ListAllBusinessesResponse(
-            Seq(HateoasWrapper(Business(TypeOfBusiness.`self-employment`, "myid", None), Seq(Link(s"/individuals/business/details/$nino/myid", GET, "retrieve-business-details"))))),
+            Seq(
+              HateoasWrapper(
+                Business(TypeOfBusiness.`self-employment`, "myid", None),
+                Seq(Link(s"/individuals/business/details/$nino/myid", GET, "retrieve-business-details"))))),
           Seq(
             Link(s"/individuals/business/details/$nino/list", GET, "self")
           )
         )
     }
   }
+
 }

@@ -30,5 +30,6 @@ class RetrieveBusinessDetailsValidator extends Validator[RetrieveBusinessDetails
       BusinessIdValidation.validate(data.businessId)
     )
   }
+
   override def validate(data: RetrieveBusinessDetailsRawData): List[MtdError] = run(validationSet, data).distinct
 }

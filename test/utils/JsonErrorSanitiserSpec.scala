@@ -16,7 +16,6 @@
 
 package utils
 
-
 import support.UnitSpec
 
 class JsonErrorSanitiserSpec extends UnitSpec {
@@ -41,4 +40,5 @@ class JsonErrorSanitiserSpec extends UnitSpec {
     }
 
   }
+
 }

@@ -19,6 +19,7 @@ package v1.models.request
 import support.UnitSpec
 
 class DesTaxYearSpec extends UnitSpec {
+
   "toString" should {
     "return the string value inside a DesTaxYear model" in {
       DesTaxYear("my value").toString shouldBe "my value"
@@ -30,4 +31,5 @@ class DesTaxYearSpec extends UnitSpec {
       DesTaxYear.fromMtd("2017-18") shouldBe DesTaxYear("2018")
     }
   }
+
 }

@@ -36,7 +36,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ListAllBusinessesControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockListAllBusinessesService
@@ -44,9 +44,9 @@ class ListAllBusinessesControllerSpec
     with MockListAllBusinessesRequestParser
     with MockIdGenerator {
 
-  private val validNino = "AA123456A"
-  val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
-  private val testHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
+  private val validNino            = "AA123456A"
+  val correlationId: String        = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  private val testHateoasLink      = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
   private val testInnerHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-inner-relationship")
 
   trait Test {
@@ -61,6 +61,7 @@ class ListAllBusinessesControllerSpec
       cc = cc,
       idGenerator = mockIdGenerator
     )
+
     MockMtdIdLookupService.lookup(validNino).returns(Future.successful(Right("test-mtd-id")))
     MockedEnrolmentsAuthService.authoriseUser()
     MockIdGenerator.getCorrelationId.returns(correlationId)
@@ -92,17 +93,17 @@ class ListAllBusinessesControllerSpec
       |   ]
       |}
         """.stripMargin
-    )
+  )
 
-  private val business = Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS"))
+  private val business     = Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS"))
   private val responseData = ListAllBusinessesResponse(Seq(business))
 
-  val hateoasResponse: ListAllBusinessesResponse[HateoasWrapper[Business]] = ListAllBusinessesResponse(Seq(HateoasWrapper(business, Seq(testInnerHateoasLink))))
+  val hateoasResponse: ListAllBusinessesResponse[HateoasWrapper[Business]] = ListAllBusinessesResponse(
+    Seq(HateoasWrapper(business, Seq(testInnerHateoasLink))))
 
   private val requestData = ListAllBusinessesRequest(Nino(validNino))
 
   private val rawData = ListAllBusinessesRawData(validNino)
-
 
   "handleRequest" should {
     "return OK" when {
@@ -169,7 +170,6 @@ class ListAllBusinessesControllerSpec
 
             val result: Future[Result] = controller.handleRequest(validNino)(fakeRequest)
 
-
             status(result) shouldBe expectedStatus
             contentAsJson(result) shouldBe Json.toJson(mtdError)
             header("X-CorrelationId", result) shouldBe Some(correlationId)
@@ -180,11 +180,12 @@ class ListAllBusinessesControllerSpec
         val input = Seq(
           (NinoFormatError, BAD_REQUEST),
           (BadRequestError, BAD_REQUEST),
-          (DownstreamError, INTERNAL_SERVER_ERROR),
+          (DownstreamError, INTERNAL_SERVER_ERROR)
         )
 
         input.foreach(args => (serviceErrors _).tupled(args))
       }
     }
   }
+
 }

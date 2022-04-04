@@ -19,6 +19,6 @@ package v1.models.hateoas
 //$COVERAGE-OFF$
 
 object RelType {
-  val SELF = "self"
+  val SELF                      = "self"
   val RETRIEVE_BUSINESS_DETAILS = "retrieve-business-details"
 }

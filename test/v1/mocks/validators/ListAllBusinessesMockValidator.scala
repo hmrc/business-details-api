@@ -33,5 +33,7 @@ class ListAllBusinessesMockValidator extends MockFactory {
         .validate(_: ListAllBusinessesRawData))
         .expects(data)
     }
+
   }
+
 }

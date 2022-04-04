@@ -20,10 +20,10 @@ import support.UnitSpec
 import v1.models.errors.NinoFormatError
 import v1.models.request.listAllBusinesses.ListAllBusinessesRawData
 
-class ListAllBusinessesValidatorSpec extends UnitSpec{
+class ListAllBusinessesValidatorSpec extends UnitSpec {
 
-  private val validNino     = "AA123456A"
-  private val invalidNino   = "beans"
+  private val validNino   = "AA123456A"
+  private val invalidNino = "beans"
 
   private val listAllBusinessesRawData: String => ListAllBusinessesRawData = (nino) => ListAllBusinessesRawData(nino)
 

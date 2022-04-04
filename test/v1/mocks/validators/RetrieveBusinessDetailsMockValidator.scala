@@ -33,5 +33,7 @@ class RetrieveBusinessDetailsMockValidator extends MockFactory {
         .validate(_: RetrieveBusinessDetailsRawData))
         .expects(data)
     }
+
   }
+
 }

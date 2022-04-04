@@ -40,15 +40,18 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
 object RetrieveBusinessDetailsResponse extends HateoasLinks {
 
   implicit val writes: OWrites[RetrieveBusinessDetailsResponse] = Json.writes[RetrieveBusinessDetailsResponse]
-  implicit val reads: Reads[RetrieveBusinessDetailsResponse] = Json.reads[RetrieveBusinessDetailsResponse]
+  implicit val reads: Reads[RetrieveBusinessDetailsResponse]    = Json.reads[RetrieveBusinessDetailsResponse]
 
-  implicit object RetrieveBusinessDetailsLinksFactory extends HateoasLinksFactory[RetrieveBusinessDetailsResponse, RetrieveBusinessDetailsHateoasData] {
+  implicit object RetrieveBusinessDetailsLinksFactory
+      extends HateoasLinksFactory[RetrieveBusinessDetailsResponse, RetrieveBusinessDetailsHateoasData] {
+
     override def links(appConfig: AppConfig, data: RetrieveBusinessDetailsHateoasData): Seq[Link] = {
       import data._
       Seq(
         retrieveBusinessDetails(appConfig, nino, businessId)
       )
     }
+
   }
 
 }

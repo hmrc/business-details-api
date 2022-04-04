@@ -23,8 +23,8 @@ import javax.inject.{Inject, Singleton}
 import utils.Logging
 
 @Singleton
-class ApiDefinitionFactory @Inject()(appConfig: AppConfig) extends Logging {
-  private val readScope = "read:self-assessment"
+class ApiDefinitionFactory @Inject() (appConfig: AppConfig) extends Logging {
+  private val readScope  = "read:self-assessment"
   private val writeScope = "write:self-assessment"
 
   def confidenceLevel: ConfidenceLevel = if (appConfig.confidenceLevelConfig.definitionEnabled) ConfidenceLevel.L200 else ConfidenceLevel.L50
@@ -62,10 +62,12 @@ class ApiDefinitionFactory @Inject()(appConfig: AppConfig) extends Logging {
     )
 
   private[definition] def buildAPIStatus(version: String): APIStatus = {
-    APIStatus.parser.lift(appConfig.apiStatus(version))
+    APIStatus.parser
+      .lift(appConfig.apiStatus(version))
       .getOrElse {
         logger.error(s"[ApiDefinition][buildApiStatus] no API Status found in config.  Reverting to Alpha")
         APIStatus.ALPHA
       }
   }
+
 }

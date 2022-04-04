@@ -27,22 +27,22 @@ trait DesResponseMappingSupport {
   self: Logging =>
 
   final def filterId(
-    responseWrapper: ResponseWrapper[RetrieveBusinessDetailsDesResponse],
-    businessId: String
+      responseWrapper: ResponseWrapper[RetrieveBusinessDetailsDesResponse],
+      businessId: String
   ): Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]] = {
-    val filteredBusinesses: List[BusinessDetails] = responseWrapper.responseData.businessDetails.filter {
-      businessDetails => businessId == businessDetails.businessId
+    val filteredBusinesses: List[BusinessDetails] = responseWrapper.responseData.businessDetails.filter { businessDetails =>
+      businessId == businessDetails.businessId
     }.toList
 
     filteredBusinesses match {
       case business :: Nil => Right(ResponseWrapper(responseWrapper.correlationId, business.toMtd))
-      case Nil => Left(ErrorWrapper(responseWrapper.correlationId, NoBusinessFoundError))
-      case _ :: _ => Left(ErrorWrapper(responseWrapper.correlationId, DownstreamError))
+      case Nil             => Left(ErrorWrapper(responseWrapper.correlationId, NoBusinessFoundError))
+      case _ :: _          => Left(ErrorWrapper(responseWrapper.correlationId, DownstreamError))
     }
   }
 
-  final def mapDesErrors[D](errorCodeMap: PartialFunction[String, MtdError])(desResponseWrapper: ResponseWrapper[DesError])(
-    implicit logContext: EndpointLogContext): ErrorWrapper = {
+  final def mapDesErrors[D](errorCodeMap: PartialFunction[String, MtdError])(desResponseWrapper: ResponseWrapper[DesError])(implicit
+      logContext: EndpointLogContext): ErrorWrapper = {
 
     lazy val defaultErrorCodeMapping: String => MtdError = { code =>
       logger.warn(s"[${logContext.controllerName}] [${logContext.endpointName}] - No mapping found for error code $code")
@@ -69,4 +69,5 @@ trait DesResponseMappingSupport {
         ErrorWrapper(correlationId, error, errors)
     }
   }
+
 }

@@ -21,6 +21,7 @@ import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 case class RetrieveBusinessDetailsDesResponse(businessDetails: Seq[BusinessDetails])
 
 object RetrieveBusinessDetailsDesResponse {
+
   implicit val reads: Reads[RetrieveBusinessDetailsDesResponse] = {
     val businessDataReads: Reads[Seq[BusinessDetails]] =
       (JsPath \ "businessData").readNullable[Seq[BusinessDetails]](BusinessDetails.readsSeqBusinessData).map(_.getOrElse(Nil))

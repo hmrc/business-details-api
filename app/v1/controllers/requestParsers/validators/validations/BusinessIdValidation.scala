@@ -25,4 +25,5 @@ object BusinessIdValidation {
   def validate(businessId: String): List[MtdError] = {
     if (businessId.matches(businessIdRegex)) NoValidationErrors else List(BusinessIdFormatError)
   }
+
 }

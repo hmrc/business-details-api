@@ -51,6 +51,7 @@ case class BusinessDetails(businessId: String,
     businessAddressPostcode = businessAddressPostcode,
     businessAddressCountryCode = businessAddressCountryCode
   )
+
 }
 
 object BusinessDetails {
@@ -64,7 +65,7 @@ object BusinessDetails {
   val accountingPeriodReads: Reads[Seq[AccountingPeriod]] = (
     (JsPath \ "accountingPeriodStartDate").read[String] and
       (JsPath \ "accountingPeriodEndDate").read[String]
-    ).apply((start, end) =>  Seq(AccountingPeriod(start, end)))
+  ).apply((start, end) => Seq(AccountingPeriod(start, end)))
 
   implicit val writes: OWrites[BusinessDetails] = Json.writes[BusinessDetails]
 
@@ -83,6 +84,7 @@ object BusinessDetails {
       (JsPath \ "businessAddressDetails" \ "postalCode").readNullable[String] and
       (JsPath \ "businessAddressDetails" \ "countryCode").readNullable[String]
   )(BusinessDetails.apply _)
+
   val readsSeqBusinessData: Reads[Seq[BusinessDetails]] = Reads.traversableReads[Seq, BusinessDetails](implicitly, readsBusinessData)
 
   val readsPropertyData: Reads[BusinessDetails] = (
@@ -99,7 +101,8 @@ object BusinessDetails {
       Reads.pure(None) and
       Reads.pure(None) and
       Reads.pure(None)
-    ) (BusinessDetails.apply _)
+  )(BusinessDetails.apply _)
+
   val readsSeqPropertyData: Reads[Seq[BusinessDetails]] = Reads.traversableReads[Seq, BusinessDetails](implicitly, readsPropertyData)
 
-  }
+}
