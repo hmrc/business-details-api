@@ -21,6 +21,7 @@ import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
+import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 import v1.models.errors._
 import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
@@ -71,7 +72,10 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
     def request(): WSRequest = {
       setupStubs()
       buildRequest(uri)
-        .withHttpHeaders((ACCEPT, "application/vnd.hmrc.1.0+json"))
+        .withHttpHeaders(
+          (ACCEPT, "application/vnd.hmrc.1.0+json"),
+          (AUTHORIZATION, "Bearer 123") // some bearer token
+      )
     }
 
     def errorBody(code: String): String =
@@ -264,7 +268,6 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           ("", "X0IS123456789012", Status.NOT_FOUND, NotFoundError),
           ("AA123456A", "X2", Status.BAD_REQUEST, BusinessIdFormatError)
         )
-
         input.foreach(args => (validationErrorTest _).tupled(args))
       }
       "des service error" when {
@@ -292,10 +295,8 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           (Status.INTERNAL_SERVER_ERROR, "SERVER_ERROR", Status.INTERNAL_SERVER_ERROR, DownstreamError),
           (Status.SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", Status.INTERNAL_SERVER_ERROR, DownstreamError)
         )
-
         input.foreach(args => (serviceErrorTest _).tupled(args))
       }
     }
   }
-
 }
