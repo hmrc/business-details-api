@@ -1,0 +1,86 @@
+summary: Retrieve business details
+description: |
+  This endpoint allows a developer to retrieve additional information for one of a user's business income source. The unique account reference (National Insurance number) must be provided as well as the unique business identifier.
+  
+  ### Test data
+  <p>Scenario simulations using <code>Gov-Test-Scenario</code> headers is only available in the sandbox environment.</p>
+  <table>
+      <thead>
+          <tr>
+              <th>Header Value (Gov-Test-Scenario)</th>
+              <th>Scenario</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td><p>N/A - DEFAULT</p></td>
+              <td><p>Simulates success response.</p></td>
+          </tr>
+          <tr>
+              <td><p>NOT_FOUND</p></td>
+              <td><p>Simulates the scenario where no data is found.</p></td>
+          </tr>
+      </tbody>
+  </table>
+tags:
+  - Retrieve business details
+
+parameters:
+  - $ref: '../pathParameters.yaml#/components/parameters/nino'
+  - $ref: '../pathParameters.yaml#/components/parameters/businessId'
+  - $ref: '../headers.yaml#/components/parameters/acceptJson'
+  - $ref: '../headers.yaml#/components/parameters/testScenarioHeader'
+
+security:
+  - User-Restricted:
+      - read:self-assessment
+
+responses:
+  "200":
+    description: Success
+    headers:
+      X-CorrelationId:
+        $ref: '../headers.yaml#/components/parameters/correlationId'
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/retrieveBusinessDetails/retrieve_business_details_response.json'
+        examples:
+          example-response:
+            description: Example Response
+            value:
+              $ref: '../examples/retrieveBusinessDetails/retrieve_business_details_response.json'
+
+  "400":
+    description: Bad request
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/error-response.yaml'
+        examples:
+          FORMAT_NINO:
+            $ref: '../errors.yaml#/components/examples/formatNino'
+          FORMAT_BUSINESS_ID:
+            $ref: '../errors.yaml#/components/examples/formatBusinessId'
+
+  "403":
+    description: Forbidden
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/error-response.yaml'
+        examples:
+          CLIENT_OR_AGENT_NOT_AUTHORISED:
+            $ref: '../errors.yaml#/components/examples/clientOrAgentNotAuthorised'
+
+  "404":
+    description: Not Found
+    content:
+      application/json:
+        schema:
+          $ref: '../schemas/error-response.yaml'
+        examples:
+          MATCHING_RESOURCE_NOT_FOUND:
+            $ref: '../errors.yaml#/components/examples/notFound'
+          NO_BUSINESS_FOUND:
+            $ref: '../errors.yaml#/components/examples/notFoundBusiness'

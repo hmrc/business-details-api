@@ -1,0 +1,136 @@
+
+openapi: "3.0.3"
+
+info:
+  version: "1.0"
+  title: Business Details (MTD)
+  description: |
+    # Overview
+    List all businesses and retrieve additional information about the details of a user’s business.
+
+    For information on how to connect to this API [see the Income Tax MTD end-to-end service guide](https://developer.service.hmrc.gov.uk/guides/income-tax-mtd-end-to-end-service-guide/).
+    
+    # Send fraud prevention data
+    HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters. 
+
+    <div class="govuk-warning-text warning-icon-fix">
+      <span class="govuk-warning-text__icon warning-icon-ui-fix" aria-hidden="true">!</span>
+      <strong class="govuk-warning-text__text">
+        <span class="govuk-warning-text__assistive">Warning</span>
+        You are required by law to submit header data for this API. This includes all associated APIs and endpoints.
+      </strong>
+    </div>
+
+    [Check the data you need to send](/guides/fraud-prevention/). You can also use the [Test API](/api-documentation/docs/api/service/txm-fph-validator-api/1.0) during initial development and as part of your quality assurance checks.
+
+    # Versioning
+    When an API changes in a way that is backwards-incompatible, we increase the version number of the API. 
+    See our [reference guide](/api-documentation/docs/reference-guide#versioning) for more on
+    versioning.
+
+
+    # Errors
+    We use standard HTTP status codes to show whether an API request succeeded or not. They are usually in the range:
+
+    - 200 to 299 if it succeeded, including code 202 if it was accepted by an API that needs to wait for further action
+    - 400 to 499 if it failed because of a client error by your application
+    - 500 to 599 if it failed because of an error on our server
+
+    Errors specific to each API are shown in the Endpoints section, under Response. See our [reference guide](https://developer.service.hmrc.gov.uk/api-documentation/docs/reference-guide#errors) for more on errors.
+
+    Single errors will be returned in the following format:<br>
+    `{
+        "code": "FORMAT_FIELD_NAME",
+        "message": "The provided FieldName is invalid"
+    }`
+
+    Where possible, multiple errors will be returned with `INVALID_REQUEST` in the following format:<br>
+    `{
+        "code": "INVALID_REQUEST",
+        "message": "Invalid request",
+        "errors": [
+            {
+                "code": "RULE_FIELD_NAME",
+                "message": "The provided FieldName is not allowed"
+            },
+            {
+                "code": "FORMAT_FIELD_NAME",
+                "message": "The provided FieldName is invalid"
+            }
+        ]
+    }`
+
+    Where it is possible for the same error to be returned multiple times, `message` will describe the expected format and `paths` will show the fields which are invalid.<br>
+
+    Where arrays are submitted a number indicates the object in the array sequence, for example, `/arrayName/1/fieldName`.
+
+    An example with single error:<br>
+    `{
+        "code": "FORMAT_STRING_NAME",
+        "message": "The provided field is not valid",
+        "paths": [ "/arrayName/0/fieldName" ]
+    }`
+
+    An example with multiple errors:<br>
+    `{
+        "code": "INVALID_REQUEST",
+        "message": "Invalid request",
+        "errors": [
+            {
+               "code": "FORMAT_VALUE",
+               "message": "The value should be between 0 and 99999999999.99",
+               "paths": [ "/objectName/fieldName1", "/arrayName/0/fieldName2" ]
+            },
+            {
+               "code": "FORMAT_STRING_NAME",
+               "message": "The provided field is not valid",
+               "paths": [ "/arrayName/0/fieldName3", "/arrayName/1/fieldName3" ]
+            }
+        ]
+    }`
+
+
+    # Changelog
+    You can find the changelog in the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/wiki) GitHub wiki.
+    
+    
+    # Support
+    
+    * Raise non-technical or platform-related issues with the [Software Development Support Team (SDST)](https://developer.service.hmrc.gov.uk/developer/support).
+    * Raise technical issues on the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/issues) GitHub page.
+    
+    
+    # Testing
+    You can use the sandbox environment to <a href="/api-documentation/docs/testing">test this API</a>. You can use the <a href="/api-documentation/docs/api/service/api-platform-test-user/1.0">Create Test User API</a> or it's frontend service to create test users.
+
+    It may not be possible to test all scenarios in the sandbox. You can test some scenarios by passing the `Gov-Test-Scenario` header. Documentation for each endpoint includes a **Test data** section, which explains the scenarios that you can simulate using the `Gov-Test-Scenario` header.
+
+    If you have a specific testing need that is not supported in the sandbox, contact <a href="/developer/support">our support team</a>.
+
+    Some APIs may be marked \[test only\]. This means that they are not available for use in production and may change.
+
+servers:
+  - url: https://test-api.service.hmrc.gov.uk
+    description: Sandbox
+  - url: https://api.service.hmrc.gov.uk
+    description: Production
+
+components:
+  securitySchemes:
+    User-Restricted:
+      type: oauth2
+      description: HMRC supports OAuth 2.0 for authenticating User-restricted API requests
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
+          scopes:
+            write:self-assessment: Grant write access
+            read:self-assessment: Grant read access
+
+paths:
+  /individuals/business/details/{nino}/list:
+    $ref: "./list.yaml"
+  /individuals/business/details/{nino}/{businessId}:
+    $ref: "./retrieve.yaml"
