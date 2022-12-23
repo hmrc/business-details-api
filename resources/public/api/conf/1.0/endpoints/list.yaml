@@ -39,14 +39,12 @@ get:
             </tr>
         </tbody>
     </table>
-  tags:
-    - List All Businesses
 
   parameters:
-    - $ref: '../pathParameters.yaml#/components/parameters/nino'
-    - $ref: '../headers.yaml#/components/parameters/acceptJson'
-    - $ref: '../headers.yaml#/components/parameters/authorization'
-    - $ref: '../headers.yaml#/components/parameters/testScenarioHeader'
+    - $ref: '../common/pathParameters.yaml#/components/parameters/nino'
+    - $ref: '../common/headers.yaml#/components/parameters/acceptJson'
+    - $ref: '../common/headers.yaml#/components/parameters/authorization'
+    - $ref: '../common/headers.yaml#/components/parameters/testScenarioHeader'
 
   security:
     - User-Restricted:
@@ -57,7 +55,7 @@ get:
       description: Success
       headers:
         X-CorrelationId:
-          $ref: '../headers.yaml#/components/parameters/correlationId'
+          $ref: '../common/headers.yaml#/components/parameters/correlationId'
       content:
         application/json:
           schema:
@@ -76,7 +74,7 @@ get:
             $ref: '../schemas/error-response.yaml'
           examples:
             FORMAT_NINO:
-              $ref: '../errors.yaml#/components/examples/formatNino'
+              $ref: '../common/errors.yaml#/components/examples/formatNino'
 
     "403":
       description: Forbidden
@@ -86,7 +84,7 @@ get:
             $ref: '../schemas/error-response.yaml'
           examples:
             CLIENT_OR_AGENT_NOT_AUTHORISED:
-              $ref: '../errors.yaml#/components/examples/clientOrAgentNotAuthorised'
+              $ref: '../common/errors.yaml#/components/examples/clientOrAgentNotAuthorised'
 
     "404":
       description: Not Found
@@ -96,4 +94,4 @@ get:
             $ref: '../schemas/error-response.yaml'
           examples:
             MATCHING_RESOURCE_NOT_FOUND:
-              $ref: '../errors.yaml#/components/examples/notFound'
+              $ref: '../common/errors.yaml#/components/examples/notFound'

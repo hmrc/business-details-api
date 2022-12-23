@@ -8,7 +8,7 @@ components:
       schema:
         type: string
         enum:
-          - "application/vnd.hmrc.2.0+json"
+          - "application/vnd.hmrc.1.0+json"
       required: true
 
     authorization:
@@ -31,6 +31,16 @@ components:
         enum:
           - "application/json"
       required: true
+
+    correlationId:
+      in: header
+      type: string
+      description: |
+        Unique ID for operation tracking
+        String, 36 characters.
+      schema:
+        type: string
+        example: c75f40a6-a3df-4429-a697-471eeec46435
 
     testScenarioHeader:
       name: "Gov-Test-Scenario"

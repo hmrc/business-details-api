@@ -56,15 +56,13 @@ get:
             </tr>
         </tbody>
     </table>
-  tags:
-    - Retrieve Business Details
 
   parameters:
-    - $ref: '../pathParameters.yaml#/components/parameters/nino'
-    - $ref: '../pathParameters.yaml#/components/parameters/businessId'
-    - $ref: '../headers.yaml#/components/parameters/acceptJson'
-    - $ref: '../headers.yaml#/components/parameters/authorization'
-    - $ref: '../headers.yaml#/components/parameters/testScenarioHeader'
+    - $ref: '../common/pathParameters.yaml#/components/parameters/nino'
+    - $ref: '../common/pathParameters.yaml#/components/parameters/businessId'
+    - $ref: '../common/headers.yaml#/components/parameters/acceptJson'
+    - $ref: '../common/headers.yaml#/components/parameters/authorization'
+    - $ref: '../common/headers.yaml#/components/parameters/testScenarioHeader'
 
   security:
     - User-Restricted:
@@ -75,7 +73,7 @@ get:
       description: Success
       headers:
         X-CorrelationId:
-          $ref: '../headers.yaml#/components/parameters/correlationId'
+          $ref: '../common/headers.yaml#/components/parameters/correlationId'
       content:
         application/json:
           schema:
@@ -94,9 +92,9 @@ get:
             $ref: '../schemas/error-response.yaml'
           examples:
             FORMAT_NINO:
-              $ref: '../errors.yaml#/components/examples/formatNino'
+              $ref: '../common/errors.yaml#/components/examples/formatNino'
             FORMAT_BUSINESS_ID:
-              $ref: '../errors.yaml#/components/examples/formatBusinessId'
+              $ref: '../common/errors.yaml#/components/examples/formatBusinessId'
 
     "403":
       description: Forbidden
@@ -116,6 +114,6 @@ get:
             $ref: '../schemas/error-response.yaml'
           examples:
             MATCHING_RESOURCE_NOT_FOUND:
-              $ref: '../errors.yaml#/components/examples/notFound'
+              $ref: '../common/errors.yaml#/components/examples/notFound'
             NO_BUSINESS_FOUND:
-              $ref: '../errors.yaml#/components/examples/notFoundBusiness'
+              $ref: '../common/errors.yaml#/components/examples/notFoundBusiness'
