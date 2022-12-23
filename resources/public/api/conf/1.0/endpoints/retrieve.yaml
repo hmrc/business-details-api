@@ -104,7 +104,7 @@ get:
             $ref: '../schemas/error-response.yaml'
           examples:
             CLIENT_OR_AGENT_NOT_AUTHORISED:
-              $ref: '../errors.yaml#/components/examples/clientOrAgentNotAuthorised'
+              $ref: '../common/errors.yaml#/components/examples/clientOrAgentNotAuthorised'
 
     "404":
       description: Not Found
