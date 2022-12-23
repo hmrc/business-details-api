@@ -1,0 +1,38 @@
+components:
+  examples:
+
+    # 400
+
+    formatNino:
+      description: |
+        The format of the supplied NINO field is not valid.
+      value:
+        code: FORMAT_NINO
+
+    formatBusinessId:
+      description: |
+        The format of the supplied Business ID field is not valid.
+      value:
+        code: FORMAT_BUSINESS_ID
+
+    # 403
+
+    clientOrAgentNotAuthorised:
+      description: |
+        The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+      value:
+        code: CLIENT_OR_AGENT_NOT_AUTHORISED
+
+    # 404
+
+    notFound:
+      description: |
+        The matching resource is not found.
+      value:
+        code: MATCHING_RESOURCE_NOT_FOUND
+
+    notFoundBusiness:
+      description: |
+        No business found for given NINO with given Business ID.
+      value:
+        code: NO_BUSINESS_FOUND
