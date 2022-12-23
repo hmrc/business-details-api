@@ -14,11 +14,44 @@ description: |
       <tbody>
           <tr>
               <td><p>N/A - DEFAULT</p></td>
-              <td><p>Simulates success response.</p></td>
+              <td>
+                  <p>Simulate a successful response with a self-employment business.</p>
+                  <p>Use the following businessId for this scenario:</p>
+                  <ul>
+                      <li><p>XAIS12345678901</p></li>
+                  </ul>
+              </td>
+          </tr>
+          <tr>
+              <td><p>PROPERTY</p></td>
+              <td><p>Simulate a successful response with a uk-property business.</p>
+              <p>Use the following businessId for this scenario:</p>
+              <ul>
+                <li><p>XAIS12345678902</p></li>
+              </ul>
+              </td>
+          </tr>
+          <tr>
+              <td><p>FOREIGN_PROPERTY</p></td>
+              <td><p>Simulate a successful response with a foreign-property business.</p>
+              <p>Use the following businessId for this scenario:</p>
+              <ul>
+                <li><p>XAIS12345678903</p></li>
+              </ul>
+              </td>
+          </tr>        
+          <tr>
+              <td><p>UNSPECIFIED</p></td>       
+              <td><p>Simulate a successful response with a property-unspecified business.</p>
+              <p>Use the following businessId for this scenario:</p>
+              <ul>
+                <li><p>XAIS12345678903</p></li>
+              </ul>
+              </td>        
           </tr>
           <tr>
               <td><p>NOT_FOUND</p></td>
-              <td><p>Simulates the scenario where no data is found.</p></td>
+              <td><p>Simulate a scenario where no data is found.</p></td>
           </tr>
       </tbody>
   </table>
@@ -29,6 +62,7 @@ parameters:
   - $ref: '../pathParameters.yaml#/components/parameters/nino'
   - $ref: '../pathParameters.yaml#/components/parameters/businessId'
   - $ref: '../headers.yaml#/components/parameters/acceptJson'
+  - $ref: '../headers.yaml#/components/parameters/authorization'
   - $ref: '../headers.yaml#/components/parameters/testScenarioHeader'
 
 security:
