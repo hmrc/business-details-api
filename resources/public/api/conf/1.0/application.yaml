@@ -131,6 +131,6 @@ components:
 
 paths:
   /individuals/business/details/{nino}/list:
-    $ref: "./endpoints/list_business_details.yaml"
+    $ref: "./endpoints/list.yaml"
   /individuals/business/details/{nino}/{businessId}:
-    $ref: "./endpoints/retrieve_business_details.yaml"
+    $ref: "./endpoints/retrieve.yaml"
