@@ -1,0 +1,28 @@
+{
+  "businessId": "XAIS12345678910",
+  "typeOfBusiness": "self-employment",
+  "tradingName": "ABC Ltd.",
+  "accountingPeriods":
+  [
+    {
+      "start": "2018-04-06",
+      "end": "2019-04-05"
+    }
+  ],
+  "accountingType": "ACCRUALS",
+  "commencementDate": "2016-09-24",
+  "cessationDate": "2020-03-24",
+  "businessAddressLineOne": "1 Acme Rd.",
+  "businessAddressLineTwo": "London",
+  "businessAddressLineThree": "Greater London",
+  "businessAddressLineFour": "United Kingdom",
+  "businessAddressPostcode": "M1 1AG",
+  "businessAddressCountryCode": "GB",
+  "links": [
+    {
+      "href": "/individuals/business/details/ET009363D/XAIS12345678910",
+      "method": "GET",
+      "rel": "self"
+    }
+  ]
+}
