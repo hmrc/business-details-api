@@ -41,10 +41,10 @@ get:
     </table>
 
   parameters:
-    - $ref: '../common/pathParameters.yaml#/components/parameters/nino'
-    - $ref: '../common/headers.yaml#/components/parameters/acceptJson'
-    - $ref: '../common/headers.yaml#/components/parameters/authorization'
-    - $ref: '../common/headers.yaml#/components/parameters/testScenarioHeader'
+    - $ref: './common/pathParameters.yaml#/components/parameters/nino'
+    - $ref: './common/headers.yaml#/components/parameters/acceptJson'
+    - $ref: './common/headers.yaml#/components/parameters/authorization'
+    - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
 
   security:
     - User-Restricted:
@@ -55,43 +55,43 @@ get:
       description: Success
       headers:
         X-CorrelationId:
-          $ref: '../common/headers.yaml#/components/parameters/correlationId'
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
       content:
         application/json:
           schema:
-            $ref: '../schemas/listAllbusinesses/list_all_businesses_response.json'
+            $ref: './schemas/listAllbusinesses/list_all_businesses_response.json'
           examples:
             example-response:
               description: Example Response
               value:
-                $ref: '../examples/listAllBusinesses/list_all_businesses_response.json'
+                $ref: './examples/listAllBusinesses/list_all_businesses_response.json'
 
     "400":
       description: Bad request
       content:
         application/json:
           schema:
-            $ref: '../schemas/error-response.yaml'
+            $ref: './schemas/error-response.yaml'
           examples:
             FORMAT_NINO:
-              $ref: '../common/errors.yaml#/components/examples/formatNino'
+              $ref: './common/errors.yaml#/components/examples/formatNino'
 
     "403":
       description: Forbidden
       content:
         application/json:
           schema:
-            $ref: '../schemas/error-response.yaml'
+            $ref: './schemas/error-response.yaml'
           examples:
             CLIENT_OR_AGENT_NOT_AUTHORISED:
-              $ref: '../common/errors.yaml#/components/examples/clientOrAgentNotAuthorised'
+              $ref: './common/errors.yaml#/components/examples/clientOrAgentNotAuthorised'
 
     "404":
       description: Not Found
       content:
         application/json:
           schema:
-            $ref: '../schemas/error-response.yaml'
+            $ref: './schemas/error-response.yaml'
           examples:
             MATCHING_RESOURCE_NOT_FOUND:
-              $ref: '../common/errors.yaml#/components/examples/notFound'
+              $ref: './common/errors.yaml#/components/examples/notFound'
