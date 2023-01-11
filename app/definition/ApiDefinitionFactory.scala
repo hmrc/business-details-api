@@ -49,7 +49,7 @@ class ApiDefinitionFactory @Inject() (appConfig: AppConfig) extends Logging {
         name = "Business Details (MTD)",
         description = "An API for providing business details data",
         context = appConfig.apiGatewayContext,
-        categories = Seq("INCOME_TAX_MTD"),
+        categories = Seq("Income Tax (Making Tax Digital)"),
         versions = Seq(
           APIVersion(
             version = VERSION_1,

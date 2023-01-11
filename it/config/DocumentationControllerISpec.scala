@@ -48,7 +48,7 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
     |      "description":"An API for providing business details data",
     |      "context":"individuals/business/details",
     |      "categories":[
-    |         "INCOME_TAX_MTD"
+    |         "Income Tax (Making Tax Digital)"
     |      ],
     |      "versions":[
     |         {
