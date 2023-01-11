@@ -18,11 +18,11 @@ Start the service manager profile: `sm --start MTDFB_SA`
 sbt test
 sbt it:test
 ```
-## Viewing RAML
+## Viewing Open API Spec (OAS) docs
 To view documentation locally ensure the Business Details API is running, and run api-documentation-frontend:
 `./run_local_with_dependencies.sh`
-Then go to http://localhost:9680/api-documentation/docs/api/preview and use this port and version:
-`http://localhost:7792/api/conf/1.0/application.raml`
+Then go to http://localhost:9680/api-documentation/docs/openapi/preview and use this port and version:
+`http://localhost:7792/api/conf/1.0/application.yaml`
 
 ## Changelog
 You can see our changelog [here](https://github.com/hmrc/income-tax-mtd-changelog/wiki)
@@ -30,7 +30,7 @@ You can see our changelog [here](https://github.com/hmrc/income-tax-mtd-changelo
 ## Support and Reporting Issues
 You can create a GitHub issue [here](https://github.com/hmrc/income-tax-mtd-changelog/issues)
 
-## API Reference / Documentation 
+## API Reference / Documentation
 Available at [HMRC Developer Hub](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api/1.0)
 ## License
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html")
