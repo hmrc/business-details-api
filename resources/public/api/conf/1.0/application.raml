@@ -1,0 +1,50 @@
+#%RAML 1.0
+---
+title: Business Details (MTD)
+description: List all businesses and retrieve additional information about the details of a user’s business.
+version: 1.0
+
+protocols: [ HTTPS ]
+baseUri: https://api.service.hmrc.gov.uk/
+
+documentation:
+ - title: Overview
+   content: !include docs/overview.md
+ - title: Send fraud prevention data
+   content: !include https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/fraud-prevention.md
+ - title: Versioning
+   content: !include https://developer.service.hmrc.gov.uk/api-documentation/assets/common/docs/versioning.md
+ - title: Errors
+   content: !include docs/errors.md
+ - title: Changelog
+   content: !include docs/changelog.md
+ - title: Support
+   content: !include docs/support.md
+ - title: Testing
+   content: !include docs/testing.md
+
+mediaType: application/hal+json
+
+uses:
+  sec: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/securitySchemes.raml
+  annotations: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/annotations.raml
+  types: https://developer.service.hmrc.gov.uk/api-documentation/assets/common/modules/types.raml
+  errors: errors.raml
+  headers: headers.raml
+
+'/individuals/business/details':
+  /{nino}:
+    uriParameters:
+      nino:
+        description: National Insurance number, in the format AA999999A.
+        type: string
+        example: TC663795B
+    /list:
+      get: !include list.raml
+    /{businessId}:
+      uriParameters:
+        businessId:
+          description: 'A unique identifier for the business income source.<p>It must conform to the following regular expression: `^X[a-zA-Z0-9]{1}IS[0-9]{11}$`'
+          type: string
+          example: XAIS12345678901
+      get: !include retrieve.raml

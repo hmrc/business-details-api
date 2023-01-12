@@ -69,7 +69,14 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
       Json.parse(response.body) shouldBe apiDefinitionJson
     }
   }
-  
+
+  "a RAML documentation request" must {
+    "return the documentation" in {
+      val response: WSResponse = await(buildRequest("/api/conf/1.0/application.raml").get())
+      response.status shouldBe Status.OK
+      response.body[String] should startWith("#%RAML 1.0")
+    }
+  }
 
   "an OAS documentation request" must {
     "return the documentation that passes OAS V3 parser" in {
