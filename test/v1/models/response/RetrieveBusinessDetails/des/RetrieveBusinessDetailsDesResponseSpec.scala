@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package v1.models.response.RetrieveBusinessDetails.des
 
+import api.models.domain.TypeOfBusiness
+import api.models.domain.accountingType.AccountingType
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
-import v1.models.domain.TypeOfBusiness
-import v1.models.domain.accountingType.AccountingType
 import v1.models.response.retrieveBusinessDetails.des.{BusinessDetails, RetrieveBusinessDetailsDesResponse}
 import v1.models.response.retrieveBusinessDetails.AccountingPeriod
 

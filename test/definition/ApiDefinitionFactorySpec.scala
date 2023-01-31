@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ package definition
 import config.ConfidenceLevelConfig
 import definition.APIStatus.{ALPHA, BETA}
 import definition.Versions.VERSION_1
-import mocks.MockAppConfig
+import mocks.{MockAppConfig, MockHttpClient}
+import play.api.Configuration
 import support.UnitSpec
 import uk.gov.hmrc.auth.core.ConfidenceLevel
-import v1.mocks.MockHttpClient
 
 class ApiDefinitionFactorySpec extends UnitSpec {
 
@@ -36,7 +36,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
   "definition" when {
     "called" should {
       "return a valid Definition case class" in new Test {
-        MockAppConfig.featureSwitch returns None
+        MockAppConfig.featureSwitches returns Configuration.empty
         MockAppConfig.apiStatus returns "1.0"
         MockAppConfig.endpointsEnabled returns true
         MockAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,17 +29,17 @@ trait MockAppConfig extends MockFactory {
     // MTD ID Lookup Config
     def mtdIdBaseUrl: CallHandler[String] = (mockAppConfig.mtdIdBaseUrl _: () => String).expects()
 
-    // DES Config
+    // Des config
     def desBaseUrl: CallHandler[String]                         = (mockAppConfig.desBaseUrl _: () => String).expects()
     def desToken: CallHandler[String]                           = (mockAppConfig.desToken _).expects()
     def desEnvironment: CallHandler[String]                     = (mockAppConfig.desEnv _).expects()
     def desEnvironmentHeaders: CallHandler[Option[Seq[String]]] = (mockAppConfig.desEnvironmentHeaders _).expects()
 
     // API Config
-    def featureSwitch: CallHandler[Option[Configuration]] = (mockAppConfig.featureSwitch _: () => Option[Configuration]).expects()
-    def apiGatewayContext: CallHandler[String]            = (mockAppConfig.apiGatewayContext _: () => String).expects()
-    def apiStatus: CallHandler[String]                    = (mockAppConfig.apiStatus: String => String).expects("1.0")
-    def endpointsEnabled: CallHandler[Boolean]            = (mockAppConfig.endpointsEnabled: String => Boolean).expects("1.0")
+    def featureSwitches: CallHandler[Configuration] = (mockAppConfig.featureSwitches _: () => Configuration).expects()
+    def apiGatewayContext: CallHandler[String]      = (mockAppConfig.apiGatewayContext _: () => String).expects()
+    def apiStatus: CallHandler[String]              = (mockAppConfig.apiStatus: String => String).expects("1.0")
+    def endpointsEnabled: CallHandler[Boolean]      = (mockAppConfig.endpointsEnabled: String => Boolean).expects("1.0")
 
     def confidenceLevelCheckEnabled: CallHandler[ConfidenceLevelConfig] =
       (mockAppConfig.confidenceLevelConfig _: () => ConfidenceLevelConfig).expects()

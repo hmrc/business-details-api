@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package v1.controllers.requestParsers.validators
 
+import api.models.errors.{BusinessIdFormatError, NinoFormatError}
 import support.UnitSpec
-import v1.models.errors.{BusinessIdFormatError, NinoFormatError}
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRawData
 
 class RetrieveBusinessDetailsValidatorSpec extends UnitSpec {

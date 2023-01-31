@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,45 +16,40 @@
 
 package v1.services
 
+import api.controllers.RequestContext
+import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundError}
+import api.services.BaseService
 import cats.data.EitherT
-import cats.implicits._
+
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.Logging
 import v1.connectors.RetrieveBusinessDetailsConnector
-import v1.controllers.EndpointLogContext
-import v1.models.errors._
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
-import v1.support.DesResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveBusinessDetailsService @Inject() (retrieveBusinessDetailsConnector: RetrieveBusinessDetailsConnector)
-    extends DesResponseMappingSupport
-    with Logging {
+class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetailsConnector) extends BaseService {
 
-  def retrieveBusinessDetailsService(request: RetrieveBusinessDetailsRequest)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext,
-      logContext: EndpointLogContext,
-      correlationId: String): Future[RetrieveBusinessDetailsServiceOutcome] = {
+  def retrieveBusinessDetailsService(
+      request: RetrieveBusinessDetailsRequest)(implicit ctx: RequestContext, ec: ExecutionContext): Future[RetrieveBusinessDetailsServiceOutcome] = {
 
     val result = for {
-      desResponseWrapper <- EitherT(retrieveBusinessDetailsConnector.retrieveBusinessDetails(request)).leftMap(mapDesErrors(desErrorMap))
-      mtdResponseWrapper <- EitherT.fromEither[Future](filterId(desResponseWrapper, request.businessId))
+      downstreamResponseWrapper <- EitherT(connector.retrieveBusinessDetails(request))
+        .leftMap(mapDownstreamErrors(downstreamErrorMap))
+      mtdResponseWrapper <- EitherT.fromEither[Future](filterId(downstreamResponseWrapper, request.businessId))
     } yield mtdResponseWrapper
+
     result.value
   }
 
-  private def desErrorMap: Map[String, MtdError] =
+  private def downstreamErrorMap: Map[String, MtdError] =
     Map(
       "INVALID_NINO"        -> NinoFormatError,
-      "INVALID_MTDBSA"      -> DownstreamError,
+      "INVALID_MTDBSA"      -> InternalError,
       "NOT_FOUND_NINO"      -> NotFoundError,
-      "NOT_FOUND_MTDBSA"    -> DownstreamError,
-      "SERVER_ERROR"        -> DownstreamError,
-      "SERVICE_UNAVAILABLE" -> DownstreamError
+      "NOT_FOUND_MTDBSA"    -> InternalError,
+      "SERVER_ERROR"        -> InternalError,
+      "SERVICE_UNAVAILABLE" -> InternalError
     )
 
 }

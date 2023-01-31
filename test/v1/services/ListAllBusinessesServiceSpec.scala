@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 
 package v1.services
 
-import v1.models.domain.Nino
+import api.controllers.EndpointLogContext
+import api.models.domain.Nino
+import api.models.errors.{DownstreamErrorCode, DownstreamErrors, ErrorWrapper, InternalError, MtdError, NinoFormatError, NotFoundError}
+import api.models.outcomes.ResponseWrapper
+import api.services.ServiceSpec
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.controllers.EndpointLogContext
 import v1.mocks.connectors.MockListAllBusinessesConnector
-import v1.models.errors._
-import v1.models.outcomes.ResponseWrapper
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
@@ -39,7 +40,7 @@ class ListAllBusinessesServiceSpec extends ServiceSpec {
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
 
     val service = new ListAllBusinessesService(
-      listAllBusinessesConnector = mockListAllBusinessesConnector
+      connector = mockListAllBusinessesConnector
     )
 
   }
@@ -60,18 +61,18 @@ class ListAllBusinessesServiceSpec extends ServiceSpec {
 
           MockListAllBusinessesConnector
             .listAllBusinesses(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
 
           await(service.listAllBusinessesService(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
       val input = Seq(
         ("INVALID_NINO", NinoFormatError),
-        ("INVALID_MTDBSA", DownstreamError),
+        ("INVALID_MTDBSA", InternalError),
         ("NOT_FOUND_NINO", NotFoundError),
-        ("NOT_FOUND_MTDBSA", DownstreamError),
-        ("SERVER_ERROR", DownstreamError),
-        ("SERVICE_UNAVAILABLE", DownstreamError)
+        ("NOT_FOUND_MTDBSA", InternalError),
+        ("SERVER_ERROR", InternalError),
+        ("SERVICE_UNAVAILABLE", InternalError)
       )
       input.foreach(args => (serviceError _).tupled(args))
     }

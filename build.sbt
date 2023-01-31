@@ -26,12 +26,12 @@ lazy val ItTest = config("it") extend Test
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
-  .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
+  .disablePlugins(JUnitXmlReportPlugin) // Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
-    retrieveManaged := true,
+    retrieveManaged                 := true,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(warnScalaVersionEviction = false),
-    scalaVersion := "2.12.15"
+    scalaVersion                    := "2.12.15"
   )
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
@@ -41,9 +41,10 @@ lazy val microservice = Project(appName, file("."))
   .settings(CodeCoverageSettings.settings: _*)
   .settings(defaultSettings(): _*)
   .configs(ItTest)
-  .settings(inConfig(ItTest)(Defaults.itSettings ++ headerSettings(ItTest) ++ automateHeaderSettings(ItTest) ++ ScalafmtPlugin.scalafmtConfigSettings): _*)
+  .settings(inConfig(ItTest)(
+    Defaults.itSettings ++ headerSettings(ItTest) ++ automateHeaderSettings(ItTest) ++ ScalafmtPlugin.scalafmtConfigSettings): _*)
   .settings(
-    ItTest / fork := true,
+    ItTest / fork                       := true,
     ItTest / unmanagedSourceDirectories := Seq((ItTest / baseDirectory).value / "it"),
     ItTest / unmanagedClasspath += baseDirectory.value / "resources",
     Runtime / unmanagedClasspath += baseDirectory.value / "resources",

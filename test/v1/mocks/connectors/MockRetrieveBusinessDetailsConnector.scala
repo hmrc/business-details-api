@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@
 
 package v1.mocks.connectors
 
+import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.connectors.{DesOutcome, RetrieveBusinessDetailsConnector}
+import v1.connectors.RetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
 import v1.models.response.retrieveBusinessDetails.des.RetrieveBusinessDetailsDesResponse
 
@@ -31,7 +32,8 @@ trait MockRetrieveBusinessDetailsConnector extends MockFactory {
 
   object MockRetrieveBusinessDetailsConnector {
 
-    def retrieveBusinessDetails(requestData: RetrieveBusinessDetailsRequest): CallHandler[Future[DesOutcome[RetrieveBusinessDetailsDesResponse]]] = {
+    def retrieveBusinessDetails(
+        requestData: RetrieveBusinessDetailsRequest): CallHandler[Future[DownstreamOutcome[RetrieveBusinessDetailsDesResponse]]] = {
       (mockRetrieveBusinessDetailsConnector
         .retrieveBusinessDetails(_: RetrieveBusinessDetailsRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)

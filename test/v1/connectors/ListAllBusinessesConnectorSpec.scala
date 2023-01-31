@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package v1.connectors
 
-import mocks.MockAppConfig
-import v1.models.domain.Nino
-import v1.mocks.MockHttpClient
-import v1.models.domain.TypeOfBusiness.`self-employment`
-import v1.models.outcomes.ResponseWrapper
+import api.connectors.ConnectorSpec
+import api.models.domain.Nino
+import api.models.domain.TypeOfBusiness.`self-employment`
+import api.models.outcomes.ResponseWrapper
+import mocks.{MockAppConfig, MockHttpClient}
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 

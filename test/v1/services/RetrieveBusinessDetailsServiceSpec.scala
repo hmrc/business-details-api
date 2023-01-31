@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,23 @@
 
 package v1.services
 
-import v1.models.domain.Nino
+import api.controllers.EndpointLogContext
+import api.models.domain.accountingType.AccountingType
+import api.models.domain.{Nino, TypeOfBusiness}
+import api.models.errors.{
+  DownstreamErrorCode,
+  DownstreamErrors,
+  ErrorWrapper,
+  InternalError,
+  MtdError,
+  NinoFormatError,
+  NoBusinessFoundError,
+  NotFoundError
+}
+import api.models.outcomes.ResponseWrapper
+import api.services.ServiceSpec
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.controllers.EndpointLogContext
 import v1.mocks.connectors.MockRetrieveBusinessDetailsConnector
-import v1.models.domain.TypeOfBusiness
-import v1.models.domain.accountingType.AccountingType
-import v1.models.errors._
-import v1.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
 import v1.models.response.retrieveBusinessDetails.des.{BusinessDetails, RetrieveBusinessDetailsDesResponse}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
@@ -110,7 +119,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
 
     val service = new RetrieveBusinessDetailsService(
-      retrieveBusinessDetailsConnector = mockRetrieveBusinessDetailsConnector
+      connector = mockRetrieveBusinessDetailsConnector
     )
 
   }
@@ -146,18 +155,18 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
 
             MockRetrieveBusinessDetailsConnector
               .retrieveBusinessDetails(requestData)
-              .returns(Future.successful(Left(ResponseWrapper(correlationId, DesErrors.single(DesErrorCode(desErrorCode))))))
+              .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
 
             await(service.retrieveBusinessDetailsService(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
           }
 
         val input = Seq(
           ("INVALID_NINO", NinoFormatError),
-          ("INVALID_MTDBSA", DownstreamError),
+          ("INVALID_MTDBSA", InternalError),
           ("NOT_FOUND_NINO", NotFoundError),
-          ("NOT_FOUND_MTDBSA", DownstreamError),
-          ("SERVER_ERROR", DownstreamError),
-          ("SERVICE_UNAVAILABLE", DownstreamError)
+          ("NOT_FOUND_MTDBSA", InternalError),
+          ("SERVER_ERROR", InternalError),
+          ("SERVICE_UNAVAILABLE", InternalError)
         )
         input.foreach(args => (serviceError _).tupled(args))
       }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package v1.models.response.listAllBusiness
 
+import api.hateoas.{HateoasLinks, HateoasListLinksFactory}
+import api.models.hateoas.{HateoasData, Link}
 import cats.Functor
 import config.AppConfig
 import play.api.libs.json.{JsPath, Json, OWrites, Reads, Writes}
-import v1.hateoas.{HateoasLinks, HateoasListLinksFactory}
-import v1.models.hateoas.{HateoasData, Link}
-import v1.models.hateoas.RelType.RETRIEVE_BUSINESS_DETAILS
+import api.models.hateoas.RelType.RETRIEVE_BUSINESS_DETAILS
 
 case class ListAllBusinessesResponse[I](listOfBusinesses: Seq[I])
 
@@ -45,14 +45,16 @@ object ListAllBusinessesResponse extends HateoasLinks {
 
   implicit object LinksFactory extends HateoasListLinksFactory[ListAllBusinessesResponse, Business, ListAllBusinessesHateoasData] {
 
+    override def itemLinks(appConfig: AppConfig, data: ListAllBusinessesHateoasData, item: Business): Seq[Link] =
+      Seq(
+        retrieveBusinessDetails(appConfig, data.nino, item.businessId, rel = RETRIEVE_BUSINESS_DETAILS)
+      )
+
     override def links(appConfig: AppConfig, data: ListAllBusinessesHateoasData): Seq[Link] = {
       Seq(
         listAllBusinesses(appConfig, data.nino)
       )
     }
-
-    override def itemLinks(appConfig: AppConfig, data: ListAllBusinessesHateoasData, item: Business): Seq[Link] =
-      Seq(retrieveBusinessDetails(appConfig, data.nino, item.businessId, rel = RETRIEVE_BUSINESS_DETAILS))
 
   }
 

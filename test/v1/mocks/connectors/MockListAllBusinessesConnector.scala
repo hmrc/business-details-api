@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@
 
 package v1.mocks.connectors
 
+import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.connectors.{DesOutcome, ListAllBusinessesConnector}
+import v1.connectors.ListAllBusinessesConnector
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
@@ -31,7 +32,7 @@ trait MockListAllBusinessesConnector extends MockFactory {
 
   object MockListAllBusinessesConnector {
 
-    def listAllBusinesses(requestData: ListAllBusinessesRequest): CallHandler[Future[DesOutcome[ListAllBusinessesResponse[Business]]]] = {
+    def listAllBusinesses(requestData: ListAllBusinessesRequest): CallHandler[Future[DownstreamOutcome[ListAllBusinessesResponse[Business]]]] = {
       (mockListAllBusinessesConnector
         .listAllBusinesses(_: ListAllBusinessesRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)
