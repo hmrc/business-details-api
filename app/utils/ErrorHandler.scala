@@ -80,16 +80,16 @@ class ErrorHandler @Inject() (config: Configuration, auditConnector: AuditConnec
 
     logger.warn(s"[ErrorHandler][onServerError] Internal server error in version 1, for (${request.method}) [${request.uri}] -> ", ex)
 
-    val (status, errorCode, eventType) = ex match {
-      case _: NotFoundException      => (NOT_FOUND, NotFoundError, "ResourceNotFound")
-      case _: AuthorisationException => (UNAUTHORIZED, ClientNotAuthorisedError, "ClientError")
-      case _: JsValidationException  => (BAD_REQUEST, BadRequestError, "ServerValidationError")
-      case e: HttpException          => (e.responseCode, BadRequestError, "ServerValidationError")
+    val (errorCode, eventType) = ex match {
+      case _: NotFoundException      => (NotFoundError, "ResourceNotFound")
+      case _: AuthorisationException => (ClientNotAuthenticatedError, "ClientError")
+      case _: JsValidationException  => (BadRequestError, "ServerValidationError")
+      case e: HttpException          => (BadRequestError, "ServerValidationError")
       case e: UpstreamErrorResponse if UpstreamErrorResponse.Upstream4xxResponse.unapply(e).isDefined =>
-        (e.reportAs, BadRequestError, "ServerValidationError")
+        (BadRequestError, "ServerValidationError")
       case e: UpstreamErrorResponse if UpstreamErrorResponse.Upstream5xxResponse.unapply(e).isDefined =>
-        (e.reportAs, InternalError, "ServerInternalError")
-      case _ => (INTERNAL_SERVER_ERROR, InternalError, "ServerInternalError")
+        (InternalError, "ServerInternalError")
+      case _ => (InternalError, "ServerInternalError")
     }
 
     auditConnector.sendEvent(
@@ -101,7 +101,7 @@ class ErrorHandler @Inject() (config: Configuration, auditConnector: AuditConnec
       )
     )
 
-    Future.successful(Status(status)(Json.toJson(errorCode)))
+    Future.successful(Status(errorCode.httpStatus)(errorCode.asJson))
   }
 
 }
