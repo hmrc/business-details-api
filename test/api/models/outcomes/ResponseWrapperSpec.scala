@@ -21,10 +21,13 @@ import support.UnitSpec
 class ResponseWrapperSpec extends UnitSpec {
 
   "mapping a ResponseWrapper" should {
-    "return the same response wrapper with correlationId and responseData" in {
-      val response = ResponseWrapper("X-123", "Response")
+    "return the the response mapped by applied partial function" in {
+      val partialFunction: Int => String = _.toString
 
-      response.map(a => a) shouldBe ResponseWrapper("X-123", "Response")
+      val response         = ResponseWrapper("X-123", 1)
+      val expectedResponse = ResponseWrapper("X-123", "1")
+
+      response.map(partialFunction) shouldBe expectedResponse
     }
   }
 
