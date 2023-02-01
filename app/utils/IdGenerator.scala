@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,10 @@
 package utils
 
 import java.util.UUID
-
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class IdGenerator @Inject() () {
 
-  def getCorrelationId: String = UUID.randomUUID().toString
+  def generateCorrelationId: String = UUID.randomUUID().toString
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,80 +16,46 @@
 
 package v1.controllers
 
-import cats.data.EitherT
+import api.controllers._
+import api.hateoas.HateoasFactory
+import api.services.{EnrolmentsAuthService, MtdIdLookupService}
+
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import utils.{IdGenerator, Logging}
+import utils.IdGenerator
 import v1.controllers.requestParsers.ListAllBusinessesRequestParser
-import v1.models.errors.{BadRequestError, DownstreamError, ErrorWrapper, NinoFormatError, NotFoundError}
 import v1.models.request.listAllBusinesses.ListAllBusinessesRawData
-import v1.services.{EnrolmentsAuthService, ListAllBusinessesService, MtdIdLookupService}
-import cats.implicits._
-import v1.hateoas.HateoasFactory
+import v1.services.ListAllBusinessesService
 import v1.models.response.listAllBusiness.ListAllBusinessesHateoasData
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ListAllBusinessesController @Inject() (val authService: EnrolmentsAuthService,
                                              val lookupService: MtdIdLookupService,
-                                             val idGenerator: IdGenerator,
-                                             requestDataParser: ListAllBusinessesRequestParser,
                                              service: ListAllBusinessesService,
+                                             parser: ListAllBusinessesRequestParser,
                                              hateoasFactory: HateoasFactory,
-                                             cc: ControllerComponents)(implicit ec: ExecutionContext)
-    extends AuthorisedController(cc)
-    with BaseController
-    with Logging {
+                                             cc: ControllerComponents,
+                                             idGenerator: IdGenerator)(implicit ec: ExecutionContext)
+    extends AuthorisedController(cc) {
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "ListAllBusinessesController", endpointName = "List All Businesses")
 
   def handleRequest(nino: String): Action[AnyContent] =
     authorisedAction(nino).async { implicit request =>
-      implicit val correlationId: String = idGenerator.getCorrelationId
-      logger.info(message = s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] " +
-        s"with correlationId : $correlationId")
+      implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
       val rawData = ListAllBusinessesRawData(nino)
-      val result =
-        for {
-          parsedRequest   <- EitherT.fromEither[Future](requestDataParser.parseRequest(rawData))
-          serviceResponse <- EitherT(service.listAllBusinessesService(parsedRequest))
-          vendorResponse <- EitherT.fromEither[Future](
-            hateoasFactory
-              .wrapList(serviceResponse.responseData, ListAllBusinessesHateoasData(nino))
-              .asRight[ErrorWrapper]
-          )
-        } yield {
-          logger.info(
-            s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
-              s"Success response received with CorrelationId: ${serviceResponse.correlationId}")
 
-          Ok(Json.toJson(vendorResponse))
-            .withApiHeaders(serviceResponse.correlationId)
-        }
+      val requestHandler =
+        RequestHandler
+          .withParser(parser)
+          .withService(service.listAllBusinessesService)
+          .withResultCreator(ResultCreator.hateoasListWrapping(hateoasFactory)((_, _) => ListAllBusinessesHateoasData(nino)))
 
-      result.leftMap { errorWrapper =>
-        val resCorrelationId = errorWrapper.correlationId
-        val result           = errorResult(errorWrapper).withApiHeaders(resCorrelationId)
-        logger.warn(
-          s"[${endpointLogContext.controllerName}][${endpointLogContext.endpointName}] - " +
-            s"Error response received with CorrelationId: $resCorrelationId")
-
-        result
-      }.merge
+      requestHandler.handleRequest(rawData)
     }
-
-  private def errorResult(errorWrapper: ErrorWrapper) = {
-    (errorWrapper.error) match {
-      case NinoFormatError | BadRequestError => BadRequest(Json.toJson(errorWrapper))
-      case NotFoundError                     => NotFound(Json.toJson(errorWrapper))
-      case DownstreamError                   => InternalServerError(Json.toJson(errorWrapper))
-      case _                                 => unhandledError(errorWrapper)
-    }
-
-  }
 
 }

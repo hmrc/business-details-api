@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 
 package v1.models.response.RetrieveBusinessDetails
 
+import api.models.domain.TypeOfBusiness
+import api.models.domain.accountingType.AccountingType
+import api.models.hateoas.Method.GET
 import mocks.MockAppConfig
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
-import v1.models.domain.TypeOfBusiness
-import v1.models.domain.accountingType.AccountingType
-import v1.models.hateoas.Link
-import v1.models.hateoas.Method.GET
+import api.models.hateoas.Link
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
 
 class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {

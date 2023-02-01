@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,42 +16,39 @@
 
 package v1.services
 
-import cats.data.EitherT
+import api.controllers.RequestContext
+import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundError}
+import api.services.BaseService
 import cats.implicits._
+
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
-import utils.Logging
 import v1.connectors.ListAllBusinessesConnector
-import v1.controllers.EndpointLogContext
-import v1.models.errors._
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
-import v1.support.DesResponseMappingSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ListAllBusinessesService @Inject() (listAllBusinessesConnector: ListAllBusinessesConnector) extends DesResponseMappingSupport with Logging {
+class ListAllBusinessesService @Inject() (connector: ListAllBusinessesConnector) extends BaseService {
 
   def listAllBusinessesService(request: ListAllBusinessesRequest)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext,
-      logContext: EndpointLogContext,
-      correlationId: String): Future[ListAllBusinessesServiceOutcome] = {
+      ctx: RequestContext,
+      ec: ExecutionContext
+  ): Future[ListAllBusinessesServiceOutcome] = {
 
-    val result = for {
-      desResponseWrapper <- EitherT(listAllBusinessesConnector.listAllBusinesses(request)).leftMap(mapDesErrors(desErrorMap))
-    } yield desResponseWrapper
-    result.value
+    connector
+      .listAllBusinesses(request)
+      .map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
+
   }
 
-  private def desErrorMap: Map[String, MtdError] =
+  private def downstreamErrorMap: Map[String, MtdError] =
     Map(
       "INVALID_NINO"        -> NinoFormatError,
-      "INVALID_MTDBSA"      -> DownstreamError,
+      "INVALID_MTDBSA"      -> InternalError,
       "NOT_FOUND_NINO"      -> NotFoundError,
-      "NOT_FOUND_MTDBSA"    -> DownstreamError,
-      "SERVER_ERROR"        -> DownstreamError,
-      "SERVICE_UNAVAILABLE" -> DownstreamError
+      "NOT_FOUND_MTDBSA"    -> InternalError,
+      "SERVER_ERROR"        -> InternalError,
+      "SERVICE_UNAVAILABLE" -> InternalError
     )
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,25 @@
 
 package v1.connectors
 
+import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
+import api.connectors.DownstreamUri.DesUri
 import config.AppConfig
+
 import javax.inject.{Inject, Singleton}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
-import v1.connectors.httpparsers.StandardDesHttpParser._
+import api.connectors.httpparsers.StandardDownstreamHttpParser._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ListAllBusinessesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  def listAllBusinesses(
-      request: ListAllBusinessesRequest)(implicit hc: HeaderCarrier, ec: ExecutionContext, correlationId: String): Future[ListConnectorOutcome] = {
+  def listAllBusinesses(request: ListAllBusinessesRequest)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[ListAllBusinessesResponse[Business]]] = {
 
     val url = s"registration/business-details/nino/${request.nino.nino}"
     get(

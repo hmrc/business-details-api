@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,29 @@
 
 package v1.controllers
 
+import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import api.mocks.MockIdGenerator
+import api.mocks.hateoas.MockHateoasFactory
+import api.mocks.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
+import api.models.domain.accountingType.AccountingType
+import api.models.domain.{Nino, TypeOfBusiness}
+import api.models.errors._
+import api.models.hateoas.Method.GET
 import play.api.libs.json.Json
 import play.api.mvc.Result
-import v1.models.domain.Nino
-import uk.gov.hmrc.http.HeaderCarrier
-import v1.mocks.MockIdGenerator
-import v1.mocks.hateoas.MockHateoasFactory
 import v1.mocks.requestParsers.MockRetrieveBusinessDetailsRequestParser
-import v1.mocks.services.{MockEnrolmentsAuthService, MockMtdIdLookupService, MockRetrieveBusinessDetailsService}
-import v1.models.domain.TypeOfBusiness
-import v1.models.domain.accountingType.AccountingType
-import v1.models.errors._
-import v1.models.hateoas.{HateoasWrapper, Link}
-import v1.models.hateoas.Method.GET
-import v1.models.outcomes.ResponseWrapper
+import v1.mocks.services.MockRetrieveBusinessDetailsService
 import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
+import api.models.hateoas.{HateoasWrapper, Link}
+import api.models.outcomes.ResponseWrapper
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class RetrieveBusinessDetailsControllerSpec
     extends ControllerBaseSpec
+    with ControllerTestRunner
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockRetrieveBusinessDetailsService
@@ -45,28 +46,8 @@ class RetrieveBusinessDetailsControllerSpec
     with MockRetrieveBusinessDetailsRequestParser
     with MockIdGenerator {
 
-  private val validNino       = "AA123456A"
-  private val validBusinessId = "XAIS12345678910"
-  val correlationId: String   = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  private val businessId      = "XAIS12345678910"
   private val testHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
-
-  trait Test {
-    val hc: HeaderCarrier = HeaderCarrier()
-
-    val controller = new RetrieveBusinessDetailsController(
-      authService = mockEnrolmentsAuthService,
-      lookupService = mockMtdIdLookupService,
-      parser = mockRequestParser,
-      service = mockRetrieveBusinessDetailsService,
-      hateoasFactory = mockHateoasFactory,
-      cc = cc,
-      idGenerator = mockIdGenerator
-    )
-
-    MockIdGenerator.getCorrelationId.returns(correlationId)
-    MockMtdIdLookupService.lookup(validNino).returns(Future.successful(Right("test-mtd-id")))
-    MockedEnrolmentsAuthService.authoriseUser()
-  }
 
   private val responseBody = Json.parse(
     """
@@ -116,13 +97,13 @@ class RetrieveBusinessDetailsControllerSpec
     Some("GB")
   )
 
-  private val requestData = RetrieveBusinessDetailsRequest(Nino(validNino), validBusinessId)
+  private val requestData = RetrieveBusinessDetailsRequest(Nino(nino), businessId)
 
-  private val rawData = RetrieveBusinessDetailsRawData(validNino, validBusinessId)
+  private val rawData = RetrieveBusinessDetailsRawData(nino, businessId)
 
   "handleRequest" should {
-    "return OK" when {
-      "happy path" in new Test {
+    "return successful response with status OK" when {
+      "valid request" in new Test {
 
         MockRetrieveBusinessDetailsRequestParser
           .parse(rawData)
@@ -133,71 +114,51 @@ class RetrieveBusinessDetailsControllerSpec
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData))))
 
         MockHateoasFactory
-          .wrap(responseData, RetrieveBusinessDetailsHateoasData(validNino, validBusinessId))
+          .wrap(responseData, RetrieveBusinessDetailsHateoasData(nino, businessId))
           .returns(HateoasWrapper(responseData, Seq(testHateoasLink)))
 
-        val result: Future[Result] = controller.handleRequest(validNino, validBusinessId)(fakeRequest)
-
-        status(result) shouldBe OK
-        contentAsJson(result) shouldBe responseBody
-        header("X-CorrelationId", result) shouldBe Some(correlationId)
+        runOkTest(expectedStatus = OK, maybeExpectedResponseBody = Some(responseBody))
 
       }
     }
     "return the error as per spec" when {
-      "parser errors occur" must {
-        def errorsFromParserTester(error: MtdError, expectedStatus: Int): Unit = {
-          s"a ${error.code} error is returned from the parser" in new Test {
+      "the parser validation fails" in new Test {
+        MockRetrieveBusinessDetailsRequestParser
+          .parse(rawData)
+          .returns(Left(ErrorWrapper(correlationId, NinoFormatError, None)))
 
-            MockRetrieveBusinessDetailsRequestParser
-              .parse(rawData)
-              .returns(Left(ErrorWrapper(correlationId, error, None)))
-
-            val result: Future[Result] = controller.handleRequest(validNino, validBusinessId)(fakeRequest)
-
-            status(result) shouldBe expectedStatus
-            contentAsJson(result) shouldBe Json.toJson(error)
-            header("X-CorrelationId", result) shouldBe Some(correlationId)
-          }
-        }
-
-        val input = Seq(
-          (NinoFormatError, BAD_REQUEST),
-          (BusinessIdFormatError, BAD_REQUEST)
-        )
-
-        input.foreach(args => (errorsFromParserTester _).tupled(args))
+        runErrorTest(NinoFormatError)
       }
-      "service errors occur" must {
-        def serviceErrors(mtdError: MtdError, expectedStatus: Int): Unit = {
-          s"a $mtdError error is returned from the service" in new Test {
 
-            MockRetrieveBusinessDetailsRequestParser
-              .parse(rawData)
-              .returns(Right(requestData))
+      "the service returns an error" in new Test {
+        MockRetrieveBusinessDetailsRequestParser
+          .parse(rawData)
+          .returns(Right(requestData))
 
-            MockRetrieveBusinessDetailsService
-              .retrieveBusinessDetailsService(requestData)
-              .returns(Future.successful(Left(ErrorWrapper(correlationId, mtdError))))
+        MockRetrieveBusinessDetailsService
+          .retrieveBusinessDetailsService(requestData)
+          .returns(Future.successful(Left(ErrorWrapper(correlationId, TaxYearFormatError))))
 
-            val result: Future[Result] = controller.handleRequest(validNino, validBusinessId)(fakeRequest)
-
-            status(result) shouldBe expectedStatus
-            contentAsJson(result) shouldBe Json.toJson(mtdError)
-            header("X-CorrelationId", result) shouldBe Some(correlationId)
-          }
-        }
-        val input = Seq(
-          (NinoFormatError, BAD_REQUEST),
-          (NotFoundError, NOT_FOUND),
-          (DownstreamError, INTERNAL_SERVER_ERROR),
-          (NoBusinessFoundError, NOT_FOUND)
-        )
-
-        input.foreach(args => (serviceErrors _).tupled(args))
+        runErrorTest(TaxYearFormatError)
       }
 
     }
+  }
+
+  trait Test extends ControllerTest {
+
+    val controller = new RetrieveBusinessDetailsController(
+      authService = mockEnrolmentsAuthService,
+      lookupService = mockMtdIdLookupService,
+      parser = mockRequestParser,
+      service = mockRetrieveBusinessDetailsService,
+      hateoasFactory = mockHateoasFactory,
+      cc = cc,
+      idGenerator = mockIdGenerator
+    )
+
+    protected def callController(): Future[Result] = controller.handleRequest(nino, businessId)(fakeGetRequest)
+
   }
 
 }

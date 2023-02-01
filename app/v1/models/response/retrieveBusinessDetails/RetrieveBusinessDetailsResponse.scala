@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package v1.models.response.retrieveBusinessDetails
 
+import api.hateoas.{HateoasLinks, HateoasLinksFactory}
+import api.models.domain.TypeOfBusiness
+import api.models.domain.accountingType.AccountingType
+import api.models.hateoas.{HateoasData, Link}
 import config.AppConfig
 import play.api.libs.json.{Json, OWrites, Reads}
-import v1.hateoas.{HateoasLinks, HateoasLinksFactory}
-import v1.models.domain.TypeOfBusiness
-import v1.models.domain.accountingType.AccountingType
-import v1.models.hateoas.{HateoasData, Link}
 
 case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,
