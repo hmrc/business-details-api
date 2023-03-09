@@ -5,10 +5,10 @@ The business details API allows a developer to:
 - retrieve additional information for a user's business details
 ## Requirements
 - Scala 2.12.x
-- Java 8
-- sbt 1.3.7
+- Java 11
+- sbt 1.8.x
 - [Service Manager](https://github.com/hmrc/service-manager)         
-      
+
 ## Running the micro-service
 Run from the console using: `sbt run` (starts on port 7792 by default)
 Start the service manager profile: `sm --start MTDFB_SA`

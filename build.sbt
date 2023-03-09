@@ -16,9 +16,11 @@
 
 import sbt._
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings}
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
-import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 import uk.gov.hmrc.SbtAutoBuildPlugin
+import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
+
+// TODO add the following line when this API is migrated to Scala 2.13:
+//targetJvm := "jvm-11"
 
 val appName = "business-details-api"
 
@@ -29,22 +31,21 @@ lazy val microservice = Project(appName, file("."))
   .disablePlugins(JUnitXmlReportPlugin) // Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
-    retrieveManaged                 := true,
+    retrieveManaged := true,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(warnScalaVersionEviction = false),
-    scalaVersion                    := "2.12.15"
+    scalaVersion := "2.12.17"
   )
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
   )
   .settings(majorVersion := 0)
-  .settings(publishingSettings: _*)
   .settings(CodeCoverageSettings.settings: _*)
   .settings(defaultSettings(): _*)
   .configs(ItTest)
   .settings(inConfig(ItTest)(
     Defaults.itSettings ++ headerSettings(ItTest) ++ automateHeaderSettings(ItTest) ++ ScalafmtPlugin.scalafmtConfigSettings): _*)
   .settings(
-    ItTest / fork                       := true,
+    ItTest / fork := true,
     ItTest / unmanagedSourceDirectories := Seq((ItTest / baseDirectory).value / "it"),
     ItTest / unmanagedClasspath += baseDirectory.value / "resources",
     Runtime / unmanagedClasspath += baseDirectory.value / "resources",
