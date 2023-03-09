@@ -20,23 +20,26 @@ import sbt._
 
 object AppDependencies {
 
-  val compile: Seq[ModuleID] = Seq(
+  val bootstrapPlayVersion = "7.11.0"
+
+  val compile: Seq[ModuleID] = List(
     ws,
-    "uk.gov.hmrc"                  %% "bootstrap-backend-play-28" % "5.24.0",
+    "uk.gov.hmrc"                  %% "bootstrap-backend-play-28" % bootstrapPlayVersion,
     "org.typelevel"                %% "cats-core"                 % "2.7.0",
     "com.chuusai"                  %% "shapeless"                 % "2.4.0-M1",
     "com.fasterxml.jackson.module" %% "jackson-module-scala"      % "2.13.2"
   )
 
-  def test(scope: String = "test, it"): Seq[sbt.ModuleID] = Seq(
-    "org.scalatest"          %% "scalatest"          % "3.2.12"            % scope,
-    "com.vladsch.flexmark"    % "flexmark-all"       % "0.62.2"            % scope,
-    "org.scalacheck"         %% "scalacheck"         % "1.16.0"            % scope,
-    "org.scalamock"          %% "scalamock"          % "5.2.0"             % scope,
-    "com.typesafe.play"      %% "play-test"          % PlayVersion.current % scope,
-    "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0"             % scope,
-    "com.github.tomakehurst"  % "wiremock-jre8"      % "2.33.2"            % scope,
-    "io.swagger.parser.v3"    % "swagger-parser-v3"  % "2.0.24"            % scope
+  def test(scope: String = "test, it"): Seq[sbt.ModuleID] = List(
+    "org.scalatest"          %% "scalatest"              % "3.2.12"             % scope,
+    "com.vladsch.flexmark"    % "flexmark-all"           % "0.62.2"             % scope,
+    "org.scalacheck"         %% "scalacheck"             % "1.16.0"             % scope,
+    "org.scalamock"          %% "scalamock"              % "5.2.0"              % scope,
+    "com.typesafe.play"      %% "play-test"              % PlayVersion.current  % scope,
+    "uk.gov.hmrc"            %% "bootstrap-test-play-28" % bootstrapPlayVersion % scope,
+    "org.scalatestplus.play" %% "scalatestplus-play"     % "5.1.0"              % scope,
+    "com.github.tomakehurst"  % "wiremock-jre8"          % "2.33.2"             % scope,
+    "io.swagger.parser.v3"    % "swagger-parser-v3"      % "2.0.24"             % scope
   )
 
 }
