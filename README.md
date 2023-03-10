@@ -5,8 +5,8 @@ The business details API allows a developer to:
 - retrieve additional information for a user's business details
 ## Requirements
 - Scala 2.12.x
-- Java 8
-- sbt 1.3.7
+- Java 11
+- sbt 1.7.x
 - [Service Manager](https://github.com/hmrc/service-manager)         
       
 ## Running the micro-service
