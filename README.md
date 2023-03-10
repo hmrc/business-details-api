@@ -7,7 +7,7 @@ The business details API allows a developer to:
 - Scala 2.12.x
 - Java 11
 - sbt 1.7.x
-- [Service Manager](https://github.com/hmrc/service-manager)         
+- [Service Manager V2](https://github.com/hmrc/sm2)         
       
 ## Running the micro-service
 Run from the console using: `sbt run` (starts on port 7792 by default)
