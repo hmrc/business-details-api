@@ -3,6 +3,7 @@ Business Details API
 The business details API allows a developer to:
 - list all businesses
 - retrieve additional information for a user's business details
+
 ## Requirements
 - Scala 2.12.x
 - Java 8
