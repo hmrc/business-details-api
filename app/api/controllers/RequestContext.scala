@@ -32,7 +32,7 @@ object RequestContext {
     RequestContext(hc, correlationId, endpointLogContext)
 
   def from(idGenerator: IdGenerator, endpointLogContext: EndpointLogContext)(implicit hc: HeaderCarrier): RequestContext =
-    RequestContext(hc, idGenerator.generateCorrelationId, endpointLogContext)
+    RequestContext(hc, idGenerator.generateCorrelationId(), endpointLogContext)
 
 }
 

@@ -36,7 +36,7 @@ class HateoasFactorySpec extends UnitSpec with MockAppConfig {
   val response = Response("X")
 
   class Test {
-    MockAppConfig.apiGatewayContext.returns("context").anyNumberOfTimes
+    MockAppConfig.apiGatewayContext.returns("context").anyNumberOfTimes()
   }
 
   "wrap" should {

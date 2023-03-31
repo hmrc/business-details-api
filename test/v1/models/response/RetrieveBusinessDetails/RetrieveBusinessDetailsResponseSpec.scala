@@ -156,7 +156,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
       "called" in {
         val nino       = "mynino"
         val businessId = "myid"
-        MockAppConfig.apiGatewayContext.returns("individuals/business/details").anyNumberOfTimes
+        MockAppConfig.apiGatewayContext.returns("individuals/business/details").anyNumberOfTimes()
         RetrieveBusinessDetailsResponse.RetrieveBusinessDetailsLinksFactory
           .links(mockAppConfig, RetrieveBusinessDetailsHateoasData(nino, businessId)) shouldBe Seq(
           Link(s"/individuals/business/details/$nino/$businessId", GET, "self")
