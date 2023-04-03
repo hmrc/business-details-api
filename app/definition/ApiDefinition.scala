@@ -69,9 +69,13 @@ case class APIDefinition(name: String,
   require(versions.nonEmpty, "at least one version is required")
   require(uniqueVersions, "version numbers must be unique")
 
-  private def uniqueVersions = {
-    !versions.map(_.version).groupBy(identity).mapValues(_.size).exists(_._2 > 1)
-  }
+  private def uniqueVersions: Boolean =
+    !versions
+      .map(_.version)
+      .groupBy(identity)
+      .view
+      .mapValues(_.size)
+      .exists { case (_, value) => value > 1 }
 
 }
 

@@ -7,7 +7,7 @@ The business details API allows a developer to:
 
 ## Requirements
 
-- Scala 2.12.x
+- Scala 2.13.x
 - Java 11
 - sbt 1.7.x
 - [Service Manager V2](https://github.com/hmrc/sm2)
@@ -33,7 +33,7 @@ Then go to http://localhost:9680/api-documentation/docs/openapi/preview and use 
 
 ## Changelog
 
-You can see our changelog [here](https://github.com/hmrc/income-tax-mtd-changelog/wiki)
+You can see our changelog [here](https://github.com/hmrc/income-tax-mtd-changelog)
 
 ## Support and Reporting Issues
 
@@ -42,7 +42,7 @@ You can create a GitHub issue [here](https://github.com/hmrc/income-tax-mtd-chan
 ## API Reference / Documentation
 
 Available
-at [HMRC Developer Hub](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api/1.0)
+at [HMRC Developer Hub](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api)
 
 ## License
 

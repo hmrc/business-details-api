@@ -27,22 +27,22 @@ trait MockAppConfig extends MockFactory {
 
   object MockAppConfig {
     // MTD ID Lookup Config
-    def mtdIdBaseUrl: CallHandler[String] = (mockAppConfig.mtdIdBaseUrl _: () => String).expects()
+    def mtdIdBaseUrl: CallHandler[String] = (() => mockAppConfig.mtdIdBaseUrl: String).expects()
 
     // Des config
-    def desBaseUrl: CallHandler[String]                         = (mockAppConfig.desBaseUrl _: () => String).expects()
-    def desToken: CallHandler[String]                           = (mockAppConfig.desToken _).expects()
-    def desEnvironment: CallHandler[String]                     = (mockAppConfig.desEnv _).expects()
-    def desEnvironmentHeaders: CallHandler[Option[Seq[String]]] = (mockAppConfig.desEnvironmentHeaders _).expects()
+    def desBaseUrl: CallHandler[String]                         = (() => mockAppConfig.desBaseUrl).expects()
+    def desToken: CallHandler[String]                           = (() => mockAppConfig.desToken).expects()
+    def desEnvironment: CallHandler[String]                     = (() => mockAppConfig.desEnv).expects()
+    def desEnvironmentHeaders: CallHandler[Option[Seq[String]]] = (() => mockAppConfig.desEnvironmentHeaders).expects()
 
     // API Config
-    def featureSwitches: CallHandler[Configuration] = (mockAppConfig.featureSwitches _: () => Configuration).expects()
-    def apiGatewayContext: CallHandler[String]      = (mockAppConfig.apiGatewayContext _: () => String).expects()
-    def apiStatus: CallHandler[String]              = (mockAppConfig.apiStatus: String => String).expects("1.0")
-    def endpointsEnabled: CallHandler[Boolean]      = (mockAppConfig.endpointsEnabled: String => Boolean).expects("1.0")
+    def featureSwitches: CallHandler[Configuration]             = (() => mockAppConfig.featureSwitches: Configuration).expects()
+    def apiGatewayContext: CallHandler[String]                  = (() => mockAppConfig.apiGatewayContext).expects()
+    def apiStatus(version: String): CallHandler[String]         = (mockAppConfig.apiStatus: String => String).expects(version)
+    def endpointsEnabled(version: String): CallHandler[Boolean] = (mockAppConfig.endpointsEnabled: String => Boolean).expects(version)
 
     def confidenceLevelCheckEnabled: CallHandler[ConfidenceLevelConfig] =
-      (mockAppConfig.confidenceLevelConfig _: () => ConfidenceLevelConfig).expects()
+      (() => mockAppConfig.confidenceLevelConfig: ConfidenceLevelConfig).expects()
 
   }
 

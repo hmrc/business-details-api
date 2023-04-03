@@ -16,9 +16,9 @@
 
 import sbt._
 import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings}
+import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
-import uk.gov.hmrc.SbtAutoBuildPlugin
 
 val appName = "business-details-api"
 
@@ -31,7 +31,13 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
     retrieveManaged                 := true,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(warnScalaVersionEviction = false),
-    scalaVersion                    := "2.12.15"
+    scalaVersion                    := "2.13.8",
+    scalacOptions ++= List(
+      "-Xfatal-warnings",
+      "-Wconf:src=routes/.*:silent",
+      "-feature",
+      "-language:higherKinds"
+    )
   )
   .settings(
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
@@ -56,5 +62,3 @@ lazy val microservice = Project(appName, file("."))
     resolvers += Resolver.jcenterRepo
   )
   .settings(PlayKeys.playDefaultPort := 7792)
-
-scalacOptions ++= Seq("-Xfatal-warnings", "-Wconf:src=routes/.*:silent")

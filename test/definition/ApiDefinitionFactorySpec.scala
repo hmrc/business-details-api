@@ -37,11 +37,10 @@ class ApiDefinitionFactorySpec extends UnitSpec {
     "called" should {
       "return a valid Definition case class" in new Test {
         MockAppConfig.featureSwitches returns Configuration.empty
-        MockAppConfig.apiStatus returns "1.0"
-        MockAppConfig.endpointsEnabled returns true
-        MockAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(
-          definitionEnabled = true,
-          authValidationEnabled = true) anyNumberOfTimes ()
+        MockAppConfig.apiStatus("1.0") returns "ALPHA"
+        MockAppConfig.endpointsEnabled("1.0") returns true
+        (MockAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(definitionEnabled = true, authValidationEnabled = true))
+          .anyNumberOfTimes()
 
         private val readScope  = "read:self-assessment"
         private val writeScope = "write:self-assessment"
@@ -98,14 +97,14 @@ class ApiDefinitionFactorySpec extends UnitSpec {
   "buildAPIStatus" when {
     "the 'apiStatus' parameter is present and valid" should {
       "return the correct status" in new Test {
-        MockAppConfig.apiStatus returns "BETA"
+        MockAppConfig.apiStatus("1.0") returns "BETA"
         apiDefinitionFactory.buildAPIStatus("1.0") shouldBe BETA
       }
     }
 
     "the 'apiStatus' parameter is present and invalid" should {
       "default to alpha" in new Test {
-        MockAppConfig.apiStatus returns "ALPHO"
+        MockAppConfig.apiStatus("1.0") returns "ALPHO"
         apiDefinitionFactory.buildAPIStatus("1.0") shouldBe ALPHA
       }
     }
