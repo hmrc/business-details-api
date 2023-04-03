@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-//scalaVersion                    := "2.13.10"
-//sbtVersion := "1.7.2"
-
 resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
 resolvers += "HMRC-open-artefacts-maven2" at "https://open.artefacts.tax.service.gov.uk/maven2"
 resolvers += Resolver.url("HMRC-open-artefacts-ivy2", url("https://open.artefacts.tax.service.gov.uk/ivy2"))(Resolver.ivyStylePatterns)
