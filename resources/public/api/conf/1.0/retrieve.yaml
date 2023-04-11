@@ -54,6 +54,14 @@ get:
                 <td><p>NOT_FOUND</p></td>
                 <td><p>Simulate a scenario where no data is found.</p></td>
             </tr>
+            <tr>
+                <td><p>CASH</p></td>
+                <td><p>Simulate a scenario where the success response yields data associated with an accountingType of 'CASH'.</p></td>
+            </tr>
+            <tr>
+                <td><p>ACCRUALS</p></td>
+                <td><p>Simulate a scenario where the success response yields data associated with an accountingType of 'ACCRUALS'.</p></td>
+            </tr>
         </tbody>
     </table>
 
