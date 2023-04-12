@@ -56,7 +56,7 @@ get:
             </tr>
             <tr>
                 <td><p>CASH</p></td>
-                <td><p>Simulate a scenario where the success response yields data associated with an accountingType of 'CASH'.</p>
+                <td><p>Simulate a scenario where the success response returns data associated with an accountingType of 'CASH'.</p>
                 <p>Use the following businessId for this scenario:</p>
                 <ul>
                   <li><p>XBIS12345678901</p></li>
@@ -65,7 +65,7 @@ get:
             </tr>
             <tr>
                 <td><p>ACCRUALS</p></td>
-                <td><p>Simulate a scenario where the success response yields data associated with an accountingType of 'ACCRUALS'.</p>
+                <td><p>Simulate a scenario where the success response returns data associated with an accountingType of 'ACCRUALS'.</p>
                 <p>Use the following businessId for this scenario:</p>
                 <ul>
                   <li><p>XBIS12345678901</p></li>
