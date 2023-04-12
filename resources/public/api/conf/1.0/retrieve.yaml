@@ -19,7 +19,7 @@ get:
                     <p>Simulate a successful response with a self-employment business.</p>
                     <p>Use the following businessId for this scenario:</p>
                     <ul>
-                        <li><p>XAIS12345678901</p></li>
+                        <li><p>XBIS12345678901</p></li>
                     </ul>
                 </td>
             </tr>
@@ -28,7 +28,7 @@ get:
                 <td><p>Simulate a successful response with a uk-property business.</p>
                 <p>Use the following businessId for this scenario:</p>
                 <ul>
-                  <li><p>XAIS12345678902</p></li>
+                  <li><p>XPIS12345678901</p></li>
                 </ul>
                 </td>
             </tr>
@@ -37,7 +37,7 @@ get:
                 <td><p>Simulate a successful response with a foreign-property business.</p>
                 <p>Use the following businessId for this scenario:</p>
                 <ul>
-                  <li><p>XAIS12345678903</p></li>
+                  <li><p>XFIS12345678901</p></li>
                 </ul>
                 </td>
             </tr>        
@@ -46,7 +46,7 @@ get:
                 <td><p>Simulate a successful response with a property-unspecified business.</p>
                 <p>Use the following businessId for this scenario:</p>
                 <ul>
-                  <li><p>XAIS12345678903</p></li>
+                  <li><p>XAIS12345678901</p></li>
                 </ul>
                 </td>        
             </tr>
@@ -56,11 +56,21 @@ get:
             </tr>
             <tr>
                 <td><p>CASH</p></td>
-                <td><p>Simulate a scenario where the success response yields data associated with an accountingType of 'CASH'.</p></td>
+                <td><p>Simulate a scenario where the success response yields data associated with an accountingType of 'CASH'.</p>
+                <p>Use the following businessId for this scenario:</p>
+                <ul>
+                  <li><p>XBIS12345678901</p></li>
+                </ul>
+                </td>
             </tr>
             <tr>
                 <td><p>ACCRUALS</p></td>
-                <td><p>Simulate a scenario where the success response yields data associated with an accountingType of 'ACCRUALS'.</p></td>
+                <td><p>Simulate a scenario where the success response yields data associated with an accountingType of 'ACCRUALS'.</p>
+                <p>Use the following businessId for this scenario:</p>
+                <ul>
+                  <li><p>XBIS12345678901</p></li>
+                </ul>
+                </td>
             </tr>
         </tbody>
     </table>
