@@ -35,8 +35,11 @@ class RetrieveBusinessDetailsConnector @Inject() (val http: HttpClient, val appC
       ec: ExecutionContext,
       correlationId: String): Future[DownstreamOutcome[RetrieveBusinessDetailsDesResponse]] = {
 
-    val url = s"registration/business-details/nino/${request.nino.nino}"
-    get(DesUri[RetrieveBusinessDetailsDesResponse](s"$url"))
+    import request._
+
+    val downstreamUri = s"registration/business-details/nino/$nino"
+
+    get(DesUri[RetrieveBusinessDetailsDesResponse](downstreamUri))
   }
 
 }

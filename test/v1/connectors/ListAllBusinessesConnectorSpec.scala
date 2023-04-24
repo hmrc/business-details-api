@@ -16,11 +16,10 @@
 
 package v1.connectors
 
-import api.connectors.ConnectorSpec
+import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.Nino
 import api.models.domain.TypeOfBusiness.`self-employment`
 import api.models.outcomes.ResponseWrapper
-import mocks.{MockAppConfig, MockHttpClient}
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
@@ -30,33 +29,24 @@ class ListAllBusinessesConnectorSpec extends ConnectorSpec {
 
   private val nino = Nino("AA123456A")
 
-  class Test extends MockHttpClient with MockAppConfig {
-    val connector: ListAllBusinessesConnector    = new ListAllBusinessesConnector(http = mockHttpClient, appConfig = mockAppConfig)
-    val desRequestHeaders: Seq[(String, String)] = Seq("Environment" -> "des-environment", "Authorization" -> s"Bearer des-token")
+  "listAllBusinessesConnector" must {
+    "send a request and return the expected response" in new DesTest with Test {
+      val outcome: Right[Nothing, ResponseWrapper[ListAllBusinessesResponse[Business]]] =
+        Right(ResponseWrapper(correlationId, ListAllBusinessesResponse(Seq(Business(`self-employment`, "123456789012345", Some("RCDTS"))))))
 
-    MockAppConfig.desBaseUrl returns baseUrl
-    MockAppConfig.desToken returns "des-token"
-    MockAppConfig.desEnvironment returns "des-environment"
-    MockAppConfig.desEnvironmentHeaders returns Some(allowedDesHeaders)
+      willGet(
+        url = s"$baseUrl/registration/business-details/nino/$nino"
+      ).returns(Future.successful(outcome))
+
+      val result: DownstreamOutcome[ListAllBusinessesResponse[Business]] = await(connector.listAllBusinesses(request))
+      result shouldBe outcome
+    }
   }
 
-  "list all businesses" should {
-    val request = ListAllBusinessesRequest(nino)
-    "return a result" when {
-      "the downstream call is successful" in new Test {
-        val outcome =
-          Right(ResponseWrapper(correlationId, ListAllBusinessesResponse(Seq(Business(`self-employment`, "123456789012345", Some("RCDTS"))))))
-        MockedHttpClient
-          .get(
-            url = s"$baseUrl/registration/business-details/nino/${request.nino.nino}",
-            config = dummyDesHeaderCarrierConfig,
-            requiredHeaders = requiredDesHeaders,
-            excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
-          )
-          .returns(Future.successful(outcome))
-        await(connector.listAllBusinesses(request)) shouldBe outcome
-      }
-    }
+  trait Test { _: ConnectorTest =>
+    protected val connector: ListAllBusinessesConnector = new ListAllBusinessesConnector(http = mockHttpClient, appConfig = mockAppConfig)
+
+    protected val request: ListAllBusinessesRequest = ListAllBusinessesRequest(nino)
   }
 
 }
