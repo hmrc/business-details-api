@@ -18,20 +18,22 @@ package v1.services
 
 import api.controllers.RequestContext
 import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundError}
-import api.services.BaseService
+import api.services.{BaseService, ServiceOutcome}
 import cats.data.EitherT
 
 import javax.inject.{Inject, Singleton}
 import v1.connectors.RetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
+import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetailsConnector) extends BaseService {
 
-  def retrieveBusinessDetailsService(
-      request: RetrieveBusinessDetailsRequest)(implicit ctx: RequestContext, ec: ExecutionContext): Future[RetrieveBusinessDetailsServiceOutcome] = {
+  def retrieveBusinessDetailsService(request: RetrieveBusinessDetailsRequest)(implicit
+      ctx: RequestContext,
+      ec: ExecutionContext): Future[ServiceOutcome[RetrieveBusinessDetailsResponse]] = {
 
     val result = for {
       downstreamResponseWrapper <- EitherT(connector.retrieveBusinessDetails(request))
@@ -42,7 +44,7 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
     result.value
   }
 
-  private def downstreamErrorMap: Map[String, MtdError] =
+  private val downstreamErrorMap: Map[String, MtdError] =
     Map(
       "INVALID_NINO"        -> NinoFormatError,
       "INVALID_MTDBSA"      -> InternalError,
