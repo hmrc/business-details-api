@@ -16,12 +16,11 @@
 
 package v1.connectors
 
-import api.connectors.ConnectorSpec
+import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{Nino, TypeOfBusiness}
-import api.models.domain.accountingType.AccountingType
 import api.models.outcomes.ResponseWrapper
-import mocks.{MockAppConfig, MockHttpClient}
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
+import v1.models.response.retrieveBusinessDetails.des.RetrieveBusinessDetailsDesResponse
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
@@ -31,50 +30,39 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
   private val nino       = Nino("AA123456A")
   private val businessId = "XAIS12345678910"
 
-  class Test extends MockHttpClient with MockAppConfig {
-    val connector: RetrieveBusinessDetailsConnector = new RetrieveBusinessDetailsConnector(http = mockHttpClient, appConfig = mockAppConfig)
-    val desRequestHeaders: Seq[(String, String)]    = Seq("Environment" -> "des-environment", "Authorization" -> s"Bearer des-token")
+  "retrieveBusinessDetailsConnector" must {
+    "send a request and return the expected response" in new DesTest with Test {
+      val outcome: Right[Nothing, ResponseWrapper[Seq[RetrieveBusinessDetailsResponse]]] = Right(ResponseWrapper(correlationId, Seq(response)))
 
-    MockAppConfig.desBaseUrl returns baseUrl
-    MockAppConfig.desToken returns "des-token"
-    MockAppConfig.desEnvironment returns "des-environment"
-    MockAppConfig.desEnvironmentHeaders returns Some(allowedDesHeaders)
+      willGet(
+        url = s"$baseUrl/registration/business-details/nino/${request.nino.nino}"
+      ).returns(Future.successful(outcome))
+
+      val result: DownstreamOutcome[RetrieveBusinessDetailsDesResponse] = await(connector.retrieveBusinessDetails(request))
+      result shouldBe outcome
+    }
   }
 
-  "retrieve business details" should {
-    val request = RetrieveBusinessDetailsRequest(nino, businessId)
-    "return a result" when {
-      "the downstream call is successful" in new Test {
-        val outcome = Right(
-          ResponseWrapper(
-            correlationId,
-            Seq(RetrieveBusinessDetailsResponse(
-              "XAIS12345678910",
-              TypeOfBusiness.`self-employment`,
-              Some("Aardvark Window Cleaning Services"),
-              Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-              Some(AccountingType.ACCRUALS),
-              Some("2016-09-24"),
-              Some("2020-03-24"),
-              Some("6 Harpic Drive"),
-              Some("Domestos Wood"),
-              Some("ToiletDucktown"),
-              Some("CIFSHIRE"),
-              Some("SW4F 3GA"),
-              Some("GB")
-            ))
-          ))
-        MockedHttpClient
-          .get(
-            url = s"$baseUrl/registration/business-details/nino/${request.nino.nino}",
-            config = dummyDesHeaderCarrierConfig,
-            requiredHeaders = requiredDesHeaders,
-            excludedHeaders = Seq("AnotherHeader" -> "HeaderValue")
-          )
-          .returns(Future.successful(outcome))
-        await(connector.retrieveBusinessDetails(request)) shouldBe outcome
-      }
-    }
+  trait Test { _: ConnectorTest =>
+    protected val connector: RetrieveBusinessDetailsConnector = new RetrieveBusinessDetailsConnector(http = mockHttpClient, appConfig = mockAppConfig)
+
+    protected val request: RetrieveBusinessDetailsRequest = RetrieveBusinessDetailsRequest(nino, businessId)
+
+    protected val response: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
+      "XAIS12345678910",
+      TypeOfBusiness.`self-employment`,
+      None,
+      Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
+      None)
+
   }
 
 }

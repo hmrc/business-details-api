@@ -18,12 +18,13 @@ package v1.services
 
 import api.controllers.RequestContext
 import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundError}
-import api.services.BaseService
+import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
 
 import javax.inject.{Inject, Singleton}
 import v1.connectors.ListAllBusinessesConnector
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
+import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,7 +34,7 @@ class ListAllBusinessesService @Inject() (connector: ListAllBusinessesConnector)
   def listAllBusinessesService(request: ListAllBusinessesRequest)(implicit
       ctx: RequestContext,
       ec: ExecutionContext
-  ): Future[ListAllBusinessesServiceOutcome] = {
+  ): Future[ServiceOutcome[ListAllBusinessesResponse[Business]]] = {
 
     connector
       .listAllBusinesses(request)
@@ -41,7 +42,7 @@ class ListAllBusinessesService @Inject() (connector: ListAllBusinessesConnector)
 
   }
 
-  private def downstreamErrorMap: Map[String, MtdError] =
+  private val downstreamErrorMap: Map[String, MtdError] =
     Map(
       "INVALID_NINO"        -> NinoFormatError,
       "INVALID_MTDBSA"      -> InternalError,
