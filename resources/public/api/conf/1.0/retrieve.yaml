@@ -54,6 +54,32 @@ get:
                 <td><p>NOT_FOUND</p></td>
                 <td><p>Simulate a scenario where no data is found.</p></td>
             </tr>
+            <tr>
+                <td><p>DYNAMIC</p></td>
+                <td><p>Simulates a dynamic response where the type of response will change corresponding to the businessId provided in the request:
+                    <ul>
+                        <li>For a response with a self-employment business, use businessId:</li>
+                    <ul>
+                        <li>XBIS12345678901 (Accruals)</li>
+                        <li>XBIS12345678902 (Cash)</li>
+                    </ul>
+                        <li>For a response with a uk-property business, use businessId:</li>
+                    <ul>
+                        <li>XPIS12345678901 (Accruals)</li>
+                        <li>XPIS12345678902 (Cash)</li>
+                    </ul>
+                          <li>For a response with a foreign-property business, use businessId:</li>
+                    <ul>
+                        <li>XFIS12345678901 (Accruals)</li>
+                        <li>XFIS12345678902 (Cash)</li>
+                    </ul>
+                          <li>For a response with a property-unspecified business, use businessId:</li>
+                    <ul>
+                        <li>XAIS12345678901 (Accruals)</li>
+                        <li>XAIS12345678902 (Cash)</li>
+                    </ul>
+                    </ul></p></td>
+            </tr>
         </tbody>
     </table>
 
