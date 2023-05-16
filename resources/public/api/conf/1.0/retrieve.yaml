@@ -63,16 +63,19 @@ get:
                         <li>XBIS12345678901 (Accruals)</li>
                         <li>XBIS12345678902 (Cash)</li>
                     </ul>
+                    <br>
                         <li>For a response with a uk-property business, use businessId:</li>
                     <ul>
                         <li>XPIS12345678901 (Accruals)</li>
                         <li>XPIS12345678902 (Cash)</li>
                     </ul>
+                    <br>
                           <li>For a response with a foreign-property business, use businessId:</li>
                     <ul>
                         <li>XFIS12345678901 (Accruals)</li>
                         <li>XFIS12345678902 (Cash)</li>
                     </ul>
+                    <br>
                           <li>For a response with a property-unspecified business, use businessId:</li>
                     <ul>
                         <li>XAIS12345678901 (Accruals)</li>
