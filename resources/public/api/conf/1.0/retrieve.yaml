@@ -56,7 +56,7 @@ get:
             </tr>
             <tr>
                 <td><p>DYNAMIC</p></td>
-                <td><p>Simulates a dynamic response where the type of response will change corresponding to the businessId provided in the request:
+                <td><p>Returns a dynamic response where the type of response will change corresponding to the businessId provided in the request:
                     <ul>
                         <li>For a response with a self-employment business, use businessId:</li>
                     <ul>
