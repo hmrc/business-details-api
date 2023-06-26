@@ -55,22 +55,50 @@ get:
                 <td><p>Simulate a scenario where no data is found.</p></td>
             </tr>
             <tr>
-                <td><p>CASH</p></td>
-                <td><p>Simulate a scenario where the success response returns data associated with an accountingType of 'CASH'.</p>
-                <p>Use the following businessId for this scenario:</p>
+                <td><p>DYNAMIC</p></td>
+                <td><p>Returns a dynamic response where the type of response will change corresponding to the businessId provided in the request:
+                    <ul>
+                        <li>For a response with a self-employment business, use businessId:</li>
+                    <ul>
+                        <li>XBIS12345678901 (Accruals)</li>
+                        <li>XBIS12345678902 (Cash)</li>
+                    </ul>
+                    <br>
+                        <li>For a response with a uk-property business, use businessId:</li>
+                    <ul>
+                        <li>XPIS12345678901 (Accruals)</li>
+                        <li>XPIS12345678902 (Cash)</li>
+                    </ul>
+                    <br>
+                          <li>For a response with a foreign-property business, use businessId:</li>
+                    <ul>
+                        <li>XFIS12345678901 (Accruals)</li>
+                        <li>XFIS12345678902 (Cash)</li>
+                    </ul>
+                    <br>
+                          <li>For a response with a property-unspecified business, use businessId:</li>
+                    <ul>
+                        <li>XAIS12345678901 (Accruals)</li>
+                        <li>XAIS12345678902 (Cash)</li>
+                    </ul>
+                    </ul></p>
+                  </td>
+              <td><p>CASH</p></td>
+                  <td><p>Simulate a scenario where the success response returns data associated with an accountingType of 'CASH'.</p>
+                  <p>Use the following businessId for this scenario:</p>
                 <ul>
                   <li><p>XBIS12345678901</p></li>
                 </ul>
-                </td>
+              </td>
             </tr>
             <tr>
-                <td><p>ACCRUALS</p></td>
+              <td><p>ACCRUALS</p></td>
                 <td><p>Simulate a scenario where the success response returns data associated with an accountingType of 'ACCRUALS'.</p>
                 <p>Use the following businessId for this scenario:</p>
                 <ul>
                   <li><p>XBIS12345678901</p></li>
                 </ul>
-                </td>
+              </td>
             </tr>
         </tbody>
     </table>
