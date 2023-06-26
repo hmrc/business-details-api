@@ -20,8 +20,6 @@ import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
-val appName = "business-details-api"
-
 lazy val ItTest = config("it") extend Test
 
 lazy val microservice = Project(appName, file("."))
@@ -62,3 +60,5 @@ lazy val microservice = Project(appName, file("."))
     resolvers += Resolver.jcenterRepo
   )
   .settings(PlayKeys.playDefaultPort := 7792)
+
+val appName = "business-details-api"

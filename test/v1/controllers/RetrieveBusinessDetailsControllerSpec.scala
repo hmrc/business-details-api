@@ -20,11 +20,11 @@ import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
 import api.mocks.MockIdGenerator
 import api.mocks.hateoas.MockHateoasFactory
 import api.mocks.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
-import api.models.domain.accountingType.AccountingType
 import api.models.domain.{Nino, TypeOfBusiness}
+import api.models.domain.accountingType.AccountingType
 import api.models.errors._
-import api.models.hateoas.Method.GET
 import api.models.hateoas.{HateoasWrapper, Link}
+import api.models.hateoas.Method.GET
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.Json
 import play.api.mvc.Result

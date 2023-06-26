@@ -21,11 +21,11 @@ import api.models.errors.{ClientNotAuthorisedError, InternalError}
 import config.ConfidenceLevelConfig
 import mocks.MockAppConfig
 import org.scalamock.handlers.CallHandler
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.authorise.{AlternatePredicate, CompositePredicate, EmptyPredicate, Predicate}
+import uk.gov.hmrc.auth.core.retrieve.{~, Retrieval}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
-import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -243,8 +243,8 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
   }
 
   trait Test {
-    lazy val target = new EnrolmentsAuthService(mockAuthConnector, mockAppConfig)
-    val mockAuthConnector: AuthConnector = mock[AuthConnector]
+    lazy val target                                                   = new EnrolmentsAuthService(mockAuthConnector, mockAppConfig)
+    val mockAuthConnector: AuthConnector                              = mock[AuthConnector]
     val authRetrievals: Retrieval[Option[AffinityGroup] ~ Enrolments] = affinityGroup and authorisedEnrolments
 
     def mockConfidenceLevelCheckConfig(authValidationEnabled: Boolean = true, confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200): Unit = {

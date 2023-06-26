@@ -31,15 +31,15 @@ import api.services.ServiceOutcome
 import config.AppConfig
 import org.scalamock.handlers.CallHandler
 import play.api.http.{HeaderNames, Status}
-import play.api.libs.json.{JsString, Json, OWrites}
+import play.api.libs.json.{Json, JsString, OWrites}
 import play.api.mvc.AnyContent
 import play.api.test.{FakeRequest, ResultExtractors}
 import support.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class RequestHandlerSpec
     extends UnitSpec
@@ -56,9 +56,9 @@ class RequestHandlerSpec
 
   private val generatedCorrelationId = "generatedCorrelationId"
   private val serviceCorrelationId   = "serviceCorrelationId"
-  private val userDetails                           = UserDetails("mtdId", "Individual", Some("agentReferenceNumber"))
-  private val mockService = mock[DummyService]
-  private val mockParser = mock[RequestParser[InputRaw.type, Input.type]]
+  private val userDetails            = UserDetails("mtdId", "Individual", Some("agentReferenceNumber"))
+  private val mockService            = mock[DummyService]
+  private val mockParser             = mock[RequestParser[InputRaw.type, Input.type]]
 
   private def service =
     (mockService.service(_: Input.type)(_: RequestContext, _: ExecutionContext)).expects(Input, *, *)
@@ -72,11 +72,12 @@ class RequestHandlerSpec
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "SomeController", endpointName = "someEndpoint")
 
-  implicit val hc: HeaderCarrier                    = HeaderCarrier()
-  implicit val ctx: RequestContext                  = RequestContext.from(mockIdGenerator, endpointLogContext)
+  implicit val hc: HeaderCarrier   = HeaderCarrier()
+  implicit val ctx: RequestContext = RequestContext.from(mockIdGenerator, endpointLogContext)
 
   private def parseRequest =
     (mockParser.parseRequest(_: InputRaw.type)(_: String)).expects(InputRaw, *)
+
   implicit val userRequest: UserRequest[AnyContent] = UserRequest[AnyContent](userDetails, FakeRequest())
 
   trait DummyService {

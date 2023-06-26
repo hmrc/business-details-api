@@ -32,4 +32,5 @@ class ListAllBusinessesValidator extends Validator[ListAllBusinessesRawData] {
       NinoValidation.validate(data.nino)
     )
   }
+
 }

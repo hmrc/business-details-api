@@ -22,10 +22,10 @@ import api.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdI
 import api.models.audit.{AuditError, AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.errors.MtdError
 import play.api.http.{HeaderNames, MimeTypes, Status}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{Json, JsValue}
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents, Result}
-import play.api.test.Helpers.stubControllerComponents
 import play.api.test.{FakeRequest, ResultExtractors}
+import play.api.test.Helpers.stubControllerComponents
 import support.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
 

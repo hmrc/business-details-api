@@ -16,7 +16,7 @@
 
 package v1.models.response.RetrieveBusinessDetails
 
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{Json, JsValue}
 import support.UnitSpec
 import v1.models.response.retrieveBusinessDetails.AccountingPeriod
 

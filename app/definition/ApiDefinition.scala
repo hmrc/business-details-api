@@ -31,7 +31,7 @@ case class PublishingException(message: String) extends Exception(message)
 sealed trait APIStatus
 
 object APIStatus extends Enumeration {
-  val parser: PartialFunction[String, APIStatus]   = Enums.parser[APIStatus]
+  val parser: PartialFunction[String, APIStatus] = Enums.parser[APIStatus]
 
   case object ALPHA extends APIStatus
 

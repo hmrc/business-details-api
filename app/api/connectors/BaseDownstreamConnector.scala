@@ -48,6 +48,31 @@ trait BaseDownstreamConnector {
     doPost(getBackendHeaders(uri, hc, correlationId, jsonContentTypeHeader))
   }
 
+  def get[Resp](uri: DownstreamUri[Resp], queryParams: Seq[(String, String)] = Seq.empty)(implicit
+      ec: ExecutionContext,
+      hc: HeaderCarrier,
+      httpReads: HttpReads[DownstreamOutcome[Resp]],
+      correlationId: String): Future[DownstreamOutcome[Resp]] = {
+
+    def doGet(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] =
+      http.GET(getBackendUri(uri), queryParams = queryParams)
+
+    doGet(getBackendHeaders(uri, hc, correlationId))
+  }
+
+  def delete[Resp](uri: DownstreamUri[Resp])(implicit
+      ec: ExecutionContext,
+      hc: HeaderCarrier,
+      httpReads: HttpReads[DownstreamOutcome[Resp]],
+      correlationId: String): Future[DownstreamOutcome[Resp]] = {
+
+    def doDelete(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] = {
+      http.DELETE(getBackendUri(uri))
+    }
+
+    doDelete(getBackendHeaders(uri, hc, correlationId))
+  }
+
   private def getBackendUri[Resp](uri: DownstreamUri[Resp]): String =
     s"${configFor(uri).baseUrl}/${uri.value}"
 
@@ -77,31 +102,6 @@ trait BaseDownstreamConnector {
         additionalHeaders ++
         passThroughHeaders
     )
-  }
-
-  def get[Resp](uri: DownstreamUri[Resp], queryParams: Seq[(String, String)] = Seq.empty)(implicit
-      ec: ExecutionContext,
-      hc: HeaderCarrier,
-      httpReads: HttpReads[DownstreamOutcome[Resp]],
-      correlationId: String): Future[DownstreamOutcome[Resp]] = {
-
-    def doGet(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] =
-      http.GET(getBackendUri(uri), queryParams = queryParams)
-
-    doGet(getBackendHeaders(uri, hc, correlationId))
-  }
-
-  def delete[Resp](uri: DownstreamUri[Resp])(implicit
-      ec: ExecutionContext,
-      hc: HeaderCarrier,
-      httpReads: HttpReads[DownstreamOutcome[Resp]],
-      correlationId: String): Future[DownstreamOutcome[Resp]] = {
-
-    def doDelete(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] = {
-      http.DELETE(getBackendUri(uri))
-    }
-
-    doDelete(getBackendHeaders(uri, hc, correlationId))
   }
 
   def put[Body: Writes, Resp](body: Body, uri: DownstreamUri[Resp])(implicit

@@ -25,7 +25,7 @@ import api.models.request.RawData
 import cats.data.EitherT
 import cats.implicits._
 import play.api.http.Status
-import play.api.libs.json.{JsValue, Json, Writes}
+import play.api.libs.json.{Json, JsValue, Writes}
 import play.api.mvc.Result
 import play.api.mvc.Results.InternalServerError
 import utils.Logging
@@ -85,9 +85,6 @@ object RequestHandler {
     def withNoContentResult(successStatus: Int = Status.NO_CONTENT): RequestHandlerBuilder[InputRaw, Input, Output] =
       withResultCreator(ResultCreator.noContent(successStatus))
 
-    def withResultCreator(resultCreator: ResultCreator[InputRaw, Input, Output]): RequestHandlerBuilder[InputRaw, Input, Output] =
-      copy(resultCreator = resultCreator)
-
     /** Shorthand for
       * {{{
       * withResultCreator(ResultCreator.hateoasWrapping(hateoasFactory, successStatus)(data))
@@ -108,6 +105,9 @@ object RequestHandler {
         linksFactory: HateoasLinksFactory[Output, HData],
         writes: Writes[HateoasWrapper[Output]]): RequestHandlerBuilder[InputRaw, Input, Output] =
       withResultCreator(ResultCreator.hateoasWrapping(hateoasFactory, successStatus)((_, _) => data))
+
+    def withResultCreator(resultCreator: ResultCreator[InputRaw, Input, Output]): RequestHandlerBuilder[InputRaw, Input, Output] =
+      copy(resultCreator = resultCreator)
 
     // Scoped as a private delegate so as to keep the logic completely separate from the configuration
     private object Delegate extends RequestHandler[InputRaw] with Logging with RequestContextImplicits {

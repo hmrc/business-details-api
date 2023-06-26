@@ -17,7 +17,7 @@
 package v1.models.response.retrieveBusinessDetails
 
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Json, OWrites, Reads}
+import play.api.libs.json.{Json, JsPath, OWrites, Reads}
 
 case class AccountingPeriod(start: String, end: String)
 

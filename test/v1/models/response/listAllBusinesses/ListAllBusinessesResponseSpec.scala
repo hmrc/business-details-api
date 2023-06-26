@@ -18,8 +18,8 @@ package v1.models.response.listAllBusinesses
 
 import api.hateoas.HateoasFactory
 import api.models.domain.TypeOfBusiness
-import api.models.hateoas.Method.GET
 import api.models.hateoas.{HateoasWrapper, Link}
+import api.models.hateoas.Method.GET
 import mocks.MockAppConfig
 import play.api.libs.json.Json
 import support.UnitSpec

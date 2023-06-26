@@ -24,13 +24,13 @@ sealed trait TypeOfBusiness
 object TypeOfBusiness {
   val parser: PartialFunction[String, TypeOfBusiness] = Enums.parser[TypeOfBusiness]
 
-  case object `self-employment`      extends TypeOfBusiness
+  case object `self-employment` extends TypeOfBusiness
 
-  case object `uk-property`          extends TypeOfBusiness
+  case object `uk-property` extends TypeOfBusiness
 
-  case object `foreign-property`     extends TypeOfBusiness
+  case object `foreign-property` extends TypeOfBusiness
 
-  implicit val format: Format[TypeOfBusiness]         = Enums.format[TypeOfBusiness]
+  implicit val format: Format[TypeOfBusiness] = Enums.format[TypeOfBusiness]
 
   case object `property-unspecified` extends TypeOfBusiness
 }

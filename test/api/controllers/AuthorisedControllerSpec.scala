@@ -32,12 +32,13 @@ class AuthorisedControllerSpec extends ControllerBaseSpec {
 
   val nino: String  = "AA123456A"
   val mtdId: String = "X123567890"
+
   val predicate: Predicate = Enrolment("HMRC-MTD-IT")
     .withIdentifier("MTDITID", mtdId)
     .withDelegatedAuthRule("mtd-it-auth")
 
   trait Test extends MockEnrolmentsAuthService with MockMtdIdLookupService {
-    lazy val target = new TestController()
+    lazy val target       = new TestController()
     val hc: HeaderCarrier = HeaderCarrier()
 
     class TestController extends AuthorisedController(cc) {
@@ -49,6 +50,7 @@ class AuthorisedControllerSpec extends ControllerBaseSpec {
       }
 
     }
+
   }
 
   "calling an action" when {

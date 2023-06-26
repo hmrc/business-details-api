@@ -27,6 +27,7 @@ object Shows {
 }
 
 object Enums {
+
   def format[E: MkValues: ClassTag](implicit ev: Show[E] = Shows.toStringShow[E]): Format[E] =
     Format(reads, writes)
 

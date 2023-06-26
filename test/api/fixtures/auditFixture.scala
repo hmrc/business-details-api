@@ -18,7 +18,7 @@ package api.fixtures
 
 import api.models.audit.{AuditError, AuditResponse}
 import play.api.http.Status.{BAD_REQUEST, OK}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{Json, JsValue}
 
 object auditFixture {
 

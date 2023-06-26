@@ -33,4 +33,5 @@ class RetrieveBusinessDetailsValidator extends Validator[RetrieveBusinessDetails
       BusinessIdValidation.validate(data.businessId)
     )
   }
+
 }

@@ -2,8 +2,7 @@
   "businessId": "XAIS12345678910",
   "typeOfBusiness": "self-employment",
   "tradingName": "ABC Ltd.",
-  "accountingPeriods":
-  [
+  "accountingPeriods": [
     {
       "start": "2023-04-06",
       "end": "2024-04-05"
