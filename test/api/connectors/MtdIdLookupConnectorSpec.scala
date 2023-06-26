@@ -23,6 +23,9 @@ import scala.concurrent.Future
 
 class MtdIdLookupConnectorSpec extends ConnectorSpec {
 
+  val nino  = "test-nino"
+  val mtdId = "test-mtdId"
+
   class Test extends MockHttpClient with MockAppConfig {
 
     val connector = new MtdIdLookupConnector(
@@ -33,9 +36,6 @@ class MtdIdLookupConnectorSpec extends ConnectorSpec {
     val baseUrl = "http://test-id-lookup-baseUrl"
     MockAppConfig.mtdIdBaseUrl returns baseUrl
   }
-
-  val nino  = "test-nino"
-  val mtdId = "test-mtdId"
 
   "getMtdId" should {
     "return an MtdId" when {

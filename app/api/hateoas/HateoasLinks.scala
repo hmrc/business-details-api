@@ -16,25 +16,25 @@
 
 package api.hateoas
 
-import config.AppConfig
 import api.models.hateoas.Link
 import api.models.hateoas.Method.GET
 import api.models.hateoas.RelType.SELF
+import config.AppConfig
 
 trait HateoasLinks {
-
-  // Domain URIs
-  private def retrieveBusinessDetailsUri(appConfig: AppConfig, nino: String, businessId: String): String =
-    s"/${appConfig.apiGatewayContext}/$nino/$businessId"
-
-  private def listAllBusinessesUri(appConfig: AppConfig, nino: String): String =
-    s"/${appConfig.apiGatewayContext}/$nino/list"
 
   // API resource links
   def retrieveBusinessDetails(appConfig: AppConfig, nino: String, businessId: String, rel: String = SELF): Link =
     Link(href = retrieveBusinessDetailsUri(appConfig, nino, businessId), method = GET, rel = rel)
 
+  // Domain URIs
+  private def retrieveBusinessDetailsUri(appConfig: AppConfig, nino: String, businessId: String): String =
+    s"/${appConfig.apiGatewayContext}/$nino/$businessId"
+
   def listAllBusinesses(appConfig: AppConfig, nino: String): Link =
     Link(href = listAllBusinessesUri(appConfig, nino), method = GET, rel = SELF)
+
+  private def listAllBusinessesUri(appConfig: AppConfig, nino: String): String =
+    s"/${appConfig.apiGatewayContext}/$nino/list"
 
 }

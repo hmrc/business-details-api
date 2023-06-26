@@ -16,21 +16,21 @@
 
 package v1.controllers
 
-import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import api.controllers.{ ControllerBaseSpec, ControllerTestRunner }
 import api.mocks.MockIdGenerator
 import api.mocks.hateoas.MockHateoasFactory
-import api.mocks.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
-import api.models.domain.{Nino, TypeOfBusiness}
+import api.mocks.services.{ MockEnrolmentsAuthService, MockMtdIdLookupService }
+import api.models.domain.{ Nino, TypeOfBusiness }
 import api.models.errors._
 import api.models.hateoas.Method.GET
+import api.models.hateoas.{ HateoasWrapper, Link }
+import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import v1.mocks.requestParsers.MockListAllBusinessesRequestParser
 import v1.mocks.services.MockListAllBusinessesService
-import v1.models.request.listAllBusinesses.{ListAllBusinessesRawData, ListAllBusinessesRequest}
-import v1.models.response.listAllBusiness.{Business, ListAllBusinessesHateoasData, ListAllBusinessesResponse}
-import api.models.hateoas.{HateoasWrapper, Link}
-import api.models.outcomes.ResponseWrapper
+import v1.models.request.listAllBusinesses.{ ListAllBusinessesRawData, ListAllBusinessesRequest }
+import v1.models.response.listAllBusiness.{ Business, ListAllBusinessesHateoasData, ListAllBusinessesResponse }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -48,6 +48,12 @@ class ListAllBusinessesControllerSpec
   private val validNino            = "AA123456A"
   private val testHateoasLink      = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
   private val testInnerHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-inner-relationship")
+
+  private val business     = Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS"))
+  private val responseData = ListAllBusinessesResponse(Seq(business))
+  private val requestData  = ListAllBusinessesRequest(Nino(validNino))
+
+  private val rawData = ListAllBusinessesRawData(validNino)
 
   private val responseBody = Json.parse(
     """
@@ -77,15 +83,8 @@ class ListAllBusinessesControllerSpec
         """.stripMargin
   )
 
-  private val business     = Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS"))
-  private val responseData = ListAllBusinessesResponse(Seq(business))
-
   val hateoasResponse: ListAllBusinessesResponse[HateoasWrapper[Business]] = ListAllBusinessesResponse(
     Seq(HateoasWrapper(business, Seq(testInnerHateoasLink))))
-
-  private val requestData = ListAllBusinessesRequest(Nino(validNino))
-
-  private val rawData = ListAllBusinessesRawData(validNino)
 
   "handleRequest" should {
     "return OK" when {

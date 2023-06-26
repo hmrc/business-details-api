@@ -25,11 +25,11 @@ class ListAllBusinessesValidator extends Validator[ListAllBusinessesRawData] {
 
   private val validationSet = List(parameterFormatValidation)
 
+  override def validate(data: ListAllBusinessesRawData): List[MtdError] = run(validationSet, data).distinct
+
   private def parameterFormatValidation: ListAllBusinessesRawData => List[List[MtdError]] = { data =>
     List(
       NinoValidation.validate(data.nino)
     )
   }
-
-  override def validate(data: ListAllBusinessesRawData): List[MtdError] = run(validationSet, data).distinct
 }

@@ -20,16 +20,25 @@ import api.controllers.RequestContext
 import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundError}
 import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
-
-import javax.inject.{Inject, Singleton}
 import v1.connectors.ListAllBusinessesConnector
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ListAllBusinessesService @Inject() (connector: ListAllBusinessesConnector) extends BaseService {
+
+  private val downstreamErrorMap: Map[String, MtdError] =
+    Map(
+      "INVALID_NINO"        -> NinoFormatError,
+      "INVALID_MTDBSA"      -> InternalError,
+      "NOT_FOUND_NINO"      -> NotFoundError,
+      "NOT_FOUND_MTDBSA"    -> InternalError,
+      "SERVER_ERROR"        -> InternalError,
+      "SERVICE_UNAVAILABLE" -> InternalError
+    )
 
   def listAllBusinessesService(request: ListAllBusinessesRequest)(implicit
       ctx: RequestContext,
@@ -41,15 +50,5 @@ class ListAllBusinessesService @Inject() (connector: ListAllBusinessesConnector)
       .map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
 
   }
-
-  private val downstreamErrorMap: Map[String, MtdError] =
-    Map(
-      "INVALID_NINO"        -> NinoFormatError,
-      "INVALID_MTDBSA"      -> InternalError,
-      "NOT_FOUND_NINO"      -> NotFoundError,
-      "NOT_FOUND_MTDBSA"    -> InternalError,
-      "SERVER_ERROR"        -> InternalError,
-      "SERVICE_UNAVAILABLE" -> InternalError
-    )
 
 }

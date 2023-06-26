@@ -26,12 +26,12 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel
 
 class ApiDefinitionFactorySpec extends UnitSpec {
 
+  private val confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200
+
   class Test extends MockHttpClient with MockAppConfig {
     val apiDefinitionFactory = new ApiDefinitionFactory(mockAppConfig)
     MockAppConfig.apiGatewayContext returns "individuals/business/details"
   }
-
-  private val confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200
 
   "definition" when {
     "called" should {

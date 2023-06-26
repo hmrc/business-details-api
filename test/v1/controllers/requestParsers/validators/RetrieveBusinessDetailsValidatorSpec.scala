@@ -22,12 +22,11 @@ import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRawData
 
 class RetrieveBusinessDetailsValidatorSpec extends UnitSpec {
 
+  val validator = new RetrieveBusinessDetailsValidator()
   private val validNino         = "AA123456A"
   private val invalidNino       = "walrus"
   private val validBusinessId   = "X0IS12345678901"
   private val invalidBusinessId = "XWalrusX"
-
-  val validator = new RetrieveBusinessDetailsValidator()
 
   "running a validation" should {
     "return no errors" when {

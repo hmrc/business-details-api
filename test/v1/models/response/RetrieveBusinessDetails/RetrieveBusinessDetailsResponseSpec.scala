@@ -18,11 +18,11 @@ package v1.models.response.RetrieveBusinessDetails
 
 import api.models.domain.TypeOfBusiness
 import api.models.domain.accountingType.AccountingType
+import api.models.hateoas.Link
 import api.models.hateoas.Method.GET
 import mocks.MockAppConfig
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
-import api.models.hateoas.Link
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
 
 class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {

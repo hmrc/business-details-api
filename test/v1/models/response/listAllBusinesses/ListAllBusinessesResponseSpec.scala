@@ -19,10 +19,10 @@ package v1.models.response.listAllBusinesses
 import api.hateoas.HateoasFactory
 import api.models.domain.TypeOfBusiness
 import api.models.hateoas.Method.GET
+import api.models.hateoas.{HateoasWrapper, Link}
 import mocks.MockAppConfig
 import play.api.libs.json.Json
 import support.UnitSpec
-import api.models.hateoas.{HateoasWrapper, Link}
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesHateoasData, ListAllBusinessesResponse}
 
 class ListAllBusinessesResponseSpec extends UnitSpec {

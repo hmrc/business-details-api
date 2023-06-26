@@ -20,16 +20,25 @@ import api.controllers.RequestContext
 import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundError}
 import api.services.{BaseService, ServiceOutcome}
 import cats.data.EitherT
-
-import javax.inject.{Inject, Singleton}
 import v1.connectors.RetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
 import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponse
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetailsConnector) extends BaseService {
+
+  private val downstreamErrorMap: Map[String, MtdError] =
+    Map(
+      "INVALID_NINO"        -> NinoFormatError,
+      "INVALID_MTDBSA"      -> InternalError,
+      "NOT_FOUND_NINO"      -> NotFoundError,
+      "NOT_FOUND_MTDBSA"    -> InternalError,
+      "SERVER_ERROR"        -> InternalError,
+      "SERVICE_UNAVAILABLE" -> InternalError
+    )
 
   def retrieveBusinessDetailsService(request: RetrieveBusinessDetailsRequest)(implicit
       ctx: RequestContext,
@@ -43,15 +52,5 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
 
     result.value
   }
-
-  private val downstreamErrorMap: Map[String, MtdError] =
-    Map(
-      "INVALID_NINO"        -> NinoFormatError,
-      "INVALID_MTDBSA"      -> InternalError,
-      "NOT_FOUND_NINO"      -> NotFoundError,
-      "NOT_FOUND_MTDBSA"    -> InternalError,
-      "SERVER_ERROR"        -> InternalError,
-      "SERVICE_UNAVAILABLE" -> InternalError
-    )
 
 }

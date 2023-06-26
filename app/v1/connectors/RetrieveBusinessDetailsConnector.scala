@@ -17,15 +17,14 @@
 package v1.connectors
 
 import api.connectors.DownstreamUri.DesUri
+import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
-
-import javax.inject.Inject
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
 import v1.models.response.retrieveBusinessDetails.des.RetrieveBusinessDetailsDesResponse
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RetrieveBusinessDetailsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {

@@ -17,8 +17,8 @@
 package api.controllers.requestParsers.validators.validations
 
 import api.models.errors.BusinessIdFormatError
-import support.UnitSpec
 import api.utils.JsonErrorValidators
+import support.UnitSpec
 
 class BusinessIdValidationSpec extends UnitSpec with JsonErrorValidators {
 

@@ -29,20 +29,6 @@ class AuthISpec extends IntegrationBaseSpec {
 
   private trait Test {
     val nino = "AA123456A"
-
-    def setupStubs(): StubMapping
-
-    def request(): WSRequest = {
-      setupStubs()
-      buildRequest(s"/$nino/list")
-        .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.1.0+json"),
-          (AUTHORIZATION, "Bearer 123") // some bearer token
-      )
-    }
-
-    def desUri: String = s"/registration/business-details/nino/$nino"
-
     val desResponse: JsValue = Json.parse("""
         |{
         |   "safeId": "XE00001234567890",
@@ -80,6 +66,19 @@ class AuthISpec extends IntegrationBaseSpec {
         |   ]
         |}
         |""".stripMargin)
+
+    def setupStubs(): StubMapping
+
+    def request(): WSRequest = {
+      setupStubs()
+      buildRequest(s"/$nino/list")
+        .withHttpHeaders(
+          (ACCEPT, "application/vnd.hmrc.1.0+json"),
+          (AUTHORIZATION, "Bearer 123") // some bearer token
+        )
+    }
+
+    def desUri: String = s"/registration/business-details/nino/$nino"
 
   }
 
@@ -147,4 +146,5 @@ class AuthISpec extends IntegrationBaseSpec {
       }
     }
   }
+
 }

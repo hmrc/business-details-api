@@ -16,24 +16,25 @@
 
 package api.hateoas
 
+import api.models.hateoas.Method.GET
+import api.models.hateoas.{HateoasData, HateoasWrapper, Link}
 import cats.Functor
 import config.AppConfig
 import mocks.MockAppConfig
 import support.UnitSpec
-import api.models.hateoas.Method.GET
-import api.models.hateoas.{HateoasData, HateoasWrapper, Link}
 
 class HateoasFactorySpec extends UnitSpec with MockAppConfig {
 
   val hateoasFactory = new HateoasFactory(mockAppConfig)
+  val response = Response("X")
 
   case class Response(foo: String)
+
   case class ListResponse[A](items: Seq[A])
 
   case class Data1(id: String) extends HateoasData
-  case class Data2(id: String) extends HateoasData
 
-  val response = Response("X")
+  case class Data2(id: String) extends HateoasData
 
   class Test {
     MockAppConfig.apiGatewayContext.returns("context").anyNumberOfTimes()

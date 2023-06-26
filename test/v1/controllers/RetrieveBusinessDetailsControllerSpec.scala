@@ -24,17 +24,17 @@ import api.models.domain.accountingType.AccountingType
 import api.models.domain.{Nino, TypeOfBusiness}
 import api.models.errors._
 import api.models.hateoas.Method.GET
+import api.models.hateoas.{HateoasWrapper, Link}
+import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import v1.mocks.requestParsers.MockRetrieveBusinessDetailsRequestParser
 import v1.mocks.services.MockRetrieveBusinessDetailsService
 import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
-import api.models.hateoas.{HateoasWrapper, Link}
-import api.models.outcomes.ResponseWrapper
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class RetrieveBusinessDetailsControllerSpec
     extends ControllerBaseSpec

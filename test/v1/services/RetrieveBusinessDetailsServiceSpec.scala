@@ -19,16 +19,7 @@ package v1.services
 import api.controllers.EndpointLogContext
 import api.models.domain.accountingType.AccountingType
 import api.models.domain.{Nino, TypeOfBusiness}
-import api.models.errors.{
-  DownstreamErrorCode,
-  DownstreamErrors,
-  ErrorWrapper,
-  InternalError,
-  MtdError,
-  NinoFormatError,
-  NoBusinessFoundError,
-  NotFoundError
-}
+import api.models.errors.{DownstreamErrorCode, DownstreamErrors, ErrorWrapper, InternalError, MtdError, NinoFormatError, NoBusinessFoundError, NotFoundError}
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import uk.gov.hmrc.http.HeaderCarrier

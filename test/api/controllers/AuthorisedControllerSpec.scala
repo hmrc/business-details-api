@@ -16,10 +16,9 @@
 
 package api.controllers
 
-import api.mocks.services.MockMtdIdLookupService
+import api.mocks.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
 import api.models.errors.{ClientNotAuthorisedError, InternalError, InvalidBearerTokenError, NinoFormatError}
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
-import api.mocks.services.MockEnrolmentsAuthService
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent}
 import uk.gov.hmrc.auth.core.Enrolment
@@ -31,7 +30,14 @@ import scala.concurrent.Future
 
 class AuthorisedControllerSpec extends ControllerBaseSpec {
 
+  val nino: String  = "AA123456A"
+  val mtdId: String = "X123567890"
+  val predicate: Predicate = Enrolment("HMRC-MTD-IT")
+    .withIdentifier("MTDITID", mtdId)
+    .withDelegatedAuthRule("mtd-it-auth")
+
   trait Test extends MockEnrolmentsAuthService with MockMtdIdLookupService {
+    lazy val target = new TestController()
     val hc: HeaderCarrier = HeaderCarrier()
 
     class TestController extends AuthorisedController(cc) {
@@ -43,16 +49,7 @@ class AuthorisedControllerSpec extends ControllerBaseSpec {
       }
 
     }
-
-    lazy val target = new TestController()
   }
-
-  val nino: String  = "AA123456A"
-  val mtdId: String = "X123567890"
-
-  val predicate: Predicate = Enrolment("HMRC-MTD-IT")
-    .withIdentifier("MTDITID", mtdId)
-    .withDelegatedAuthRule("mtd-it-auth")
 
   "calling an action" when {
 
