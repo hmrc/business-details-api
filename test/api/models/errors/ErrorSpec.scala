@@ -16,7 +16,7 @@
 
 package api.models.errors
 
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{Json, JsValue}
 import support.UnitSpec
 
 class ErrorSpec extends UnitSpec {

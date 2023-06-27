@@ -33,8 +33,8 @@ import uk.gov.hmrc.play.audit.model.{DataEvent, TruncationLog}
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 
 import java.time.Instant
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.control.NoStackTrace
 
 class ErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite {

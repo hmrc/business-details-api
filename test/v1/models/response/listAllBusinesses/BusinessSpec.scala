@@ -17,7 +17,7 @@
 package v1.models.response.listAllBusinesses
 
 import api.models.domain.TypeOfBusiness
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{Json, JsValue}
 import support.UnitSpec
 import v1.models.response.listAllBusiness.Business
 

@@ -19,15 +19,14 @@ package v1.controllers
 import api.controllers._
 import api.hateoas.HateoasFactory
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
-
-import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
 import v1.controllers.requestParsers.ListAllBusinessesRequestParser
 import v1.models.request.listAllBusinesses.ListAllBusinessesRawData
-import v1.services.ListAllBusinessesService
 import v1.models.response.listAllBusiness.ListAllBusinessesHateoasData
+import v1.services.ListAllBusinessesService
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton

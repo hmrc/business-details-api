@@ -23,12 +23,11 @@ import play.api.libs.json.{Json, Reads}
 import support.UnitSpec
 
 class JsonFormatValidationSpec extends UnitSpec with JsonErrorValidators {
-
-  case class TestDataObject(fieldOne: String, fieldTwo: String)
+  val someError: MtdError = MtdError("SOME_CODE", "some message", BAD_REQUEST)
 
   implicit val testDataObjectReads: Reads[TestDataObject] = Json.reads[TestDataObject]
 
-  val someError: MtdError = MtdError("SOME_CODE", "some message", BAD_REQUEST)
+  case class TestDataObject(fieldOne: String, fieldTwo: String)
 
   "validate" should {
     "return no errors" when {

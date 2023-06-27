@@ -19,7 +19,7 @@ package v1.models.response.retrieveBusinessDetails.des
 import api.models.domain.TypeOfBusiness
 import api.models.domain.accountingType.{AccountingType, CashOrAccruals}
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Json, OWrites, Reads}
+import play.api.libs.json.{Json, JsPath, OWrites, Reads}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 case class BusinessDetails(businessId: String,

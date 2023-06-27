@@ -25,7 +25,7 @@ import api.models.request.RawData
 import cats.data.EitherT
 import cats.implicits._
 import play.api.http.Status
-import play.api.libs.json.{JsValue, Json, Writes}
+import play.api.libs.json.{Json, JsValue, Writes}
 import play.api.mvc.Result
 import play.api.mvc.Results.InternalServerError
 import utils.Logging
@@ -62,9 +62,6 @@ object RequestHandler {
 
     def handleRequest(rawData: InputRaw)(implicit ctx: RequestContext, request: UserRequest[_], ec: ExecutionContext): Future[Result] =
       Delegate.handleRequest(rawData)
-
-    def withResultCreator(resultCreator: ResultCreator[InputRaw, Input, Output]): RequestHandlerBuilder[InputRaw, Input, Output] =
-      copy(resultCreator = resultCreator)
 
     def withErrorHandling(errorHandling: ErrorHandling): RequestHandlerBuilder[InputRaw, Input, Output] =
       copy(errorHandling = errorHandling)
@@ -108,6 +105,9 @@ object RequestHandler {
         linksFactory: HateoasLinksFactory[Output, HData],
         writes: Writes[HateoasWrapper[Output]]): RequestHandlerBuilder[InputRaw, Input, Output] =
       withResultCreator(ResultCreator.hateoasWrapping(hateoasFactory, successStatus)((_, _) => data))
+
+    def withResultCreator(resultCreator: ResultCreator[InputRaw, Input, Output]): RequestHandlerBuilder[InputRaw, Input, Output] =
+      copy(resultCreator = resultCreator)
 
     // Scoped as a private delegate so as to keep the logic completely separate from the configuration
     private object Delegate extends RequestHandler[InputRaw] with Logging with RequestContextImplicits {
@@ -167,6 +167,14 @@ object RequestHandler {
         result
       }
 
+      def auditIfRequired(httpStatus: Int, response: Either[ErrorWrapper, Option[JsValue]])(implicit
+          ctx: RequestContext,
+          request: UserRequest[_],
+          ec: ExecutionContext): Unit =
+        auditHandler.foreach { creator =>
+          creator.performAudit(request.userDetails, httpStatus, response)
+        }
+
       private def handleFailure(errorWrapper: ErrorWrapper)(implicit ctx: RequestContext, request: UserRequest[_], ec: ExecutionContext) = {
         logger.warn(
           s"[${ctx.endpointLogContext.controllerName}][${ctx.endpointLogContext.endpointName}] - " +
@@ -187,14 +195,6 @@ object RequestHandler {
             s"Unhandled error: $errorWrapper")
         InternalServerError(Json.toJson(InternalError))
       }
-
-      def auditIfRequired(httpStatus: Int, response: Either[ErrorWrapper, Option[JsValue]])(implicit
-          ctx: RequestContext,
-          request: UserRequest[_],
-          ec: ExecutionContext): Unit =
-        auditHandler.foreach { creator =>
-          creator.performAudit(request.userDetails, httpStatus, response)
-        }
 
     }
 

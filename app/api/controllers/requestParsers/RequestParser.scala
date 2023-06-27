@@ -25,8 +25,6 @@ trait RequestParser[Raw <: RawData, Request] extends Logging {
 
   val validator: Validator[Raw]
 
-  protected def requestFor(data: Raw): Request
-
   def parseRequest(data: Raw)(implicit correlationId: String): Either[ErrorWrapper, Request] = {
     validator.validate(data) match {
       case Nil =>
@@ -44,5 +42,7 @@ trait RequestParser[Raw <: RawData, Request] extends Logging {
         Left(ErrorWrapper(correlationId, BadRequestError, Some(errs)))
     }
   }
+
+  protected def requestFor(data: Raw): Request
 
 }

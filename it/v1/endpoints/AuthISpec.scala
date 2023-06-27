@@ -19,7 +19,7 @@ package v1.endpoints
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{Json, JsValue}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
@@ -29,19 +29,6 @@ class AuthISpec extends IntegrationBaseSpec {
 
   private trait Test {
     val nino = "AA123456A"
-
-    def setupStubs(): StubMapping
-
-    def request(): WSRequest = {
-      setupStubs()
-      buildRequest(s"/$nino/list")
-        .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.1.0+json"),
-          (AUTHORIZATION, "Bearer 123") // some bearer token
-      )
-    }
-
-    def desUri: String = s"/registration/business-details/nino/$nino"
 
     val desResponse: JsValue = Json.parse("""
         |{
@@ -80,6 +67,19 @@ class AuthISpec extends IntegrationBaseSpec {
         |   ]
         |}
         |""".stripMargin)
+
+    def setupStubs(): StubMapping
+
+    def request(): WSRequest = {
+      setupStubs()
+      buildRequest(s"/$nino/list")
+        .withHttpHeaders(
+          (ACCEPT, "application/vnd.hmrc.1.0+json"),
+          (AUTHORIZATION, "Bearer 123") // some bearer token
+        )
+    }
+
+    def desUri: String = s"/registration/business-details/nino/$nino"
 
   }
 
@@ -147,4 +147,5 @@ class AuthISpec extends IntegrationBaseSpec {
       }
     }
   }
+
 }

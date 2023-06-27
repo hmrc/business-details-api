@@ -18,7 +18,7 @@ package v1.models.response.listAllBusiness
 
 import api.models.domain.TypeOfBusiness
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Json, OWrites, Reads}
+import play.api.libs.json.{Json, JsPath, OWrites, Reads}
 
 case class Business(typeOfBusiness: TypeOfBusiness, businessId: String, tradingName: Option[String])
 

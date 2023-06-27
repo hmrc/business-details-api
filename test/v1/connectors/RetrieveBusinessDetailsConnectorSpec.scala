@@ -20,8 +20,8 @@ import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{Nino, TypeOfBusiness}
 import api.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
-import v1.models.response.retrieveBusinessDetails.des.RetrieveBusinessDetailsDesResponse
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
+import v1.models.response.retrieveBusinessDetails.des.RetrieveBusinessDetailsDesResponse
 
 import scala.concurrent.Future
 

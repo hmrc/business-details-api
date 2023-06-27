@@ -1,4 +1,3 @@
-
 openapi: "3.0.3"
 
 info:
@@ -27,7 +26,7 @@ info:
     * Raise non-technical or platform-related issues with the [Software Development Support Team (SDST)](https://developer.service.hmrc.gov.uk/developer/support).
     * Raise technical issues on the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/issues) GitHub page.
     * <a href="/contact/report-technical-problem?newTab=true&service=api-documentation-frontend" target="_blank">Is this page not working properly? (opens in new tab)</a>
-    
+
 servers:
   - url: https://test-api.service.hmrc.gov.uk
     description: Sandbox

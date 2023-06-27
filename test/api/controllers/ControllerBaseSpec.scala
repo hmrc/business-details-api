@@ -22,10 +22,10 @@ import api.mocks.services.{MockAuditService, MockEnrolmentsAuthService, MockMtdI
 import api.models.audit.{AuditError, AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.errors.MtdError
 import play.api.http.{HeaderNames, MimeTypes, Status}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{Json, JsValue}
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents, Result}
-import play.api.test.Helpers.stubControllerComponents
 import play.api.test.{FakeRequest, ResultExtractors}
+import play.api.test.Helpers.stubControllerComponents
 import support.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -92,14 +92,14 @@ trait ControllerTestRunner extends MockEnrolmentsAuthService with MockMtdIdLooku
       checkAuditOkEvent(expectedStatus, maybeAuditRequestBody, maybeAuditResponseBody)
     }
 
-    protected def runErrorTestWithAudit(expectedError: MtdError, maybeAuditRequestBody: Option[JsValue] = None): Unit = {
-      runErrorTest(expectedError)
-      checkAuditErrorEvent(expectedError, maybeAuditRequestBody)
-    }
-
     protected def checkAuditOkEvent(expectedStatus: Int, maybeRequestBody: Option[JsValue], maybeAuditResponseBody: Option[JsValue]): Unit = {
       val auditResponse: AuditResponse = AuditResponse(expectedStatus, None, maybeAuditResponseBody)
       MockedAuditService.verifyAuditEvent(event(auditResponse, maybeRequestBody)).once()
+    }
+
+    protected def runErrorTestWithAudit(expectedError: MtdError, maybeAuditRequestBody: Option[JsValue] = None): Unit = {
+      runErrorTest(expectedError)
+      checkAuditErrorEvent(expectedError, maybeAuditRequestBody)
     }
 
     protected def checkAuditErrorEvent(expectedError: MtdError, maybeRequestBody: Option[JsValue]): Unit = {
