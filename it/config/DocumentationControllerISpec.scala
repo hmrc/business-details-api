@@ -27,7 +27,7 @@ import scala.util.Try
 
 class DocumentationControllerISpec extends IntegrationBaseSpec {
 
-  val config: AppConfig = app.injector.instanceOf[AppConfig]
+  val config: AppConfig                = app.injector.instanceOf[AppConfig]
   val confidenceLevel: ConfidenceLevel = config.confidenceLevelConfig.confidenceLevel
 
   val apiDefinitionJson: JsValue = Json.parse(
@@ -57,8 +57,8 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
       |      "versions":[
       |         {
       |            "version":"1.0",
-      |            "status":"ALPHA",
-      |            "endpointsEnabled":false
+      |            "status":"BETA",
+      |            "endpointsEnabled":true
       |         }
       |      ]
       |   }
@@ -79,7 +79,7 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
       val response: WSResponse = await(buildRequest("/api/conf/1.0/application.yaml").get())
       response.status shouldBe Status.OK
 
-      val contents = response.body[String]
+      val contents     = response.body[String]
       val parserResult = Try(new OpenAPIV3Parser().readContents(contents))
       parserResult.isSuccess shouldBe true
 
