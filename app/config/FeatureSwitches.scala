@@ -18,26 +18,7 @@ package config
 
 import play.api.Configuration
 
-case class FeatureSwitches(featureSwitchConfig: Configuration) {
-
-  private val versionRegex = """(\d)\.\d""".r
-
-  def isVersionEnabled(version: String): Boolean = {
-    val maybeVersion: Option[String] =
-      version match {
-        case versionRegex(v) => Some(v)
-        case _               => None
-      }
-
-    val enabled = for {
-      validVersion <- maybeVersion
-      enabled      <- featureSwitchConfig.getOptional[Boolean](s"version-$validVersion.enabled")
-    } yield enabled
-
-    enabled.getOrElse(false)
-  }
-
-}
+case class FeatureSwitches(featureSwitchConfig: Configuration)
 
 object FeatureSwitches {
   def apply()(implicit appConfig: AppConfig): FeatureSwitches = FeatureSwitches(appConfig.featureSwitches)

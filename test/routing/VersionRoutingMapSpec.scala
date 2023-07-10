@@ -16,7 +16,6 @@
 
 package routing
 
-import definition.Versions
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.routing.Router
 import support.UnitSpec
@@ -35,7 +34,7 @@ class VersionRoutingMapSpec extends UnitSpec with GuiceOneAppPerSuite {
           v1Router = v1Routes
         )
 
-        versionRoutingMap.map(Versions.VERSION_1) shouldBe v1Routes
+        versionRoutingMap.map(Version1) shouldBe v1Routes
       }
     }
   }

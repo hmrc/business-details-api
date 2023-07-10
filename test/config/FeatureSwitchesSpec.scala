@@ -14,18 +14,28 @@
  * limitations under the License.
  */
 
-package definition
+package config
 
-import play.api.http.HeaderNames.ACCEPT
-import play.api.test.FakeRequest
+import play.api.Configuration
 import support.UnitSpec
 
-class VersionSpec extends UnitSpec {
+class FeatureSwitchesSpec extends UnitSpec {
 
-  "Versions" when {
-    "retrieved from a request header" must {
-      "work" in {
-        Versions.getFromRequest(FakeRequest().withHeaders((ACCEPT, "application/vnd.hmrc.1.0+json"))) shouldBe Some("1.0")
+  private val configuration = Configuration(
+    "feature-switch.enabled" -> true
+  )
+
+  private val featureSwitches = FeatureSwitches(configuration)
+
+  "FeatureSwitches" should {
+    "return true" when {
+      "the feature switch is set to true" in {
+        featureSwitches.featureSwitchConfig.getOptional[Boolean]("feature-switch.enabled") shouldBe Some(true)
+      }
+    }
+    "return false" when {
+      "the feature switch is not present in the config" in {
+        featureSwitches.featureSwitchConfig.getOptional[Boolean]("invalid") shouldBe None
       }
     }
   }
