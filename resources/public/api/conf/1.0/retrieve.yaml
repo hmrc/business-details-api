@@ -4,104 +4,17 @@ get:
     This endpoint allows a developer to retrieve additional information for one of a user's business income source. The unique account reference (National Insurance number) must be provided as well as the unique business identifier.
     
     ### Test data
-    <p>Scenario simulations using <code>Gov-Test-Scenario</code> headers is only available in the sandbox environment.</p>
-    <table>
-        <thead>
-            <tr>
-                <th>Header Value (Gov-Test-Scenario)</th>
-                <th>Scenario</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><p>N/A - DEFAULT</p></td>
-                <td>
-                    <p>Simulate a successful response with a self-employment business.</p>
-                    <p>Use the following businessId for this scenario:</p>
-                    <ul>
-                        <li><p>XBIS12345678901</p></li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
-                <td><p>PROPERTY</p></td>
-                <td><p>Simulate a successful response with a uk-property business.</p>
-                <p>Use the following businessId for this scenario:</p>
-                <ul>
-                  <li><p>XPIS12345678901</p></li>
-                </ul>
-                </td>
-            </tr>
-            <tr>
-                <td><p>FOREIGN_PROPERTY</p></td>
-                <td><p>Simulate a successful response with a foreign-property business.</p>
-                <p>Use the following businessId for this scenario:</p>
-                <ul>
-                  <li><p>XFIS12345678901</p></li>
-                </ul>
-                </td>
-            </tr>        
-            <tr>
-                <td><p>UNSPECIFIED</p></td>       
-                <td><p>Simulate a successful response with a property-unspecified business.</p>
-                <p>Use the following businessId for this scenario:</p>
-                <ul>
-                  <li><p>XAIS12345678901</p></li>
-                </ul>
-                </td>        
-            </tr>
-            <tr>
-                <td><p>NOT_FOUND</p></td>
-                <td><p>Simulate a scenario where no data is found.</p></td>
-            </tr>
-            <tr>
-                <td><p>DYNAMIC</p></td>
-                <td><p>Returns a dynamic response where the type of response will change corresponding to the businessId provided in the request:
-                    <ul>
-                        <li>For a response with a self-employment business, use businessId:</li>
-                    <ul>
-                        <li>XBIS12345678901 (Accruals)</li>
-                        <li>XBIS12345678902 (Cash)</li>
-                    </ul>
-                    <br>
-                        <li>For a response with a uk-property business, use businessId:</li>
-                    <ul>
-                        <li>XPIS12345678901 (Accruals)</li>
-                        <li>XPIS12345678902 (Cash)</li>
-                    </ul>
-                    <br>
-                          <li>For a response with a foreign-property business, use businessId:</li>
-                    <ul>
-                        <li>XFIS12345678901 (Accruals)</li>
-                        <li>XFIS12345678902 (Cash)</li>
-                    </ul>
-                    <br>
-                          <li>For a response with a property-unspecified business, use businessId:</li>
-                    <ul>
-                        <li>XAIS12345678901 (Accruals)</li>
-                        <li>XAIS12345678902 (Cash)</li>
-                    </ul>
-                    </ul></p>
-                  </td>
-              <td><p>CASH</p></td>
-                  <td><p>Simulate a scenario where the success response returns data associated with an accountingType of 'CASH'.</p>
-                  <p>Use the following businessId for this scenario:</p>
-                <ul>
-                  <li><p>XBIS12345678901</p></li>
-                </ul>
-              </td>
-            </tr>
-            <tr>
-              <td><p>ACCRUALS</p></td>
-                <td><p>Simulate a scenario where the success response returns data associated with an accountingType of 'ACCRUALS'.</p>
-                <p>Use the following businessId for this scenario:</p>
-                <ul>
-                  <li><p>XBIS12345678901</p></li>
-                </ul>
-              </td>
-            </tr>
-        </tbody>
-    </table>
+    Scenario simulations using <code>Gov-Test-Scenario</code> headers is only available in the sandbox environment.
+    | Header Value (Gov-Test-Scenario) | Scenario |
+    | --- | --- |
+    | N/A - DEFAULT | Simulate a successful response with a self-employment business. <br/> Use the following businessId for this scenario: <br/> - XBIS12345678901 |
+    | PROPERTY | Simulate a successful response with a uk-property business. <br/> Use the following businessId for this scenario: <br/> - XPIS12345678901 |
+    | FOREIGN_PROPERTY | Simulate a successful response with a foreign-property business. <br/> Use the following businessId for this scenario: <br/> - XFIS12345678901 |
+    | UNSPECIFIED | Simulate a successful response with a property-unspecified business. <br/> Use the following businessId for this scenario: <br/> - XAIS12345678901 |
+    | NOT_FOUND | Simulate a scenario where no data is found. |
+    | DYNAMIC | Returns a dynamic response where the type of response will change corresponding to the businessId provided in the request: <br/> - For a response with a self-employment business, use businessId: <br/>   -- XBIS12345678901 (Accruals) <br/>   -- XBIS12345678902 (Cash) <br/> - For a response with a uk-property business, use businessId: <br/>   -- XPIS12345678901 (Accruals) <br/>   -- XPIS12345678902 (Cash) <br/> - For a response with a foreign-property business, use businessId: <br/>   -- XFIS12345678901 (Accruals) <br/>   -- XFIS12345678902 (Cash) <br/> - For a response with a property-unspecified business, use businessId: <br/>   -- XAIS12345678901 (Accruals) <br/>   -- XAIS12345678902 (Cash) |
+    | CASH | Simulate a scenario where the success response returns data associated with an accountingType of 'CASH'. <br/> Use the following businessId for this scenario: <br/> - XBIS12345678901 |
+    | ACCRUALS | Simulate a scenario where the success response returns data associated with an accountingType of 'ACCRUALS'. <br/> Use the following businessId for this scenario: <br/> - XBIS12345678901 |
 
   parameters:
     - $ref: './common/pathParameters.yaml#/components/parameters/nino'
