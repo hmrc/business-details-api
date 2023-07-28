@@ -38,6 +38,8 @@ import v1.models.response.retrieveBusinessDetails.des.{BusinessDetails, Retrieve
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
+import v1.models.response.retrieveBusinessDetails.des.LatencyDetails
+import v1.models.response.retrieveBusinessDetails.des.LatencyIndicator
 
 class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
 
@@ -69,6 +71,10 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         TypeOfBusiness.`self-employment`,
         Some("Aardvark Window Cleaning Services"),
         Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+        Some("2018-04-06"),
+        Some("2018-12-12"),
+        Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+        Some("2023"),
         Some(AccountingType.ACCRUALS),
         Some("2016-09-24"),
         Some("2020-03-24"),
@@ -87,6 +93,10 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         TypeOfBusiness.`self-employment`,
         Some("Aardvark Window Cleaning Services"),
         Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+        Some("2018-04-06"),
+        Some("2018-12-12"),
+        Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+        Some("2023"),
         Some(AccountingType.ACCRUALS),
         Some("2016-09-24"),
         Some("2020-03-24"),
@@ -102,6 +112,10 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         TypeOfBusiness.`self-employment`,
         Some("Aardvark Window Cleaning Services"),
         Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+        Some("2018-04-06"),
+        Some("2018-12-12"),
+        Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+        Some("2023"),
         Some(AccountingType.ACCRUALS),
         Some("2016-09-24"),
         Some("2020-03-24"),

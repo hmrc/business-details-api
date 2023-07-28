@@ -26,6 +26,8 @@ import support.UnitSpec
 import utils.Logging
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 import v1.models.response.retrieveBusinessDetails.des.{BusinessDetails, RetrieveBusinessDetailsDesResponse}
+import v1.models.response.retrieveBusinessDetails.des.LatencyIndicator
+import v1.models.response.retrieveBusinessDetails.des.LatencyDetails
 
 class DownstreamResponseMappingSupportSpec extends UnitSpec {
 
@@ -114,6 +116,10 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
         TypeOfBusiness.`self-employment`,
         Some("Aardvark Window Cleaning Services"),
         Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+        Some("2018-04-06"),
+        Some("2018-12-12"),
+        Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+        Some("2023"),
         Some(AccountingType.ACCRUALS),
         Some("2016-09-24"),
         Some("2020-03-24"),
@@ -131,6 +137,10 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
           TypeOfBusiness.`self-employment`,
           Some("Aardvark Window Cleaning Services"),
           Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+          Some("2018-04-06"),
+          Some("2018-12-12"),
+          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          Some("2023"),
           Some(AccountingType.ACCRUALS),
           Some("2016-09-24"),
           Some("2020-03-24"),
@@ -146,6 +156,10 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
           TypeOfBusiness.`self-employment`,
           Some("Aardvark Window Cleaning Services"),
           Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+          Some("2018-04-06"),
+          Some("2018-12-12"),
+          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          Some("2023"),
           Some(AccountingType.ACCRUALS),
           Some("2016-09-24"),
           Some("2020-03-24"),
@@ -165,6 +179,10 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
           TypeOfBusiness.`self-employment`,
           Some("Aardvark Window Cleaning Services"),
           Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+          Some("2018-04-06"),
+          Some("2018-12-12"),
+          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          Some("2023"),
           Some(AccountingType.ACCRUALS),
           Some("2016-09-24"),
           Some("2020-03-24"),
@@ -180,6 +198,10 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
           TypeOfBusiness.`self-employment`,
           Some("Aardvark Window Cleaning Services"),
           Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+          Some("2018-04-06"),
+          Some("2018-12-12"),
+          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          Some("2023"),
           Some(AccountingType.ACCRUALS),
           Some("2016-09-24"),
           Some("2020-03-24"),

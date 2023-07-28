@@ -19,13 +19,67 @@ package v1.models.response.retrieveBusinessDetails.des
 import api.models.domain.TypeOfBusiness
 import api.models.domain.accountingType.{AccountingType, CashOrAccruals}
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Json, OWrites, Reads}
+import play.api.libs.json.{JsPath, Json, Writes, OWrites, Reads}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
+import play.api.libs.json.JsSuccess
+import play.api.libs.json.JsError
+import play.api.libs.json.JsString
+
+trait LatencyIndicator
+
+object LatencyIndicator {
+
+  case object Annual extends LatencyIndicator {
+    override def toString = "A"
+  }
+
+  case object Quarterly extends LatencyIndicator {
+    override def toString = "Q"
+  }
+
+  implicit val writes: Writes[LatencyIndicator] = Writes { (latencyIndicator: LatencyIndicator) =>
+    JsString(latencyIndicator.toString)
+  }
+
+  implicit val latencyIndicatorReads: Reads[LatencyIndicator] = Reads { json =>
+    json.as[String] match {
+      case "A" | "a" => JsSuccess(Annual)
+      case "Q" | "q" => JsSuccess(Quarterly)
+      case other     => JsError(s"Unknown latency indicator: $other")
+    }
+  }
+
+}
+
+case class LatencyDetails(
+    latencyEndDate: String,
+    taxYear1: String,
+    latencyIndicator1: LatencyIndicator,
+    taxYear2: String,
+    latencyIndicator2: LatencyIndicator
+)
+
+object LatencyDetails {
+  implicit val writes: OWrites[LatencyDetails] = Json.writes[LatencyDetails]
+
+  implicit val reads: Reads[LatencyDetails] = (
+    (JsPath \ "latencyEndDate").read[String] and
+      (JsPath \ "taxYear1").read[String] and
+      (JsPath \ "latencyIndicator1").read[LatencyIndicator] and
+      (JsPath \ "taxYear2").read[String] and
+      (JsPath \ "latencyIndicator2").read[LatencyIndicator]
+  )(LatencyDetails.apply _)
+
+}
 
 case class BusinessDetails(businessId: String,
                            typeOfBusiness: TypeOfBusiness,
                            tradingName: Option[String],
                            accountingPeriods: Seq[AccountingPeriod],
+                           firstAccountingPeriodStartDate: Option[String],
+                           firstAccountingPeriodEndDate: Option[String],
+                           latencyDetails: Option[LatencyDetails],
+                           yearOfMigration: Option[String],
                            accountingType: Option[AccountingType],
                            commencementDate: Option[String],
                            cessationDate: Option[String],
@@ -74,6 +128,10 @@ object BusinessDetails {
       Reads.pure(TypeOfBusiness.`self-employment`) and
       (JsPath \ "tradingName").readNullable[String] and
       accountingPeriodReads and
+      (JsPath \ "firstAccountingPeriodStartDate").readNullable[String] and
+      (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
+      (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
+      (JsPath \ "yearOfMigration").readNullable[String] and
       (JsPath \ "cashOrAccruals").readNullable[CashOrAccruals].map(_.map(_.toMtd)) and
       (JsPath \ "tradingStartDate").readNullable[String] and
       (JsPath \ "cessationDate").readNullable[String] and
@@ -92,6 +150,10 @@ object BusinessDetails {
       (JsPath \ "incomeSourceType").readNullable[TypeOfBusiness].map(_.getOrElse(TypeOfBusiness.`property-unspecified`)) and
       Reads.pure(None) and
       accountingPeriodReads and
+      (JsPath \ "firstAccountingPeriodStartDate").readNullable[String] and
+      (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
+      (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
+      (JsPath \ "yearOfMigration").readNullable[String] and
       cashOrAccrualsReads and
       (JsPath \ "tradingStartDate").readNullable[String] and
       (JsPath \ "cessationDate").readNullable[String] and
