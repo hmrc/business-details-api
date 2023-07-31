@@ -32,6 +32,7 @@ import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
 import api.models.hateoas.{HateoasWrapper, Link}
 import api.models.outcomes.ResponseWrapper
+import v1.models.response.retrieveBusinessDetails.des.{LatencyDetails, LatencyIndicator}
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -70,6 +71,16 @@ class RetrieveBusinessDetailsControllerSpec
       |   "businessAddressLineFour": "CIFSHIRE",
       |   "businessAddressPostcode": "SW4F 3GA",
       |   "businessAddressCountryCode": "GB",
+      |   "firstAccountingPeriodStartDate": "2018-04-06",
+      |   "firstAccountingPeriodEndDate": "2018-12-12",
+      |   "latencyDetails": {
+      |     "latencyEndDate": "2018-12-12",
+      |     "taxYear1": "2018",
+      |     "latencyIndicator1": "A",
+      |     "taxYear2": "2019",
+      |     "latencyIndicator2": "Q"
+      |   },
+      |   "yearOfMigration": "2023",
       |   "links": [
       |     {
       |       "href": "/foo/bar",
@@ -94,7 +105,11 @@ class RetrieveBusinessDetailsControllerSpec
     Some("ToiletDucktown"),
     Some("CIFSHIRE"),
     Some("SW4F 3GA"),
-    Some("GB")
+    Some("GB"),
+    Some("2018-04-06"),
+    Some("2018-12-12"),
+    Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+    Some("2023"),
   )
 
   private val requestData = RetrieveBusinessDetailsRequest(Nino(nino), businessId)

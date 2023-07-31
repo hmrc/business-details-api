@@ -22,6 +22,7 @@ import api.models.domain.accountingType.AccountingType
 import api.models.hateoas.{HateoasData, Link}
 import config.AppConfig
 import play.api.libs.json.{Json, OWrites, Reads}
+import v1.models.response.retrieveBusinessDetails.des.LatencyDetails
 
 case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,
@@ -35,7 +36,11 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            businessAddressLineThree: Option[String],
                                            businessAddressLineFour: Option[String],
                                            businessAddressPostcode: Option[String],
-                                           businessAddressCountryCode: Option[String])
+                                           businessAddressCountryCode: Option[String],
+                                           firstAccountingPeriodStartDate: Option[String],
+                                           firstAccountingPeriodEndDate: Option[String],
+                                           latencyDetails: Option[LatencyDetails],
+                                           yearOfMigration: Option[String])
 
 object RetrieveBusinessDetailsResponse extends HateoasLinks {
 

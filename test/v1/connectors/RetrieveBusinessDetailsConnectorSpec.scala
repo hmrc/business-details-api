@@ -20,7 +20,7 @@ import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{Nino, TypeOfBusiness}
 import api.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
-import v1.models.response.retrieveBusinessDetails.des.RetrieveBusinessDetailsDesResponse
+import v1.models.response.retrieveBusinessDetails.des.{LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDesResponse}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
@@ -61,7 +61,12 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
       None,
       None,
       None,
-      None)
+      None,
+      Some("2018-04-06"),
+      Some("2018-12-12"),
+      Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+      Some("2023")
+    )
 
   }
 

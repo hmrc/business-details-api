@@ -30,11 +30,11 @@ trait LatencyIndicator
 object LatencyIndicator {
 
   case object Annual extends LatencyIndicator {
-    override def toString = "A"
+    override def toString: String = "A"
   }
 
   case object Quarterly extends LatencyIndicator {
-    override def toString = "Q"
+    override def toString: String = "Q"
   }
 
   implicit val writes: Writes[LatencyIndicator] = Writes { (latencyIndicator: LatencyIndicator) =>
@@ -103,20 +103,24 @@ case class BusinessDetails(businessId: String,
     businessAddressLineThree = businessAddressLineThree,
     businessAddressLineFour = businessAddressLineFour,
     businessAddressPostcode = businessAddressPostcode,
-    businessAddressCountryCode = businessAddressCountryCode
+    businessAddressCountryCode = businessAddressCountryCode,
+    firstAccountingPeriodStartDate = firstAccountingPeriodStartDate,
+    firstAccountingPeriodEndDate = firstAccountingPeriodEndDate,
+    latencyDetails = latencyDetails,
+    yearOfMigration = yearOfMigration,
   )
 
 }
 
 object BusinessDetails {
 
-  val cashOrAccrualsReads: Reads[Option[AccountingType]] = (JsPath \ "cashOrAccrualsFlag").readNullable[Boolean].map {
+  private val cashOrAccrualsReads: Reads[Option[AccountingType]] = (JsPath \ "cashOrAccrualsFlag").readNullable[Boolean].map {
     case Some(false) => Some(AccountingType.CASH)
     case Some(true)  => Some(AccountingType.ACCRUALS)
     case None        => None
   }
 
-  val accountingPeriodReads: Reads[Seq[AccountingPeriod]] = (
+  private val accountingPeriodReads: Reads[Seq[AccountingPeriod]] = (
     (JsPath \ "accountingPeriodStartDate").read[String] and
       (JsPath \ "accountingPeriodEndDate").read[String]
   ).apply((start, end) => Seq(AccountingPeriod(start, end)))

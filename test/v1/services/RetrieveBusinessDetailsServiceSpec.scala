@@ -61,7 +61,11 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     Some("ToiletDucktown"),
     Some("CIFSHIRE"),
     Some("SW4F 3GA"),
-    Some("GB")
+    Some("GB"),
+    Some("2018-04-06"),
+    Some("2018-12-12"),
+    Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+    Some("2023")
   )
 
   private val desSingleResponseBody = RetrieveBusinessDetailsDesResponse(
