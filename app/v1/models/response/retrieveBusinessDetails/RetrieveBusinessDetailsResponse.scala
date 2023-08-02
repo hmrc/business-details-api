@@ -22,7 +22,7 @@ import api.models.domain.accountingType.AccountingType
 import api.models.hateoas.{HateoasData, Link}
 import config.AppConfig
 import play.api.libs.json.{Json, OWrites, Reads}
-import v1.models.response.retrieveBusinessDetails.des.LatencyDetails
+import v1.models.response.retrieveBusinessDetails.downstream.LatencyDetails
 
 case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,

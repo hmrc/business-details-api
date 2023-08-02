@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package v1.models.response.RetrieveBusinessDetails.des
+package v1.models.response.RetrieveBusinessDetails.downstream
 
 import api.models.domain.TypeOfBusiness
 import api.models.domain.accountingType.AccountingType
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 import v1.models.response.retrieveBusinessDetails.AccountingPeriod
-import v1.models.response.retrieveBusinessDetails.des.{BusinessDetails, LatencyDetails, LatencyIndicator}
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, LatencyDetails, LatencyIndicator}
 
 class BusinessDetailsSpec extends UnitSpec {
 

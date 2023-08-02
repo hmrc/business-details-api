@@ -22,7 +22,7 @@ import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.RetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
-import v1.models.response.retrieveBusinessDetails.des.RetrieveBusinessDetailsDesResponse
+import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -33,7 +33,7 @@ trait MockRetrieveBusinessDetailsConnector extends MockFactory {
   object MockRetrieveBusinessDetailsConnector {
 
     def retrieveBusinessDetails(
-        requestData: RetrieveBusinessDetailsRequest): CallHandler[Future[DownstreamOutcome[RetrieveBusinessDetailsDesResponse]]] = {
+        requestData: RetrieveBusinessDetailsRequest): CallHandler[Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]]] = {
       (mockRetrieveBusinessDetailsConnector
         .retrieveBusinessDetails(_: RetrieveBusinessDetailsRequest)(_: HeaderCarrier, _: ExecutionContext, _: String))
         .expects(requestData, *, *, *)

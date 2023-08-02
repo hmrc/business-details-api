@@ -20,7 +20,7 @@ import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{Nino, TypeOfBusiness}
 import api.models.outcomes.ResponseWrapper
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
-import v1.models.response.retrieveBusinessDetails.des.{LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDesResponse}
+import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
@@ -38,7 +38,18 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
         url = s"$baseUrl/registration/business-details/nino/${request.nino.nino}"
       ).returns(Future.successful(outcome))
 
-      val result: DownstreamOutcome[RetrieveBusinessDetailsDesResponse] = await(connector.retrieveBusinessDetails(request))
+      val result: DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse] = await(connector.retrieveBusinessDetails(request))
+      result shouldBe outcome
+    }
+
+    "send a request and return the expected response when r10-IFS feature switch is enabled" in new IfsTest with Test {
+      val outcome: Right[Nothing, ResponseWrapper[Seq[RetrieveBusinessDetailsResponse]]] = Right(ResponseWrapper(correlationId, Seq(response)))
+
+      willGet(
+        url = s"$baseUrl/registration/business-details/nino/${request.nino.nino}"
+      ).returns(Future.successful(outcome))
+
+      val result: DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse] = await(connector.retrieveBusinessDetails(request))
       result shouldBe outcome
     }
   }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.models.response.retrieveBusinessDetails.des
+package v1.models.response.retrieveBusinessDetails.downstream
 
 import api.models.domain.TypeOfBusiness
 import api.models.domain.accountingType.{AccountingType, CashOrAccruals}

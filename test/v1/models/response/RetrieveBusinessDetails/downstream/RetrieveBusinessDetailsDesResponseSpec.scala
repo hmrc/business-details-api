@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package v1.models.response.RetrieveBusinessDetails.des
+package v1.models.response.RetrieveBusinessDetails.downstream
 
 import api.models.domain.TypeOfBusiness
 import api.models.domain.accountingType.AccountingType
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
-import v1.models.response.retrieveBusinessDetails.des.{BusinessDetails, LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDesResponse}
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
 import v1.models.response.retrieveBusinessDetails.AccountingPeriod
 
 class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
@@ -76,7 +76,7 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
             |""".stripMargin
         )
 
-        val responseBody: RetrieveBusinessDetailsDesResponse = RetrieveBusinessDetailsDesResponse(
+        val responseBody: RetrieveBusinessDetailsDownstreamResponse = RetrieveBusinessDetailsDownstreamResponse(
           Seq(BusinessDetails(
             "XAIS12345678910",
             TypeOfBusiness.`self-employment`,
@@ -97,7 +97,7 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
             Some("GB")
           )))
 
-        responseBody shouldBe desJson.as[RetrieveBusinessDetailsDesResponse]
+        responseBody shouldBe desJson.as[RetrieveBusinessDetailsDownstreamResponse]
       }
     }
     "read property data from json" when {
@@ -141,7 +141,7 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
             |""".stripMargin
         )
 
-        val responseBody: RetrieveBusinessDetailsDesResponse = RetrieveBusinessDetailsDesResponse(
+        val responseBody: RetrieveBusinessDetailsDownstreamResponse = RetrieveBusinessDetailsDownstreamResponse(
           Seq(BusinessDetails(
             "X0IS123456789012",
             TypeOfBusiness.`foreign-property`,
@@ -162,7 +162,7 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
             None
           )))
 
-        responseBody shouldBe desJson.as[RetrieveBusinessDetailsDesResponse]
+        responseBody shouldBe desJson.as[RetrieveBusinessDetailsDownstreamResponse]
       }
     }
   }

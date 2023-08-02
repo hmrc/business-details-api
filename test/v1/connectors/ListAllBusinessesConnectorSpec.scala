@@ -41,6 +41,18 @@ class ListAllBusinessesConnectorSpec extends ConnectorSpec {
       val result: DownstreamOutcome[ListAllBusinessesResponse[Business]] = await(connector.listAllBusinesses(request))
       result shouldBe outcome
     }
+
+    "send a request and return the expected response for Release 10" in new IfsTest with Test {
+      val outcome: Right[Nothing, ResponseWrapper[ListAllBusinessesResponse[Business]]] =
+        Right(ResponseWrapper(correlationId, ListAllBusinessesResponse(Seq(Business(`self-employment`, "123456789012345", Some("RCDTS"))))))
+
+      willGet(
+        url = s"$baseUrl/registration/business-details/nino/$nino"
+      ).returns(Future.successful(outcome))
+
+      val result: DownstreamOutcome[ListAllBusinessesResponse[Business]] = await(connector.listAllBusinesses(request))
+      result shouldBe outcome
+    }
   }
 
   trait Test { _: ConnectorTest =>

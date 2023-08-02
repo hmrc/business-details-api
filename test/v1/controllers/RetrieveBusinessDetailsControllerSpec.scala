@@ -32,7 +32,7 @@ import play.api.mvc.Result
 import v1.mocks.requestParsers.MockRetrieveBusinessDetailsRequestParser
 import v1.mocks.services.MockRetrieveBusinessDetailsService
 import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest}
-import v1.models.response.retrieveBusinessDetails.des.{LatencyDetails, LatencyIndicator}
+import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global

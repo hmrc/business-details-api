@@ -24,7 +24,7 @@ import api.models.outcomes.ResponseWrapper
 import play.api.http.Status.BAD_REQUEST
 import support.UnitSpec
 import utils.Logging
-import v1.models.response.retrieveBusinessDetails.des.{BusinessDetails, LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDesResponse}
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 class DownstreamResponseMappingSupportSpec extends UnitSpec {
@@ -115,7 +115,7 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
   }
 
   "filterId" should {
-    val desSingleBusiness: RetrieveBusinessDetailsDesResponse = RetrieveBusinessDetailsDesResponse(
+    val desSingleBusiness: RetrieveBusinessDetailsDownstreamResponse = RetrieveBusinessDetailsDownstreamResponse(
       Seq(BusinessDetails(
         businessId = "XAIS12345678910",
         typeOfBusiness = TypeOfBusiness.`self-employment`,
@@ -135,7 +135,7 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
         businessAddressPostcode = Some("SW4F 3GA"),
         businessAddressCountryCode = Some("GB")
       )))
-    val desMultipleBusinessInSeq = RetrieveBusinessDetailsDesResponse(
+    val desMultipleBusinessInSeq = RetrieveBusinessDetailsDownstreamResponse(
       Seq(
         BusinessDetails(
           businessId = "XAIS12345678910",
@@ -177,7 +177,7 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
         )
       ))
 
-    val DesSingleBusinessDetailsRepeated = RetrieveBusinessDetailsDesResponse(
+    val DesSingleBusinessDetailsRepeated = RetrieveBusinessDetailsDownstreamResponse(
       Seq(
         BusinessDetails(
           businessId = "XAIS12345678910",

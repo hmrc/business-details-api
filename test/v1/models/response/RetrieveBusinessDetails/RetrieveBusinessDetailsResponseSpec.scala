@@ -23,7 +23,7 @@ import mocks.MockAppConfig
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 import api.models.hateoas.Link
-import v1.models.response.retrieveBusinessDetails.des.{LatencyDetails, LatencyIndicator}
+import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
 
 class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {

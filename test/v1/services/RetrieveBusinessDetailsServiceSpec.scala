@@ -27,7 +27,7 @@ import play.api.Configuration
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.connectors.MockRetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
-import v1.models.response.retrieveBusinessDetails.des.{BusinessDetails, LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDesResponse}
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
@@ -59,7 +59,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     Some("2023")
   )
 
-  private val desSingleResponseBody = RetrieveBusinessDetailsDesResponse(
+  private val desSingleResponseBody = RetrieveBusinessDetailsDownstreamResponse(
     Seq(
       BusinessDetails(
         "XAIS12345678910",
@@ -81,7 +81,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         Some("GB")
       )))
 
-  private val desMultiResponseBody = RetrieveBusinessDetailsDesResponse(
+  private val desMultiResponseBody = RetrieveBusinessDetailsDownstreamResponse(
     Seq(
       BusinessDetails(
         "XAIS12345678910",
