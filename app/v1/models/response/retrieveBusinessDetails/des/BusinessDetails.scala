@@ -19,11 +19,8 @@ package v1.models.response.retrieveBusinessDetails.des
 import api.models.domain.TypeOfBusiness
 import api.models.domain.accountingType.{AccountingType, CashOrAccruals}
 import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Json, Writes, OWrites, Reads}
+import play.api.libs.json._
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
-import play.api.libs.json.JsSuccess
-import play.api.libs.json.JsError
-import play.api.libs.json.JsString
 
 trait LatencyIndicator
 
@@ -107,7 +104,27 @@ case class BusinessDetails(businessId: String,
     firstAccountingPeriodStartDate = firstAccountingPeriodStartDate,
     firstAccountingPeriodEndDate = firstAccountingPeriodEndDate,
     latencyDetails = latencyDetails,
-    yearOfMigration = yearOfMigration,
+    yearOfMigration = yearOfMigration
+  )
+
+  def toMtdWithoutR10kFields: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
+    businessId = businessId,
+    typeOfBusiness = typeOfBusiness,
+    tradingName = tradingName,
+    accountingPeriods = accountingPeriods,
+    accountingType = accountingType,
+    commencementDate = commencementDate,
+    cessationDate = cessationDate,
+    businessAddressLineOne = businessAddressLineOne,
+    businessAddressLineTwo = businessAddressLineTwo,
+    businessAddressLineThree = businessAddressLineThree,
+    businessAddressLineFour = businessAddressLineFour,
+    businessAddressPostcode = businessAddressPostcode,
+    businessAddressCountryCode = businessAddressCountryCode,
+    firstAccountingPeriodStartDate = None,
+    firstAccountingPeriodEndDate = None,
+    latencyDetails = None,
+    yearOfMigration = None
   )
 
 }

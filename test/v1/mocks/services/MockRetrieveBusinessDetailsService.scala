@@ -19,6 +19,7 @@ package v1.mocks.services
 import api.controllers.RequestContext
 import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
+import config.AppConfig
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
@@ -37,12 +38,12 @@ trait MockRetrieveBusinessDetailsService extends MockFactory {
         request: RetrieveBusinessDetailsRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]]]] = {
       (
         mockRetrieveBusinessDetailsService
-          .retrieveBusinessDetailsService(_: RetrieveBusinessDetailsRequest)(
+          .retrieveBusinessDetailsService(_: RetrieveBusinessDetailsRequest, _: AppConfig)(
             _: RequestContext,
             _: ExecutionContext
           )
         )
-        .expects(request, *, *)
+        .expects(request, *, *, *)
     }
 
   }

@@ -17,25 +17,26 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.mocks.MockIdGenerator
 import api.mocks.hateoas.MockHateoasFactory
 import api.mocks.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
+import api.mocks.{MockAppConfig, MockIdGenerator}
 import api.models.domain.accountingType.AccountingType
 import api.models.domain.{Nino, TypeOfBusiness}
 import api.models.errors._
 import api.models.hateoas.Method.GET
+import api.models.hateoas.{HateoasWrapper, Link}
+import api.models.outcomes.ResponseWrapper
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import v1.mocks.requestParsers.MockRetrieveBusinessDetailsRequestParser
 import v1.mocks.services.MockRetrieveBusinessDetailsService
 import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest}
-import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
-import api.models.hateoas.{HateoasWrapper, Link}
-import api.models.outcomes.ResponseWrapper
 import v1.models.response.retrieveBusinessDetails.des.{LatencyDetails, LatencyIndicator}
+import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class RetrieveBusinessDetailsControllerSpec
     extends ControllerBaseSpec
@@ -45,7 +46,8 @@ class RetrieveBusinessDetailsControllerSpec
     with MockRetrieveBusinessDetailsService
     with MockHateoasFactory
     with MockRetrieveBusinessDetailsRequestParser
-    with MockIdGenerator {
+    with MockIdGenerator
+    with MockAppConfig {
 
   private val businessId      = "XAIS12345678910"
   private val testHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
@@ -109,7 +111,7 @@ class RetrieveBusinessDetailsControllerSpec
     Some("2018-04-06"),
     Some("2018-12-12"),
     Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-    Some("2023"),
+    Some("2023")
   )
 
   private val requestData = RetrieveBusinessDetailsRequest(Nino(nino), businessId)
@@ -169,8 +171,13 @@ class RetrieveBusinessDetailsControllerSpec
       service = mockRetrieveBusinessDetailsService,
       hateoasFactory = mockHateoasFactory,
       cc = cc,
+      appConfig = mockAppConfig,
       idGenerator = mockIdGenerator
     )
+
+    MockAppConfig.featureSwitches
+      .returns(Configuration("r10-fields.enabled" -> true))
+      .anyNumberOfTimes()
 
     protected def callController(): Future[Result] = controller.handleRequest(nino, businessId)(fakeGetRequest)
 
