@@ -28,14 +28,17 @@ trait DownstreamResponseMappingSupport {
 
   final def filterId(
       responseWrapper: ResponseWrapper[RetrieveBusinessDetailsDesResponse],
-      businessId: String
+      businessId: String,
+      r10FieldsEnabled: Boolean
   ): Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]] = {
     val filteredBusinesses: List[BusinessDetails] = responseWrapper.responseData.businessDetails.filter { businessDetails =>
       businessId == businessDetails.businessId
     }.toList
 
     filteredBusinesses match {
-      case business :: Nil => Right(ResponseWrapper(responseWrapper.correlationId, business.toMtd))
+      case business :: Nil if r10FieldsEnabled =>
+        Right(ResponseWrapper(responseWrapper.correlationId, business.toMtd))
+      case business :: Nil => Right(ResponseWrapper(responseWrapper.correlationId, business.toMtdWithoutR10kFields))
       case Nil             => Left(ErrorWrapper(responseWrapper.correlationId, NoBusinessFoundError))
       case _ :: _          => Left(ErrorWrapper(responseWrapper.correlationId, InternalError))
     }

@@ -23,6 +23,7 @@ import mocks.MockAppConfig
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 import api.models.hateoas.Link
+import v1.models.response.retrieveBusinessDetails.des.{LatencyDetails, LatencyIndicator}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
 
 class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
@@ -44,7 +45,11 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
           Some("ToiletDucktown"),
           Some("CIFSHIRE"),
           Some("SW4F 3GA"),
-          Some("GB")
+          Some("GB"),
+          Some("2018-04-06"),
+          Some("2018-12-12"),
+          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          Some("2023"),
         )
 
         val desJson: JsValue = Json.parse(
@@ -66,7 +71,16 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
             |   "businessAddressLineThree": "ToiletDucktown",
             |   "businessAddressLineFour": "CIFSHIRE",
             |   "businessAddressPostcode": "SW4F 3GA",
-            |   "businessAddressCountryCode": "GB"
+            |   "businessAddressCountryCode": "GB","firstAccountingPeriodStartDate": "2018-04-06",
+            |   "firstAccountingPeriodEndDate": "2018-12-12",
+            |   "latencyDetails": {
+            |     "latencyEndDate": "2018-12-12",
+            |     "taxYear1": "2018",
+            |     "latencyIndicator1": "A",
+            |     "taxYear2": "2019",
+            |     "latencyIndicator2": "Q"
+            |   },
+            |   "yearOfMigration": "2023"
             |}
             |""".stripMargin
         )
@@ -88,7 +102,11 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
           None,
           None,
           None,
-          None
+          None,
+          None,
+          None,
+          None,
+          None,
         )
 
         val desJson: JsValue = Json.parse(
@@ -124,7 +142,11 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
           None,
           None,
           None,
-          Some("CM")
+          Some("CM"),
+          Some("2018-04-06"),
+          Some("2018-12-12"),
+          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          Some("2023"),
         )
 
         val desJson: JsValue = Json.parse(
@@ -141,7 +163,17 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
             |   "accountingType": "ACCRUALS",
             |   "commencementDate": "2016-09-24",
             |   "cessationDate": "2020-03-24",
-            |   "businessAddressCountryCode": "CM"
+            |   "businessAddressCountryCode": "CM",
+            |   "firstAccountingPeriodStartDate": "2018-04-06",
+            |   "firstAccountingPeriodEndDate": "2018-12-12",
+            |   "latencyDetails": {
+            |     "latencyEndDate": "2018-12-12",
+            |     "taxYear1": "2018",
+            |     "latencyIndicator1": "A",
+            |     "taxYear2": "2019",
+            |     "latencyIndicator2": "Q"
+            |   },
+            |   "yearOfMigration": "2023"
             |}
             |""".stripMargin
         )
