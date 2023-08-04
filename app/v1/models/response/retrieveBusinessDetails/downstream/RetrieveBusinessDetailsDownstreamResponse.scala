@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package v1.models.response.retrieveBusinessDetails.des
+package v1.models.response.retrieveBusinessDetails.downstream
 
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 
-case class RetrieveBusinessDetailsDesResponse(businessDetails: Seq[BusinessDetails])
+case class RetrieveBusinessDetailsDownstreamResponse(businessDetails: Seq[BusinessDetails])
 
-object RetrieveBusinessDetailsDesResponse {
+object RetrieveBusinessDetailsDownstreamResponse {
 
-  implicit val reads: Reads[RetrieveBusinessDetailsDesResponse] = {
+  implicit val reads: Reads[RetrieveBusinessDetailsDownstreamResponse] = {
     val businessDataReads: Reads[Seq[BusinessDetails]] =
       (JsPath \ "businessData").readNullable[Seq[BusinessDetails]](BusinessDetails.readsSeqBusinessData).map(_.getOrElse(Nil))
     val propertyDataReads: Reads[Seq[BusinessDetails]] =
@@ -32,9 +32,9 @@ object RetrieveBusinessDetailsDesResponse {
       businessData <- businessDataReads
       propertyData <- propertyDataReads
     } yield {
-      RetrieveBusinessDetailsDesResponse(businessData ++ propertyData)
+      RetrieveBusinessDetailsDownstreamResponse(businessData ++ propertyData)
     }
   }
 
-  implicit val writes: OWrites[RetrieveBusinessDetailsDesResponse] = Json.writes[RetrieveBusinessDetailsDesResponse]
+  implicit val writes: OWrites[RetrieveBusinessDetailsDownstreamResponse] = Json.writes[RetrieveBusinessDetailsDownstreamResponse]
 }

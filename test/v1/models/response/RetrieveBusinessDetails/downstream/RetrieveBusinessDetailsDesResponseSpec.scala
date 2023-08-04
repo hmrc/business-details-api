@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package v1.models.response.RetrieveBusinessDetails.des
+package v1.models.response.RetrieveBusinessDetails.downstream
 
 import api.models.domain.TypeOfBusiness
 import api.models.domain.accountingType.AccountingType
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
-import v1.models.response.retrieveBusinessDetails.des.{BusinessDetails, RetrieveBusinessDetailsDesResponse}
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
 import v1.models.response.retrieveBusinessDetails.AccountingPeriod
 
 class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
@@ -49,6 +49,16 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
             |      "postalCode": "DH14EJ",
             |      "countryCode": "GB"
             |    },
+            |    "firstAccountingPeriodStartDate": "2018-04-06",
+            |    "firstAccountingPeriodEndDate":   "2018-12-12",
+            |    "yearOfMigration": "2023",
+            |    "latencyDetails":  {
+            |      "taxYear1": "2018",
+            |      "taxYear2": "2019",
+            |      "latencyIndicator1": "A",
+            |      "latencyIndicator2": "Q",
+            |      "latencyEndDate": "2018-12-12"
+            |    },
             |    "businessContactDetails": {
             |      "phoneNumber": "01332752856",
             |      "mobileNumber": "07782565326",
@@ -66,12 +76,16 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
             |""".stripMargin
         )
 
-        val responseBody: RetrieveBusinessDetailsDesResponse = RetrieveBusinessDetailsDesResponse(
+        val responseBody: RetrieveBusinessDetailsDownstreamResponse = RetrieveBusinessDetailsDownstreamResponse(
           Seq(BusinessDetails(
             "XAIS12345678910",
             TypeOfBusiness.`self-employment`,
             Some("RCDTS"),
             Seq(AccountingPeriod("2001-01-01", "2001-01-01")),
+            Some("2018-04-06"),
+            Some("2018-12-12"),
+            Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+            Some("2023"),
             Some(AccountingType.CASH),
             Some("2001-01-01"),
             Some("2001-01-01"),
@@ -83,7 +97,7 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
             Some("GB")
           )))
 
-        responseBody shouldBe desJson.as[RetrieveBusinessDetailsDesResponse]
+        responseBody shouldBe desJson.as[RetrieveBusinessDetailsDownstreamResponse]
       }
     }
     "read property data from json" when {
@@ -104,6 +118,16 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
             |    "tradingStartDate": "2017-07-24",
             |    "cashOrAccrualsFlag": true,
             |    "numPropRented": 0,
+            |    "firstAccountingPeriodStartDate": "2018-04-06",
+            |    "firstAccountingPeriodEndDate":   "2018-12-12",
+            |    "yearOfMigration": "2023",
+            |    "latencyDetails":  {
+            |      "taxYear1": "2018",
+            |      "taxYear2": "2019",
+            |      "latencyIndicator1": "A",
+            |      "latencyIndicator2": "Q",
+            |      "latencyEndDate": "2018-12-12"
+            |    },
             |    "numPropRentedUK": 0,
             |    "numPropRentedEEA": 5,
             |    "numPropRentedNONEEA": 1,
@@ -117,12 +141,16 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
             |""".stripMargin
         )
 
-        val responseBody: RetrieveBusinessDetailsDesResponse = RetrieveBusinessDetailsDesResponse(
+        val responseBody: RetrieveBusinessDetailsDownstreamResponse = RetrieveBusinessDetailsDownstreamResponse(
           Seq(BusinessDetails(
             "X0IS123456789012",
             TypeOfBusiness.`foreign-property`,
             None,
             Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+            Some("2018-04-06"),
+            Some("2018-12-12"),
+            Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+            Some("2023"),
             Some(AccountingType.ACCRUALS),
             Some("2017-07-24"),
             Some("2020-01-01"),
@@ -134,7 +162,7 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
             None
           )))
 
-        responseBody shouldBe desJson.as[RetrieveBusinessDetailsDesResponse]
+        responseBody shouldBe desJson.as[RetrieveBusinessDetailsDownstreamResponse]
       }
     }
   }

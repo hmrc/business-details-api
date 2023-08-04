@@ -21,21 +21,24 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import utils.Logging
 import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponse
-import v1.models.response.retrieveBusinessDetails.des.{BusinessDetails, RetrieveBusinessDetailsDesResponse}
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, RetrieveBusinessDetailsDownstreamResponse}
 
 trait DownstreamResponseMappingSupport {
   self: Logging =>
 
   final def filterId(
-      responseWrapper: ResponseWrapper[RetrieveBusinessDetailsDesResponse],
-      businessId: String
+                      responseWrapper: ResponseWrapper[RetrieveBusinessDetailsDownstreamResponse],
+                      businessId: String,
+                      r10FieldsEnabled: Boolean
   ): Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]] = {
     val filteredBusinesses: List[BusinessDetails] = responseWrapper.responseData.businessDetails.filter { businessDetails =>
       businessId == businessDetails.businessId
     }.toList
 
     filteredBusinesses match {
-      case business :: Nil => Right(ResponseWrapper(responseWrapper.correlationId, business.toMtd))
+      case business :: Nil if r10FieldsEnabled =>
+        Right(ResponseWrapper(responseWrapper.correlationId, business.toMtd))
+      case business :: Nil => Right(ResponseWrapper(responseWrapper.correlationId, business.toMtdWithoutR10kFields))
       case Nil             => Left(ErrorWrapper(responseWrapper.correlationId, NoBusinessFoundError))
       case _ :: _          => Left(ErrorWrapper(responseWrapper.correlationId, InternalError))
     }

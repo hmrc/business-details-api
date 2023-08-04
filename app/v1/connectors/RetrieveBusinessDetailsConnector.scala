@@ -16,16 +16,15 @@
 
 package v1.connectors
 
-import api.connectors.DownstreamUri.DesUri
+import api.connectors.DownstreamUri.{DesUri, IfsUri}
+import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
+import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse
 
 import javax.inject.Inject
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import api.connectors.httpparsers.StandardDownstreamHttpParser._
-import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
-import v1.models.response.retrieveBusinessDetails.des.RetrieveBusinessDetailsDesResponse
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class RetrieveBusinessDetailsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
@@ -33,13 +32,17 @@ class RetrieveBusinessDetailsConnector @Inject() (val http: HttpClient, val appC
   def retrieveBusinessDetails(request: RetrieveBusinessDetailsRequest)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext,
-      correlationId: String): Future[DownstreamOutcome[RetrieveBusinessDetailsDesResponse]] = {
+      correlationId: String): Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]] = {
 
     import request._
 
     val downstreamUri = s"registration/business-details/nino/$nino"
 
-    get(DesUri[RetrieveBusinessDetailsDesResponse](downstreamUri))
+    if (featureSwitches.r10IFSEnabled) {
+      get(IfsUri[RetrieveBusinessDetailsDownstreamResponse](downstreamUri))
+    } else {
+      get(DesUri[RetrieveBusinessDetailsDownstreamResponse](downstreamUri))
+    }
   }
 
 }

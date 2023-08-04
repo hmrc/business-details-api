@@ -34,8 +34,17 @@ trait AppConfig {
   def desToken: String
   def desEnvironmentHeaders: Option[Seq[String]]
 
+  // IFS Config
+  def ifsBaseUrl: String
+  def ifsEnv: String
+  def ifsToken: String
+  def ifsEnvironmentHeaders: Option[Seq[String]]
+
   lazy val desDownstreamConfig: DownstreamConfig =
     DownstreamConfig(baseUrl = desBaseUrl, env = desEnv, token = desToken, environmentHeaders = desEnvironmentHeaders)
+
+  lazy val ifsDownstreamConfig: DownstreamConfig =
+    DownstreamConfig(baseUrl = ifsBaseUrl, env = ifsEnv, token = ifsToken, environmentHeaders = ifsEnvironmentHeaders)
 
   // API Config
   def apiGatewayContext: String
@@ -56,12 +65,19 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
   val desToken: String                           = config.getString("microservice.services.des.token")
   val desEnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.des.environmentHeaders")
 
+  // IFS Config
+  val ifsBaseUrl: String                         = config.baseUrl("ifs")
+  val ifsEnv: String                             = config.getString("microservice.services.ifs.env")
+  val ifsToken: String                           = config.getString("microservice.services.ifs.token")
+  val ifsEnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.ifs.environmentHeaders")
+
   // API Config
   val apiGatewayContext: String                    = config.getString("api.gateway.context")
   val confidenceLevelConfig: ConfidenceLevelConfig = configuration.get[ConfidenceLevelConfig](s"api.confidence-level-check")
   def apiStatus(version: Version): String          = config.getString(s"api.${version.name}.status")
   def featureSwitches: Configuration               = configuration.getOptional[Configuration](s"feature-switch").getOrElse(Configuration.empty)
   def endpointsEnabled(version: Version): Boolean  = config.getBoolean(s"api.${version.name}.endpoints.enabled")
+
 }
 
 trait FixedConfig {
