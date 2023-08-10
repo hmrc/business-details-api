@@ -57,8 +57,8 @@
         "taxYear1": {
           "type": "string",
           "description": "First tax year for the income source.",
-          "example": "2019",
-          "format": "YYYY",
+          "example": "2018-19",
+          "format": "YYYY-YY",
           "minimum": 4,
           "maximum": 4
         },
@@ -76,8 +76,8 @@
         "taxYear2": {
           "type": "string",
           "description": "Second tax year for the income source.",
-          "example": "2020",
-          "format": "YYYY",
+          "example": "2019-20",
+          "format": "YYYY-YY",
           "minimum": 4,
           "maximum": 4
         },
