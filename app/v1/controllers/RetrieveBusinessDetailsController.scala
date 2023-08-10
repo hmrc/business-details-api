@@ -54,7 +54,7 @@ class RetrieveBusinessDetailsController @Inject() (val authService: EnrolmentsAu
       val requestHandler =
         RequestHandler
           .withParser(parser)
-          .withService(service.retrieveBusinessDetailsService(_, appConfig))
+          .withService(service.retrieveBusinessDetailsService)
           .withHateoasResult(hateoasFactory)(RetrieveBusinessDetailsHateoasData(nino, businessId))
 
       requestHandler.handleRequest(rawData)

@@ -17,7 +17,7 @@
 package v1.models.response.retrieveBusinessDetails
 
 import api.hateoas.{HateoasLinks, HateoasLinksFactory}
-import api.models.domain.TypeOfBusiness
+import api.models.domain.{TaxYear, TypeOfBusiness}
 import api.models.domain.accountingType.AccountingType
 import api.models.hateoas.{HateoasData, Link}
 import config.AppConfig
@@ -40,7 +40,22 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            firstAccountingPeriodStartDate: Option[String],
                                            firstAccountingPeriodEndDate: Option[String],
                                            latencyDetails: Option[LatencyDetails],
-                                           yearOfMigration: Option[String])
+                                           yearOfMigration: Option[String]) {
+
+  def reformattedLatencyDetails: RetrieveBusinessDetailsResponse = {
+    latencyDetails match {
+      case Some(existingLatencyDetails) =>
+        val updatedLatencyDetails = existingLatencyDetails.copy(
+          taxYear1 = TaxYear.fromDownstream(existingLatencyDetails.taxYear1).asMtd,
+          taxYear2 = TaxYear.fromDownstream(existingLatencyDetails.taxYear2).asMtd
+        )
+        copy(latencyDetails = Some(updatedLatencyDetails))
+
+      case None =>
+        copy(latencyDetails = latencyDetails)
+    }
+  }
+}
 
 object RetrieveBusinessDetailsResponse extends HateoasLinks {
 

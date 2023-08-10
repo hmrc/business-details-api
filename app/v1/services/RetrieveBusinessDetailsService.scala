@@ -18,33 +18,46 @@ package v1.services
 
 import api.controllers.RequestContext
 import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundError}
+import api.models.outcomes.ResponseWrapper
 import api.services.{BaseService, ServiceOutcome}
 import cats.data.EitherT
 import config.{AppConfig, FeatureSwitches}
-
-import javax.inject.{Inject, Singleton}
 import v1.connectors.RetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
 import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponse
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetailsConnector) extends BaseService {
+class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetailsConnector, appConfig: AppConfig) extends BaseService {
 
-  def retrieveBusinessDetailsService(request: RetrieveBusinessDetailsRequest, appConfig: AppConfig)(implicit
+  val r10AdditionalFieldsEnabled: Boolean = FeatureSwitches()(appConfig).r10AdditionalFieldsEnabled
+
+  def retrieveBusinessDetailsService(request: RetrieveBusinessDetailsRequest)(implicit
       ctx: RequestContext,
       ec: ExecutionContext): Future[ServiceOutcome[RetrieveBusinessDetailsResponse]] = {
-
-    val r10AdditionalFieldsEnabled = FeatureSwitches()(appConfig).r10AdditionalFieldsEnabled
 
     val result = for {
       downstreamResponseWrapper <- EitherT(connector.retrieveBusinessDetails(request))
         .leftMap(mapDownstreamErrors(downstreamErrorMap))
-      mtdResponseWrapper <- EitherT.fromEither[Future](filterId(downstreamResponseWrapper, request.businessId, r10AdditionalFieldsEnabled))
+      mtdResponseWrapper <- EitherT
+        .fromEither[Future](filterId(downstreamResponseWrapper, request.businessId, r10AdditionalFieldsEnabled))
+        .flatMap(response => EitherT.fromEither[Future](reformattedTaxYearResponseMap(response)))
     } yield mtdResponseWrapper
 
     result.value
+  }
+
+  def reformattedTaxYearResponseMap(
+      responseWrapper: ResponseWrapper[RetrieveBusinessDetailsResponse]): ServiceOutcome[RetrieveBusinessDetailsResponse] = {
+    val response = responseWrapper.responseData
+
+    if (r10AdditionalFieldsEnabled) {
+      Right(responseWrapper.copy(responseData = response.reformattedLatencyDetails))
+    } else {
+      Right(responseWrapper.copy(responseData = response))
+    }
   }
 
   private val downstreamErrorMap: Map[String, MtdError] =
