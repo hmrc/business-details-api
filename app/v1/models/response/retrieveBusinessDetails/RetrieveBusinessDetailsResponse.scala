@@ -17,8 +17,8 @@
 package v1.models.response.retrieveBusinessDetails
 
 import api.hateoas.{HateoasLinks, HateoasLinksFactory}
-import api.models.domain.{TaxYear, TypeOfBusiness}
 import api.models.domain.accountingType.AccountingType
+import api.models.domain.{TaxYear, TypeOfBusiness}
 import api.models.hateoas.{HateoasData, Link}
 import config.AppConfig
 import play.api.libs.json.{Json, OWrites, Reads}
@@ -42,7 +42,14 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            latencyDetails: Option[LatencyDetails],
                                            yearOfMigration: Option[String]) {
 
-  def reformattedLatencyDetails: RetrieveBusinessDetailsResponse = {
+  val isAdditionalR10FieldsMissing: Boolean = Seq(
+    firstAccountingPeriodStartDate,
+    firstAccountingPeriodEndDate,
+    latencyDetails,
+    yearOfMigration
+  ).forall(_.isEmpty)
+
+  def reformatLatencyDetails: RetrieveBusinessDetailsResponse = {
     latencyDetails match {
       case Some(existingLatencyDetails) =>
         val updatedLatencyDetails = existingLatencyDetails.copy(
@@ -55,6 +62,22 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
         copy(latencyDetails = latencyDetails)
     }
   }
+
+  def addR10AdditionalFields: RetrieveBusinessDetailsResponse = {
+    if (isAdditionalR10FieldsMissing) {
+      // If any of the fields are missing, set to None
+      copy(
+        firstAccountingPeriodStartDate = None,
+        firstAccountingPeriodEndDate = None,
+        latencyDetails = None,
+        yearOfMigration = None
+      )
+    } else {
+      // If all the fields are present, return the original response
+      this
+    }
+  }
+
 }
 
 object RetrieveBusinessDetailsResponse extends HateoasLinks {

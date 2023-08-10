@@ -105,25 +105,25 @@ case class BusinessDetails(businessId: String,
     yearOfMigration = yearOfMigration
   )
 
-  def toMtdWithoutR10kFields: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
-    businessId = businessId,
-    typeOfBusiness = typeOfBusiness,
-    tradingName = tradingName,
-    accountingPeriods = accountingPeriods,
-    accountingType = accountingType,
-    commencementDate = commencementDate,
-    cessationDate = cessationDate,
-    businessAddressLineOne = businessAddressLineOne,
-    businessAddressLineTwo = businessAddressLineTwo,
-    businessAddressLineThree = businessAddressLineThree,
-    businessAddressLineFour = businessAddressLineFour,
-    businessAddressPostcode = businessAddressPostcode,
-    businessAddressCountryCode = businessAddressCountryCode,
-    firstAccountingPeriodStartDate = None,
-    firstAccountingPeriodEndDate = None,
-    latencyDetails = None,
-    yearOfMigration = None
-  )
+//  def toMtdWithoutR10kFields: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
+//    businessId = businessId,
+//    typeOfBusiness = typeOfBusiness,
+//    tradingName = tradingName,
+//    accountingPeriods = accountingPeriods,
+//    accountingType = accountingType,
+//    commencementDate = commencementDate,
+//    cessationDate = cessationDate,
+//    businessAddressLineOne = businessAddressLineOne,
+//    businessAddressLineTwo = businessAddressLineTwo,
+//    businessAddressLineThree = businessAddressLineThree,
+//    businessAddressLineFour = businessAddressLineFour,
+//    businessAddressPostcode = businessAddressPostcode,
+//    businessAddressCountryCode = businessAddressCountryCode,
+//    firstAccountingPeriodStartDate = None,
+//    firstAccountingPeriodEndDate = None,
+//    latencyDetails = None,
+//    yearOfMigration = None
+//  )
 
 }
 

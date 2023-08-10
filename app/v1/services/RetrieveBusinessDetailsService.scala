@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetailsConnector, appConfig: AppConfig) extends BaseService {
 
-  val r10AdditionalFieldsEnabled: Boolean = FeatureSwitches()(appConfig).r10AdditionalFieldsEnabled
+  val r10AdditionalFieldsEnabled: Boolean = FeatureSwitches(appConfig.featureSwitches).r10AdditionalFieldsEnabled
 
   def retrieveBusinessDetailsService(request: RetrieveBusinessDetailsRequest)(implicit
       ctx: RequestContext,
@@ -42,19 +42,19 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
       downstreamResponseWrapper <- EitherT(connector.retrieveBusinessDetails(request))
         .leftMap(mapDownstreamErrors(downstreamErrorMap))
       mtdResponseWrapper <- EitherT
-        .fromEither[Future](filterId(downstreamResponseWrapper, request.businessId, r10AdditionalFieldsEnabled))
-        .flatMap(response => EitherT.fromEither[Future](reformattedTaxYearResponseMap(response)))
+        .fromEither[Future](filterId(downstreamResponseWrapper, request.businessId))
+        .flatMap(response => EitherT.fromEither[Future](r10AdditionalFieldsResponseMap(response)))
     } yield mtdResponseWrapper
 
     result.value
   }
 
-  def reformattedTaxYearResponseMap(
+  def r10AdditionalFieldsResponseMap(
       responseWrapper: ResponseWrapper[RetrieveBusinessDetailsResponse]): ServiceOutcome[RetrieveBusinessDetailsResponse] = {
     val response = responseWrapper.responseData
 
     if (r10AdditionalFieldsEnabled) {
-      Right(responseWrapper.copy(responseData = response.reformattedLatencyDetails))
+      Right(responseWrapper.copy(responseData = response.addR10AdditionalFields.reformatLatencyDetails))
     } else {
       Right(responseWrapper.copy(responseData = response))
     }
