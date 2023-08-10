@@ -17,7 +17,7 @@
 package v1.models.response.retrieveBusinessDetails.downstream
 
 import api.models.domain.TypeOfBusiness
-import api.models.domain.accountingType.{AccountingType, CashOrAccruals}
+import api.models.domain.accountingType.AccountingType
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
@@ -131,7 +131,7 @@ case class BusinessDetails(businessId: String,
 
 object BusinessDetails {
 
-  private val cashOrAccrualsReads: Reads[Option[AccountingType]] = (JsPath \ "cashOrAccrualsFlag").readNullable[Boolean].map {
+  private def cashOrAccrualsReads(field: String): Reads[Option[AccountingType]] = (JsPath \ field).readNullable[Boolean].map {
     case Some(false) => Some(AccountingType.CASH)
     case Some(true)  => Some(AccountingType.ACCRUALS)
     case None        => None
@@ -153,7 +153,7 @@ object BusinessDetails {
       (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
       (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
       (JsPath \ "yearOfMigration").readNullable[String] and
-      (JsPath \ "cashOrAccruals").readNullable[CashOrAccruals].map(_.map(_.toMtd)) and
+      cashOrAccrualsReads("cashOrAccruals") and
       (JsPath \ "tradingStartDate").readNullable[String] and
       (JsPath \ "cessationDate").readNullable[String] and
       (JsPath \ "businessAddressDetails" \ "addressLine1").readNullable[String] and
@@ -175,7 +175,7 @@ object BusinessDetails {
       (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
       (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
       (JsPath \ "yearOfMigration").readNullable[String] and
-      cashOrAccrualsReads and
+      cashOrAccrualsReads("cashOrAccrualsFlag") and
       (JsPath \ "tradingStartDate").readNullable[String] and
       (JsPath \ "cessationDate").readNullable[String] and
       Reads.pure(None) and
