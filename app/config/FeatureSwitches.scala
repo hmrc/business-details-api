@@ -22,8 +22,9 @@ case class FeatureSwitches(featureSwitchConfig: Configuration) {
 
   val r10AdditionalFieldsEnabled: Boolean = isEnabled("r10-fields.enabled")
   val r10IFSEnabled: Boolean = isEnabled("r10-IFS.enabled")
+   def isEnabled(key: String): Boolean = isConfigTrue(key + ".enabled")
 
-  private def isEnabled(key: String): Boolean = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)
+  private def isConfigTrue(key: String): Boolean = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)
 }
 
 object FeatureSwitches {
