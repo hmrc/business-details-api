@@ -55,7 +55,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     Some("GB"),
     Some("2018-04-06"),
     Some("2018-12-12"),
-    Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+    Some(LatencyDetails("2018-12-12", "2017-18", LatencyIndicator.Annual, "2018-19", LatencyIndicator.Quarterly)),
     Some("2023")
   )
 

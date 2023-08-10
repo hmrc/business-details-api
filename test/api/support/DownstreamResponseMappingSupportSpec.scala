@@ -205,7 +205,7 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
           accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
           firstAccountingPeriodStartDate = Some("2018-04-06"),
           firstAccountingPeriodEndDate = Some("2018-12-12"),
-          latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          latencyDetails = Some(LatencyDetails("2018-12-12", "2017-18", LatencyIndicator.Annual, "2018-19", LatencyIndicator.Quarterly)),
           yearOfMigration = Some("2023"),
           accountingType = Some(AccountingType.ACCRUALS),
           commencementDate = Some("2016-09-24"),
@@ -235,7 +235,7 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
       businessAddressCountryCode = Some("GB"),
       firstAccountingPeriodStartDate = Some("2018-04-06"),
       firstAccountingPeriodEndDate = Some("2018-12-12"),
-      latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+      latencyDetails = Some(LatencyDetails("2018-12-12", "2017-18", LatencyIndicator.Annual, "2018-19", LatencyIndicator.Quarterly)),
       yearOfMigration = Some("2023")
     )
 

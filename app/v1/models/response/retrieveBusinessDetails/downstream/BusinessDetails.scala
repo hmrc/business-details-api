@@ -16,8 +16,8 @@
 
 package v1.models.response.retrieveBusinessDetails.downstream
 
-import api.models.domain.TypeOfBusiness
 import api.models.domain.accountingType.{AccountingType, CashOrAccruals}
+import api.models.domain.{TaxYear, TypeOfBusiness}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
@@ -48,13 +48,11 @@ object LatencyIndicator {
 
 }
 
-case class LatencyDetails(
-    latencyEndDate: String,
-    taxYear1: String,
-    latencyIndicator1: LatencyIndicator,
-    taxYear2: String,
-    latencyIndicator2: LatencyIndicator
-)
+case class LatencyDetails(latencyEndDate: String,
+                          taxYear1: String,
+                          latencyIndicator1: LatencyIndicator,
+                          taxYear2: String,
+                          latencyIndicator2: LatencyIndicator) {}
 
 object LatencyDetails {
   implicit val writes: OWrites[LatencyDetails] = Json.writes[LatencyDetails]
@@ -103,7 +101,7 @@ case class BusinessDetails(businessId: String,
     businessAddressCountryCode = businessAddressCountryCode,
     firstAccountingPeriodStartDate = firstAccountingPeriodStartDate,
     firstAccountingPeriodEndDate = firstAccountingPeriodEndDate,
-    latencyDetails = latencyDetails,
+    latencyDetails = reformattedLatencyDetails,
     yearOfMigration = yearOfMigration
   )
 
@@ -126,6 +124,19 @@ case class BusinessDetails(businessId: String,
     latencyDetails = None,
     yearOfMigration = None
   )
+
+  def reformattedLatencyDetails: Option[LatencyDetails] = {
+    latencyDetails match {
+      case Some(existingLatencyDetails) =>
+        val updatedLatencyDetails = existingLatencyDetails.copy(
+          taxYear1 = TaxYear.fromDownstream(existingLatencyDetails.taxYear1).asMtd,
+          taxYear2 = TaxYear.fromDownstream(existingLatencyDetails.taxYear2).asMtd
+        )
+        Some(updatedLatencyDetails)
+      case None =>
+        latencyDetails
+    }
+  }
 
 }
 
