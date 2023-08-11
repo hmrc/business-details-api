@@ -23,8 +23,6 @@ case class RetrieveBusinessDetailsDownstreamResponse(businessDetails: Seq[Busine
 object RetrieveBusinessDetailsDownstreamResponse {
 
   implicit val reads: Reads[RetrieveBusinessDetailsDownstreamResponse] = {
-//    val yearOfMigrationReads: Reads[Seq[BusinessDetails]] =
-//      (JsPath \ "yearOfMigration").readNullable[Seq[BusinessDetails]](BusinessDetails.readsSeqYearOfMigration).map(_.getOrElse(Nil))
     val businessDataReads: Reads[Seq[BusinessDetails]] =
       (JsPath \ "businessData").readNullable[Seq[BusinessDetails]](BusinessDetails.readsSeqBusinessData).map(_.getOrElse(Nil))
     val propertyDataReads: Reads[Seq[BusinessDetails]] =
@@ -33,9 +31,8 @@ object RetrieveBusinessDetailsDownstreamResponse {
     for {
       businessData    <- businessDataReads
       propertyData    <- propertyDataReads
-      //yearOfMigration <- yearOfMigrationReads
     } yield {
-      RetrieveBusinessDetailsDownstreamResponse(businessData ++ propertyData) //++ yearOfMigration)
+      RetrieveBusinessDetailsDownstreamResponse(businessData ++ propertyData)
     }
   }
 

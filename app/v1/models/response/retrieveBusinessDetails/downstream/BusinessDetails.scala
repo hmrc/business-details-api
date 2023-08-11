@@ -135,7 +135,7 @@ object BusinessDetails {
       (JsPath \ "firstAccountingPeriodStartDate").readNullable[String] and
       (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
       (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
-      (JsPath \ "taxPayerDisplayResponse" \ "yearOfMigration").readNullable[String] and
+      (JsPath \ "yearOfMigration").readNullable[String] and
       (JsPath \ "cashOrAccruals").readNullable[CashOrAccruals].map(_.map(_.toMtd)) and
       (JsPath \ "tradingStartDate").readNullable[String] and
       (JsPath \ "cessationDate").readNullable[String] and
@@ -157,7 +157,7 @@ object BusinessDetails {
       (JsPath \ "firstAccountingPeriodStartDate").readNullable[String] and
       (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
       (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
-      (JsPath \ "taxPayerDisplayResponse" \ "yearOfMigration").readNullable[String] and
+      (JsPath \ "yearOfMigration").readNullable[String] and
       cashOrAccrualsReads and
       (JsPath \ "tradingStartDate").readNullable[String] and
       (JsPath \ "cessationDate").readNullable[String] and
