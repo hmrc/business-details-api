@@ -104,30 +104,15 @@ case class BusinessDetails(businessId: String,
     latencyDetails = latencyDetails,
     yearOfMigration = yearOfMigration
   )
-
-//  def toMtdWithoutR10kFields: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
-//    businessId = businessId,
-//    typeOfBusiness = typeOfBusiness,
-//    tradingName = tradingName,
-//    accountingPeriods = accountingPeriods,
-//    accountingType = accountingType,
-//    commencementDate = commencementDate,
-//    cessationDate = cessationDate,
-//    businessAddressLineOne = businessAddressLineOne,
-//    businessAddressLineTwo = businessAddressLineTwo,
-//    businessAddressLineThree = businessAddressLineThree,
-//    businessAddressLineFour = businessAddressLineFour,
-//    businessAddressPostcode = businessAddressPostcode,
-//    businessAddressCountryCode = businessAddressCountryCode,
-//    firstAccountingPeriodStartDate = None,
-//    firstAccountingPeriodEndDate = None,
-//    latencyDetails = None,
-//    yearOfMigration = None
-//  )
-
 }
 
 object BusinessDetails {
+
+  val readsYearOfMigration: Reads[BusinessDetails] = (
+    (JsPath \ "yearOfMigration").readNullable[String])
+  (BusinessDetails.apply _)
+
+  val readsSeqYearOfMigration: Reads[Seq[BusinessDetails]] = Reads.traversableReads[Seq, BusinessDetails](implicitly, readsYearOfMigration)
 
   private val cashOrAccrualsReads: Reads[Option[AccountingType]] = (JsPath \ "cashOrAccrualsFlag").readNullable[Boolean].map {
     case Some(false) => Some(AccountingType.CASH)

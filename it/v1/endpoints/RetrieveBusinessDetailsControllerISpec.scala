@@ -54,6 +54,16 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         |   "businessAddressLineFour": "London",
         |   "businessAddressPostcode": "DH14EJ",
         |   "businessAddressCountryCode": "GB",
+        |   "firstAccountingPeriodStartDate": "2018-04-06",
+        |   "firstAccountingPeriodEndDate": "2018-12-12",
+        |   "latencyDetails": {
+        |     "latencyEndDate": "2018-12-12",
+        |     "taxYear1": "2017-18",
+        |     "latencyIndicator1": "A",
+        |     "taxYear2": "2018-19",
+        |     "latencyIndicator2": "Q"
+        |   },
+        |   "yearOfMigration": "2023",
         |   "links": [
         |     {
         |       "href": "/individuals/business/details/$nino/$businessId",
@@ -105,6 +115,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |  "safeId": "XAIS123456789012",
             |  "nino": "AA123456A",
             |  "mtdbsa": "123456789012345",
+            |  "yearOfMigration": "2023",
             |  "propertyIncome": false,
             |  "businessData": [{
             |    "incomeSourceId": "XAIS12345678901",
@@ -130,7 +141,16 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |    "seasonal": true,
             |    "cessationDate": "2001-01-01",
             |    "cessationReason": "002",
-            |    "paperLess": true
+            |    "paperLess": true,
+            |    "firstAccountingPeriodStartDate": "2018-04-06",
+            |    "firstAccountingPeriodEndDate": "2018-12-12",
+            |    "latencyDetails": {
+            |      "latencyEndDate": "2018-12-12",
+            |      "taxYear1": "2018",
+            |      "latencyIndicator1": "A",
+            |      "taxYear2": "2019",
+            |      "latencyIndicator2": "Q"
+            |   }
             |  }]
             |}
             |""".stripMargin
@@ -157,6 +177,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |  "safeId": "XE00001234567890",
             |  "nino": "AA123456A",
             |  "mtdbsa": "123456789012345",
+            |  "yearOfMigration": "2023",
             |  "propertyIncome": false,
             |  "businessData": [{
             |    "incomeSourceId": "XAIS12345678901",
@@ -182,7 +203,16 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |    "seasonal": true,
             |    "cessationDate": "2001-01-01",
             |    "cessationReason": "002",
-            |    "paperLess": true
+            |    "paperLess": true,
+            |    "incomeSourceStartDate": "2019-07-14",
+            |    "firstAccountingPeriodStartDate": "2018-04-06",
+            |    "firstAccountingPeriodEndDate": "2018-12-12",
+            |    "latencyDetails": {
+            |      "latencyEndDate": "2018-12-12",
+            |      "taxYear1": "2018",
+            |      "latencyIndicator1": "A",
+            |      "taxYear2": "2019",
+            |      "latencyIndicator2": "Q"
             |  },
             |  {
             |    "incomeSourceId": "XAIS12345671111",

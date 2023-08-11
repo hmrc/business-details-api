@@ -50,22 +50,15 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
   ).forall(_.isEmpty)
 
   def reformatLatencyDetails: RetrieveBusinessDetailsResponse = {
-    latencyDetails match {
-      case Some(existingLatencyDetails) =>
-        val updatedLatencyDetails = existingLatencyDetails.copy(
-          taxYear1 = TaxYear.fromDownstream(existingLatencyDetails.taxYear1).asMtd,
-          taxYear2 = TaxYear.fromDownstream(existingLatencyDetails.taxYear2).asMtd
-        )
-        copy(latencyDetails = Some(updatedLatencyDetails))
-
-      case None =>
-        copy(latencyDetails = latencyDetails)
-    }
+    val updatedLatencyDetails = latencyDetails.map(details => details.copy(
+      taxYear1 = TaxYear.fromDownstream(details.taxYear1).asMtd,
+      taxYear2 = TaxYear.fromDownstream(details.taxYear2).asMtd
+    ))
+    copy(latencyDetails = updatedLatencyDetails)
   }
 
   def addR10AdditionalFields: RetrieveBusinessDetailsResponse = {
     if (isAdditionalR10FieldsMissing) {
-      // If any of the fields are missing, set to None
       copy(
         firstAccountingPeriodStartDate = None,
         firstAccountingPeriodEndDate = None,
@@ -73,7 +66,6 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
         yearOfMigration = None
       )
     } else {
-      // If all the fields are present, return the original response
       this
     }
   }

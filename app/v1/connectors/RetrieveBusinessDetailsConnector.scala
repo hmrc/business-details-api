@@ -38,7 +38,7 @@ class RetrieveBusinessDetailsConnector @Inject() (val http: HttpClient, val appC
 
     val downstreamUri = s"registration/business-details/nino/$nino"
 
-    if (featureSwitches.r10IFSEnabled) {
+    if (featureSwitches.isR10IFSEnabled) {
       get(IfsUri[RetrieveBusinessDetailsDownstreamResponse](downstreamUri))
     } else {
       get(DesUri[RetrieveBusinessDetailsDownstreamResponse](downstreamUri))

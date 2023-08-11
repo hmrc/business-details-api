@@ -77,9 +77,9 @@ class RetrieveBusinessDetailsControllerSpec
       |   "firstAccountingPeriodEndDate": "2018-12-12",
       |   "latencyDetails": {
       |     "latencyEndDate": "2018-12-12",
-      |     "taxYear1": "2018",
+      |     "taxYear1": "2017-18",
       |     "latencyIndicator1": "A",
-      |     "taxYear2": "2019",
+      |     "taxYear2": "2018-19",
       |     "latencyIndicator2": "Q"
       |   },
       |   "yearOfMigration": "2023",
@@ -110,7 +110,7 @@ class RetrieveBusinessDetailsControllerSpec
     Some("GB"),
     Some("2018-04-06"),
     Some("2018-12-12"),
-    Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+    Some(LatencyDetails("2018-12-12", "2017-18", LatencyIndicator.Annual, "2018-19", LatencyIndicator.Quarterly)),
     Some("2023")
   )
 

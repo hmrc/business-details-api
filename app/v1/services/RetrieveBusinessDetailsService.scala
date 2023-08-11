@@ -32,8 +32,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetailsConnector, appConfig: AppConfig) extends BaseService {
 
-  val r10AdditionalFieldsEnabled: Boolean = FeatureSwitches(appConfig.featureSwitches).r10AdditionalFieldsEnabled
-
   def retrieveBusinessDetailsService(request: RetrieveBusinessDetailsRequest)(implicit
       ctx: RequestContext,
       ec: ExecutionContext): Future[ServiceOutcome[RetrieveBusinessDetailsResponse]] = {
@@ -53,7 +51,7 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
       responseWrapper: ResponseWrapper[RetrieveBusinessDetailsResponse]): ServiceOutcome[RetrieveBusinessDetailsResponse] = {
     val response = responseWrapper.responseData
 
-    if (r10AdditionalFieldsEnabled) {
+    if (FeatureSwitches()(appConfig).isR10AdditionalFieldsEnabled) {
       Right(responseWrapper.copy(responseData = response.addR10AdditionalFields.reformatLatencyDetails))
     } else {
       Right(responseWrapper.copy(responseData = response))
