@@ -104,15 +104,15 @@ case class BusinessDetails(businessId: String,
     latencyDetails = latencyDetails,
     yearOfMigration = yearOfMigration
   )
+
 }
 
 object BusinessDetails {
 
-  val readsYearOfMigration: Reads[BusinessDetails] = (
-    (JsPath \ "yearOfMigration").readNullable[String])
-  (BusinessDetails.apply _)
-
-  val readsSeqYearOfMigration: Reads[Seq[BusinessDetails]] = Reads.traversableReads[Seq, BusinessDetails](implicitly, readsYearOfMigration)
+//  val readsYearOfMigration: Reads[BusinessDetails] = ((JsPath \ "yearOfMigration").readNullable[String])
+//  (BusinessDetails.apply _)
+//
+//  val readsSeqYearOfMigration: Reads[Seq[BusinessDetails]] = Reads.traversableReads[Seq, BusinessDetails](implicitly, readsYearOfMigration)
 
   private val cashOrAccrualsReads: Reads[Option[AccountingType]] = (JsPath \ "cashOrAccrualsFlag").readNullable[Boolean].map {
     case Some(false) => Some(AccountingType.CASH)
@@ -135,7 +135,7 @@ object BusinessDetails {
       (JsPath \ "firstAccountingPeriodStartDate").readNullable[String] and
       (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
       (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
-      (JsPath \ "yearOfMigration").readNullable[String] and
+      (JsPath \ "taxPayerDisplayResponse" \ "yearOfMigration").readNullable[String] and
       (JsPath \ "cashOrAccruals").readNullable[CashOrAccruals].map(_.map(_.toMtd)) and
       (JsPath \ "tradingStartDate").readNullable[String] and
       (JsPath \ "cessationDate").readNullable[String] and
@@ -157,7 +157,7 @@ object BusinessDetails {
       (JsPath \ "firstAccountingPeriodStartDate").readNullable[String] and
       (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
       (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
-      (JsPath \ "yearOfMigration").readNullable[String] and
+      (JsPath \ "taxPayerDisplayResponse" \ "yearOfMigration").readNullable[String] and
       cashOrAccrualsReads and
       (JsPath \ "tradingStartDate").readNullable[String] and
       (JsPath \ "cessationDate").readNullable[String] and
