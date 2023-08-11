@@ -32,7 +32,7 @@ trait Rewriter {
 
 @Singleton
 class RewriteableAssets @Inject() (errorHandler: HttpErrorHandler, meta: AssetsMetadata, appConfig: AppConfig)(implicit ec: ExecutionContext)
-  extends Assets(errorHandler, meta) {
+    extends Assets(errorHandler, meta) {
   import meta._
 
   /** If no rewriters, Play's own static Assets.assetAt() will be called.
@@ -52,7 +52,7 @@ class RewriteableAssets @Inject() (errorHandler: HttpErrorHandler, meta: AssetsM
 
   // Mostly copied from the private method in Assets:
   private def assetAt(path: String, filename: String, rewrites: Seq[Rewriter])(implicit
-                                                                               request: RequestHeader
+      request: RequestHeader
   ): Future[Result] = {
     val assetName: Option[String] = resourceNameAt(path, filename)
     val assetInfoFuture: Future[Option[(AssetInfo, AcceptEncoding)]] = assetName

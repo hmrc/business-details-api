@@ -37,18 +37,18 @@ get:
         application/json:
           schema:
             {{#if (enabled "r10-fields" )}}
-            $ref: './schemas/retrieveBusinessDetails/retrieve_business_details_response_with_additional_fields.json'
+            $ref: ./schemas/retrieveBusinessDetails/retrieve_business_details_response_with_additional_fields.json
             {{else}}
-            $ref: './schemas/retrieveBusinessDetails/retrieve_business_details_response.json'
+            $ref: ./schemas/retrieveBusinessDetails/retrieve_business_details_response.json
             {{/if}}
           examples:
             example-response:
               description: Example Response
               value:
-                {{#if (enabled "r10-fields" )}}
-                $ref: './examples/retrieveBusinessDetails/retrieve_business_details_response_with_additional_fields.json'
+                {{#if (enabled "r10-fields")}}
+                $ref: ./examples/retrieveBusinessDetails/retrieve_business_details_response_with_additional_fields.json
                 {{else}}
-                $ref: ''./examples/retrieveBusinessDetails/retrieve_business_details_response.json'
+                $ref: ./examples/retrieveBusinessDetails/retrieve_business_details_response.json
                 {{/if}}
 
     "400":
