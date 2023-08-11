@@ -55,7 +55,7 @@ class ApiVersionTitleRewriterSpec extends UnitSpec with MockAppConfig {
                     |
                     |info:
                     |  version: "1.0"
-                    |  title: Individuals Expenses (MTD)
+                    |  title: Business Details (MTD)
                     |  description: |
                     |    # Send fraud prevention data
                     |    HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters.
@@ -70,7 +70,7 @@ class ApiVersionTitleRewriterSpec extends UnitSpec with MockAppConfig {
                     |
                     |info:
                     |  version: "1.0"
-                    |  title: "Individuals Expenses (MTD) [test only]"
+                    |  title: "Business Details (MTD) [test only]"
                     |  description: |
                     |    # Send fraud prevention data
                     |    HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters.

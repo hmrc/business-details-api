@@ -29,7 +29,7 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
 
     "checking if rewrite is needed" should {
       "indicate rewrite needed for grouped endpoints yaml file" in {
-        val result = checkAndRewrite.check("any-version", "employment_expenses.yaml")
+        val result = checkAndRewrite.check("any-version", "business_details.yaml")
         result shouldBe true
       }
 
@@ -53,16 +53,16 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
         val yaml =
           """
                   |put:
-                  |  $ref: "./employment_expenses_create_and_amend.yaml"
-                  |  summary: Create and Amend Employment Expenses{{#maybeTestOnly "2.0 employment-expenses-create-and-amend"}}{{/maybeTestOnly}}
+                  |  $ref: "./business_details_create_and_amend.yaml"
+                  |  summary: Create and Amend Business Details{{#maybeTestOnly "2.0 employment-expenses-create-and-amend"}}{{/maybeTestOnly}}
                   |  security:
                   |    - User-Restricted:
                   |        - write:self-assessment
                   |
                   |
                   |get:
-                  |  $ref: "./employment_expenses_retrieve.yaml"
-                  |  summary: Retrieve Employment Expenses{{#maybeTestOnly "2.0 employment-expenses-retrieve"}}{{/maybeTestOnly}}
+                  |  $ref: "./business_details_retrieve.yaml"
+                  |  summary: Retrieve Business Details{{#maybeTestOnly "2.0 employment-expenses-retrieve"}}{{/maybeTestOnly}}
                   |  security:
                   |    - User-Restricted:
                   |        - read:self-assessment
@@ -70,8 +70,8 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
                   |    - $ref: './common/queryParameters.yaml#/components/parameters/source'
                   |
                   |delete:
-                  |  $ref: "./employment_expenses_delete.yaml"
-                  |  summary: Delete Employment Expenses{{#maybeTestOnly "2.0 employment-expenses-delete"}}{{/maybeTestOnly}}
+                  |  $ref: "./business_details_delete.yaml"
+                  |  summary: Delete Business Details{{#maybeTestOnly "2.0 employment-expenses-delete"}}{{/maybeTestOnly}}
                   |  security:
                   |    - User-Restricted:
                   |        - write:self-assessment
@@ -81,16 +81,16 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
         val expected =
           """
                   |put:
-                  |  $ref: "./employment_expenses_create_and_amend.yaml"
-                  |  summary: Create and Amend Employment Expenses [test only]
+                  |  $ref: "./business_details_create_and_amend.yaml"
+                  |  summary: Create and Amend Business Details [test only]
                   |  security:
                   |    - User-Restricted:
                   |        - write:self-assessment
                   |
                   |
                   |get:
-                  |  $ref: "./employment_expenses_retrieve.yaml"
-                  |  summary: Retrieve Employment Expenses
+                  |  $ref: "./business_details_retrieve.yaml"
+                  |  summary: Retrieve Business Details
                   |  security:
                   |    - User-Restricted:
                   |        - read:self-assessment
@@ -98,15 +98,15 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
                   |    - $ref: './common/queryParameters.yaml#/components/parameters/source'
                   |
                   |delete:
-                  |  $ref: "./employment_expenses_delete.yaml"
-                  |  summary: Delete Employment Expenses [test only]
+                  |  $ref: "./business_details_delete.yaml"
+                  |  summary: Delete Business Details [test only]
                   |  security:
                   |    - User-Restricted:
                   |        - write:self-assessment
                   |
                   |""".stripMargin
 
-        val result = checkAndRewrite.rewrite(path = "/public/api/conf/1.0", filename = "employment_expenses.yaml", yaml)
+        val result = checkAndRewrite.rewrite(path = "/public/api/conf/1.0", filename = "business_details.yaml", yaml)
         result shouldBe expected
       }
 
@@ -114,16 +114,16 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
         val yaml =
           """
             |put:
-            |  $ref: "./employment_expenses_create_and_amend.yaml"
-            |  summary: Create and Amend Employment Expenses
+            |  $ref: "./business_details_create_and_amend.yaml"
+            |  summary: Create and Amend Business Details
             |  security:
             |    - User-Restricted:
             |        - write:self-assessment
             |
             |
             |get:
-            |  $ref: "./employment_expenses_retrieve.yaml"
-            |  summary: Retrieve Employment Expenses
+            |  $ref: "./business_details_retrieve.yaml"
+            |  summary: Retrieve Business Details
             |  security:
             |    - User-Restricted:
             |        - read:self-assessment
@@ -131,15 +131,15 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
             |    - $ref: './common/queryParameters.yaml#/components/parameters/source'
             |
             |delete:
-            |  $ref: "./employment_expenses_delete.yaml"
-            |  summary: Delete Employment Expenses
+            |  $ref: "./business_details_delete.yaml"
+            |  summary: Delete Business Details
             |  security:
             |    - User-Restricted:
             |        - write:self-assessment
             |
             |""".stripMargin
 
-        val result = checkAndRewrite.rewrite("/public/api/conf/1.0", "employment_expenses.yaml", yaml)
+        val result = checkAndRewrite.rewrite("/public/api/conf/1.0", "business_details.yaml", yaml)
         result shouldBe yaml
 
       }
@@ -149,8 +149,8 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
         val yaml =
           s"""
              |put:
-             |  $$ref: "./employment_expenses_create_and_amend.yaml"
-             |  summary: Create and Amend Employment Expenses{{#maybeTestOnly "$endpointDetails"}}{{/maybeTestOnly}}
+             |  $$ref: "./business_details_create_and_amend.yaml"
+             |  summary: Create and Amend Business Details{{#maybeTestOnly "$endpointDetails"}}{{/maybeTestOnly}}
              |  security:
              |    - User-Restricted:
              |        - write:self-assessment
@@ -158,7 +158,7 @@ class EndpointSummaryGroupRewriterSpec extends UnitSpec with MockAppConfig {
              |""".stripMargin
 
         val exception = intercept[HandlebarsException] {
-          checkAndRewrite.rewrite("/public/api/conf/1.0", "employment_expenses.yaml", yaml)
+          checkAndRewrite.rewrite("/public/api/conf/1.0", "business_details.yaml", yaml)
         }
 
         val cause = exception.getCause
