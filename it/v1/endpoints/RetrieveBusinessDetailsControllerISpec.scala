@@ -216,7 +216,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |    "accountingPeriodStartDate": "2019-04-06",
             |    "accountingPeriodEndDate": "2020-04-05",
             |    "tradingStartDate": "2017-07-24",
-            |    "cashOrAccrualsFlag": true,
+            |    "cashOrAccruals": true,
             |    "numPropRented": 0,
             |    "numPropRentedUK": 0,
             |    "numPropRentedEEA": 5,

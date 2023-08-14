@@ -116,7 +116,7 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
             |    "accountingPeriodStartDate": "2019-04-06",
             |    "accountingPeriodEndDate": "2020-04-05",
             |    "tradingStartDate": "2017-07-24",
-            |    "cashOrAccrualsFlag": true,
+            |    "cashOrAccruals": true,
             |    "numPropRented": 0,
             |    "firstAccountingPeriodStartDate": "2018-04-06",
             |    "firstAccountingPeriodEndDate":   "2018-12-12",

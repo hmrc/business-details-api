@@ -131,7 +131,7 @@ case class BusinessDetails(businessId: String,
 
 object BusinessDetails {
 
-  private def cashOrAccrualsReads(field: String): Reads[Option[AccountingType]] = (JsPath \ field).readNullable[Boolean].map {
+  private val cashOrAccrualsReads: Reads[Option[AccountingType]] = (JsPath \ "cashOrAccruals").readNullable[Boolean].map {
     case Some(false) => Some(AccountingType.CASH)
     case Some(true)  => Some(AccountingType.ACCRUALS)
     case None        => None
@@ -153,7 +153,7 @@ object BusinessDetails {
       (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
       (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
       (JsPath \ "yearOfMigration").readNullable[String] and
-      cashOrAccrualsReads("cashOrAccruals") and
+      cashOrAccrualsReads and
       (JsPath \ "tradingStartDate").readNullable[String] and
       (JsPath \ "cessationDate").readNullable[String] and
       (JsPath \ "businessAddressDetails" \ "addressLine1").readNullable[String] and
@@ -175,7 +175,7 @@ object BusinessDetails {
       (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
       (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
       (JsPath \ "yearOfMigration").readNullable[String] and
-      cashOrAccrualsReads("cashOrAccrualsFlag") and
+      cashOrAccrualsReads and
       (JsPath \ "tradingStartDate").readNullable[String] and
       (JsPath \ "cessationDate").readNullable[String] and
       Reads.pure(None) and
