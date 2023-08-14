@@ -98,6 +98,9 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
     protected def requestAsset(filename: String, accept: String = "text/yaml"): Future[Result] =
       controller.asset("1.0", filename)(fakeGetRequest.withHeaders(ACCEPT -> accept))
 
+    protected def invalidAsset(filename:String, accept:String = "text/yaml"): Future[Result] =
+      controller.asset("1.0", filename)(fakeGetRequest.withHeaders(ACCEPT -> accept))
+
     protected def numberOfTestOnlyOccurrences(str: String): Int = "\\[test only]".r.findAllIn(str).size
 
     MockAppConfig.featureSwitches returns Configuration("openApiFeatureTest.enabled" -> featureEnabled)

@@ -20,28 +20,35 @@ import com.github.jknack.handlebars.Options
 import config.rewriters.DocumentationRewriters.{CheckAndRewrite}
 import config.{AppConfig, FeatureSwitches}
 
-
 import javax.inject.{Inject, Singleton}
 
 /** Checks whether the feature is enabled in the current environment e.g. ET/Sandbox.
   */
 @Singleton class OasFeatureRewriter @Inject() (implicit val appConfig: AppConfig) extends HandlebarsRewriter {
 
+  trait CheckRewrite {
+    def apply(version: String, feature: String): Boolean
+  }
+
   private val fs = FeatureSwitches(appConfig.featureSwitches)
 
   hb.registerHelper(
-    "enabled",
-    (featureName: String, _: Options) => {
-       fsRewriteEnabled(featureName)
+    "testOnly",
+    (feature: String, _: Options) => {
+      featureEnabled(feature)
     }
   )
 
   val rewriteOasFeature: CheckAndRewrite = CheckAndRewrite(
-    check = (version, _) => appConfig.endpointsEnabled(version) && !fsRewriteEnabled(fs()),
+    check = (version, _) => appConfig.endpointsEnabled(version),
     rewrite = (_, _, contents) => rewrite(contents, fs)
   )
 
-  private def fsRewriteEnabled(featureName: String) : Boolean = if (fs.isEnabled(featureName) & !fs.isReleasedInProduction(featureName)) true else null
-
+  private def featureEnabled(featureName: String): Boolean = {
+    (fs.isEnabled(featureName), fs.isReleasedInProduction(featureName)) match {
+      case (true, false) => true
+      case (_, _)        => false
+    }
+  }
 
 }

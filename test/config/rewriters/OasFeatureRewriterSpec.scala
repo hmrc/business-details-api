@@ -43,21 +43,21 @@ class OasFeatureRewriterSpec extends UnitSpec with MockAppConfig {
       "1.0 endpoints are disabled" in {
         val (check, _) = setupCheckAndRewrite(oasFeatureEnabled = true, oasFeatureEnabledInProd = true, versionEnabled = false)
 
-        val result = check("1.0", "any-file.yaml")
+        val result = check("1.0", "oasFeature")
         result shouldBe false
       }
 
       "1.0 endpoints and feature switch in prod are enabled" in {
         val (check, _) = setupCheckAndRewrite(oasFeatureEnabled = true, oasFeatureEnabledInProd = true, versionEnabled = true)
 
-        val result = check("1.0", "any-file.yaml")
-        result shouldBe false
+        val result = check("1.0", "oasFeature")
+        result shouldBe true
       }
 
       "1.0 endpoints are enabled and feature switch in prod is disabled" in {
         val (check, _) = setupCheckAndRewrite(oasFeatureEnabled = true, oasFeatureEnabledInProd = false, versionEnabled = true)
 
-        val result = check("1.0", "any-file.yaml")
+        val result = check("1.0", "oasFeature")
         result shouldBe true
       }
     }
@@ -72,7 +72,7 @@ class OasFeatureRewriterSpec extends UnitSpec with MockAppConfig {
           |  A National Insurance number and tax year must be provided.
           |
           |  ### Test data
-          |  {{#if (enabled "oasFeature")}}
+          |  {{#if (testOnly "oasFeature")}}
           |  <p>Scenario simulations using Gov-Test-Scenario headers ARE ONLY AVAILABLE IN the sandbox environment.</p>
           |  {{else}}
           |  <p>Scenario simulations using Gov-Test-Scenario headers are only available in the sandbox environment.</p>
