@@ -51,7 +51,7 @@ class OasFeatureRewriterSpec extends UnitSpec with MockAppConfig {
         val (check, _) = setupCheckAndRewrite(oasFeatureEnabled = true, oasFeatureEnabledInProd = true, versionEnabled = true)
 
         val result = check("1.0", "any-file.yaml")
-        result shouldBe true
+        result shouldBe false
       }
 
       "1.0 endpoints are enabled and feature switch in prod is disabled" in {

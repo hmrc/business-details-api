@@ -17,8 +17,9 @@
 package config.rewriters
 
 import com.github.jknack.handlebars.Options
-import config.rewriters.DocumentationRewriters.CheckAndRewrite
+import config.rewriters.DocumentationRewriters.{CheckAndRewrite}
 import config.{AppConfig, FeatureSwitches}
+
 
 import javax.inject.{Inject, Singleton}
 
@@ -31,13 +32,16 @@ import javax.inject.{Inject, Singleton}
   hb.registerHelper(
     "enabled",
     (featureName: String, _: Options) => {
-      if (fs.isEnabled(featureName) && !fs.isReleasedInProduction(featureName)) "true" else null // javascript "truthy"
+       fsRewriteEnabled(featureName)
     }
   )
 
   val rewriteOasFeature: CheckAndRewrite = CheckAndRewrite(
-    check = (version, _) => appConfig.endpointsEnabled(version),
+    check = (version, _) => appConfig.endpointsEnabled(version) && !fsRewriteEnabled(fs()),
     rewrite = (_, _, contents) => rewrite(contents, fs)
   )
+
+  private def fsRewriteEnabled(featureName: String) : Boolean = if (fs.isEnabled(featureName) & !fs.isReleasedInProduction(featureName)) true else null
+
 
 }
