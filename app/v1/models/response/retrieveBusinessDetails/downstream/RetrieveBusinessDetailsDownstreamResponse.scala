@@ -27,12 +27,17 @@ object RetrieveBusinessDetailsDownstreamResponse {
       (JsPath \ "businessData").readNullable[Seq[BusinessDetails]](BusinessDetails.readsSeqBusinessData).map(_.getOrElse(Nil))
     val propertyDataReads: Reads[Seq[BusinessDetails]] =
       (JsPath \ "propertyData").readNullable[Seq[BusinessDetails]](BusinessDetails.readsSeqPropertyData).map(_.getOrElse(Nil))
+    val yearOfMigrationReads: Reads[Option[String]] =
+      (JsPath \ "yearOfMigration").readNullable[String]
 
     for {
       businessData    <- businessDataReads
       propertyData    <- propertyDataReads
+      yearOfMigration <- yearOfMigrationReads
     } yield {
-      RetrieveBusinessDetailsDownstreamResponse(businessData ++ propertyData)
+      val businessDataWithYearOfMigration: Seq[BusinessDetails] = businessData.map(_.copy(yearOfMigration = yearOfMigration))
+      val propertyDataWithYearOfMigration: Seq[BusinessDetails] = propertyData.map(_.copy(yearOfMigration = yearOfMigration))
+      RetrieveBusinessDetailsDownstreamResponse(businessDataWithYearOfMigration ++ propertyDataWithYearOfMigration)
     }
   }
 

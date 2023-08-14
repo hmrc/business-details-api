@@ -213,6 +213,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |      "latencyIndicator1": "A",
             |      "taxYear2": "2019",
             |      "latencyIndicator2": "Q"
+            |     }
             |  },
             |  {
             |    "incomeSourceId": "XAIS12345671111",

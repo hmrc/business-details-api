@@ -108,12 +108,6 @@ case class BusinessDetails(businessId: String,
 }
 
 object BusinessDetails {
-
-//  val readsYearOfMigration: Reads[BusinessDetails] = ((JsPath \ "yearOfMigration").readNullable[String])
-//  (BusinessDetails.apply _)
-//
-//  val readsSeqYearOfMigration: Reads[Seq[BusinessDetails]] = Reads.traversableReads[Seq, BusinessDetails](implicitly, readsYearOfMigration)
-
   private val cashOrAccrualsReads: Reads[Option[AccountingType]] = (JsPath \ "cashOrAccrualsFlag").readNullable[Boolean].map {
     case Some(false) => Some(AccountingType.CASH)
     case Some(true)  => Some(AccountingType.ACCRUALS)

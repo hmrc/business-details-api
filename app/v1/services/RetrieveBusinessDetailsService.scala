@@ -52,7 +52,7 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
     val response = responseWrapper.responseData
 
     if (FeatureSwitches()(appConfig).isR10AdditionalFieldsEnabled) {
-      Right(responseWrapper.copy(responseData = response.addR10AdditionalFields.reformatLatencyDetails))
+      Right(responseWrapper.copy(responseData = response.addR10AdditionalFields.reformatLatencyDetailsTaxYears))
     } else {
       Right(responseWrapper.copy(responseData = response))
     }

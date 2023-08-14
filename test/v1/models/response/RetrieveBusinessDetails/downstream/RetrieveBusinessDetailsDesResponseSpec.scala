@@ -35,6 +35,7 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
             |  "safeId": "XE00001234567890",
             |  "nino": "AA123456A",
             |  "mtdbsa": "123456789012345",
+            |  "yearOfMigration": "2023",
             |  "propertyIncome": false,
             |  "businessData": [{
             |    "incomeSourceId": "XAIS12345678910",
@@ -51,7 +52,6 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
             |    },
             |    "firstAccountingPeriodStartDate": "2018-04-06",
             |    "firstAccountingPeriodEndDate":   "2018-12-12",
-            |    "yearOfMigration": "2023",
             |    "latencyDetails":  {
             |      "taxYear1": "2018",
             |      "taxYear2": "2019",
@@ -110,6 +110,7 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
             |  "nino": "AA123456A",
             |  "mtdbsa": "123456789012345",
             |  "propertyIncome": false,
+            |  "yearOfMigration": "2023",
             |  "propertyData": [{
             |    "incomeSourceType": "foreign-property",
             |    "incomeSourceId": "X0IS123456789012",

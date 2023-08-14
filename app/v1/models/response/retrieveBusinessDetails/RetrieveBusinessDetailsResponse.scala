@@ -49,7 +49,7 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
     yearOfMigration
   ).forall(_.isEmpty)
 
-  def reformatLatencyDetails: RetrieveBusinessDetailsResponse = {
+  def reformatLatencyDetailsTaxYears: RetrieveBusinessDetailsResponse = {
     val updatedLatencyDetails = latencyDetails.map(details => details.copy(
       taxYear1 = TaxYear.fromDownstream(details.taxYear1).asMtd,
       taxYear2 = TaxYear.fromDownstream(details.taxYear2).asMtd
