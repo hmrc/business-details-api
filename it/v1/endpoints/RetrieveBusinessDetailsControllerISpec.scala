@@ -92,7 +92,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
       s"""
          |      {
          |        "code": "$code",
-         |        "reason": "des message"
+         |        "reason": "message"
          |      }
     """.stripMargin
 
@@ -109,9 +109,11 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
     "return a 200 status code" when {
       "any valid request is made and single business returned" in new RetrieveBusinessDetailsControllerTest {
 
-        val desJson: JsValue = Json.parse(
+        val downstreamJson: JsValue = Json.parse(
           """
             |{
+            |"processingDate": "2023-07-05T09:16:58.655Z",
+            |"taxPayerDisplayResponse": {
             |  "safeId": "XAIS123456789012",
             |  "nino": "AA123456A",
             |  "mtdbsa": "123456789012345",
@@ -152,6 +154,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |      "latencyIndicator2": "Q"
             |   }
             |  }]
+            |  }
             |}
             |""".stripMargin
         )
@@ -160,7 +163,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desJson)
+          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, downstreamJson)
         }
 
         val response: WSResponse = await(request().get())
@@ -171,9 +174,11 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
 
       "any valid request is made multiple business are returned" in new RetrieveBusinessDetailsControllerTest {
 
-        val desJson: JsValue = Json.parse(
+        val downstreamJson: JsValue = Json.parse(
           """
             |{
+            |"processingDate": "2023-07-05T09:16:58.655Z",
+            |"taxPayerDisplayResponse": {
             |  "safeId": "XE00001234567890",
             |  "nino": "AA123456A",
             |  "mtdbsa": "123456789012345",
@@ -258,6 +263,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |    "paperLess": true,
             |    "incomeSourceStartDate": "2019-07-14"
             |  }]
+            |  }
             |}
             |""".stripMargin
         )
@@ -266,7 +272,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desJson)
+          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, downstreamJson)
         }
 
         val response: WSResponse = await(request().get())
@@ -301,15 +307,15 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         )
         input.foreach(args => (validationErrorTest _).tupled(args))
       }
-      "des service error" when {
-        def serviceErrorTest(desStatus: Int, desCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"des returns an $desCode error and status $desStatus" in new RetrieveBusinessDetailsControllerTest {
+      "downstream service error" when {
+        def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"des returns an $downstreamCode error and status $downstreamStatus" in new RetrieveBusinessDetailsControllerTest {
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DesStub.onError(DesStub.GET, desUri, desStatus, errorBody(desCode))
+              DesStub.onError(DesStub.GET, desUri, downstreamStatus, errorBody(downstreamCode))
             }
 
             val response: WSResponse = await(request().get())

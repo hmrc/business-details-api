@@ -20,8 +20,8 @@ import play.api.Configuration
 
 case class FeatureSwitches(featureSwitchConfig: Configuration) {
 
-  val isR10AdditionalFieldsEnabled: Boolean = isEnabled("r10-fields.enabled")
-  val isR10IFSEnabled: Boolean              = isEnabled("r10-IFS.enabled")
+  val isRetrieveAdditionalFieldsEnabled: Boolean = isEnabled("r10-fields.enabled")
+  val isIfsEnabled: Boolean              = isEnabled("r10-IFS.enabled")
 
   private def isEnabled(key: String): Boolean = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)
 }

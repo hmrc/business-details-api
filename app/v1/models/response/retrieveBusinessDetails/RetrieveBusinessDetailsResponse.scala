@@ -42,12 +42,15 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            latencyDetails: Option[LatencyDetails],
                                            yearOfMigration: Option[String]) {
 
-  val isAdditionalR10FieldsMissing: Boolean = Seq(
-    firstAccountingPeriodStartDate,
-    firstAccountingPeriodEndDate,
-    latencyDetails,
-    yearOfMigration
-  ).forall(_.isEmpty)
+  def addRetrieveAdditionalFields: RetrieveBusinessDetailsResponse = {
+    val updatedResponse = this.copy(
+      firstAccountingPeriodStartDate = if (firstAccountingPeriodStartDate.isEmpty) None else firstAccountingPeriodStartDate,
+      firstAccountingPeriodEndDate = if (firstAccountingPeriodEndDate.isEmpty) None else firstAccountingPeriodEndDate,
+      latencyDetails = if (latencyDetails.isEmpty) None else latencyDetails,
+      yearOfMigration = if (yearOfMigration.isEmpty) None else yearOfMigration
+    )
+    updatedResponse
+  }
 
   def reformatLatencyDetailsTaxYears: RetrieveBusinessDetailsResponse = {
     val updatedLatencyDetails = latencyDetails.map(details => details.copy(
@@ -55,19 +58,6 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
       taxYear2 = TaxYear.fromDownstream(details.taxYear2).asMtd
     ))
     copy(latencyDetails = updatedLatencyDetails)
-  }
-
-  def addR10AdditionalFields: RetrieveBusinessDetailsResponse = {
-    if (isAdditionalR10FieldsMissing) {
-      copy(
-        firstAccountingPeriodStartDate = None,
-        firstAccountingPeriodEndDate = None,
-        latencyDetails = None,
-        yearOfMigration = None
-      )
-    } else {
-      this
-    }
   }
 
 }

@@ -39,7 +39,7 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
       ctx: RequestContext,
       ec: ExecutionContext): Future[ServiceOutcome[RetrieveBusinessDetailsResponse]] = {
 
-    val isR10IFSEnabled = FeatureSwitches()(appConfig).isR10IFSEnabled
+    val isR10IFSEnabled = FeatureSwitches()(appConfig).isIfsEnabled
     implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(isR10IFSEnabled)
 
     val result = for {
@@ -47,18 +47,18 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
         .leftMap(mapDownstreamErrors(downstreamErrorMap))
       mtdResponseWrapper <- EitherT
         .fromEither[Future](filterId(downstreamResponseWrapper, request.businessId))
-        .flatMap(response => EitherT.fromEither[Future](r10AdditionalFieldsResponseMap(response)))
+        .flatMap(response => EitherT.fromEither[Future](retrieveAdditionalFieldsResponseMap(response)))
     } yield mtdResponseWrapper
 
     result.value
   }
 
-  def r10AdditionalFieldsResponseMap(
+  def retrieveAdditionalFieldsResponseMap(
       responseWrapper: ResponseWrapper[RetrieveBusinessDetailsResponse]): ServiceOutcome[RetrieveBusinessDetailsResponse] = {
     val response = responseWrapper.responseData
 
-    if (FeatureSwitches()(appConfig).isR10AdditionalFieldsEnabled) {
-      Right(responseWrapper.copy(responseData = response.addR10AdditionalFields.reformatLatencyDetailsTaxYears))
+    if (FeatureSwitches()(appConfig).isRetrieveAdditionalFieldsEnabled) {
+      Right(responseWrapper.copy(responseData = response.addRetrieveAdditionalFields.reformatLatencyDetailsTaxYears))
     } else {
       Right(responseWrapper.copy(responseData = response))
     }
