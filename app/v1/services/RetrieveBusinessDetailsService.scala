@@ -22,9 +22,12 @@ import api.models.outcomes.ResponseWrapper
 import api.services.{BaseService, ServiceOutcome}
 import cats.data.EitherT
 import config.{AppConfig, FeatureSwitches}
+import play.api.libs.json.Reads
 import v1.connectors.RetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
 import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponse
+import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse
+import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse.getReads
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,6 +38,9 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
   def retrieveBusinessDetailsService(request: RetrieveBusinessDetailsRequest)(implicit
       ctx: RequestContext,
       ec: ExecutionContext): Future[ServiceOutcome[RetrieveBusinessDetailsResponse]] = {
+
+    val isR10IFSEnabled = FeatureSwitches()(appConfig).isR10IFSEnabled
+    implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(isR10IFSEnabled)
 
     val result = for {
       downstreamResponseWrapper <- EitherT(connector.retrieveBusinessDetails(request))

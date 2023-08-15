@@ -73,7 +73,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     Some("2023")
   )
 
-  private val desSingleResponseBody = RetrieveBusinessDetailsDownstreamResponse(
+  private val downstreamSingleResponseBody = RetrieveBusinessDetailsDownstreamResponse(
     Seq(
       BusinessDetails(
         "XAIS12345678910",
@@ -95,7 +95,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         Some("GB")
       )))
 
-  private val desMultiResponseBody = RetrieveBusinessDetailsDownstreamResponse(
+  private val downstreamMultiResponseBody = RetrieveBusinessDetailsDownstreamResponse(
     Seq(
       BusinessDetails(
         "XAIS12345678910",
@@ -151,17 +151,17 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
 
   "service" when {
     "a connector call is successful" should {
-      "return a mapped result from a single des response" in new Test {
+      "return a mapped result from a single DES response" in new Test {
         MockRetrieveBusinessDetailsConnector
           .retrieveBusinessDetails(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, desSingleResponseBody))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamSingleResponseBody))))
 
         await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
       }
-      "return a mapped result from multiple des responses" in new Test {
+      "return a mapped result from multiple DES responses" in new Test {
         MockRetrieveBusinessDetailsConnector
           .retrieveBusinessDetails(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, desMultiResponseBody))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamMultiResponseBody))))
 
         await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
       }
@@ -170,7 +170,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
       "return not found error for no matching id" in new Test {
         MockRetrieveBusinessDetailsConnector
           .retrieveBusinessDetails(badRequestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, desMultiResponseBody))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamMultiResponseBody))))
 
         await(service.retrieveBusinessDetailsService(badRequestData)) shouldBe Left(ErrorWrapper(correlationId, NoBusinessFoundError))
       }
