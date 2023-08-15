@@ -131,10 +131,24 @@ case class BusinessDetails(businessId: String,
 
 object BusinessDetails {
 
-  private val cashOrAccrualsReads: Reads[Option[AccountingType]] = (JsPath \ "cashOrAccruals").readNullable[Boolean].map {
-    case Some(false) => Some(AccountingType.CASH)
-    case Some(true)  => Some(AccountingType.ACCRUALS)
-    case None        => None
+  // TODO : dependency inject appConfig and get the feature switch
+  // var r10IFSEnabled: Boolean =  FeatureSwitches()(appConfig).r10IFSEnabled
+  var r10IFSEnabled: Boolean = true
+
+  private def cashOrAccrualsReads(field: String): Reads[Option[AccountingType]] = {
+    if (r10IFSEnabled || field == "cashOrAccrualsFlag") {
+      (JsPath \ field).readNullable[Boolean].map {
+        case Some(true)  => Some(AccountingType.ACCRUALS)
+        case Some(false) => Some(AccountingType.CASH)
+        case None        => None
+      }
+    } else {
+      (JsPath \ field).readNullable[String].map {
+        case Some("cash")     => Some(AccountingType.CASH)
+        case Some("accruals") => Some(AccountingType.ACCRUALS)
+        case _                => None
+      }
+    }
   }
 
   private val accountingPeriodReads: Reads[Seq[AccountingPeriod]] = (
@@ -153,7 +167,7 @@ object BusinessDetails {
       (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
       (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
       (JsPath \ "yearOfMigration").readNullable[String] and
-      cashOrAccrualsReads and
+      cashOrAccrualsReads("cashOrAccruals") and
       (JsPath \ "tradingStartDate").readNullable[String] and
       (JsPath \ "cessationDate").readNullable[String] and
       (JsPath \ "businessAddressDetails" \ "addressLine1").readNullable[String] and
@@ -166,6 +180,14 @@ object BusinessDetails {
 
   val readsSeqBusinessData: Reads[Seq[BusinessDetails]] = Reads.traversableReads[Seq, BusinessDetails](implicitly, readsBusinessData)
 
+  private val cashOrAccrualsReadsForPropertyData = {
+    if (r10IFSEnabled) {
+      cashOrAccrualsReads("cashOrAccruals")
+    } else {
+      cashOrAccrualsReads("cashOrAccrualsFlag")
+    }
+  }
+
   val readsPropertyData: Reads[BusinessDetails] = (
     (JsPath \ "incomeSourceId").read[String] and
       (JsPath \ "incomeSourceType").readNullable[TypeOfBusiness].map(_.getOrElse(TypeOfBusiness.`property-unspecified`)) and
@@ -175,7 +197,7 @@ object BusinessDetails {
       (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
       (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
       (JsPath \ "yearOfMigration").readNullable[String] and
-      cashOrAccrualsReads and
+      cashOrAccrualsReadsForPropertyData and
       (JsPath \ "tradingStartDate").readNullable[String] and
       (JsPath \ "cessationDate").readNullable[String] and
       Reads.pure(None) and
