@@ -21,11 +21,11 @@ import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundErro
 import api.services.{BaseService, ServiceOutcome}
 import cats.data.EitherT
 import config.{AppConfig, FeatureSwitches}
-
 import javax.inject.{Inject, Singleton}
 import v1.connectors.RetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
 import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponse
+import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse.reads
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,6 +37,8 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
       ec: ExecutionContext): Future[ServiceOutcome[RetrieveBusinessDetailsResponse]] = {
 
     val r10AdditionalFieldsEnabled = FeatureSwitches()(appConfig).r10AdditionalFieldsEnabled
+    val isR10IFSEnabled            = FeatureSwitches()(appConfig).r10IFSEnabled
+    implicit val responseReads     = reads(isR10IFSEnabled)
 
     val result = for {
       downstreamResponseWrapper <- EitherT(connector.retrieveBusinessDetails(request))

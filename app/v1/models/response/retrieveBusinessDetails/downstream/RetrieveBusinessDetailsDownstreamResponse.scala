@@ -17,16 +17,17 @@
 package v1.models.response.retrieveBusinessDetails.downstream
 
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
+import v1.models.response.retrieveBusinessDetails.downstream.BusinessDetails.{readsSeqBusinessData, readsSeqPropertyData}
 
 case class RetrieveBusinessDetailsDownstreamResponse(businessDetails: Seq[BusinessDetails])
 
 object RetrieveBusinessDetailsDownstreamResponse {
 
-  implicit val reads: Reads[RetrieveBusinessDetailsDownstreamResponse] = {
+  val reads: Boolean => Reads[RetrieveBusinessDetailsDownstreamResponse] = { implicit isR10IFSEnabled: Boolean =>
     val businessDataReads: Reads[Seq[BusinessDetails]] =
-      (JsPath \ "businessData").readNullable[Seq[BusinessDetails]](BusinessDetails.readsSeqBusinessData).map(_.getOrElse(Nil))
+      (JsPath \ "businessData").readNullable[Seq[BusinessDetails]](readsSeqBusinessData(isR10IFSEnabled)).map(_.getOrElse(Nil))
     val propertyDataReads: Reads[Seq[BusinessDetails]] =
-      (JsPath \ "propertyData").readNullable[Seq[BusinessDetails]](BusinessDetails.readsSeqPropertyData).map(_.getOrElse(Nil))
+      (JsPath \ "propertyData").readNullable[Seq[BusinessDetails]](readsSeqPropertyData(isR10IFSEnabled)).map(_.getOrElse(Nil))
 
     for {
       businessData <- businessDataReads

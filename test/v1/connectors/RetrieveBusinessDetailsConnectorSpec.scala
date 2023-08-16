@@ -19,7 +19,9 @@ package v1.connectors
 import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{Nino, TypeOfBusiness}
 import api.models.outcomes.ResponseWrapper
+import play.api.libs.json.Reads
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
+import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse.reads
 import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
@@ -32,7 +34,8 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
 
   "retrieveBusinessDetailsConnector" must {
     "send a request and return the expected response" in new DesTest with Test {
-      val outcome: Right[Nothing, ResponseWrapper[Seq[RetrieveBusinessDetailsResponse]]] = Right(ResponseWrapper(correlationId, Seq(response)))
+      val outcome: Right[Nothing, ResponseWrapper[Seq[RetrieveBusinessDetailsResponse]]]     = Right(ResponseWrapper(correlationId, Seq(response)))
+      protected implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = reads(false)
 
       willGet(
         url = s"$baseUrl/registration/business-details/nino/${request.nino.nino}"
@@ -43,7 +46,8 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
     }
 
     "send a request and return the expected response when r10-IFS feature switch is enabled" in new IfsTest with Test {
-      val outcome: Right[Nothing, ResponseWrapper[Seq[RetrieveBusinessDetailsResponse]]] = Right(ResponseWrapper(correlationId, Seq(response)))
+      val outcome: Right[Nothing, ResponseWrapper[Seq[RetrieveBusinessDetailsResponse]]]     = Right(ResponseWrapper(correlationId, Seq(response)))
+      protected implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = reads(false)
 
       willGet(
         url = s"$baseUrl/registration/business-details/nino/${request.nino.nino}"

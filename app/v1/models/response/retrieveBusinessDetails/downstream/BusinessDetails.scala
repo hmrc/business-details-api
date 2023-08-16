@@ -131,11 +131,7 @@ case class BusinessDetails(businessId: String,
 
 object BusinessDetails {
 
-  // TODO : dependency inject appConfig and get the feature switch
-  // var r10IFSEnabled: Boolean =  FeatureSwitches()(appConfig).r10IFSEnabled
-  var r10IFSEnabled: Boolean = true
-
-  private def cashOrAccrualsReads(field: String): Reads[Option[AccountingType]] = {
+  private def cashOrAccrualsReads(field: String)(implicit r10IFSEnabled: Boolean): Reads[Option[AccountingType]] = {
     if (r10IFSEnabled || field == "cashOrAccrualsFlag") {
       (JsPath \ field).readNullable[Boolean].map {
         case Some(true)  => Some(AccountingType.ACCRUALS)
@@ -158,29 +154,33 @@ object BusinessDetails {
 
   implicit val writes: OWrites[BusinessDetails] = Json.writes[BusinessDetails]
 
-  val readsBusinessData: Reads[BusinessDetails] = (
-    (JsPath \ "incomeSourceId").read[String] and
-      Reads.pure(TypeOfBusiness.`self-employment`) and
-      (JsPath \ "tradingName").readNullable[String] and
-      accountingPeriodReads and
-      (JsPath \ "firstAccountingPeriodStartDate").readNullable[String] and
-      (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
-      (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
-      (JsPath \ "yearOfMigration").readNullable[String] and
-      cashOrAccrualsReads("cashOrAccruals") and
-      (JsPath \ "tradingStartDate").readNullable[String] and
-      (JsPath \ "cessationDate").readNullable[String] and
-      (JsPath \ "businessAddressDetails" \ "addressLine1").readNullable[String] and
-      (JsPath \ "businessAddressDetails" \ "addressLine2").readNullable[String] and
-      (JsPath \ "businessAddressDetails" \ "addressLine3").readNullable[String] and
-      (JsPath \ "businessAddressDetails" \ "addressLine4").readNullable[String] and
-      (JsPath \ "businessAddressDetails" \ "postalCode").readNullable[String] and
-      (JsPath \ "businessAddressDetails" \ "countryCode").readNullable[String]
-  )(BusinessDetails.apply _)
+  val readsBusinessData: Boolean => Reads[BusinessDetails] = { implicit r10IFSEnabled: Boolean =>
+    (
+      (JsPath \ "incomeSourceId").read[String] and
+        Reads.pure(TypeOfBusiness.`self-employment`) and
+        (JsPath \ "tradingName").readNullable[String] and
+        accountingPeriodReads and
+        (JsPath \ "firstAccountingPeriodStartDate").readNullable[String] and
+        (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
+        (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
+        (JsPath \ "yearOfMigration").readNullable[String] and
+        cashOrAccrualsReads("cashOrAccruals") and
+        (JsPath \ "tradingStartDate").readNullable[String] and
+        (JsPath \ "cessationDate").readNullable[String] and
+        (JsPath \ "businessAddressDetails" \ "addressLine1").readNullable[String] and
+        (JsPath \ "businessAddressDetails" \ "addressLine2").readNullable[String] and
+        (JsPath \ "businessAddressDetails" \ "addressLine3").readNullable[String] and
+        (JsPath \ "businessAddressDetails" \ "addressLine4").readNullable[String] and
+        (JsPath \ "businessAddressDetails" \ "postalCode").readNullable[String] and
+        (JsPath \ "businessAddressDetails" \ "countryCode").readNullable[String]
+    )(BusinessDetails.apply _)
+  }
 
-  val readsSeqBusinessData: Reads[Seq[BusinessDetails]] = Reads.traversableReads[Seq, BusinessDetails](implicitly, readsBusinessData)
+  val readsSeqBusinessData: Boolean => Reads[Seq[BusinessDetails]] = { implicit isR10IFSEnabled: Boolean =>
+    Reads.traversableReads[Seq, BusinessDetails](implicitly, readsBusinessData(isR10IFSEnabled))
+  }
 
-  private val cashOrAccrualsReadsForPropertyData = {
+  private def cashOrAccrualsReadsForPropertyData(implicit r10IFSEnabled: Boolean) = {
     if (r10IFSEnabled) {
       cashOrAccrualsReads("cashOrAccruals")
     } else {
@@ -188,26 +188,30 @@ object BusinessDetails {
     }
   }
 
-  val readsPropertyData: Reads[BusinessDetails] = (
-    (JsPath \ "incomeSourceId").read[String] and
-      (JsPath \ "incomeSourceType").readNullable[TypeOfBusiness].map(_.getOrElse(TypeOfBusiness.`property-unspecified`)) and
-      Reads.pure(None) and
-      accountingPeriodReads and
-      (JsPath \ "firstAccountingPeriodStartDate").readNullable[String] and
-      (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
-      (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
-      (JsPath \ "yearOfMigration").readNullable[String] and
-      cashOrAccrualsReadsForPropertyData and
-      (JsPath \ "tradingStartDate").readNullable[String] and
-      (JsPath \ "cessationDate").readNullable[String] and
-      Reads.pure(None) and
-      Reads.pure(None) and
-      Reads.pure(None) and
-      Reads.pure(None) and
-      Reads.pure(None) and
-      Reads.pure(None)
-  )(BusinessDetails.apply _)
+  val readsPropertyData: Boolean => Reads[BusinessDetails] = { implicit r10IFSEnabled: Boolean =>
+    (
+      (JsPath \ "incomeSourceId").read[String] and
+        (JsPath \ "incomeSourceType").readNullable[TypeOfBusiness].map(_.getOrElse(TypeOfBusiness.`property-unspecified`)) and
+        Reads.pure(None) and
+        accountingPeriodReads and
+        (JsPath \ "firstAccountingPeriodStartDate").readNullable[String] and
+        (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
+        (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
+        (JsPath \ "yearOfMigration").readNullable[String] and
+        cashOrAccrualsReadsForPropertyData and
+        (JsPath \ "tradingStartDate").readNullable[String] and
+        (JsPath \ "cessationDate").readNullable[String] and
+        Reads.pure(None) and
+        Reads.pure(None) and
+        Reads.pure(None) and
+        Reads.pure(None) and
+        Reads.pure(None) and
+        Reads.pure(None)
+    )(BusinessDetails.apply _)
+  }
 
-  val readsSeqPropertyData: Reads[Seq[BusinessDetails]] = Reads.traversableReads[Seq, BusinessDetails](implicitly, readsPropertyData)
+  val readsSeqPropertyData: Boolean => Reads[Seq[BusinessDetails]] = { implicit isR10IFSEnabled: Boolean =>
+    Reads.traversableReads[Seq, BusinessDetails](implicitly, readsPropertyData(isR10IFSEnabled))
+  }
 
 }

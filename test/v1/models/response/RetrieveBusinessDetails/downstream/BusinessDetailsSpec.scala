@@ -89,7 +89,7 @@ class BusinessDetailsSpec extends UnitSpec {
           Some("DH14EJ"),
           Some("GB")
         )
-        businessDesJson.as[BusinessDetails](BusinessDetails.readsBusinessData) shouldBe responseBody
+        businessDesJson.as[BusinessDetails](BusinessDetails.readsBusinessData.apply(true)) shouldBe responseBody
       }
     }
     "read from property json" when {
@@ -147,7 +147,7 @@ class BusinessDetailsSpec extends UnitSpec {
           None
         )
 
-        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe responseBody
       }
 
       "A partial json is supplied" in {
@@ -201,7 +201,7 @@ class BusinessDetailsSpec extends UnitSpec {
           None
         )
 
-        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe responseBody
       }
       "A the minimum json is supplied" in {
 
@@ -235,7 +235,7 @@ class BusinessDetailsSpec extends UnitSpec {
           None
         )
 
-        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe responseBody
       }
     }
   }

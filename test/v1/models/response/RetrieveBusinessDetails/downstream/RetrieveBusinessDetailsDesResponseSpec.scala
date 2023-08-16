@@ -18,17 +18,23 @@ package v1.models.response.RetrieveBusinessDetails.downstream
 
 import api.models.domain.TypeOfBusiness
 import api.models.domain.accountingType.AccountingType
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsValue, Json, Reads}
 import support.UnitSpec
-import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
+import v1.models.response.retrieveBusinessDetails.downstream.{
+  BusinessDetails,
+  LatencyDetails,
+  LatencyIndicator,
+  RetrieveBusinessDetailsDownstreamResponse
+}
 import v1.models.response.retrieveBusinessDetails.AccountingPeriod
+import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse.reads
 
 class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
 
   "reads" should {
     "read business data from json" when {
       "A full json is supplied" in {
-
+        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = reads(true)
         val desJson: JsValue = Json.parse(
           """
             |{
@@ -102,6 +108,7 @@ class RetrieveBusinessDetailsDesResponseSpec extends UnitSpec {
     }
     "read property data from json" when {
       "A full json is supplied" in {
+        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = reads(true)
 
         val desJson: JsValue = Json.parse(
           """
