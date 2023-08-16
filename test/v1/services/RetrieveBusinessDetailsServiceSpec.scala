@@ -142,7 +142,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
 
     MockAppConfig.featureSwitches
-      .returns(Configuration("r10-fields.enabled" -> true))
+      .returns(Configuration("retrieveAdditionalFields.enabled" -> true))
       .anyNumberOfTimes()
 
     val service = new RetrieveBusinessDetailsService(mockRetrieveBusinessDetailsConnector, mockAppConfig)

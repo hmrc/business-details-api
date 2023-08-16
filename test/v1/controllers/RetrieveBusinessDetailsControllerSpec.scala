@@ -176,7 +176,7 @@ class RetrieveBusinessDetailsControllerSpec
     )
 
     MockAppConfig.featureSwitches
-      .returns(Configuration("r10-fields.enabled" -> true))
+      .returns(Configuration("retrieveAdditionalFields.enabled" -> true))
       .anyNumberOfTimes()
 
     protected def callController(): Future[Result] = controller.handleRequest(nino, businessId)(fakeGetRequest)

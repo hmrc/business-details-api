@@ -44,7 +44,7 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
       result shouldBe outcome
     }
 
-    "send a request and return the expected response when r10-IFS feature switch is enabled" in new IfsTest with Test {
+    "send a request and return the expected response when ifs feature switch is enabled" in new IfsTest with Test {
       val outcome: Right[Nothing, ResponseWrapper[Seq[RetrieveBusinessDetailsResponse]]] = Right(ResponseWrapper(correlationId, Seq(response)))
 
       willGet(
