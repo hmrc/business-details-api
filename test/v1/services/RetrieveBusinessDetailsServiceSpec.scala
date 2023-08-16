@@ -20,28 +20,14 @@ import api.controllers.EndpointLogContext
 import api.mocks.MockAppConfig
 import api.models.domain.accountingType.AccountingType
 import api.models.domain.{Nino, TypeOfBusiness}
-import api.models.errors.{
-  DownstreamErrorCode,
-  DownstreamErrors,
-  ErrorWrapper,
-  InternalError,
-  MtdError,
-  NinoFormatError,
-  NoBusinessFoundError,
-  NotFoundError
-}
+import api.models.errors.{DownstreamErrorCode, DownstreamErrors, ErrorWrapper, InternalError, MtdError, NinoFormatError, NoBusinessFoundError, NotFoundError}
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import play.api.Configuration
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.connectors.MockRetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
-import v1.models.response.retrieveBusinessDetails.downstream.{
-  BusinessDetails,
-  LatencyDetails,
-  LatencyIndicator,
-  RetrieveBusinessDetailsDownstreamResponse
-}
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
@@ -151,45 +137,16 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
 
   }
 
-  trait DesTest extends MockRetrieveBusinessDetailsConnector with MockAppConfig {
-    implicit val hc: HeaderCarrier              = HeaderCarrier()
-    implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
-
-    MockAppConfig.featureSwitches
-      .returns(Configuration("r10-IFS.enabled" -> false))
-      .anyNumberOfTimes()
-
-    val service = new RetrieveBusinessDetailsService(
-      connector = mockRetrieveBusinessDetailsConnector
-    )
-
-  }
-
   "service" when {
     "a connector call is successful" should {
-      "return a mapped result from a single ifs response" in new Test {
+      "return a mapped result from a single des response" in new Test {
         MockRetrieveBusinessDetailsConnector
           .retrieveBusinessDetails(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, desSingleResponseBody))))
 
         await(service.retrieveBusinessDetailsService(requestData, mockAppConfig)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
       }
-      "return a mapped result from multiple ifs responses" in new Test {
-        MockRetrieveBusinessDetailsConnector
-          .retrieveBusinessDetails(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, desMultiResponseBody))))
-
-        await(service.retrieveBusinessDetailsService(requestData, mockAppConfig)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
-      }
-
-      "return a mapped result from a single des response" in new DesTest {
-        MockRetrieveBusinessDetailsConnector
-          .retrieveBusinessDetails(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, desSingleResponseBody))))
-
-        await(service.retrieveBusinessDetailsService(requestData, mockAppConfig)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
-      }
-      "return a mapped result from multiple des responses" in new DesTest {
+      "return a mapped result from multiple des responses" in new Test {
         MockRetrieveBusinessDetailsConnector
           .retrieveBusinessDetails(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, desMultiResponseBody))))
