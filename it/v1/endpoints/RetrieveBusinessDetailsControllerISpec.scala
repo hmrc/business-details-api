@@ -103,7 +103,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
     trait RetrieveBusinessDetailsControllerTest extends Test {
       def uri: String = s"/$nino/$businessId"
 
-      def desUri: String = s"/registration/business-details/nino/$nino"
+      def downstreamUri: String = s"/registration/business-details/nino/$nino"
     }
 
     "return a 200 status code" when {
@@ -163,7 +163,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Status.OK, downstreamJson)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Status.OK, downstreamJson)
         }
 
         val response: WSResponse = await(request().get())
@@ -272,7 +272,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Status.OK, downstreamJson)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Status.OK, downstreamJson)
         }
 
         val response: WSResponse = await(request().get())
@@ -315,7 +315,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DownstreamStub.onError(DownstreamStub.GET, desUri, downstreamStatus, errorBody(downstreamCode))
+              DownstreamStub.onError(DownstreamStub.GET, downstreamUri, downstreamStatus, errorBody(downstreamCode))
             }
 
             val response: WSResponse = await(request().get())
