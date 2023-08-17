@@ -46,10 +46,18 @@ trait MockAppConfig extends MockFactory {
     def ifsEnvironmentHeaders: CallHandler[Option[Seq[String]]] = (() => mockAppConfig.ifsEnvironmentHeaders).expects()
 
     // API Config
-    def featureSwitches: CallHandler[Configuration]              = (() => mockAppConfig.featureSwitches: Configuration).expects()
-    def apiGatewayContext: CallHandler[String]                   = (() => mockAppConfig.apiGatewayContext).expects()
-    def apiStatus(version: Version): CallHandler[String]         = (mockAppConfig.apiStatus: Version => String).expects(version)
-    def endpointsEnabled(version: Version): CallHandler[Boolean] = (mockAppConfig.endpointsEnabled: Version => Boolean).expects(version)
+    def featureSwitches: CallHandler[Configuration]             = (() => mockAppConfig.featureSwitches: Configuration).expects()
+    def apiGatewayContext: CallHandler[String]                  = (() => mockAppConfig.apiGatewayContext).expects()
+    def apiStatus(version: Version): CallHandler[String]        = (mockAppConfig.apiStatus: Version => String).expects(version)
+    def endpointsEnabled(version: String): CallHandler[Boolean] = (mockAppConfig.endpointsEnabled(_: String)).expects(version)
+
+    def endpointsEnabled(version: Version): CallHandler[Boolean] = (mockAppConfig.endpointsEnabled(_: Version)).expects(version)
+
+    def apiVersionReleasedInProduction(version: String): CallHandler[Boolean] =
+      (mockAppConfig.apiVersionReleasedInProduction: String => Boolean).expects(version)
+
+    def endpointReleasedInProduction(version: String, key: String): CallHandler[Boolean] =
+      (mockAppConfig.endpointReleasedInProduction: (String, String) => Boolean).expects(version, key)
 
     def confidenceLevelCheckEnabled: CallHandler[ConfidenceLevelConfig] =
       (() => mockAppConfig.confidenceLevelConfig: ConfidenceLevelConfig).expects()
