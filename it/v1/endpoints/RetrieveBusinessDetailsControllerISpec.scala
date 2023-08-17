@@ -23,8 +23,8 @@ import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
+import stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import support.IntegrationBaseSpec
-import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 
 class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
 
@@ -163,7 +163,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, downstreamJson)
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Status.OK, downstreamJson)
         }
 
         val response: WSResponse = await(request().get())
@@ -272,7 +272,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, downstreamJson)
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Status.OK, downstreamJson)
         }
 
         val response: WSResponse = await(request().get())
@@ -315,7 +315,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DesStub.onError(DesStub.GET, desUri, downstreamStatus, errorBody(downstreamCode))
+              DownstreamStub.onError(DownstreamStub.GET, desUri, downstreamStatus, errorBody(downstreamCode))
             }
 
             val response: WSResponse = await(request().get())
