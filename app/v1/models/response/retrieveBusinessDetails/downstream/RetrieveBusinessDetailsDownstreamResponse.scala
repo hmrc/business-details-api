@@ -22,10 +22,10 @@ case class RetrieveBusinessDetailsDownstreamResponse(businessDetails: Seq[Busine
 
 object RetrieveBusinessDetailsDownstreamResponse {
 
-  private def getDownstreamPath(data: String)(implicit isR10IFSEnabled: Boolean): JsPath =
-    if (isR10IFSEnabled) JsPath \ "taxPayerDisplayResponse" \ data else JsPath \ data
+  private def getDownstreamPath(data: String)(implicit isIfsEnabled: Boolean): JsPath =
+    if (isIfsEnabled) JsPath \ "taxPayerDisplayResponse" \ data else JsPath \ data
 
-  val getReads: Boolean => Reads[RetrieveBusinessDetailsDownstreamResponse] = { implicit isR10IFSEnabled: Boolean =>
+  val getReads: Boolean => Reads[RetrieveBusinessDetailsDownstreamResponse] = { implicit isIfsEnabled: Boolean =>
     val businessDataReads: Reads[Seq[BusinessDetails]] =
       getDownstreamPath("businessData").readNullable[Seq[BusinessDetails]](BusinessDetails.readsSeqBusinessData).map(_.getOrElse(Nil))
     val propertyDataReads: Reads[Seq[BusinessDetails]] =

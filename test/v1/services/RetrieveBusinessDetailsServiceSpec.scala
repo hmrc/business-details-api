@@ -183,10 +183,8 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     implicit val hc: HeaderCarrier              = HeaderCarrier()
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
 
-    protected val retrieveAdditionalFieldsEnabled: Boolean
-
     MockAppConfig.featureSwitches
-      .returns(Configuration("retrieveAdditionalFields.enabled" -> retrieveAdditionalFieldsEnabled))
+      .returns(Configuration("retrieveAdditionalFields.enabled" -> true))
       .anyNumberOfTimes()
 
     val service = new RetrieveBusinessDetailsService(mockRetrieveBusinessDetailsConnector, mockAppConfig)
@@ -196,8 +194,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
   "service" when {
     "a connector call is successful" should {
       "return a mapped result from a single downstream response" in new Test {
-        val retrieveAdditionalFieldsEnabled = true
-
         MockRetrieveBusinessDetailsConnector
           .retrieveBusinessDetails(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamSingleResponseBody))))
@@ -205,43 +201,31 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
       }
       "return a mapped result from multiple downstream responses" in new Test {
-        val retrieveAdditionalFieldsEnabled = true
-
         MockRetrieveBusinessDetailsConnector
           .retrieveBusinessDetails(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamMultiResponseBody))))
 
         await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
       }
+      "return a mapped result when additional fields are not present" in new Test {
+        MockRetrieveBusinessDetailsConnector
+          .retrieveBusinessDetails(requestData)
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamSingleWithoutAdditionalFieldsResponseBody))))
+
+        await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBodyWithoutAdditionalFields))
+      }
     }
     "a connector call is unsuccessful" should {
       "return not found error for no matching id" in new Test {
-        val retrieveAdditionalFieldsEnabled = true
-
         MockRetrieveBusinessDetailsConnector
           .retrieveBusinessDetails(badRequestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamMultiResponseBody))))
 
         await(service.retrieveBusinessDetailsService(badRequestData)) shouldBe Left(ErrorWrapper(correlationId, NoBusinessFoundError))
       }
-
-      "Response" when {
-        "retrieveAdditionalFieldsEnabled is disabled" in new Test {
-         val retrieveAdditionalFieldsEnabled = false
-
-          MockRetrieveBusinessDetailsConnector
-            .retrieveBusinessDetails(requestData)
-            .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamSingleWithoutAdditionalFieldsResponseBody))))
-
-          await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBodyWithoutAdditionalFields))
-        }
-      }
-
       "a connector call is unsuccessful" should {
         def serviceError(desErrorCode: String, error: MtdError): Unit =
           s"return ${error.code} when $desErrorCode error is returned from the service" in new Test {
-            val retrieveAdditionalFieldsEnabled = true
-
             MockRetrieveBusinessDetailsConnector
               .retrieveBusinessDetails(requestData)
               .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))

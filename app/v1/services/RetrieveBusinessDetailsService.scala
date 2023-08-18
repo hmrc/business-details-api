@@ -39,8 +39,8 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
       ctx: RequestContext,
       ec: ExecutionContext): Future[ServiceOutcome[RetrieveBusinessDetailsResponse]] = {
 
-    val isR10IFSEnabled = FeatureSwitches()(appConfig).isIfsEnabled
-    implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(isR10IFSEnabled)
+    val isIfsEnabled = FeatureSwitches()(appConfig).isIfsEnabled
+    implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(isIfsEnabled)
 
     val result = for {
       downstreamResponseWrapper <- EitherT(connector.retrieveBusinessDetails(request))
