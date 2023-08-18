@@ -162,7 +162,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockAppConfig.desEnvironment returns "des-environment"
     MockAppConfig.desEnvironmentHeaders returns Some(allowedDesHeaders)
 
-    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false, "ifs.enabled" -> false)
+    MockAppConfig.featureSwitches returns Configuration("ifs.enabled" -> false, "retrieveAdditionalFields.enabled" -> false)
 
   }
 
@@ -175,7 +175,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockAppConfig.ifsEnvironment returns "ifs-environment"
     MockAppConfig.ifsEnvironmentHeaders returns Some(allowedIfsHeaders)
 
-    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false, "ifs.enabled" -> true)
+    MockAppConfig.featureSwitches returns Configuration("ifs.enabled" -> true, "retrieveAdditionalFields.enabled" -> false)
 
   }
 

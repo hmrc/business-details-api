@@ -20,10 +20,12 @@ import play.api.Configuration
 
 case class FeatureSwitches(featureSwitchConfig: Configuration) {
 
-  val isRetrieveAdditionalFieldsEnabled: Boolean = isEnabled("retrieveAdditionalFields.enabled")
-  val isIfsEnabled: Boolean                      = isEnabled("ifs.enabled")
+  val isRetrieveAdditionalFieldsEnabled: Boolean = isEnabled("retrieveAdditionalFields")
+  val isIfsEnabled: Boolean                      = isEnabled("ifs")
+  def isEnabled(key: String): Boolean     = isConfigTrue(key + ".enabled")
 
-  private def isEnabled(key: String): Boolean = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)
+  def isReleasedInProduction(feature: String): Boolean = isConfigTrue(feature + ".released-in-production")
+  private def isConfigTrue(key: String): Boolean       = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)
 }
 
 object FeatureSwitches {
