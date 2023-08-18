@@ -27,26 +27,26 @@
     },
     "yearOfMigration": {
       "type": "string",
-      "description": '{{#if (testOnly "r10-fields")}}[Test only] {{/if}}Year of migration.',
+      "description": "{{#if (testOnly 'r10-fields')}}[Test only] {{/if}}Year of migration.",
       "pattern": "^(\\d{4})$",
       "format": "yyyy",
       "example": "2022"
     },
     "firstAccountingPeriodStartDate": {
       "type": "string",
-      "description": '{{#if (testOnly "r10-fields")}}[Test only] {{/if}}The first accounting period start date.',
+      "description": "{{#if (testOnly 'r10-fields')}}[Test only] {{/if}}The first accounting period start date.",
       "format": "yyyy-MM-DD",
       "example": "2019-09-30"
     },
     "firstAccountingPeriodEndDate": {
       "type": "string",
-      "description": '{{#if (testOnly "r10-fields")}}[Test only] {{/if}}The first accounting period end date.',
+      "description": "{{#if (testOnly 'r10-fields')}}[Test only] {{/if}}The first accounting period end date.",
       "format": "yyyy-MM-DD",
       "example": "2020-02-29"
     },
     "latencyDetails": {
       "type": "object",
-      "description": '{{#if (testOnly "r10-fields")}}[Test only] {{/if}}Income source latency details.',
+      "description": "{{#if (testOnly 'r10-fields')}}[Test only] {{/if}}Income source latency details.",
       "properties": {
         "latencyEndDate": {
           "type": "string",
