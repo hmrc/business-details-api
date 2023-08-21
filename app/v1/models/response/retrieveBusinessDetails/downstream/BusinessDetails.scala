@@ -17,10 +17,11 @@
 package v1.models.response.retrieveBusinessDetails.downstream
 
 import api.models.domain.TypeOfBusiness
-import api.models.domain.accountingType.{AccountingType, CashOrAccruals}
+import api.models.domain.accountingType.AccountingType
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
+import play.api.libs.json.Reads._
 
 trait LatencyIndicator
 
@@ -39,6 +40,8 @@ object LatencyIndicator {
   }
 
   implicit val latencyIndicatorReads: Reads[LatencyIndicator] = Reads { json =>
+    // Import the specific implicit conversion for reading a String
+    import Reads.StringReads
     json.as[String] match {
       case "A" | "a" => JsSuccess(Annual)
       case "Q" | "q" => JsSuccess(Quarterly)
@@ -130,19 +133,29 @@ case class BusinessDetails(businessId: String,
 }
 
 object BusinessDetails {
-
-  private val cashOrAccrualsReads: Reads[Option[AccountingType]] = (JsPath \ "cashOrAccrualsFlag").readNullable[Boolean].map {
-    case Some(false) => Some(AccountingType.CASH)
-    case Some(true)  => Some(AccountingType.ACCRUALS)
-    case None        => None
-  }
+  implicit val writes: OWrites[BusinessDetails] = Json.writes[BusinessDetails]
 
   private val accountingPeriodReads: Reads[Seq[AccountingPeriod]] = (
     (JsPath \ "accountingPeriodStartDate").read[String] and
       (JsPath \ "accountingPeriodEndDate").read[String]
   ).apply((start, end) => Seq(AccountingPeriod(start, end)))
 
-  implicit val writes: OWrites[BusinessDetails] = Json.writes[BusinessDetails]
+  private val cashOrAccruals: Reads[Option[AccountingType]] =
+    Reads { json =>
+      val cashOrAccrualsBool   = (json \ "cashOrAccruals").validateOpt[Boolean]
+      val cashOrAccrualsString = (json \ "cashOrAccruals").validateOpt[String]
+      val cashOrAccrualsFlag   = (json \ "cashOrAccrualsFlag").validateOpt[Boolean]
+
+      (cashOrAccrualsBool, cashOrAccrualsString, cashOrAccrualsFlag) match {
+        case (_, JsSuccess(Some("cash"), _), _)     => JsSuccess(Some(AccountingType.CASH))
+        case (_, JsSuccess(Some("accruals"), _), _) => JsSuccess(Some(AccountingType.ACCRUALS))
+        case (JsSuccess(Some(true), _), _, _)       => JsSuccess(Some(AccountingType.ACCRUALS))
+        case (JsSuccess(Some(false), _), _, _)      => JsSuccess(Some(AccountingType.CASH))
+        case (_, _, JsSuccess(Some(true), _))       => JsSuccess(Some(AccountingType.ACCRUALS))
+        case (_, _, JsSuccess(Some(false), _))      => JsSuccess(Some(AccountingType.CASH))
+        case _                                      => JsSuccess(None)
+      }
+    }
 
   val readsBusinessData: Reads[BusinessDetails] = (
     (JsPath \ "incomeSourceId").read[String] and
@@ -153,7 +166,7 @@ object BusinessDetails {
       (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
       (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
       (JsPath \ "yearOfMigration").readNullable[String] and
-      (JsPath \ "cashOrAccruals").readNullable[CashOrAccruals].map(_.map(_.toMtd)) and
+      cashOrAccruals and
       (JsPath \ "tradingStartDate").readNullable[String] and
       (JsPath \ "cessationDate").readNullable[String] and
       (JsPath \ "businessAddressDetails" \ "addressLine1").readNullable[String] and
@@ -164,28 +177,31 @@ object BusinessDetails {
       (JsPath \ "businessAddressDetails" \ "countryCode").readNullable[String]
   )(BusinessDetails.apply _)
 
-  val readsSeqBusinessData: Reads[Seq[BusinessDetails]] = Reads.traversableReads[Seq, BusinessDetails](implicitly, readsBusinessData)
+  val readsSeqBusinessData: Reads[Seq[BusinessDetails]] =
+    Reads.traversableReads[Seq, BusinessDetails](implicitly, readsBusinessData)
 
-  val readsPropertyData: Reads[BusinessDetails] = (
-    (JsPath \ "incomeSourceId").read[String] and
-      (JsPath \ "incomeSourceType").readNullable[TypeOfBusiness].map(_.getOrElse(TypeOfBusiness.`property-unspecified`)) and
-      Reads.pure(None) and
-      accountingPeriodReads and
-      (JsPath \ "firstAccountingPeriodStartDate").readNullable[String] and
-      (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
-      (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
-      (JsPath \ "yearOfMigration").readNullable[String] and
-      cashOrAccrualsReads and
-      (JsPath \ "tradingStartDate").readNullable[String] and
-      (JsPath \ "cessationDate").readNullable[String] and
-      Reads.pure(None) and
-      Reads.pure(None) and
-      Reads.pure(None) and
-      Reads.pure(None) and
-      Reads.pure(None) and
-      Reads.pure(None)
-  )(BusinessDetails.apply _)
+  val readsPropertyData: Reads[BusinessDetails] =
+    (
+      (JsPath \ "incomeSourceId").read[String] and
+        (JsPath \ "incomeSourceType").readNullable[TypeOfBusiness].map(_.getOrElse(TypeOfBusiness.`property-unspecified`)) and
+        Reads.pure(None) and
+        accountingPeriodReads and
+        (JsPath \ "firstAccountingPeriodStartDate").readNullable[String] and
+        (JsPath \ "firstAccountingPeriodEndDate").readNullable[String] and
+        (JsPath \ "latencyDetails").readNullable[LatencyDetails] and
+        (JsPath \ "yearOfMigration").readNullable[String] and
+        cashOrAccruals and
+        (JsPath \ "tradingStartDate").readNullable[String] and
+        (JsPath \ "cessationDate").readNullable[String] and
+        Reads.pure(None) and
+        Reads.pure(None) and
+        Reads.pure(None) and
+        Reads.pure(None) and
+        Reads.pure(None) and
+        Reads.pure(None)
+    )(BusinessDetails.apply _)
 
-  val readsSeqPropertyData: Reads[Seq[BusinessDetails]] = Reads.traversableReads[Seq, BusinessDetails](implicitly, readsPropertyData)
+  val readsSeqPropertyData: Reads[Seq[BusinessDetails]] =
+    Reads.traversableReads[Seq, BusinessDetails](implicitly, readsPropertyData)
 
 }
