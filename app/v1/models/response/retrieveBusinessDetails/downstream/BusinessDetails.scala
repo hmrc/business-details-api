@@ -40,7 +40,6 @@ object LatencyIndicator {
   }
 
   implicit val latencyIndicatorReads: Reads[LatencyIndicator] = Reads { json =>
-    // Import the specific implicit conversion for reading a String
     import Reads.StringReads
     json.as[String] match {
       case "A" | "a" => JsSuccess(Annual)

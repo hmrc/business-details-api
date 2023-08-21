@@ -238,6 +238,215 @@ class BusinessDetailsSpec extends UnitSpec {
         propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
       }
     }
+
+    "read accounting type from json" when {
+      "cashOrAccruals is true" in {
+        val json: JsValue = Json.parse(
+          """
+            |{
+            |  "incomeSourceId": "X0IS123456789012",
+            |  "accountingPeriodStartDate": "2019-04-06",
+            |  "accountingPeriodEndDate": "2020-04-05",
+            |  "cashOrAccruals": true
+            |}
+            |""".stripMargin
+        )
+
+        val responseBody = BusinessDetails(
+          "X0IS123456789012",
+          TypeOfBusiness.`property-unspecified`,
+          None,
+          Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+          None,
+          None,
+          None,
+          None,
+          Some(AccountingType.ACCRUALS),
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None
+        )
+
+        json.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+      }
+      "accountsOrAccruals is false" in {
+        val json: JsValue = Json.parse(
+          """
+            |{
+            |  "incomeSourceId": "X0IS123456789012",
+            |  "accountingPeriodStartDate": "2019-04-06",
+            |  "accountingPeriodEndDate": "2020-04-05",
+            |  "cashOrAccruals": false
+            |}
+            |""".stripMargin
+        )
+
+        val responseBody = BusinessDetails(
+          "X0IS123456789012",
+          TypeOfBusiness.`property-unspecified`,
+          None,
+          Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+          None,
+          None,
+          None,
+          None,
+          Some(AccountingType.CASH),
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None
+        )
+
+        json.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+      }
+      "accountsOrAccruals is 'cash'" in {
+        val json: JsValue = Json.parse(
+          """
+            |{
+            |  "incomeSourceId": "X0IS123456789012",
+            |  "accountingPeriodStartDate": "2019-04-06",
+            |  "accountingPeriodEndDate": "2020-04-05",
+            |  "cashOrAccruals": "cash"
+            |}
+            |""".stripMargin
+        )
+
+        val responseBody = BusinessDetails(
+          "X0IS123456789012",
+          TypeOfBusiness.`property-unspecified`,
+          None,
+          Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+          None,
+          None,
+          None,
+          None,
+          Some(AccountingType.CASH),
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None
+        )
+
+        json.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+      }
+      "accountsOrAccruals is 'accruals''" in {
+        val json: JsValue = Json.parse(
+          """
+            |{
+            |  "incomeSourceId": "X0IS123456789012",
+            |  "accountingPeriodStartDate": "2019-04-06",
+            |  "accountingPeriodEndDate": "2020-04-05",
+            |  "cashOrAccruals": "accruals"
+            |}
+            |""".stripMargin
+        )
+
+        val responseBody = BusinessDetails(
+          "X0IS123456789012",
+          TypeOfBusiness.`property-unspecified`,
+          None,
+          Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+          None,
+          None,
+          None,
+          None,
+          Some(AccountingType.ACCRUALS),
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None
+        )
+
+        json.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+      }
+      "cashOrAccrualsFlag is true" in {
+
+        val json: JsValue = Json.parse(
+          """
+              |{
+              |  "incomeSourceId": "X0IS123456789012",
+              |  "accountingPeriodStartDate": "2019-04-06",
+              |  "accountingPeriodEndDate": "2020-04-05",
+              |  "cashOrAccrualsFlag": true
+              |}
+              |""".stripMargin
+        )
+
+        val responseBody = BusinessDetails(
+          "X0IS123456789012",
+          TypeOfBusiness.`property-unspecified`,
+          None,
+          Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+          None,
+          None,
+          None,
+          None,
+          Some(AccountingType.ACCRUALS),
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None
+        )
+
+        json.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+      }
+
+      "accountsOrAccrualFlags is false" in {
+        val json: JsValue = Json.parse(
+          """
+              |{
+              |  "incomeSourceId": "X0IS123456789012",
+              |  "accountingPeriodStartDate": "2019-04-06",
+              |  "accountingPeriodEndDate": "2020-04-05",
+              |  "cashOrAccrualsFlag": false
+              |}
+              |""".stripMargin
+        )
+
+        val responseBody = BusinessDetails(
+          "X0IS123456789012",
+          TypeOfBusiness.`property-unspecified`,
+          None,
+          Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+          None,
+          None,
+          None,
+          None,
+          Some(AccountingType.CASH),
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None,
+          None
+        )
+
+        json.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+      }
+    }
   }
 
 }

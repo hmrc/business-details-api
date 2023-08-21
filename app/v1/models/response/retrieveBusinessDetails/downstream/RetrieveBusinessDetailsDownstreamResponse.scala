@@ -23,7 +23,8 @@ case class RetrieveBusinessDetailsDownstreamResponse(businessDetails: Seq[Busine
 object RetrieveBusinessDetailsDownstreamResponse {
 
   implicit val writes: OWrites[RetrieveBusinessDetailsDownstreamResponse] = Json.writes[RetrieveBusinessDetailsDownstreamResponse]
-  implicit val reads: Reads[RetrieveBusinessDetailsDownstreamResponse] = { //includePropertyData =>
+
+  implicit val reads: Reads[RetrieveBusinessDetailsDownstreamResponse] = {
     implicit val businessDetailsReads: Reads[Seq[BusinessDetails]] = BusinessDetails.readsSeqBusinessData
     implicit val propertyDetailsReads: Reads[Seq[BusinessDetails]] = BusinessDetails.readsSeqPropertyData
 
@@ -39,6 +40,5 @@ object RetrieveBusinessDetailsDownstreamResponse {
       RetrieveBusinessDetailsDownstreamResponse(businessData ++ propertyData)
     }
   }
-
 
 }

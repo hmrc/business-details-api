@@ -22,6 +22,7 @@ Start the service manager profile: `sm --start MTDFB_SA`
 ```
 sbt test
 sbt it:test
+sbt coverage test it:test coverageReport
 ```
 
 ## Viewing Open API Spec (OAS) docs
