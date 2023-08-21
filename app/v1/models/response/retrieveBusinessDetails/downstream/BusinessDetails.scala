@@ -52,12 +52,12 @@ object LatencyIndicator {
 }
 
 case class LatencyDetails(
-                           latencyEndDate: String,
-                           taxYear1: String,
-                           latencyIndicator1: LatencyIndicator,
-                           taxYear2: String,
-                           latencyIndicator2: LatencyIndicator
-                         )
+    latencyEndDate: String,
+    taxYear1: String,
+    latencyIndicator1: LatencyIndicator,
+    taxYear2: String,
+    latencyIndicator2: LatencyIndicator
+)
 
 object LatencyDetails {
   implicit val writes: OWrites[LatencyDetails] = Json.writes[LatencyDetails]
@@ -68,7 +68,7 @@ object LatencyDetails {
       (JsPath \ "latencyIndicator1").read[LatencyIndicator] and
       (JsPath \ "taxYear2").read[String] and
       (JsPath \ "latencyIndicator2").read[LatencyIndicator]
-    )(LatencyDetails.apply _)
+  )(LatencyDetails.apply _)
 
 }
 
@@ -133,27 +133,31 @@ case class BusinessDetails(businessId: String,
 }
 
 object BusinessDetails {
+  implicit val writes: OWrites[BusinessDetails] = Json.writes[BusinessDetails]
 
   private val accountingPeriodReads: Reads[Seq[AccountingPeriod]] = (
     (JsPath \ "accountingPeriodStartDate").read[String] and
       (JsPath \ "accountingPeriodEndDate").read[String]
-    ).apply((start, end) => Seq(AccountingPeriod(start, end)))
+  ).apply((start, end) => Seq(AccountingPeriod(start, end)))
 
   private val cashOrAccruals: Reads[Option[AccountingType]] =
     Reads { json =>
       val cashOrAccrualsBool   = (json \ "cashOrAccruals").validateOpt[Boolean]
       val cashOrAccrualsString = (json \ "cashOrAccruals").validateOpt[String]
+      val cashOrAccrualsFlag   = (json \ "cashOrAccrualsFlag").validateOpt[Boolean]
 
-      (cashOrAccrualsBool, cashOrAccrualsString) match {
-        case (_, JsSuccess(Some("cash"), _))     => JsSuccess(Some(AccountingType.CASH))
-        case (_, JsSuccess(Some("accruals"), _)) => JsSuccess(Some(AccountingType.ACCRUALS))
-        case (JsSuccess(Some(true), _), _)       => JsSuccess(Some(AccountingType.ACCRUALS))
-        case (JsSuccess(Some(false), _), _)      => JsSuccess(Some(AccountingType.CASH))
-        case _                                   => JsSuccess(None)
+      (cashOrAccrualsBool, cashOrAccrualsString, cashOrAccrualsFlag) match {
+        case (_, JsSuccess(Some("cash"), _), _)     => JsSuccess(Some(AccountingType.CASH))
+        case (_, JsSuccess(Some("accruals"), _), _) => JsSuccess(Some(AccountingType.ACCRUALS))
+        case (JsSuccess(Some(true), _), _, _)       => JsSuccess(Some(AccountingType.ACCRUALS))
+        case (JsSuccess(Some(false), _), _, _)      => JsSuccess(Some(AccountingType.CASH))
+        case (_, _, JsSuccess(Some(true), _))       => JsSuccess(Some(AccountingType.ACCRUALS))
+        case (_, _, JsSuccess(Some(false), _))      => JsSuccess(Some(AccountingType.CASH))
+        case _                                      => JsSuccess(None)
       }
     }
 
-  implicit val readsBusinessData: Reads[BusinessDetails] = (
+  val readsBusinessData: Reads[BusinessDetails] = (
     (JsPath \ "incomeSourceId").read[String] and
       Reads.pure(TypeOfBusiness.`self-employment`) and
       (JsPath \ "tradingName").readNullable[String] and
@@ -171,7 +175,7 @@ object BusinessDetails {
       (JsPath \ "businessAddressDetails" \ "addressLine4").readNullable[String] and
       (JsPath \ "businessAddressDetails" \ "postalCode").readNullable[String] and
       (JsPath \ "businessAddressDetails" \ "countryCode").readNullable[String]
-    ) (BusinessDetails.apply _)
+  )(BusinessDetails.apply _)
 
   val readsSeqBusinessData: Reads[Seq[BusinessDetails]] =
     Reads.traversableReads[Seq, BusinessDetails](implicitly, readsBusinessData)
@@ -195,11 +199,9 @@ object BusinessDetails {
         Reads.pure(None) and
         Reads.pure(None) and
         Reads.pure(None)
-      )(BusinessDetails.apply _)
+    )(BusinessDetails.apply _)
 
   val readsSeqPropertyData: Reads[Seq[BusinessDetails]] =
     Reads.traversableReads[Seq, BusinessDetails](implicitly, readsPropertyData)
-
-  implicit val writes: OWrites[BusinessDetails] = Json.writes[BusinessDetails]
 
 }
