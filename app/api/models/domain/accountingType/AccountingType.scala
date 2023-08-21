@@ -18,6 +18,7 @@ package api.models.domain.accountingType
 
 import play.api.libs.json.Format
 import utils.enums.Enums
+import utils.enums.Values.MkValues
 
 sealed trait AccountingType
 
@@ -25,6 +26,9 @@ object AccountingType {
   case object CASH     extends AccountingType
   case object ACCRUALS extends AccountingType
 
-  implicit val format: Format[AccountingType] = Enums.format[AccountingType]
+  implicit val accountingTypeValues: MkValues[AccountingType] = new MkValues[AccountingType] {
+    override val values: List[AccountingType] = List(CASH, ACCRUALS)
+  }
 
+  implicit val format: Format[AccountingType] = Enums.format[AccountingType]
 }

@@ -16,17 +16,20 @@
 
 package v1.models.response.retrieveBusinessDetails.downstream
 
-import play.api.libs.json.{JsPath, Json, OWrites, Reads}
+import play.api.libs.json.{Json, JsPath, OWrites, Reads}
 
 case class RetrieveBusinessDetailsDownstreamResponse(businessDetails: Seq[BusinessDetails])
 
 object RetrieveBusinessDetailsDownstreamResponse {
 
-  implicit val reads: Reads[RetrieveBusinessDetailsDownstreamResponse] = {
+  implicit val reads: Boolean => Reads[RetrieveBusinessDetailsDownstreamResponse] = { includePropertyData =>
+    implicit val businessDetailsReads: Reads[Seq[BusinessDetails]] = BusinessDetails.readsSeqBusinessData
+    implicit val propertyDetailsReads: Reads[Seq[BusinessDetails]] = BusinessDetails.readsSeqPropertyData
+
     val businessDataReads: Reads[Seq[BusinessDetails]] =
-      (JsPath \ "businessData").readNullable[Seq[BusinessDetails]](BusinessDetails.readsSeqBusinessData).map(_.getOrElse(Nil))
+      (JsPath \ "businessData").readNullable[Seq[BusinessDetails]](businessDetailsReads).map(_.getOrElse(Nil))
     val propertyDataReads: Reads[Seq[BusinessDetails]] =
-      (JsPath \ "propertyData").readNullable[Seq[BusinessDetails]](BusinessDetails.readsSeqPropertyData).map(_.getOrElse(Nil))
+      (JsPath \ "propertyData").readNullable[Seq[BusinessDetails]](propertyDetailsReads).map(_.getOrElse(Nil))
 
     for {
       businessData <- businessDataReads
