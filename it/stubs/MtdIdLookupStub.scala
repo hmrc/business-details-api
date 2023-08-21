@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package v1.stubs
+package stubs
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.http.Status._
+import play.api.http.Status.{BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json
 import support.WireMockMethods
 

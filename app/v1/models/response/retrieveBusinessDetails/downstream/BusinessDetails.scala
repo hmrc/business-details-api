@@ -48,13 +48,11 @@ object LatencyIndicator {
 
 }
 
-case class LatencyDetails(
-    latencyEndDate: String,
-    taxYear1: String,
-    latencyIndicator1: LatencyIndicator,
-    taxYear2: String,
-    latencyIndicator2: LatencyIndicator
-)
+case class LatencyDetails(latencyEndDate: String,
+                          taxYear1: String,
+                          latencyIndicator1: LatencyIndicator,
+                          taxYear2: String,
+                          latencyIndicator2: LatencyIndicator) {}
 
 object LatencyDetails {
   implicit val writes: OWrites[LatencyDetails] = Json.writes[LatencyDetails]
@@ -107,32 +105,12 @@ case class BusinessDetails(businessId: String,
     yearOfMigration = yearOfMigration
   )
 
-  def toMtdWithoutR10kFields: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
-    businessId = businessId,
-    typeOfBusiness = typeOfBusiness,
-    tradingName = tradingName,
-    accountingPeriods = accountingPeriods,
-    accountingType = accountingType,
-    commencementDate = commencementDate,
-    cessationDate = cessationDate,
-    businessAddressLineOne = businessAddressLineOne,
-    businessAddressLineTwo = businessAddressLineTwo,
-    businessAddressLineThree = businessAddressLineThree,
-    businessAddressLineFour = businessAddressLineFour,
-    businessAddressPostcode = businessAddressPostcode,
-    businessAddressCountryCode = businessAddressCountryCode,
-    firstAccountingPeriodStartDate = None,
-    firstAccountingPeriodEndDate = None,
-    latencyDetails = None,
-    yearOfMigration = None
-  )
-
 }
 
 object BusinessDetails {
 
-  private def cashOrAccrualsReads(field: String)(implicit r10IFSEnabled: Boolean): Reads[Option[AccountingType]] = {
-    if (r10IFSEnabled || field == "cashOrAccrualsFlag") {
+  private def cashOrAccrualsReads(field: String)(implicit isIfsEnabled: Boolean): Reads[Option[AccountingType]] = {
+    if (isIfsEnabled || field == "cashOrAccrualsFlag") {
       (JsPath \ field).readNullable[Boolean].map {
         case Some(true)  => Some(AccountingType.ACCRUALS)
         case Some(false) => Some(AccountingType.CASH)
@@ -154,7 +132,7 @@ object BusinessDetails {
 
   implicit val writes: OWrites[BusinessDetails] = Json.writes[BusinessDetails]
 
-  val readsBusinessData: Boolean => Reads[BusinessDetails] = { implicit r10IFSEnabled: Boolean =>
+  val readsBusinessData: Boolean => Reads[BusinessDetails] = { implicit isIfsEnabled: Boolean =>
     (
       (JsPath \ "incomeSourceId").read[String] and
         Reads.pure(TypeOfBusiness.`self-employment`) and
@@ -176,19 +154,19 @@ object BusinessDetails {
     )(BusinessDetails.apply _)
   }
 
-  val readsSeqBusinessData: Boolean => Reads[Seq[BusinessDetails]] = { implicit isR10IFSEnabled: Boolean =>
-    Reads.traversableReads[Seq, BusinessDetails](implicitly, readsBusinessData(isR10IFSEnabled))
+  val readsSeqBusinessData: Boolean => Reads[Seq[BusinessDetails]] = { implicit isIfsEnabled: Boolean =>
+    Reads.traversableReads[Seq, BusinessDetails](implicitly, readsBusinessData(isIfsEnabled))
   }
 
-  private def cashOrAccrualsReadsForPropertyData(implicit r10IFSEnabled: Boolean) = {
-    if (r10IFSEnabled) {
+  private def cashOrAccrualsReadsForPropertyData(implicit isIfsEnabled: Boolean) = {
+    if (isIfsEnabled) {
       cashOrAccrualsReads("cashOrAccruals")
     } else {
       cashOrAccrualsReads("cashOrAccrualsFlag")
     }
   }
 
-  val readsPropertyData: Boolean => Reads[BusinessDetails] = { implicit r10IFSEnabled: Boolean =>
+  val readsPropertyData: Boolean => Reads[BusinessDetails] = { implicit isIfsEnabled: Boolean =>
     (
       (JsPath \ "incomeSourceId").read[String] and
         (JsPath \ "incomeSourceType").readNullable[TypeOfBusiness].map(_.getOrElse(TypeOfBusiness.`property-unspecified`)) and
@@ -210,8 +188,8 @@ object BusinessDetails {
     )(BusinessDetails.apply _)
   }
 
-  val readsSeqPropertyData: Boolean => Reads[Seq[BusinessDetails]] = { implicit isR10IFSEnabled: Boolean =>
-    Reads.traversableReads[Seq, BusinessDetails](implicitly, readsPropertyData(isR10IFSEnabled))
+  val readsSeqPropertyData: Boolean => Reads[Seq[BusinessDetails]] = { implicit isIfsEnabled: Boolean =>
+    Reads.traversableReads[Seq, BusinessDetails](implicitly, readsPropertyData(isIfsEnabled))
   }
 
 }

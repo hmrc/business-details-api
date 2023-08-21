@@ -20,10 +20,10 @@ import api.connectors.DownstreamUri.{DesUri, IfsUri}
 import api.connectors.httpparsers.StandardDownstreamHttpParser.reads
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
+import play.api.libs.json.Reads
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
 import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse
-import play.api.libs.json.Reads
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +40,7 @@ class RetrieveBusinessDetailsConnector @Inject() (val http: HttpClient, val appC
 
     val downstreamUri = s"registration/business-details/nino/$nino"
 
-    if (featureSwitches.r10IFSEnabled) {
+    if (featureSwitches.isIfsEnabled) {
       get(IfsUri[RetrieveBusinessDetailsDownstreamResponse](downstreamUri))
     } else {
       get(DesUri[RetrieveBusinessDetailsDownstreamResponse](downstreamUri))

@@ -27,22 +27,20 @@ trait DownstreamResponseMappingSupport {
   self: Logging =>
 
   final def filterId(
-                      responseWrapper: ResponseWrapper[RetrieveBusinessDetailsDownstreamResponse],
-                      businessId: String,
-                      r10FieldsEnabled: Boolean
+      responseWrapper: ResponseWrapper[RetrieveBusinessDetailsDownstreamResponse],
+      businessId: String
   ): Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]] = {
     val filteredBusinesses: List[BusinessDetails] = responseWrapper.responseData.businessDetails.filter { businessDetails =>
       businessId == businessDetails.businessId
     }.toList
 
     filteredBusinesses match {
-      case business :: Nil if r10FieldsEnabled =>
-        Right(ResponseWrapper(responseWrapper.correlationId, business.toMtd))
-      case business :: Nil => Right(ResponseWrapper(responseWrapper.correlationId, business.toMtdWithoutR10kFields))
-      case Nil             => Left(ErrorWrapper(responseWrapper.correlationId, NoBusinessFoundError))
-      case _ :: _          => Left(ErrorWrapper(responseWrapper.correlationId, InternalError))
+      case business :: Nil => Right(ResponseWrapper(responseWrapper.correlationId, business.toMtd))
+      case Nil => Left(ErrorWrapper(responseWrapper.correlationId, NoBusinessFoundError))
+      case _ :: _ => Left(ErrorWrapper(responseWrapper.correlationId, InternalError))
     }
   }
+
 
   final def mapDownstreamErrors[D](errorCodeMap: PartialFunction[String, MtdError])(downstreamResponseWrapper: ResponseWrapper[DownstreamError])(
       implicit logContext: EndpointLogContext): ErrorWrapper = {

@@ -23,17 +23,25 @@ case class RetrieveBusinessDetailsDownstreamResponse(businessDetails: Seq[Busine
 
 object RetrieveBusinessDetailsDownstreamResponse {
 
-  val reads: Boolean => Reads[RetrieveBusinessDetailsDownstreamResponse] = { implicit isR10IFSEnabled: Boolean =>
+  private def getDownstreamPath(data: String)(implicit isIfsEnabled: Boolean): JsPath =
+    if (isIfsEnabled) JsPath \ "taxPayerDisplayResponse" \ data else JsPath \ data
+
+  val getReads: Boolean => Reads[RetrieveBusinessDetailsDownstreamResponse] = { implicit isIfsEnabled: Boolean =>
     val businessDataReads: Reads[Seq[BusinessDetails]] =
-      (JsPath \ "businessData").readNullable[Seq[BusinessDetails]](readsSeqBusinessData(isR10IFSEnabled)).map(_.getOrElse(Nil))
+      getDownstreamPath("businessData").readNullable[Seq[BusinessDetails]](readsSeqBusinessData(isIfsEnabled)).map(_.getOrElse(Nil))
     val propertyDataReads: Reads[Seq[BusinessDetails]] =
-      (JsPath \ "propertyData").readNullable[Seq[BusinessDetails]](readsSeqPropertyData(isR10IFSEnabled)).map(_.getOrElse(Nil))
+      getDownstreamPath("propertyData").readNullable[Seq[BusinessDetails]](readsSeqPropertyData(isIfsEnabled)).map(_.getOrElse(Nil))
+    val yearOfMigrationReads: Reads[Option[String]] =
+      getDownstreamPath("yearOfMigration").readNullable[String]
 
     for {
-      businessData <- businessDataReads
-      propertyData <- propertyDataReads
+      businessData    <- businessDataReads
+      propertyData    <- propertyDataReads
+      yearOfMigration <- yearOfMigrationReads
     } yield {
-      RetrieveBusinessDetailsDownstreamResponse(businessData ++ propertyData)
+      val businessDataWithYearOfMigration: Seq[BusinessDetails] = businessData.map(_.copy(yearOfMigration = yearOfMigration))
+      val propertyDataWithYearOfMigration: Seq[BusinessDetails] = propertyData.map(_.copy(yearOfMigration = yearOfMigration))
+      RetrieveBusinessDetailsDownstreamResponse(businessDataWithYearOfMigration ++ propertyDataWithYearOfMigration)
     }
   }
 

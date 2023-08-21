@@ -20,27 +20,29 @@ import api.models.domain.TypeOfBusiness
 import api.models.domain.accountingType.AccountingType
 import play.api.libs.json.{JsValue, Json, Reads}
 import support.UnitSpec
+
+import v1.models.response.retrieveBusinessDetails.AccountingPeriod
+import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse.getReads
 import v1.models.response.retrieveBusinessDetails.downstream.{
   BusinessDetails,
   LatencyDetails,
   LatencyIndicator,
   RetrieveBusinessDetailsDownstreamResponse
 }
-import v1.models.response.retrieveBusinessDetails.AccountingPeriod
-import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse.reads
 
 class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
 
   "reads" should {
-    "read business data from json" when {
-      "A full DES response json is supplied" in {
-        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = reads(false)
-        val desJson: JsValue = Json.parse(
+    "read the response from DES" when {
+      "only business data is supplied" in new Test {
+        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(false)
+        val downstreamJson: JsValue = Json.parse(
           """
             |{
             |  "safeId": "XE00001234567890",
             |  "nino": "AA123456A",
             |  "mtdbsa": "123456789012345",
+            |  "yearOfMigration": "2023",
             |  "propertyIncome": false,
             |  "businessData": [{
             |    "incomeSourceId": "XAIS12345678910",
@@ -57,7 +59,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             |    },
             |    "firstAccountingPeriodStartDate": "2018-04-06",
             |    "firstAccountingPeriodEndDate":   "2018-12-12",
-            |    "yearOfMigration": "2023",
             |    "latencyDetails":  {
             |      "taxYear1": "2018",
             |      "taxYear2": "2019",
@@ -103,92 +104,19 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             Some("GB")
           )))
 
-        responseBody shouldBe desJson.as[RetrieveBusinessDetailsDownstreamResponse]
+        responseBody shouldBe downstreamJson.as[RetrieveBusinessDetailsDownstreamResponse]
       }
-      "A full IFS response json is supplied" in {
-        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = reads(true)
-        val desJson: JsValue = Json.parse(
+      "only property data is supplied" in new Test {
+        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(false)
+
+        val downstreamJson: JsValue = Json.parse(
           """
             |{
             |  "safeId": "XE00001234567890",
             |  "nino": "AA123456A",
             |  "mtdbsa": "123456789012345",
             |  "propertyIncome": false,
-            |  "businessData": [{
-            |    "incomeSourceId": "XAIS12345678910",
-            |    "accountingPeriodStartDate": "2001-01-01",
-            |    "accountingPeriodEndDate": "2001-01-01",
-            |    "tradingName": "RCDTS",
-            |    "businessAddressDetails": {
-            |      "addressLine1": "100 SuttonStreet",
-            |      "addressLine2": "Wokingham",
-            |      "addressLine3": "Surrey",
-            |      "addressLine4": "London",
-            |      "postalCode": "DH14EJ",
-            |      "countryCode": "GB"
-            |    },
-            |    "firstAccountingPeriodStartDate": "2018-04-06",
-            |    "firstAccountingPeriodEndDate":   "2018-12-12",
-            |    "yearOfMigration": "2023",
-            |    "latencyDetails":  {
-            |      "taxYear1": "2018",
-            |      "taxYear2": "2019",
-            |      "latencyIndicator1": "A",
-            |      "latencyIndicator2": "Q",
-            |      "latencyEndDate": "2018-12-12"
-            |    },
-            |    "businessContactDetails": {
-            |      "phoneNumber": "01332752856",
-            |      "mobileNumber": "07782565326",
-            |      "faxNumber": "01332754256",
-            |      "emailAddress": "stephen@manncorpone.co.uk"
-            |    },
-            |    "tradingStartDate": "2001-01-01",
-            |    "cashOrAccruals": false,
-            |    "seasonal": true,
-            |    "cessationDate": "2001-01-01",
-            |    "cessationReason": "002",
-            |    "paperLess": true
-            |  }]
-            |}
-            |""".stripMargin
-        )
-
-        val responseBody: RetrieveBusinessDetailsDownstreamResponse = RetrieveBusinessDetailsDownstreamResponse(
-          Seq(BusinessDetails(
-            "XAIS12345678910",
-            TypeOfBusiness.`self-employment`,
-            Some("RCDTS"),
-            Seq(AccountingPeriod("2001-01-01", "2001-01-01")),
-            Some("2018-04-06"),
-            Some("2018-12-12"),
-            Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-            Some("2023"),
-            Some(AccountingType.CASH),
-            Some("2001-01-01"),
-            Some("2001-01-01"),
-            Some("100 SuttonStreet"),
-            Some("Wokingham"),
-            Some("Surrey"),
-            Some("London"),
-            Some("DH14EJ"),
-            Some("GB")
-          )))
-
-        responseBody shouldBe desJson.as[RetrieveBusinessDetailsDownstreamResponse]
-      }
-    }
-    "read property data from json" when {
-      "A full DES response json is supplied" in {
-        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = reads(false)
-
-        val desJson: JsValue = Json.parse(
-          """
-            |{
-            |  "safeId": "XE00001234567890",
-            |  "nino": "AA123456A",
-            |  "mtdbsa": "123456789012345",
-            |  "propertyIncome": false,
+            |  "yearOfMigration": "2023",
             |  "propertyData": [{
             |    "incomeSourceType": "foreign-property",
             |    "incomeSourceId": "X0IS123456789012",
@@ -241,18 +169,100 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             None
           )))
 
-        responseBody shouldBe desJson.as[RetrieveBusinessDetailsDownstreamResponse]
+        responseBody shouldBe downstreamJson.as[RetrieveBusinessDetailsDownstreamResponse]
       }
-      "A full IFS response json is supplied" in {
-        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = reads(true)
+    }
 
-        val desJson: JsValue = Json.parse(
+    "read the response from IFS" when {
+      "only business data is supplied" in new Test {
+        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(true)
+
+        val downstreamJson: JsValue = Json.parse(
           """
             |{
+            |"processingDate": "2023-07-05T09:16:58.655Z",
+            |"taxPayerDisplayResponse": {
+            |  "safeId": "XE00001234567890",
+            |  "nino": "AA123456A",
+            |  "mtdbsa": "123456789012345",
+            |  "yearOfMigration": "2023",
+            |  "propertyIncome": false,
+            |  "businessData": [{
+            |    "incomeSourceId": "XAIS12345678910",
+            |    "accountingPeriodStartDate": "2001-01-01",
+            |    "accountingPeriodEndDate": "2001-01-01",
+            |    "tradingName": "RCDTS",
+            |    "businessAddressDetails": {
+            |      "addressLine1": "100 SuttonStreet",
+            |      "addressLine2": "Wokingham",
+            |      "addressLine3": "Surrey",
+            |      "addressLine4": "London",
+            |      "postalCode": "DH14EJ",
+            |      "countryCode": "GB"
+            |    },
+            |    "firstAccountingPeriodStartDate": "2018-04-06",
+            |    "firstAccountingPeriodEndDate":   "2018-12-12",
+            |    "latencyDetails":  {
+            |      "taxYear1": "2018",
+            |      "taxYear2": "2019",
+            |      "latencyIndicator1": "A",
+            |      "latencyIndicator2": "Q",
+            |      "latencyEndDate": "2018-12-12"
+            |    },
+            |    "businessContactDetails": {
+            |      "phoneNumber": "01332752856",
+            |      "mobileNumber": "07782565326",
+            |      "faxNumber": "01332754256",
+            |      "emailAddress": "stephen@manncorpone.co.uk"
+            |    },
+            |    "tradingStartDate": "2001-01-01",
+            |    "cashOrAccruals": false,
+            |    "seasonal": true,
+            |    "cessationDate": "2001-01-01",
+            |    "cessationReason": "002",
+            |    "paperLess": true
+            |  }]
+            |  }
+            |}
+            |""".stripMargin
+        )
+
+        val responseBody: RetrieveBusinessDetailsDownstreamResponse = RetrieveBusinessDetailsDownstreamResponse(
+          Seq(BusinessDetails(
+            "XAIS12345678910",
+            TypeOfBusiness.`self-employment`,
+            Some("RCDTS"),
+            Seq(AccountingPeriod("2001-01-01", "2001-01-01")),
+            Some("2018-04-06"),
+            Some("2018-12-12"),
+            Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+            Some("2023"),
+            Some(AccountingType.CASH),
+            Some("2001-01-01"),
+            Some("2001-01-01"),
+            Some("100 SuttonStreet"),
+            Some("Wokingham"),
+            Some("Surrey"),
+            Some("London"),
+            Some("DH14EJ"),
+            Some("GB")
+          )))
+
+        responseBody shouldBe downstreamJson.as[RetrieveBusinessDetailsDownstreamResponse]
+      }
+      "only property data is supplied" in new Test {
+        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(true)
+
+        val downstreamJson: JsValue = Json.parse(
+          """
+            |{
+            |"processingDate": "2023-07-05T09:16:58.655Z",
+            |"taxPayerDisplayResponse": {
             |  "safeId": "XE00001234567890",
             |  "nino": "AA123456A",
             |  "mtdbsa": "123456789012345",
             |  "propertyIncome": false,
+            |  "yearOfMigration": "2023",
             |  "propertyData": [{
             |    "incomeSourceType": "foreign-property",
             |    "incomeSourceId": "X0IS123456789012",
@@ -280,6 +290,7 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             |    "paperLess": true,
             |    "incomeSourceStartDate": "2019-07-14"
             |  }]
+            |  }
             |}
             |""".stripMargin
         )
@@ -305,9 +316,15 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             None
           )))
 
-        responseBody shouldBe desJson.as[RetrieveBusinessDetailsDownstreamResponse]
+        responseBody shouldBe downstreamJson.as[RetrieveBusinessDetailsDownstreamResponse]
       }
     }
+  }
+
+  trait Test {
+    val downstreamJson: JsValue
+    val responseBody: RetrieveBusinessDetailsDownstreamResponse
+    implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse]
   }
 
 }

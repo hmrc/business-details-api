@@ -23,8 +23,8 @@ class FeatureSwitchesSpec extends UnitSpec {
 
   private val configuration = Configuration(
     "feature-switch.enabled" -> true,
-    "r10-fields.enabled"     -> false,
-    "r10-IFS.enabled"        -> false
+    "retrieveAdditionalFields.enabled"     -> false,
+    "ifs.enabled"        -> false
   )
 
   private val featureSwitches = FeatureSwitches(configuration)
@@ -36,8 +36,8 @@ class FeatureSwitchesSpec extends UnitSpec {
       }
 
       "the feature switch is set to false" in {
-        featureSwitches.featureSwitchConfig.getOptional[Boolean]("r10-fields.enabled") shouldBe Some(false)
-        featureSwitches.featureSwitchConfig.getOptional[Boolean]("r10-IFS.enabled") shouldBe Some(false)
+        featureSwitches.featureSwitchConfig.getOptional[Boolean]("retrieveAdditionalFields.enabled") shouldBe Some(false)
+        featureSwitches.featureSwitchConfig.getOptional[Boolean]("ifs.enabled") shouldBe Some(false)
       }
 
     }

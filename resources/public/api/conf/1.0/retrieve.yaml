@@ -41,8 +41,7 @@ get:
             example-response:
               description: Example Response
               value:
-                $ref: './examples/retrieveBusinessDetails/retrieve_business_details_response.json'
-
+                $ref: ./examples/retrieveBusinessDetails/retrieve_business_details_response.json
     "400":
       description: Bad request
       content:

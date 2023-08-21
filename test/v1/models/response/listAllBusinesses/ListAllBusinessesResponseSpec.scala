@@ -59,7 +59,7 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
             |            "emailAddress": "stephen@manncorpone.co.uk"
             |         },
             |         "tradingStartDate": "2001-01-01",
-            |         "cashOrAccruals": "cash",
+            |         "cashOrAccruals": false,
             |         "seasonal": true,
             |         "cessationDate": "2001-01-01",
             |         "cessationReason": "002",
@@ -86,7 +86,7 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
             |            "emailAddress": "stephen@manncorpone.co.uk"
             |         },
             |         "tradingStartDate": "2001-01-01",
-            |         "cashOrAccruals": "cash",
+            |         "cashOrAccruals": false,
             |         "seasonal": true,
             |         "cessationDate": "2001-01-01",
             |         "cessationReason": "002",
@@ -187,7 +187,7 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
             |        "emailAddress": "stephen@manncorpone.co.uk"
             |      },
             |      "tradingStartDate": "2001-01-01",
-            |      "cashOrAccruals": "cash",
+            |      "cashOrAccruals": false,
             |      "seasonal": true,
             |      "cessationDate": "2001-01-01",
             |      "cessationReason": "002",
@@ -214,7 +214,7 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
             |        "emailAddress": "stephen@manncorpone.co.uk"
             |      },
             |      "tradingStartDate": "2001-01-01",
-            |      "cashOrAccruals": "cash",
+            |      "cashOrAccruals": false,
             |      "seasonal": true,
             |      "cessationDate": "2001-01-01",
             |      "cessationReason": "002",
