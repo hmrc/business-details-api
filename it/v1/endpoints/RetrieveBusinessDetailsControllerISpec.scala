@@ -23,8 +23,8 @@ import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
+import stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import support.IntegrationBaseSpec
-import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 
 class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
 
@@ -54,6 +54,16 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         |   "businessAddressLineFour": "London",
         |   "businessAddressPostcode": "DH14EJ",
         |   "businessAddressCountryCode": "GB",
+        |   "firstAccountingPeriodStartDate": "2018-04-06",
+        |   "firstAccountingPeriodEndDate": "2018-12-12",
+        |   "latencyDetails": {
+        |     "latencyEndDate": "2018-12-12",
+        |     "taxYear1": "2017-18",
+        |     "latencyIndicator1": "A",
+        |     "taxYear2": "2018-19",
+        |     "latencyIndicator2": "Q"
+        |   },
+        |   "yearOfMigration": "2023",
         |   "links": [
         |     {
         |       "href": "/individuals/business/details/$nino/$businessId",
@@ -82,7 +92,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
       s"""
          |      {
          |        "code": "$code",
-         |        "reason": "des message"
+         |        "reason": "message"
          |      }
     """.stripMargin
 
@@ -93,18 +103,21 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
     trait RetrieveBusinessDetailsControllerTest extends Test {
       def uri: String = s"/$nino/$businessId"
 
-      def desUri: String = s"/registration/business-details/nino/$nino"
+      def downstreamUri: String = s"/registration/business-details/nino/$nino"
     }
 
     "return a 200 status code" when {
       "any valid request is made and single business returned" in new RetrieveBusinessDetailsControllerTest {
 
-        val desJson: JsValue = Json.parse(
+        val downstreamJson: JsValue = Json.parse(
           """
             |{
+            |"processingDate": "2023-07-05T09:16:58.655Z",
+            |"taxPayerDisplayResponse": {
             |  "safeId": "XAIS123456789012",
             |  "nino": "AA123456A",
             |  "mtdbsa": "123456789012345",
+            |  "yearOfMigration": "2023",
             |  "propertyIncome": false,
             |  "businessData": [{
             |    "incomeSourceId": "XAIS12345678901",
@@ -130,8 +143,18 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |    "seasonal": true,
             |    "cessationDate": "2001-01-01",
             |    "cessationReason": "002",
-            |    "paperLess": true
+            |    "paperLess": true,
+            |    "firstAccountingPeriodStartDate": "2018-04-06",
+            |    "firstAccountingPeriodEndDate": "2018-12-12",
+            |    "latencyDetails": {
+            |      "latencyEndDate": "2018-12-12",
+            |      "taxYear1": "2018",
+            |      "latencyIndicator1": "A",
+            |      "taxYear2": "2019",
+            |      "latencyIndicator2": "Q"
+            |   }
             |  }]
+            |  }
             |}
             |""".stripMargin
         )
@@ -140,7 +163,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desJson)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Status.OK, downstreamJson)
         }
 
         val response: WSResponse = await(request().get())
@@ -151,12 +174,15 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
 
       "any valid request is made multiple business are returned" in new RetrieveBusinessDetailsControllerTest {
 
-        val desJson: JsValue = Json.parse(
+        val downstreamJson: JsValue = Json.parse(
           """
             |{
+            |"processingDate": "2023-07-05T09:16:58.655Z",
+            |"taxPayerDisplayResponse": {
             |  "safeId": "XE00001234567890",
             |  "nino": "AA123456A",
             |  "mtdbsa": "123456789012345",
+            |  "yearOfMigration": "2023",
             |  "propertyIncome": false,
             |  "businessData": [{
             |    "incomeSourceId": "XAIS12345678901",
@@ -182,7 +208,17 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |    "seasonal": true,
             |    "cessationDate": "2001-01-01",
             |    "cessationReason": "002",
-            |    "paperLess": true
+            |    "paperLess": true,
+            |    "incomeSourceStartDate": "2019-07-14",
+            |    "firstAccountingPeriodStartDate": "2018-04-06",
+            |    "firstAccountingPeriodEndDate": "2018-12-12",
+            |    "latencyDetails": {
+            |      "latencyEndDate": "2018-12-12",
+            |      "taxYear1": "2018",
+            |      "latencyIndicator1": "A",
+            |      "taxYear2": "2019",
+            |      "latencyIndicator2": "Q"
+            |     }
             |  },
             |  {
             |    "incomeSourceId": "XAIS12345671111",
@@ -227,6 +263,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |    "paperLess": true,
             |    "incomeSourceStartDate": "2019-07-14"
             |  }]
+            |  }
             |}
             |""".stripMargin
         )
@@ -235,7 +272,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desJson)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Status.OK, downstreamJson)
         }
 
         val response: WSResponse = await(request().get())
@@ -270,15 +307,15 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         )
         input.foreach(args => (validationErrorTest _).tupled(args))
       }
-      "des service error" when {
-        def serviceErrorTest(desStatus: Int, desCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"des returns an $desCode error and status $desStatus" in new RetrieveBusinessDetailsControllerTest {
+      "downstream service error" when {
+        def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"des returns an $downstreamCode error and status $downstreamStatus" in new RetrieveBusinessDetailsControllerTest {
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DesStub.onError(DesStub.GET, desUri, desStatus, errorBody(desCode))
+              DownstreamStub.onError(DownstreamStub.GET, downstreamUri, downstreamStatus, errorBody(downstreamCode))
             }
 
             val response: WSResponse = await(request().get())

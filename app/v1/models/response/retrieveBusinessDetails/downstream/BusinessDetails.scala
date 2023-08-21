@@ -48,13 +48,11 @@ object LatencyIndicator {
 
 }
 
-case class LatencyDetails(
-    latencyEndDate: String,
-    taxYear1: String,
-    latencyIndicator1: LatencyIndicator,
-    taxYear2: String,
-    latencyIndicator2: LatencyIndicator
-)
+case class LatencyDetails(latencyEndDate: String,
+                          taxYear1: String,
+                          latencyIndicator1: LatencyIndicator,
+                          taxYear2: String,
+                          latencyIndicator2: LatencyIndicator) {}
 
 object LatencyDetails {
   implicit val writes: OWrites[LatencyDetails] = Json.writes[LatencyDetails]
@@ -107,30 +105,9 @@ case class BusinessDetails(businessId: String,
     yearOfMigration = yearOfMigration
   )
 
-  def toMtdWithoutR10kFields: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
-    businessId = businessId,
-    typeOfBusiness = typeOfBusiness,
-    tradingName = tradingName,
-    accountingPeriods = accountingPeriods,
-    accountingType = accountingType,
-    commencementDate = commencementDate,
-    cessationDate = cessationDate,
-    businessAddressLineOne = businessAddressLineOne,
-    businessAddressLineTwo = businessAddressLineTwo,
-    businessAddressLineThree = businessAddressLineThree,
-    businessAddressLineFour = businessAddressLineFour,
-    businessAddressPostcode = businessAddressPostcode,
-    businessAddressCountryCode = businessAddressCountryCode,
-    firstAccountingPeriodStartDate = None,
-    firstAccountingPeriodEndDate = None,
-    latencyDetails = None,
-    yearOfMigration = None
-  )
-
 }
 
 object BusinessDetails {
-
   private val cashOrAccrualsReads: Reads[Option[AccountingType]] = (JsPath \ "cashOrAccrualsFlag").readNullable[Boolean].map {
     case Some(false) => Some(AccountingType.CASH)
     case Some(true)  => Some(AccountingType.ACCRUALS)

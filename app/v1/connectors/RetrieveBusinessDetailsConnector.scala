@@ -20,6 +20,7 @@ import api.connectors.DownstreamUri.{DesUri, IfsUri}
 import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
+import play.api.libs.json.Reads
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
 import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse
@@ -32,13 +33,14 @@ class RetrieveBusinessDetailsConnector @Inject() (val http: HttpClient, val appC
   def retrieveBusinessDetails(request: RetrieveBusinessDetailsRequest)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext,
-      correlationId: String): Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]] = {
+      correlationId: String,
+      responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse]): Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]] = {
 
     import request._
 
     val downstreamUri = s"registration/business-details/nino/$nino"
 
-    if (featureSwitches.r10IFSEnabled) {
+    if (featureSwitches.isIfsEnabled) {
       get(IfsUri[RetrieveBusinessDetailsDownstreamResponse](downstreamUri))
     } else {
       get(DesUri[RetrieveBusinessDetailsDownstreamResponse](downstreamUri))
