@@ -61,7 +61,7 @@ class BusinessDetailsSpec extends UnitSpec {
             |    "emailAddress": "stephen@manncorpone.co.uk"
             |  },
             |  "tradingStartDate": "2001-01-01",
-            |  "cashOrAccruals": "cash",
+            |  "cashOrAccruals": false,
             |  "seasonal": true,
             |  "cessationDate": "2001-01-01",
             |  "cessationReason": "002",
@@ -89,7 +89,7 @@ class BusinessDetailsSpec extends UnitSpec {
           Some("DH14EJ"),
           Some("GB")
         )
-        businessDesJson.as[BusinessDetails](BusinessDetails.readsBusinessData) shouldBe responseBody
+        businessDesJson.as[BusinessDetails](BusinessDetails.readsBusinessData.apply(true)) shouldBe responseBody
       }
     }
     "read from property json" when {
@@ -113,7 +113,7 @@ class BusinessDetailsSpec extends UnitSpec {
             |    "latencyIndicator2": "Q",
             |    "latencyEndDate": "2018-12-12"
             |  },
-            |  "cashOrAccrualsFlag": true,
+            |  "cashOrAccruals": true,
             |  "numPropRented": 0,
             |  "numPropRentedUK": 0,
             |  "numPropRentedEEA": 5,
@@ -147,7 +147,7 @@ class BusinessDetailsSpec extends UnitSpec {
           None
         )
 
-        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe responseBody
       }
 
       "A partial json is supplied" in {
@@ -158,7 +158,7 @@ class BusinessDetailsSpec extends UnitSpec {
             |  "incomeSourceId": "X0IS123456789012",
             |  "accountingPeriodStartDate": "2019-04-06",
             |  "accountingPeriodEndDate": "2020-04-05",
-            |  "cashOrAccrualsFlag": false,
+            |  "cashOrAccruals": false,
             |  "numPropRented": 0,
             |  "numPropRentedUK": 0,
             |  "numPropRentedEEA": 5,
@@ -201,7 +201,7 @@ class BusinessDetailsSpec extends UnitSpec {
           None
         )
 
-        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe responseBody
       }
       "A the minimum json is supplied" in {
 
@@ -235,7 +235,7 @@ class BusinessDetailsSpec extends UnitSpec {
           None
         )
 
-        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe responseBody
       }
     }
   }

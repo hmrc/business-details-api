@@ -17,7 +17,7 @@
 package v1.connectors
 
 import api.connectors.DownstreamUri.{DesUri, IfsUri}
-import api.connectors.httpparsers.StandardDownstreamHttpParser._
+import api.connectors.httpparsers.StandardDownstreamHttpParser.reads
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
 import play.api.libs.json.Reads

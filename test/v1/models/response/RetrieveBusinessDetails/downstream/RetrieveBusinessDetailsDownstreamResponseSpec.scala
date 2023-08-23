@@ -20,6 +20,7 @@ import api.models.domain.TypeOfBusiness
 import api.models.domain.accountingType.AccountingType
 import play.api.libs.json.{JsValue, Json, Reads}
 import support.UnitSpec
+
 import v1.models.response.retrieveBusinessDetails.AccountingPeriod
 import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse.getReads
 import v1.models.response.retrieveBusinessDetails.downstream.{
@@ -35,7 +36,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
     "read the response from DES" when {
       "only business data is supplied" in new Test {
         implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(false)
-
         val downstreamJson: JsValue = Json.parse(
           """
             |{
@@ -216,7 +216,7 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             |      "emailAddress": "stephen@manncorpone.co.uk"
             |    },
             |    "tradingStartDate": "2001-01-01",
-            |    "cashOrAccruals": "cash",
+            |    "cashOrAccruals": false,
             |    "seasonal": true,
             |    "cessationDate": "2001-01-01",
             |    "cessationReason": "002",
@@ -269,7 +269,7 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             |    "accountingPeriodStartDate": "2019-04-06",
             |    "accountingPeriodEndDate": "2020-04-05",
             |    "tradingStartDate": "2017-07-24",
-            |    "cashOrAccrualsFlag": true,
+            |    "cashOrAccruals": true,
             |    "numPropRented": 0,
             |    "firstAccountingPeriodStartDate": "2018-04-06",
             |    "firstAccountingPeriodEndDate":   "2018-12-12",
@@ -325,7 +325,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
     val downstreamJson: JsValue
     val responseBody: RetrieveBusinessDetailsDownstreamResponse
     implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse]
-
   }
 
 }

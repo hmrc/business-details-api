@@ -17,6 +17,7 @@
 package v1.models.response.retrieveBusinessDetails.downstream
 
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
+import v1.models.response.retrieveBusinessDetails.downstream.BusinessDetails.{readsSeqBusinessData, readsSeqPropertyData}
 
 case class RetrieveBusinessDetailsDownstreamResponse(businessDetails: Seq[BusinessDetails])
 
@@ -27,9 +28,9 @@ object RetrieveBusinessDetailsDownstreamResponse {
 
   val getReads: Boolean => Reads[RetrieveBusinessDetailsDownstreamResponse] = { implicit isIfsEnabled: Boolean =>
     val businessDataReads: Reads[Seq[BusinessDetails]] =
-      getDownstreamPath("businessData").readNullable[Seq[BusinessDetails]](BusinessDetails.readsSeqBusinessData).map(_.getOrElse(Nil))
+      getDownstreamPath("businessData").readNullable[Seq[BusinessDetails]](readsSeqBusinessData(isIfsEnabled)).map(_.getOrElse(Nil))
     val propertyDataReads: Reads[Seq[BusinessDetails]] =
-      getDownstreamPath("propertyData").readNullable[Seq[BusinessDetails]](BusinessDetails.readsSeqPropertyData).map(_.getOrElse(Nil))
+      getDownstreamPath("propertyData").readNullable[Seq[BusinessDetails]](readsSeqPropertyData(isIfsEnabled)).map(_.getOrElse(Nil))
     val yearOfMigrationReads: Reads[Option[String]] =
       getDownstreamPath("yearOfMigration").readNullable[String]
 

@@ -115,6 +115,28 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         Some("GB")
       )))
 
+  private val downstreamWithoutAdditionalFieldsSingleResponseBody = RetrieveBusinessDetailsDownstreamResponse(
+    Seq(
+      BusinessDetails(
+        "XAIS12345678910",
+        TypeOfBusiness.`self-employment`,
+        Some("Aardvark Window Cleaning Services"),
+        Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+        Some("2018-04-06"),
+        Some("2018-12-12"),
+        Some(LatencyDetails("2018-12-12", "2017-18", LatencyIndicator.Annual, "2018-19", LatencyIndicator.Quarterly)),
+        Some("2023"),
+        Some(AccountingType.ACCRUALS),
+        Some("2016-09-24"),
+        Some("2020-03-24"),
+        Some("6 Harpic Drive"),
+        Some("Domestos Wood"),
+        Some("ToiletDucktown"),
+        Some("CIFSHIRE"),
+        Some("SW4F 3GA"),
+        Some("GB")
+      )))
+
   private val downstreamSingleWithoutAdditionalFieldsResponseBody = RetrieveBusinessDetailsDownstreamResponse(
     Seq(
       BusinessDetails(
@@ -182,9 +204,10 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
   trait Test extends MockRetrieveBusinessDetailsConnector with MockAppConfig {
     implicit val hc: HeaderCarrier              = HeaderCarrier()
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
+    val isEnabled: Boolean                      = true
 
     MockAppConfig.featureSwitches
-      .returns(Configuration("retrieveAdditionalFields.enabled" -> true))
+      .returns(Configuration("retrieveAdditionalFields.enabled" -> isEnabled))
       .anyNumberOfTimes()
 
     val service = new RetrieveBusinessDetailsService(mockRetrieveBusinessDetailsConnector, mockAppConfig)
@@ -200,6 +223,16 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
 
         await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
       }
+
+      "return a mapped result from a downstream response when retrieveAdditionalFields is disabled" in new Test {
+        override val isEnabled: Boolean = false
+        MockRetrieveBusinessDetailsConnector
+          .retrieveBusinessDetails(requestData)
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamWithoutAdditionalFieldsSingleResponseBody))))
+
+        await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
+      }
+
       "return a mapped result from multiple downstream responses" in new Test {
         MockRetrieveBusinessDetailsConnector
           .retrieveBusinessDetails(requestData)
