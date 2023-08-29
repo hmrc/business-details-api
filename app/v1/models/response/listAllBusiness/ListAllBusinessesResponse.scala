@@ -17,21 +17,24 @@
 package v1.models.response.listAllBusiness
 
 import api.hateoas.{HateoasLinks, HateoasListLinksFactory}
+import api.models.hateoas.RelType.RETRIEVE_BUSINESS_DETAILS
 import api.models.hateoas.{HateoasData, Link}
 import cats.Functor
 import config.AppConfig
-import play.api.libs.json.{JsPath, Json, OWrites, Reads, Writes}
-import api.models.hateoas.RelType.RETRIEVE_BUSINESS_DETAILS
+import play.api.libs.json._
 
 case class ListAllBusinessesResponse[I](listOfBusinesses: Seq[I])
 
 object ListAllBusinessesResponse extends HateoasLinks {
 
-  implicit def reads: Reads[ListAllBusinessesResponse[Business]] = {
+  private def getDownstreamPath(data: String)(implicit isIfsEnabled: Boolean): JsPath =
+    if (isIfsEnabled) JsPath \ "taxPayerDisplayResponse" \ data else JsPath \ data
+
+  val getReads: Boolean => Reads[ListAllBusinessesResponse[Business]] = { implicit isIfsEnabled: Boolean =>
     val businessDataReads: Reads[Seq[Business]] =
-      (JsPath \ "businessData").readNullable[Seq[Business]](Business.readsSeqBusinessData).map(_.getOrElse(Nil))
+      getDownstreamPath("businessData").readNullable[Seq[Business]](Business.readsSeqBusinessData).map(_.getOrElse(Nil))
     val propertyDataReads: Reads[Seq[Business]] =
-      (JsPath \ "propertyData").readNullable[Seq[Business]](Business.readsSeqPropertyData).map(_.getOrElse(Nil))
+      getDownstreamPath("propertyData").readNullable[Seq[Business]](Business.readsSeqPropertyData).map(_.getOrElse(Nil))
 
     for {
       businessData <- businessDataReads

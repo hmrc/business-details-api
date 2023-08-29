@@ -20,136 +20,37 @@ import api.hateoas.HateoasFactory
 import api.models.domain.TypeOfBusiness
 import api.models.hateoas.Method.GET
 import mocks.MockAppConfig
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, Reads}
 import support.UnitSpec
 import api.models.hateoas.{HateoasWrapper, Link}
+import v1.models.response.listAllBusiness.ListAllBusinessesResponse.getReads
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesHateoasData, ListAllBusinessesResponse}
+import v1.models.response.listAllBusinesses.ListAllBusinessJson._
 
 class ListAllBusinessesResponseSpec extends UnitSpec {
 
   "reads" should {
-    "output a model" when {
+    "output a DES model" when {
+      val isIfsEnabled                                                       = false
+      implicit val responseReads: Reads[ListAllBusinessesResponse[Business]] = getReads(isIfsEnabled)
+
       "passed DES json with businessData" in {
+
         val desJson = Json.parse(
-          """
-            |{
-            |   "safeId": "XE00001234567890",
-            |   "nino": "AA123456A",
-            |   "mtdbsa": "123456789012345",
-            |   "propertyIncome": false,
-            |   "businessData": [
-            |      {
-            |         "incomeSourceType": "doesn't matter",
-            |         "incomeSourceId": "123456789012345",
-            |         "accountingPeriodStartDate": "2001-01-01",
-            |         "accountingPeriodEndDate": "2001-01-01",
-            |         "tradingName": "RCDTS",
-            |         "businessAddressDetails": {
-            |            "addressLine1": "100 SuttonStreet",
-            |            "addressLine2": "Wokingham",
-            |            "addressLine3": "Surrey",
-            |            "addressLine4": "London",
-            |            "postalCode": "DH14EJ",
-            |            "countryCode": "GB"
-            |         },
-            |         "businessContactDetails": {
-            |            "phoneNumber": "01332752856",
-            |            "mobileNumber": "07782565326",
-            |            "faxNumber": "01332754256",
-            |            "emailAddress": "stephen@manncorpone.co.uk"
-            |         },
-            |         "tradingStartDate": "2001-01-01",
-            |         "cashOrAccruals": "cash",
-            |         "seasonal": true,
-            |         "cessationDate": "2001-01-01",
-            |         "cessationReason": "002",
-            |         "paperLess": true
-            |      },
-            |      {
-            |         "incomeSourceType": "doesn't matter",
-            |         "incomeSourceId": "098765432109876",
-            |         "accountingPeriodStartDate": "2001-01-01",
-            |         "accountingPeriodEndDate": "2001-01-01",
-            |         "tradingName": "RCDTS 2",
-            |         "businessAddressDetails": {
-            |            "addressLine1": "100 SuttonStreet",
-            |            "addressLine2": "Wokingham",
-            |            "addressLine3": "Surrey",
-            |            "addressLine4": "London",
-            |            "postalCode": "DH14EJ",
-            |            "countryCode": "GB"
-            |         },
-            |         "businessContactDetails": {
-            |            "phoneNumber": "01332752856",
-            |            "mobileNumber": "07782565326",
-            |            "faxNumber": "01332754256",
-            |            "emailAddress": "stephen@manncorpone.co.uk"
-            |         },
-            |         "tradingStartDate": "2001-01-01",
-            |         "cashOrAccruals": "cash",
-            |         "seasonal": true,
-            |         "cessationDate": "2001-01-01",
-            |         "cessationReason": "002",
-            |         "paperLess": true
-            |      }
-            |   ]
-            |}
-            |""".stripMargin
+          desResponseWithBusinessData.stripMargin
         )
+
         val model = ListAllBusinessesResponse(
           Seq(
             Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS")),
             Business(TypeOfBusiness.`self-employment`, "098765432109876", Some("RCDTS 2"))
           ))
+
         desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
       }
+
       "passed DES json with propertyData" in {
-        val desJson = Json.parse(
-          """
-            |{
-            |  "safeId": "XE00001234567890",
-            |  "nino": "AA123456A",
-            |  "mtdbsa": "123456789012345",
-            |  "propertyIncome": true,
-            |  "propertyData": [
-            |    {
-            |      "incomeSourceType": "uk-property",
-            |      "incomeSourceId": "123456789012345",
-            |      "accountingPeriodStartDate": "2001-01-01",
-            |      "accountingPeriodEndDate": "2001-01-01",
-            |      "tradingStartDate": "2001-01-01",
-            |      "cashOrAccrualsFlag": true,
-            |      "numPropRented": 0,
-            |      "numPropRentedUK": 0,
-            |      "numPropRentedEEA": 5,
-            |      "numPropRentedNONEEA": 1,
-            |      "emailAddress": "stephen@manncorpone.co.uk",
-            |      "cessationDate": "2001-01-01",
-            |      "cessationReason": "002",
-            |      "paperLess": true,
-            |      "incomeSourceStartDate": "2019-07-14"
-            |    },
-            |    {
-            |      "incomeSourceType": "foreign-property",
-            |      "incomeSourceId": "098765432109876",
-            |      "accountingPeriodStartDate": "2001-01-01",
-            |      "accountingPeriodEndDate": "2001-01-01",
-            |      "tradingStartDate": "2001-01-01",
-            |      "cashOrAccrualsFlag": true,
-            |      "numPropRented": 0,
-            |      "numPropRentedUK": 0,
-            |      "numPropRentedEEA": 5,
-            |      "numPropRentedNONEEA": 1,
-            |      "emailAddress": "stephen@manncorpone.co.uk",
-            |      "cessationDate": "2001-01-01",
-            |      "cessationReason": "002",
-            |      "paperLess": true,
-            |      "incomeSourceStartDate": "2019-07-14"
-            |    }
-            |  ]
-            |}
-            |""".stripMargin
-        )
+        val desJson = Json.parse(desResponseWithPropertyData.stripMargin)
         val model = ListAllBusinessesResponse(
           Seq(
             Business(TypeOfBusiness.`uk-property`, "123456789012345", None),
@@ -157,109 +58,51 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
           ))
         desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
       }
+
       "passed DES json with businessData and propertyData" in {
+        val desJson = Json.parse(desResponseWithPropertyAndBusinessData.stripMargin)
+        val model = ListAllBusinessesResponse(
+          Seq(
+            Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS")),
+            Business(TypeOfBusiness.`self-employment`, "098765432109876", Some("RCDTS 2")),
+            Business(TypeOfBusiness.`uk-property`, "123456789012345", None),
+            Business(TypeOfBusiness.`foreign-property`, "098765432109876", None)
+          ))
+        desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
+      }
+    }
+
+    "output an IFS model" when {
+      val isIfsEnabled                                                       = true
+      implicit val responseReads: Reads[ListAllBusinessesResponse[Business]] = getReads(isIfsEnabled)
+
+      "passed IFS json with businessData" in {
+
         val desJson = Json.parse(
-          """
-            |{
-            |  "safeId": "XE00001234567890",
-            |  "nino": "AA123456A",
-            |  "mtdbsa": "123456789012345",
-            |  "propertyIncome": true,
-            |  "businessData": [
-            |    {
-            |      "incomeSourceType": "doesn't matter",
-            |      "incomeSourceId": "123456789012345",
-            |      "accountingPeriodStartDate": "2001-01-01",
-            |      "accountingPeriodEndDate": "2001-01-01",
-            |      "tradingName": "RCDTS",
-            |      "businessAddressDetails": {
-            |        "addressLine1": "100 SuttonStreet",
-            |        "addressLine2": "Wokingham",
-            |        "addressLine3": "Surrey",
-            |        "addressLine4": "London",
-            |        "postalCode": "DH14EJ",
-            |        "countryCode": "GB"
-            |      },
-            |      "businessContactDetails": {
-            |        "phoneNumber": "01332752856",
-            |        "mobileNumber": "07782565326",
-            |        "faxNumber": "01332754256",
-            |        "emailAddress": "stephen@manncorpone.co.uk"
-            |      },
-            |      "tradingStartDate": "2001-01-01",
-            |      "cashOrAccruals": "cash",
-            |      "seasonal": true,
-            |      "cessationDate": "2001-01-01",
-            |      "cessationReason": "002",
-            |      "paperLess": true
-            |    },
-            |    {
-            |      "incomeSourceType": "doesn't matter",
-            |      "incomeSourceId": "098765432109876",
-            |      "accountingPeriodStartDate": "2001-01-01",
-            |      "accountingPeriodEndDate": "2001-01-01",
-            |      "tradingName": "RCDTS 2",
-            |      "businessAddressDetails": {
-            |        "addressLine1": "100 SuttonStreet",
-            |        "addressLine2": "Wokingham",
-            |        "addressLine3": "Surrey",
-            |        "addressLine4": "London",
-            |        "postalCode": "DH14EJ",
-            |        "countryCode": "GB"
-            |      },
-            |      "businessContactDetails": {
-            |        "phoneNumber": "01332752856",
-            |        "mobileNumber": "07782565326",
-            |        "faxNumber": "01332754256",
-            |        "emailAddress": "stephen@manncorpone.co.uk"
-            |      },
-            |      "tradingStartDate": "2001-01-01",
-            |      "cashOrAccruals": "cash",
-            |      "seasonal": true,
-            |      "cessationDate": "2001-01-01",
-            |      "cessationReason": "002",
-            |      "paperLess": true
-            |    }
-            |  ],
-            |  "propertyData": [
-            |    {
-            |      "incomeSourceType": "uk-property",
-            |      "incomeSourceId": "123456789012345",
-            |      "accountingPeriodStartDate": "2001-01-01",
-            |      "accountingPeriodEndDate": "2001-01-01",
-            |      "tradingStartDate": "2001-01-01",
-            |      "cashOrAccrualsFlag": true,
-            |      "numPropRented": 0,
-            |      "numPropRentedUK": 0,
-            |      "numPropRentedEEA": 5,
-            |      "numPropRentedNONEEA": 1,
-            |      "emailAddress": "stephen@manncorpone.co.uk",
-            |      "cessationDate": "2001-01-01",
-            |      "cessationReason": "002",
-            |      "paperLess": true,
-            |      "incomeSourceStartDate": "2019-07-14"
-            |    },
-            |    {
-            |      "incomeSourceType": "foreign-property",
-            |      "incomeSourceId": "098765432109876",
-            |      "accountingPeriodStartDate": "2001-01-01",
-            |      "accountingPeriodEndDate": "2001-01-01",
-            |      "tradingStartDate": "2001-01-01",
-            |      "cashOrAccrualsFlag": true,
-            |      "numPropRented": 0,
-            |      "numPropRentedUK": 0,
-            |      "numPropRentedEEA": 5,
-            |      "numPropRentedNONEEA": 1,
-            |      "emailAddress": "stephen@manncorpone.co.uk",
-            |      "cessationDate": "2001-01-01",
-            |      "cessationReason": "002",
-            |      "paperLess": true,
-            |      "incomeSourceStartDate": "2019-07-14"
-            |    }
-            |  ]
-            |}
-            |""".stripMargin
+          ifsResponseWithBusinessData.stripMargin
         )
+
+        val model = ListAllBusinessesResponse(
+          Seq(
+            Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS")),
+            Business(TypeOfBusiness.`self-employment`, "098765432109876", Some("RCDTS 2"))
+          ))
+
+        desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
+      }
+
+      "passed IFS json with propertyData" in {
+        val desJson = Json.parse(ifsResponseWithPropertyData.stripMargin)
+        val model = ListAllBusinessesResponse(
+          Seq(
+            Business(TypeOfBusiness.`uk-property`, "123456789012345", None),
+            Business(TypeOfBusiness.`foreign-property`, "098765432109876", None)
+          ))
+        desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
+      }
+
+      "passed IFS json with businessData and propertyData" in {
+        val desJson = Json.parse(ifsResponseWithPropertyAndBusinessData.stripMargin)
         val model = ListAllBusinessesResponse(
           Seq(
             Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS")),

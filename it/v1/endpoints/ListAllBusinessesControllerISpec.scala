@@ -129,38 +129,40 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
     val desResponseBodyBusinessData: JsValue = Json.parse(
       """
         |{
-        |  "safeId": "XE00001234567890",
-        |  "nino": "AA123456A",
-        |  "mtdbsa": "123456789012345",
-        |  "propertyIncome": false,
-        |  "businessData": [
-        |    {
-        |      "incomeSourceId": "123456789012345",
-        |      "accountingPeriodStartDate": "2001-01-01",
-        |      "accountingPeriodEndDate": "2001-01-01",
-        |      "tradingName": "RCDTS",
-        |      "businessAddressDetails": {
-        |        "addressLine1": "100 SuttonStreet",
-        |        "addressLine2": "Wokingham",
-        |        "addressLine3": "Surrey",
-        |        "addressLine4": "London",
-        |        "postalCode": "DH14EJ",
-        |        "countryCode": "GB"
-        |      },
-        |      "businessContactDetails": {
-        |        "phoneNumber": "01332752856",
-        |        "mobileNumber": "07782565326",
-        |        "faxNumber": "01332754256",
-        |        "emailAddress": "stephen@manncorpone.co.uk"
-        |      },
-        |      "tradingStartDate": "2001-01-01",
-        |      "cashOrAccruals": "cash",
-        |      "seasonal": true,
-        |      "cessationDate": "2001-01-01",
-        |      "cessationReason": "002",
-        |      "paperLess": true
-        |    }
-        |  ]
+        | "taxPayerDisplayResponse": {
+        |   "safeId": "XE00001234567890",
+        |   "nino": "AA123456A",
+        |   "mtdbsa": "123456789012345",
+        |   "propertyIncome": false,
+        |   "businessData": [
+        |     {
+        |       "incomeSourceId": "123456789012345",
+        |       "accountingPeriodStartDate": "2001-01-01",
+        |       "accountingPeriodEndDate": "2001-01-01",
+        |       "tradingName": "RCDTS",
+        |       "businessAddressDetails": {
+        |         "addressLine1": "100 SuttonStreet",
+        |         "addressLine2": "Wokingham",
+        |         "addressLine3": "Surrey",
+        |         "addressLine4": "London",
+        |         "postalCode": "DH14EJ",
+        |         "countryCode": "GB"
+        |       },
+        |       "businessContactDetails": {
+        |         "phoneNumber": "01332752856",
+        |         "mobileNumber": "07782565326",
+        |         "faxNumber": "01332754256",
+        |         "emailAddress": "stephen@manncorpone.co.uk"
+        |       },
+        |       "tradingStartDate": "2001-01-01",
+        |       "cashOrAccruals": "cash",
+        |       "seasonal": true,
+        |       "cessationDate": "2001-01-01",
+        |       "cessationReason": "002",
+        |       "paperLess": true
+        |     }
+        |   ]
+        | }
         |}
         """.stripMargin
     )
@@ -168,29 +170,31 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
     val desResponseBodyPropertyData: JsValue = Json.parse(
       """
         |{
-        |  "safeId": "XE00001234567890",
-        |  "nino": "AA123456A",
-        |  "mtdbsa": "123456789012345",
-        |  "propertyIncome": true,
-        |  "propertyData": [
-        |    {
-        |      "incomeSourceType": "uk-property",
-        |      "incomeSourceId": "098765432109876",
-        |      "accountingPeriodStartDate": "2001-01-01",
-        |      "accountingPeriodEndDate": "2001-01-01",
-        |      "tradingStartDate": "2001-01-01",
-        |      "cashOrAccrualsFlag": true,
-        |      "numPropRented": 0,
-        |      "numPropRentedUK": 0,
-        |      "numPropRentedEEA": 5,
-        |      "numPropRentedNONEEA": 1,
-        |      "emailAddress": "stephen@manncorpone.co.uk",
-        |      "cessationDate": "2001-01-01",
-        |      "cessationReason": "002",
-        |      "paperLess": true,
-        |      "incomeSourceStartDate": "2019-07-14"
-        |    }
-        |  ]
+        | "taxPayerDisplayResponse": {
+        |   "safeId": "XE00001234567890",
+        |   "nino": "AA123456A",
+        |   "mtdbsa": "123456789012345",
+        |   "propertyIncome": true,
+        |   "propertyData": [
+        |     {
+        |       "incomeSourceType": "uk-property",
+        |       "incomeSourceId": "098765432109876",
+        |       "accountingPeriodStartDate": "2001-01-01",
+        |       "accountingPeriodEndDate": "2001-01-01",
+        |       "tradingStartDate": "2001-01-01",
+        |       "cashOrAccrualsFlag": true,
+        |       "numPropRented": 0,
+        |       "numPropRentedUK": 0,
+        |       "numPropRentedEEA": 5,
+        |       "numPropRentedNONEEA": 1,
+        |       "emailAddress": "stephen@manncorpone.co.uk",
+        |       "cessationDate": "2001-01-01",
+        |       "cessationReason": "002",
+        |       "paperLess": true,
+        |       "incomeSourceStartDate": "2019-07-14"
+        |     }
+        |   ]
+        | }
         |}
         """.stripMargin
     )
@@ -198,57 +202,59 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
     val desResponseBodyBothData: JsValue = Json.parse(
       """
         |{
-        |  "safeId": "XE00001234567890",
-        |  "nino": "AA123456A",
-        |  "mtdbsa": "123456789012345",
-        |  "propertyIncome": true,
-        |  "businessData": [
-        |    {
-        |      "incomeSourceId": "123456789012345",
-        |      "accountingPeriodStartDate": "2001-01-01",
-        |      "accountingPeriodEndDate": "2001-01-01",
-        |      "tradingName": "RCDTS",
-        |      "businessAddressDetails": {
-        |        "addressLine1": "100 SuttonStreet",
-        |        "addressLine2": "Wokingham",
-        |        "addressLine3": "Surrey",
-        |        "addressLine4": "London",
-        |        "postalCode": "DH14EJ",
-        |        "countryCode": "GB"
-        |      },
-        |      "businessContactDetails": {
-        |        "phoneNumber": "01332752856",
-        |        "mobileNumber": "07782565326",
-        |        "faxNumber": "01332754256",
-        |        "emailAddress": "stephen@manncorpone.co.uk"
-        |      },
-        |      "tradingStartDate": "2001-01-01",
-        |      "cashOrAccruals": "cash",
-        |      "seasonal": true,
-        |      "cessationDate": "2001-01-01",
-        |      "cessationReason": "002",
-        |      "paperLess": true
-        |    }
-        |  ],
-        |  "propertyData": [
-        |    {
-        |      "incomeSourceType": "uk-property",
-        |      "incomeSourceId": "098765432109876",
-        |      "accountingPeriodStartDate": "2001-01-01",
-        |      "accountingPeriodEndDate": "2001-01-01",
-        |      "tradingStartDate": "2001-01-01",
-        |      "cashOrAccrualsFlag": true,
-        |      "numPropRented": 0,
-        |      "numPropRentedUK": 0,
-        |      "numPropRentedEEA": 5,
-        |      "numPropRentedNONEEA": 1,
-        |      "emailAddress": "stephen@manncorpone.co.uk",
-        |      "cessationDate": "2001-01-01",
-        |      "cessationReason": "002",
-        |      "paperLess": true,
-        |      "incomeSourceStartDate": "2019-07-14"
-        |    }
-        |  ]
+        | "taxPayerDisplayResponse": {
+        |   "safeId": "XE00001234567890",
+        |   "nino": "AA123456A",
+        |   "mtdbsa": "123456789012345",
+        |   "propertyIncome": true,
+        |   "businessData": [
+        |     {
+        |       "incomeSourceId": "123456789012345",
+        |       "accountingPeriodStartDate": "2001-01-01",
+        |       "accountingPeriodEndDate": "2001-01-01",
+        |       "tradingName": "RCDTS",
+        |       "businessAddressDetails": {
+        |         "addressLine1": "100 SuttonStreet",
+        |         "addressLine2": "Wokingham",
+        |         "addressLine3": "Surrey",
+        |         "addressLine4": "London",
+        |         "postalCode": "DH14EJ",
+        |         "countryCode": "GB"
+        |       },
+        |       "businessContactDetails": {
+        |         "phoneNumber": "01332752856",
+        |         "mobileNumber": "07782565326",
+        |         "faxNumber": "01332754256",
+        |         "emailAddress": "stephen@manncorpone.co.uk"
+        |       },
+        |       "tradingStartDate": "2001-01-01",
+        |       "cashOrAccruals": "cash",
+        |       "seasonal": true,
+        |       "cessationDate": "2001-01-01",
+        |       "cessationReason": "002",
+        |       "paperLess": true
+        |     }
+        |   ],
+        |   "propertyData": [
+        |     {
+        |       "incomeSourceType": "uk-property",
+        |       "incomeSourceId": "098765432109876",
+        |       "accountingPeriodStartDate": "2001-01-01",
+        |       "accountingPeriodEndDate": "2001-01-01",
+        |       "tradingStartDate": "2001-01-01",
+        |       "cashOrAccrualsFlag": true,
+        |       "numPropRented": 0,
+        |       "numPropRentedUK": 0,
+        |       "numPropRentedEEA": 5,
+        |       "numPropRentedNONEEA": 1,
+        |       "emailAddress": "stephen@manncorpone.co.uk",
+        |       "cessationDate": "2001-01-01",
+        |       "cessationReason": "002",
+        |       "paperLess": true,
+        |       "incomeSourceStartDate": "2019-07-14"
+        |     }
+        |   ]
+        | }
         |}
         """.stripMargin
     )
@@ -298,6 +304,7 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         response.json shouldBe responseBodyBusinessData
         response.header("Content-Type") shouldBe Some("application/json")
       }
+
       "any valid request is made and DES only returns propertyData" in new ListAllBusinessesControllerTest {
 
         override def setupStubs(): StubMapping = {
@@ -312,6 +319,7 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         response.json shouldBe responseBodyPropertyData
         response.header("Content-Type") shouldBe Some("application/json")
       }
+
       "any valid request is made and DES returns both businessData and propertyData" in new ListAllBusinessesControllerTest {
 
         override def setupStubs(): StubMapping = {
@@ -327,6 +335,7 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         response.header("Content-Type") shouldBe Some("application/json")
       }
     }
+
     "return error according to spec" when {
       "validation error" when {
         def validationErrorTest(requestNino: String, expectedStatus: Int, expectedBody: MtdError): Unit = {

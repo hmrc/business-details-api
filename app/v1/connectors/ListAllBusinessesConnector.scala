@@ -25,6 +25,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 import api.connectors.httpparsers.StandardDownstreamHttpParser._
+import play.api.libs.json.Reads
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,7 +35,8 @@ class ListAllBusinessesConnector @Inject() (val http: HttpClient, val appConfig:
   def listAllBusinesses(request: ListAllBusinessesRequest)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext,
-      correlationId: String): Future[DownstreamOutcome[ListAllBusinessesResponse[Business]]] = {
+      correlationId: String,
+      responseReads: Reads[ListAllBusinessesResponse[Business]]): Future[DownstreamOutcome[ListAllBusinessesResponse[Business]]] = {
 
     import request._
 

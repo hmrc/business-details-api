@@ -21,6 +21,8 @@ import api.models.domain.Nino
 import api.models.errors.{DownstreamErrorCode, DownstreamErrors, ErrorWrapper, InternalError, MtdError, NinoFormatError, NotFoundError}
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
+import mocks.MockAppConfig
+import play.api.Configuration
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.connectors.MockListAllBusinessesConnector
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
@@ -28,7 +30,7 @@ import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.Future
 
-class ListAllBusinessesServiceSpec extends ServiceSpec {
+class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
 
   private val validNino   = Nino("AA123456A")
   private val requestData = ListAllBusinessesRequest(validNino)
@@ -38,9 +40,15 @@ class ListAllBusinessesServiceSpec extends ServiceSpec {
   trait Test extends MockListAllBusinessesConnector {
     implicit val hc: HeaderCarrier              = HeaderCarrier()
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
+    val isEnabled: Boolean                      = true
+
+    MockAppConfig.featureSwitches
+      .returns(Configuration("retrieveAdditionalFields.enabled" -> isEnabled))
+      .anyNumberOfTimes()
 
     val service = new ListAllBusinessesService(
-      connector = mockListAllBusinessesConnector
+      connector = mockListAllBusinessesConnector,
+      mockAppConfig
     )
 
   }
