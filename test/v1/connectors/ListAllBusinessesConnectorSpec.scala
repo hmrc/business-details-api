@@ -20,7 +20,10 @@ import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.Nino
 import api.models.domain.TypeOfBusiness.`self-employment`
 import api.models.outcomes.ResponseWrapper
+import play.api.Configuration
+import play.api.libs.json.Reads
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
+import v1.models.response.listAllBusiness.ListAllBusinessesResponse.getReads
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.Future
@@ -59,6 +62,15 @@ class ListAllBusinessesConnectorSpec extends ConnectorSpec {
     protected val connector: ListAllBusinessesConnector = new ListAllBusinessesConnector(http = mockHttpClient, appConfig = mockAppConfig)
 
     protected val request: ListAllBusinessesRequest = ListAllBusinessesRequest(nino)
+
+    val isEnabled: Boolean = true
+
+    MockAppConfig.featureSwitches
+      .returns(Configuration("retrieveAdditionalFields.enabled" -> isEnabled))
+      .anyNumberOfTimes()
+
+    val isIfsEnabled = true
+    implicit val responseReads: Reads[ListAllBusinessesResponse[Business]] = getReads(isIfsEnabled)
   }
 
 }
