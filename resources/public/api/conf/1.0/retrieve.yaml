@@ -41,8 +41,7 @@ get:
             example-response:
               description: Example Response
               value:
-                $ref: './examples/retrieveBusinessDetails/retrieve_business_details_response.json'
-
+                $ref: ./examples/retrieveBusinessDetails/retrieve_business_details_response.json
     "400":
       description: Bad request
       content:
@@ -54,6 +53,8 @@ get:
               $ref: './common/errors.yaml#/components/examples/formatNino'
             FORMAT_BUSINESS_ID:
               $ref: './common/errors.yaml#/components/examples/formatBusinessId'
+            RULE_INCORRECT_GOV_TEST_SCENARIO:
+              $ref: './common/errors.yaml#/components/examples/ruleIncorrectGovTestScenario'
 
     "403":
       description: Forbidden

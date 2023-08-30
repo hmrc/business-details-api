@@ -17,6 +17,7 @@
 package v1.services
 
 import api.controllers.EndpointLogContext
+import api.mocks.MockAppConfig
 import api.models.domain.accountingType.AccountingType
 import api.models.domain.{Nino, TypeOfBusiness}
 import api.models.errors.{
@@ -31,10 +32,16 @@ import api.models.errors.{
 }
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
+import play.api.Configuration
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.mocks.connectors.MockRetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
-import v1.models.response.retrieveBusinessDetails.des.{BusinessDetails, RetrieveBusinessDetailsDesResponse}
+import v1.models.response.retrieveBusinessDetails.downstream.{
+  BusinessDetails,
+  LatencyDetails,
+  LatencyIndicator,
+  RetrieveBusinessDetailsDownstreamResponse
+}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
@@ -59,16 +66,44 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     Some("ToiletDucktown"),
     Some("CIFSHIRE"),
     Some("SW4F 3GA"),
-    Some("GB")
+    Some("GB"),
+    Some("2018-04-06"),
+    Some("2018-12-12"),
+    Some(LatencyDetails("2018-12-12", "2017-18", LatencyIndicator.Annual, "2018-19", LatencyIndicator.Quarterly)),
+    Some("2023")
   )
 
-  private val desSingleResponseBody = RetrieveBusinessDetailsDesResponse(
+  private val responseBodyWithoutAdditionalFields = RetrieveBusinessDetailsResponse(
+    "XAIS12345678910",
+    TypeOfBusiness.`self-employment`,
+    Some("Aardvark Window Cleaning Services"),
+    Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+    Some(AccountingType.ACCRUALS),
+    Some("2016-09-24"),
+    Some("2020-03-24"),
+    Some("6 Harpic Drive"),
+    Some("Domestos Wood"),
+    Some("ToiletDucktown"),
+    Some("CIFSHIRE"),
+    Some("SW4F 3GA"),
+    Some("GB"),
+    None,
+    None,
+    None,
+    None
+  )
+
+  private val downstreamSingleResponseBody = RetrieveBusinessDetailsDownstreamResponse(
     Seq(
       BusinessDetails(
         "XAIS12345678910",
         TypeOfBusiness.`self-employment`,
         Some("Aardvark Window Cleaning Services"),
         Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+        Some("2018-04-06"),
+        Some("2018-12-12"),
+        Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+        Some("2023"),
         Some(AccountingType.ACCRUALS),
         Some("2016-09-24"),
         Some("2020-03-24"),
@@ -80,13 +115,61 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         Some("GB")
       )))
 
-  private val desMultiResponseBody = RetrieveBusinessDetailsDesResponse(
+  private val downstreamWithoutAdditionalFieldsSingleResponseBody = RetrieveBusinessDetailsDownstreamResponse(
     Seq(
       BusinessDetails(
         "XAIS12345678910",
         TypeOfBusiness.`self-employment`,
         Some("Aardvark Window Cleaning Services"),
         Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+        Some("2018-04-06"),
+        Some("2018-12-12"),
+        Some(LatencyDetails("2018-12-12", "2017-18", LatencyIndicator.Annual, "2018-19", LatencyIndicator.Quarterly)),
+        Some("2023"),
+        Some(AccountingType.ACCRUALS),
+        Some("2016-09-24"),
+        Some("2020-03-24"),
+        Some("6 Harpic Drive"),
+        Some("Domestos Wood"),
+        Some("ToiletDucktown"),
+        Some("CIFSHIRE"),
+        Some("SW4F 3GA"),
+        Some("GB")
+      )))
+
+  private val downstreamSingleWithoutAdditionalFieldsResponseBody = RetrieveBusinessDetailsDownstreamResponse(
+    Seq(
+      BusinessDetails(
+        "XAIS12345678910",
+        TypeOfBusiness.`self-employment`,
+        Some("Aardvark Window Cleaning Services"),
+        Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+        None,
+        None,
+        None,
+        None,
+        Some(AccountingType.ACCRUALS),
+        Some("2016-09-24"),
+        Some("2020-03-24"),
+        Some("6 Harpic Drive"),
+        Some("Domestos Wood"),
+        Some("ToiletDucktown"),
+        Some("CIFSHIRE"),
+        Some("SW4F 3GA"),
+        Some("GB")
+      )))
+
+  private val downstreamMultiResponseBody = RetrieveBusinessDetailsDownstreamResponse(
+    Seq(
+      BusinessDetails(
+        "XAIS12345678910",
+        TypeOfBusiness.`self-employment`,
+        Some("Aardvark Window Cleaning Services"),
+        Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+        Some("2018-04-06"),
+        Some("2018-12-12"),
+        Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+        Some("2023"),
         Some(AccountingType.ACCRUALS),
         Some("2016-09-24"),
         Some("2020-03-24"),
@@ -102,6 +185,10 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         TypeOfBusiness.`self-employment`,
         Some("Aardvark Window Cleaning Services"),
         Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+        Some("2018-04-06"),
+        Some("2018-12-12"),
+        Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+        Some("2023"),
         Some(AccountingType.ACCRUALS),
         Some("2016-09-24"),
         Some("2020-03-24"),
@@ -114,45 +201,64 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
       )
     ))
 
-  trait Test extends MockRetrieveBusinessDetailsConnector {
+  trait Test extends MockRetrieveBusinessDetailsConnector with MockAppConfig {
     implicit val hc: HeaderCarrier              = HeaderCarrier()
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
+    val isEnabled: Boolean                      = true
 
-    val service = new RetrieveBusinessDetailsService(
-      connector = mockRetrieveBusinessDetailsConnector
-    )
+    MockAppConfig.featureSwitches
+      .returns(Configuration("retrieveAdditionalFields.enabled" -> isEnabled))
+      .anyNumberOfTimes()
+
+    val service = new RetrieveBusinessDetailsService(mockRetrieveBusinessDetailsConnector, mockAppConfig)
 
   }
 
   "service" when {
     "a connector call is successful" should {
-      "return a mapped result from a single des response" in new Test {
+      "return a mapped result from a single downstream response" in new Test {
         MockRetrieveBusinessDetailsConnector
           .retrieveBusinessDetails(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, desSingleResponseBody))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamSingleResponseBody))))
 
         await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
       }
-      "return a mapped result from multiple des responses" in new Test {
+
+      "return a mapped result from a downstream response when retrieveAdditionalFields is disabled" in new Test {
+        override val isEnabled: Boolean = false
         MockRetrieveBusinessDetailsConnector
           .retrieveBusinessDetails(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, desMultiResponseBody))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamWithoutAdditionalFieldsSingleResponseBody))))
 
         await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
+      }
+
+      "return a mapped result from multiple downstream responses" in new Test {
+        MockRetrieveBusinessDetailsConnector
+          .retrieveBusinessDetails(requestData)
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamMultiResponseBody))))
+
+        await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
+      }
+      "return a mapped result when additional fields are not present" in new Test {
+        MockRetrieveBusinessDetailsConnector
+          .retrieveBusinessDetails(requestData)
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamSingleWithoutAdditionalFieldsResponseBody))))
+
+        await(service.retrieveBusinessDetailsService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBodyWithoutAdditionalFields))
       }
     }
     "a connector call is unsuccessful" should {
       "return not found error for no matching id" in new Test {
         MockRetrieveBusinessDetailsConnector
           .retrieveBusinessDetails(badRequestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, desMultiResponseBody))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamMultiResponseBody))))
 
         await(service.retrieveBusinessDetailsService(badRequestData)) shouldBe Left(ErrorWrapper(correlationId, NoBusinessFoundError))
       }
       "a connector call is unsuccessful" should {
         def serviceError(desErrorCode: String, error: MtdError): Unit =
           s"return ${error.code} when $desErrorCode error is returned from the service" in new Test {
-
             MockRetrieveBusinessDetailsConnector
               .retrieveBusinessDetails(requestData)
               .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))

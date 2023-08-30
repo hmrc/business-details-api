@@ -162,7 +162,20 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockAppConfig.desEnvironment returns "des-environment"
     MockAppConfig.desEnvironmentHeaders returns Some(allowedDesHeaders)
 
-    MockAppConfig.featureSwitches returns Configuration("tys-api.enabled" -> false)
+    MockAppConfig.featureSwitches returns Configuration("ifs.enabled" -> false)
+
+  }
+
+  protected trait IfsTest extends ConnectorTest {
+
+    protected lazy val requiredHeaders: Seq[(String, String)] = requiredIfsHeaders
+
+    MockAppConfig.ifsBaseUrl returns baseUrl
+    MockAppConfig.ifsToken returns "ifs-token"
+    MockAppConfig.ifsEnvironment returns "ifs-environment"
+    MockAppConfig.ifsEnvironmentHeaders returns Some(allowedIfsHeaders)
+
+    MockAppConfig.featureSwitches returns Configuration("ifs.enabled" -> true)
 
   }
 

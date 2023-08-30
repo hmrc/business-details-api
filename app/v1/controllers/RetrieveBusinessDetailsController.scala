@@ -19,6 +19,7 @@ package v1.controllers
 import api.controllers.{AuthorisedController, EndpointLogContext, RequestContext, RequestHandler}
 import api.hateoas.HateoasFactory
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
+import config.AppConfig
 
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -37,6 +38,7 @@ class RetrieveBusinessDetailsController @Inject() (val authService: EnrolmentsAu
                                                    parser: RetrieveBusinessDetailsRequestParser,
                                                    hateoasFactory: HateoasFactory,
                                                    cc: ControllerComponents,
+                                                   appConfig: AppConfig,
                                                    val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
     extends AuthorisedController(cc) {
 

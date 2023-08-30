@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package v1.models.response.RetrieveBusinessDetails.des
+package v1.models.response.RetrieveBusinessDetails.downstream
 
 import api.models.domain.TypeOfBusiness
 import api.models.domain.accountingType.AccountingType
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 import v1.models.response.retrieveBusinessDetails.AccountingPeriod
-import v1.models.response.retrieveBusinessDetails.des.BusinessDetails
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, LatencyDetails, LatencyIndicator}
 
 class BusinessDetailsSpec extends UnitSpec {
 
@@ -35,6 +35,16 @@ class BusinessDetailsSpec extends UnitSpec {
             |  "incomeSourceId": "XAIS12345678910",
             |  "accountingPeriodStartDate": "2001-01-01",
             |  "accountingPeriodEndDate": "2001-01-01",
+            |  "firstAccountingPeriodStartDate": "2018-04-06",
+            |  "firstAccountingPeriodEndDate":   "2018-12-12",
+            |  "yearOfMigration": "2023",
+            |  "latencyDetails":  {
+            |    "taxYear1": "2018",
+            |    "taxYear2": "2019",
+            |    "latencyIndicator1": "A",
+            |    "latencyIndicator2": "Q",
+            |    "latencyEndDate": "2018-12-12"
+            |  },
             |  "tradingName": "RCDTS",
             |  "businessAddressDetails": {
             |    "addressLine1": "100 SuttonStreet",
@@ -51,7 +61,7 @@ class BusinessDetailsSpec extends UnitSpec {
             |    "emailAddress": "stephen@manncorpone.co.uk"
             |  },
             |  "tradingStartDate": "2001-01-01",
-            |  "cashOrAccruals": "cash",
+            |  "cashOrAccruals": false,
             |  "seasonal": true,
             |  "cessationDate": "2001-01-01",
             |  "cessationReason": "002",
@@ -65,6 +75,10 @@ class BusinessDetailsSpec extends UnitSpec {
           TypeOfBusiness.`self-employment`,
           Some("RCDTS"),
           Seq(AccountingPeriod("2001-01-01", "2001-01-01")),
+          Some("2018-04-06"),
+          Some("2018-12-12"),
+          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          Some("2023"),
           Some(AccountingType.CASH),
           Some("2001-01-01"),
           Some("2001-01-01"),
@@ -75,7 +89,7 @@ class BusinessDetailsSpec extends UnitSpec {
           Some("DH14EJ"),
           Some("GB")
         )
-        businessDesJson.as[BusinessDetails](BusinessDetails.readsBusinessData) shouldBe responseBody
+        businessDesJson.as[BusinessDetails](BusinessDetails.readsBusinessData.apply(true)) shouldBe responseBody
       }
     }
     "read from property json" when {
@@ -89,7 +103,17 @@ class BusinessDetailsSpec extends UnitSpec {
             |  "accountingPeriodStartDate": "2019-04-06",
             |  "accountingPeriodEndDate": "2020-04-05",
             |  "tradingStartDate": "2017-07-24",
-            |  "cashOrAccrualsFlag": true,
+            |  "firstAccountingPeriodStartDate": "2018-04-06",
+            |  "firstAccountingPeriodEndDate":   "2018-12-12",
+            |  "yearOfMigration": "2023",
+            |  "latencyDetails":  {
+            |    "taxYear1": "2018",
+            |    "taxYear2": "2019",
+            |    "latencyIndicator1": "A",
+            |    "latencyIndicator2": "Q",
+            |    "latencyEndDate": "2018-12-12"
+            |  },
+            |  "cashOrAccruals": true,
             |  "numPropRented": 0,
             |  "numPropRentedUK": 0,
             |  "numPropRentedEEA": 5,
@@ -108,6 +132,10 @@ class BusinessDetailsSpec extends UnitSpec {
           TypeOfBusiness.`foreign-property`,
           None,
           Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+          Some("2018-04-06"),
+          Some("2018-12-12"),
+          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          Some("2023"),
           Some(AccountingType.ACCRUALS),
           Some("2017-07-24"),
           Some("2020-01-01"),
@@ -119,7 +147,7 @@ class BusinessDetailsSpec extends UnitSpec {
           None
         )
 
-        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe responseBody
       }
 
       "A partial json is supplied" in {
@@ -130,7 +158,7 @@ class BusinessDetailsSpec extends UnitSpec {
             |  "incomeSourceId": "X0IS123456789012",
             |  "accountingPeriodStartDate": "2019-04-06",
             |  "accountingPeriodEndDate": "2020-04-05",
-            |  "cashOrAccrualsFlag": false,
+            |  "cashOrAccruals": false,
             |  "numPropRented": 0,
             |  "numPropRentedUK": 0,
             |  "numPropRentedEEA": 5,
@@ -138,7 +166,17 @@ class BusinessDetailsSpec extends UnitSpec {
             |  "emailAddress": "stephen@manncorpone.co.uk",
             |  "cessationReason": "002",
             |  "paperLess": true,
-            |  "incomeSourceStartDate": "2019-07-14"
+            |  "incomeSourceStartDate": "2019-07-14",
+            |  "firstAccountingPeriodStartDate": "2018-04-06",
+            |  "firstAccountingPeriodEndDate":   "2018-12-12",
+            |  "yearOfMigration": "2023",
+            |  "latencyDetails":  {
+            |    "taxYear1": "2018",
+            |    "taxYear2": "2019",
+            |    "latencyIndicator1": "A",
+            |    "latencyIndicator2": "Q",
+            |    "latencyEndDate": "2018-12-12"
+            |  }
             |}
             |""".stripMargin
         )
@@ -148,6 +186,10 @@ class BusinessDetailsSpec extends UnitSpec {
           TypeOfBusiness.`property-unspecified`,
           None,
           Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+          Some("2018-04-06"),
+          Some("2018-12-12"),
+          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          Some("2023"),
           Some(AccountingType.CASH),
           None,
           None,
@@ -159,7 +201,7 @@ class BusinessDetailsSpec extends UnitSpec {
           None
         )
 
-        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe responseBody
       }
       "A the minimum json is supplied" in {
 
@@ -186,10 +228,14 @@ class BusinessDetailsSpec extends UnitSpec {
           None,
           None,
           None,
+          None,
+          None,
+          None,
+          None,
           None
         )
 
-        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe responseBody
+        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe responseBody
       }
     }
   }

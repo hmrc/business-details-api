@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-package api.models.domain.accountingType
+package stubs
 
-import support.UnitSpec
-import utils.enums.EnumJsonSpecSupport
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import play.api.http.Status.NO_CONTENT
+import support.WireMockMethods
 
-class CashOrAccrualsSpec extends UnitSpec with EnumJsonSpecSupport {
+object AuditStub extends WireMockMethods {
 
-  testRoundTrip[CashOrAccruals](
-    ("cash", CashOrAccruals.`cash`),
-    ("accruals", CashOrAccruals.`accruals`)
-  )
+  private val auditUri: String = s"/write/audit.*"
 
-  "toMtd" should {
-    Seq((CashOrAccruals.`cash`, AccountingType.CASH), (CashOrAccruals.`accruals`, AccountingType.ACCRUALS)).foreach {
-      case (cashOrAccruals, accountingType) =>
-        s"convert $cashOrAccruals to $accountingType" in {
-          cashOrAccruals.toMtd shouldBe accountingType
-        }
-    }
+  def audit(): StubMapping = {
+    when(method = POST, uri = auditUri)
+      .thenReturn(status = NO_CONTENT)
   }
 
 }

@@ -19,8 +19,10 @@ package v1.connectors
 import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{Nino, TypeOfBusiness}
 import api.models.outcomes.ResponseWrapper
+import play.api.libs.json.Reads
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
-import v1.models.response.retrieveBusinessDetails.des.RetrieveBusinessDetailsDesResponse
+import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse.getReads
+import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
@@ -35,10 +37,21 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
       val outcome: Right[Nothing, ResponseWrapper[Seq[RetrieveBusinessDetailsResponse]]] = Right(ResponseWrapper(correlationId, Seq(response)))
 
       willGet(
-        url = s"$baseUrl/registration/business-details/nino/${request.nino.nino}"
+        url = s"$baseUrl/registration/business-details/nino/${request.nino}"
       ).returns(Future.successful(outcome))
 
-      val result: DownstreamOutcome[RetrieveBusinessDetailsDesResponse] = await(connector.retrieveBusinessDetails(request))
+      val result: DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse] = await(connector.retrieveBusinessDetails(request))
+      result shouldBe outcome
+    }
+
+    "send a request and return the expected response when ifs feature switch is enabled" in new IfsTest with Test {
+      val outcome: Right[Nothing, ResponseWrapper[Seq[RetrieveBusinessDetailsResponse]]] = Right(ResponseWrapper(correlationId, Seq(response)))
+
+      willGet(
+        url = s"$baseUrl/registration/business-details/nino/${request.nino}"
+      ).returns(Future.successful(outcome))
+
+      val result: DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse] = await(connector.retrieveBusinessDetails(request))
       result shouldBe outcome
     }
   }
@@ -47,6 +60,8 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
     protected val connector: RetrieveBusinessDetailsConnector = new RetrieveBusinessDetailsConnector(http = mockHttpClient, appConfig = mockAppConfig)
 
     protected val request: RetrieveBusinessDetailsRequest = RetrieveBusinessDetailsRequest(nino, businessId)
+
+    protected implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(false)
 
     protected val response: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
       "XAIS12345678910",
@@ -61,7 +76,12 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
       None,
       None,
       None,
-      None)
+      None,
+      Some("2018-04-06"),
+      Some("2018-12-12"),
+      Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+      Some("2023")
+    )
 
   }
 

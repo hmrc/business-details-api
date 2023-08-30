@@ -21,13 +21,13 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import utils.Logging
 import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponse
-import v1.models.response.retrieveBusinessDetails.des.{BusinessDetails, RetrieveBusinessDetailsDesResponse}
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, RetrieveBusinessDetailsDownstreamResponse}
 
 trait DownstreamResponseMappingSupport {
   self: Logging =>
 
   final def filterId(
-      responseWrapper: ResponseWrapper[RetrieveBusinessDetailsDesResponse],
+      responseWrapper: ResponseWrapper[RetrieveBusinessDetailsDownstreamResponse],
       businessId: String
   ): Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]] = {
     val filteredBusinesses: List[BusinessDetails] = responseWrapper.responseData.businessDetails.filter { businessDetails =>
@@ -36,10 +36,11 @@ trait DownstreamResponseMappingSupport {
 
     filteredBusinesses match {
       case business :: Nil => Right(ResponseWrapper(responseWrapper.correlationId, business.toMtd))
-      case Nil             => Left(ErrorWrapper(responseWrapper.correlationId, NoBusinessFoundError))
-      case _ :: _          => Left(ErrorWrapper(responseWrapper.correlationId, InternalError))
+      case Nil => Left(ErrorWrapper(responseWrapper.correlationId, NoBusinessFoundError))
+      case _ :: _ => Left(ErrorWrapper(responseWrapper.correlationId, InternalError))
     }
   }
+
 
   final def mapDownstreamErrors[D](errorCodeMap: PartialFunction[String, MtdError])(downstreamResponseWrapper: ResponseWrapper[DownstreamError])(
       implicit logContext: EndpointLogContext): ErrorWrapper = {

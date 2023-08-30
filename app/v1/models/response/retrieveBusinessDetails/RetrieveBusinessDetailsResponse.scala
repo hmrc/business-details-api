@@ -17,11 +17,12 @@
 package v1.models.response.retrieveBusinessDetails
 
 import api.hateoas.{HateoasLinks, HateoasLinksFactory}
-import api.models.domain.TypeOfBusiness
 import api.models.domain.accountingType.AccountingType
+import api.models.domain.{TaxYear, TypeOfBusiness}
 import api.models.hateoas.{HateoasData, Link}
 import config.AppConfig
 import play.api.libs.json.{Json, OWrites, Reads}
+import v1.models.response.retrieveBusinessDetails.downstream.LatencyDetails
 
 case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,
@@ -35,7 +36,31 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            businessAddressLineThree: Option[String],
                                            businessAddressLineFour: Option[String],
                                            businessAddressPostcode: Option[String],
-                                           businessAddressCountryCode: Option[String])
+                                           businessAddressCountryCode: Option[String],
+                                           firstAccountingPeriodStartDate: Option[String],
+                                           firstAccountingPeriodEndDate: Option[String],
+                                           latencyDetails: Option[LatencyDetails],
+                                           yearOfMigration: Option[String]) {
+
+  def addRetrieveAdditionalFields: RetrieveBusinessDetailsResponse = {
+    val updatedResponse = this.copy(
+      firstAccountingPeriodStartDate = if (firstAccountingPeriodStartDate.isEmpty) None else firstAccountingPeriodStartDate,
+      firstAccountingPeriodEndDate = if (firstAccountingPeriodEndDate.isEmpty) None else firstAccountingPeriodEndDate,
+      latencyDetails = if (latencyDetails.isEmpty) None else latencyDetails,
+      yearOfMigration = if (yearOfMigration.isEmpty) None else yearOfMigration
+    )
+    updatedResponse
+  }
+
+  def reformatLatencyDetailsTaxYears: RetrieveBusinessDetailsResponse = {
+    val updatedLatencyDetails = latencyDetails.map(details => details.copy(
+      taxYear1 = TaxYear.fromDownstream(details.taxYear1).asMtd,
+      taxYear2 = TaxYear.fromDownstream(details.taxYear2).asMtd
+    ))
+    copy(latencyDetails = updatedLatencyDetails)
+  }
+
+}
 
 object RetrieveBusinessDetailsResponse extends HateoasLinks {
 

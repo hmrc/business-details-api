@@ -22,8 +22,8 @@ import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
+import stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import support.IntegrationBaseSpec
-import v1.stubs.{AuditStub, AuthStub, DesStub, MtdIdLookupStub}
 
 class AuthISpec extends IntegrationBaseSpec {
 
@@ -71,7 +71,7 @@ class AuthISpec extends IntegrationBaseSpec {
         |            "emailAddress": "stephen@manncorpone.co.uk"
         |         },
         |         "tradingStartDate": "2001-01-01",
-        |         "cashOrAccruals": "cash",
+        |         "cashOrAccruals": false,
         |         "seasonal": true,
         |         "cessationDate": "2001-01-01",
         |         "cessationReason": "002",
@@ -107,7 +107,7 @@ class AuthISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DesStub.onSuccess(DesStub.GET, desUri, Status.OK, desResponse)
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Status.OK, desResponse)
         }
 
         val response: WSResponse = await(request().get())

@@ -17,7 +17,7 @@
 package v1.connectors
 
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
-import api.connectors.DownstreamUri.DesUri
+import api.connectors.DownstreamUri.{DesUri, IfsUri}
 import config.AppConfig
 
 import javax.inject.{Inject, Singleton}
@@ -40,9 +40,12 @@ class ListAllBusinessesConnector @Inject() (val http: HttpClient, val appConfig:
 
     val downstreamUri = s"registration/business-details/nino/$nino"
 
-    get(
-      DesUri[ListAllBusinessesResponse[Business]](downstreamUri)
-    )
+    if (featureSwitches.isIfsEnabled) {
+      get(IfsUri[ListAllBusinessesResponse[Business]](downstreamUri))
+    } else {
+      get(DesUri[ListAllBusinessesResponse[Business]](downstreamUri))
+    }
+
   }
 
 }

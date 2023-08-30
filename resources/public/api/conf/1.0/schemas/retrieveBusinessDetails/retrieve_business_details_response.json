@@ -25,6 +25,82 @@
       "description": "The trading name of the business.",
       "example": "ABC Ltd."
     },
+    "yearOfMigration": {
+      "type": "string",
+      "description": "{{#if (testOnly 'retrieveAdditionalFields')}}[Test only] {{/if}}Year of migration.",
+      "pattern": "^(\\d{4})$",
+      "format": "yyyy",
+      "example": "2022"
+    },
+    "firstAccountingPeriodStartDate": {
+      "type": "string",
+      "description": "{{#if (testOnly 'retrieveAdditionalFields')}}[Test only] {{/if}}The first accounting period start date.",
+      "format": "yyyy-MM-DD",
+      "example": "2019-09-30"
+    },
+    "firstAccountingPeriodEndDate": {
+      "type": "string",
+      "description": "{{#if (testOnly 'retrieveAdditionalFields')}}[Test only] {{/if}}The first accounting period end date.",
+      "format": "yyyy-MM-DD",
+      "example": "2020-02-29"
+    },
+    "latencyDetails": {
+      "type": "object",
+      "description": "{{#if (testOnly 'retrieveAdditionalFields')}}[Test only] {{/if}}Income source latency details.",
+      "properties": {
+        "latencyEndDate": {
+          "type": "string",
+          "description": "End date of latency period for the income source.",
+          "example": "2020-02-27",
+          "format": "YYYY-MM-DD"
+        },
+        "taxYear1": {
+          "type": "string",
+          "description": "First tax year for the income source.",
+          "example": "2018-19",
+          "format": "YYYY-YY",
+          "minimum": 4,
+          "maximum": 4
+        },
+        "latencyIndicator1": {
+          "type": "string",
+          "description": "Self assessment submission frequency.",
+          "enum": [
+            "A",
+            "Q"
+          ],
+          "minimum": 1,
+          "maximum": 1,
+          "example": "A"
+        },
+        "taxYear2": {
+          "type": "string",
+          "description": "Second tax year for the income source.",
+          "example": "2019-20",
+          "format": "YYYY-YY",
+          "minimum": 4,
+          "maximum": 4
+        },
+        "latencyIndicator2": {
+          "type": "string",
+          "description": "Self assessment submission frequency.",
+          "enum": [
+            "A",
+            "Q"
+          ],
+          "minimum": 1,
+          "maximum": 1,
+          "example": "A"
+        }
+      },
+      "required": [
+        "latencyEndDate",
+        "taxYear1",
+        "latencyIndicator1",
+        "taxYear2",
+        "latencyIndicator2"
+      ]
+    },
     "accountingPeriods": {
       "type": "array",
       "description": "A list of the accounting periods for the business.",

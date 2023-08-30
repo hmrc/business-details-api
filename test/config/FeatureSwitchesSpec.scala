@@ -22,16 +22,24 @@ import support.UnitSpec
 class FeatureSwitchesSpec extends UnitSpec {
 
   private val configuration = Configuration(
-    "feature-switch.enabled" -> true
+    "feature-switch.enabled" -> true,
+    "retrieveAdditionalFields.enabled"     -> false,
+    "ifs.enabled"        -> false
   )
 
   private val featureSwitches = FeatureSwitches(configuration)
 
   "FeatureSwitches" should {
-    "return true" when {
+    "return the correct value" when {
       "the feature switch is set to true" in {
         featureSwitches.featureSwitchConfig.getOptional[Boolean]("feature-switch.enabled") shouldBe Some(true)
       }
+
+      "the feature switch is set to false" in {
+        featureSwitches.featureSwitchConfig.getOptional[Boolean]("retrieveAdditionalFields.enabled") shouldBe Some(false)
+        featureSwitches.featureSwitchConfig.getOptional[Boolean]("ifs.enabled") shouldBe Some(false)
+      }
+
     }
     "return false" when {
       "the feature switch is not present in the config" in {
