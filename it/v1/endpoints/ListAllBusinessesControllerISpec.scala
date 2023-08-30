@@ -129,6 +129,7 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
     val desResponseBodyBusinessData: JsValue = Json.parse(
       """
         |{
+        | "processingDate": "2023-07-05T09:16:58.655Z",
         | "taxPayerDisplayResponse": {
         |   "safeId": "XE00001234567890",
         |   "nino": "AA123456A",
@@ -170,6 +171,7 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
     val desResponseBodyPropertyData: JsValue = Json.parse(
       """
         |{
+        | "processingDate": "2023-07-05T09:16:58.655Z",
         | "taxPayerDisplayResponse": {
         |   "safeId": "XE00001234567890",
         |   "nino": "AA123456A",
@@ -202,6 +204,7 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
     val desResponseBodyBothData: JsValue = Json.parse(
       """
         |{
+        | "processingDate": "2023-07-05T09:16:58.655Z",
         | "taxPayerDisplayResponse": {
         |   "safeId": "XE00001234567890",
         |   "nino": "AA123456A",
