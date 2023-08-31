@@ -20,6 +20,8 @@ import api.controllers.RequestContext
 import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundError}
 import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
+import config.{AppConfig, FeatureSwitches}
+import play.api.libs.json.Reads
 
 import javax.inject.{Inject, Singleton}
 import v1.connectors.ListAllBusinessesConnector
@@ -29,12 +31,15 @@ import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ListAllBusinessesService @Inject() (connector: ListAllBusinessesConnector) extends BaseService {
+class ListAllBusinessesService @Inject() (connector: ListAllBusinessesConnector, appConfig: AppConfig) extends BaseService {
 
   def listAllBusinessesService(request: ListAllBusinessesRequest)(implicit
       ctx: RequestContext,
       ec: ExecutionContext
   ): Future[ServiceOutcome[ListAllBusinessesResponse[Business]]] = {
+
+    val isIfsEnabled: Boolean                                              = FeatureSwitches()(appConfig).isIfsEnabled
+    implicit val responseReads: Reads[ListAllBusinessesResponse[Business]] = ListAllBusinessesResponse.getReads(isIfsEnabled)
 
     connector
       .listAllBusinesses(request)

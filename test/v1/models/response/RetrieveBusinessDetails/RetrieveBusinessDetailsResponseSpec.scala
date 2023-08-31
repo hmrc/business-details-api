@@ -71,7 +71,8 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
             |   "businessAddressLineThree": "ToiletDucktown",
             |   "businessAddressLineFour": "CIFSHIRE",
             |   "businessAddressPostcode": "SW4F 3GA",
-            |   "businessAddressCountryCode": "GB","firstAccountingPeriodStartDate": "2018-04-06",
+            |   "businessAddressCountryCode": "GB",
+            |   "firstAccountingPeriodStartDate": "2018-04-06",
             |   "firstAccountingPeriodEndDate": "2018-12-12",
             |   "latencyDetails": {
             |     "latencyEndDate": "2018-12-12",
