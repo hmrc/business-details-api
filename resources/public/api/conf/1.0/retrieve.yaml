@@ -1,7 +1,8 @@
 get:
   summary: Retrieve Business Details
   description: |
-    This endpoint allows a developer to retrieve additional information for one of a user's business income source. The unique account reference (National Insurance number) must be provided as well as the unique business identifier.
+    This endpoint allows a developer to retrieve additional information for one of a user's business income source. The 
+    unique account reference (National Insurance number) must be provided as well as the unique business identifier.
     
     ### Test data
     Scenario simulations using <code>Gov-Test-Scenario</code> headers is only available in the sandbox environment.
@@ -15,6 +16,7 @@ get:
     | DYNAMIC | Returns a dynamic response where the type of response will change corresponding to the businessId provided in the request: <br/> - For a response with a self-employment business, use businessId: <br/>   -- XBIS12345678901 (Accruals) <br/>   -- XBIS12345678902 (Cash) <br/> - For a response with a uk-property business, use businessId: <br/>   -- XPIS12345678901 (Accruals) <br/>   -- XPIS12345678902 (Cash) <br/> - For a response with a foreign-property business, use businessId: <br/>   -- XFIS12345678901 (Accruals) <br/>   -- XFIS12345678902 (Cash) <br/> - For a response with a property-unspecified business, use businessId: <br/>   -- XAIS12345678901 (Accruals) <br/>   -- XAIS12345678902 (Cash) |
     | CASH | Simulate a scenario where the success response returns data associated with an accountingType of 'CASH'. <br/> Use the following businessId for this scenario: <br/> - XBIS12345678901 |
     | ACCRUALS | Simulate a scenario where the success response returns data associated with an accountingType of 'ACCRUALS'. <br/> Use the following businessId for this scenario: <br/> - XBIS12345678901 |
+    | STATEFUL | Performs a stateful retrieve. |
 
   parameters:
     - $ref: './common/pathParameters.yaml#/components/parameters/nino'
