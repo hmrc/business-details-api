@@ -30,13 +30,12 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
   val config: AppConfig                = app.injector.instanceOf[AppConfig]
   val confidenceLevel: ConfidenceLevel = config.confidenceLevelConfig.confidenceLevel
 
-  override def servicesConfig: Map[String, String] = {
+  override def servicesConfig: Map[String, String] =
     Map(
       "api.1.0.status"                               -> "BETA",
       "api.1.0.endpoints.enabled"                    -> "true",
       "api.1.0.endpoints.api-released-in-production" -> "true"
     ) ++ super.servicesConfig
-  }
 
   val apiDefinitionJson: JsValue = Json.parse(
     s"""
