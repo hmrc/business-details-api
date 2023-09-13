@@ -91,7 +91,15 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
   def featureSwitches: Configuration               = configuration.getOptional[Configuration](s"feature-switch").getOrElse(Configuration.empty)
   def endpointsEnabled(version: String): Boolean   = config.getBoolean(s"api.$version.endpoints.enabled")
   def endpointsEnabled(version: Version): Boolean  = config.getBoolean(s"api.${version.name}.endpoints.enabled")
-  def apiVersionReleasedInProduction(version: String): Boolean = config.getBoolean(s"api.$version.endpoints.api-released-in-production")
+
+  def apiVersionReleasedInProduction(version: String): Boolean = {
+    val confPath = s"api.$version.endpoints.api-released-in-production"
+
+    if (configuration.has(confPath))
+      configuration.get[Boolean](confPath)
+    else
+      false
+  }
 
   def endpointReleasedInProduction(version: String, name: String): Boolean = {
     val versionReleasedInProd = apiVersionReleasedInProduction(version)
@@ -101,11 +109,6 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
     if (versionReleasedInProd && conf.hasPath(path)) config.getBoolean(path) else versionReleasedInProd
   }
 
-}
-
-trait FixedConfig {
-  // Minimum tax year for MTD
-  val minimumTaxYear = 2018
 }
 
 case class ConfidenceLevelConfig(confidenceLevel: ConfidenceLevel, definitionEnabled: Boolean, authValidationEnabled: Boolean)
