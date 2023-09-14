@@ -17,7 +17,7 @@
 package config.rewriters
 
 import com.github.jknack.handlebars.Options
-import config.rewriters.DocumentationRewriters.{CheckAndRewrite}
+import config.rewriters.DocumentationRewriters.CheckAndRewrite
 import config.{AppConfig, FeatureSwitches}
 
 import javax.inject.{Inject, Singleton}
@@ -40,7 +40,7 @@ import javax.inject.{Inject, Singleton}
   )
 
   val rewriteOasFeature: CheckAndRewrite = CheckAndRewrite(
-    check = (version, _) => if (version == "common") false else appConfig.endpointsEnabled(version),
+    check = (version, _) => true,
     rewrite = (_, _, contents) => rewrite(contents, fs)
   )
 
