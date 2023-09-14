@@ -105,9 +105,13 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
     val versionReleasedInProd = apiVersionReleasedInProduction(version)
     val path                  = s"api.$version.endpoints.released-in-production.$name"
 
-    val conf = configuration.underlying
-    if (versionReleasedInProd && conf.hasPath(path)) config.getBoolean(path) else versionReleasedInProd
+    versionReleasedInProd && confBoolean(path, defaultValue = true)
   }
+
+  /** Can't use config.getConfBool as it's typesafe, and the app-config files use strings.
+    */
+  private def confBoolean(path: String, defaultValue: Boolean): Boolean =
+    if (configuration.underlying.hasPath(path)) config.getBoolean(path) else defaultValue
 
 }
 
