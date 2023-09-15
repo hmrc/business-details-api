@@ -92,21 +92,18 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
   def endpointsEnabled(version: String): Boolean   = config.getBoolean(s"api.$version.endpoints.enabled")
   def endpointsEnabled(version: Version): Boolean  = config.getBoolean(s"api.${version.name}.endpoints.enabled")
 
-  def apiVersionReleasedInProduction(version: String): Boolean = {
-    val confPath = s"api.$version.endpoints.api-released-in-production"
+  def apiVersionReleasedInProduction(version: String): Boolean =
+    confBoolean(
+      path = s"api.$version.endpoints.api-released-in-production",
+      defaultValue = false
+    )
 
-    if (configuration.has(confPath))
-      configuration.get[Boolean](confPath)
-    else
-      false
-  }
-
-  def endpointReleasedInProduction(version: String, name: String): Boolean = {
-    val versionReleasedInProd = apiVersionReleasedInProduction(version)
-    val path                  = s"api.$version.endpoints.released-in-production.$name"
-
-    versionReleasedInProd && confBoolean(path, defaultValue = true)
-  }
+  def endpointReleasedInProduction(version: String, name: String): Boolean =
+    apiVersionReleasedInProduction(version) &&
+      confBoolean(
+        path = s"api.$version.endpoints.released-in-production.$name",
+        defaultValue = true
+      )
 
   /** Can't use config.getConfBool as it's typesafe, and the app-config files use strings.
     */
