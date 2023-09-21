@@ -329,6 +329,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           (Status.BAD_REQUEST, "INVALID_MTDBSA", Status.INTERNAL_SERVER_ERROR, InternalError),
           (Status.NOT_FOUND, "NOT_FOUND_NINO", Status.NOT_FOUND, NotFoundError),
           (Status.NOT_FOUND, "NOT_FOUND_MTDBSA", Status.INTERNAL_SERVER_ERROR, InternalError),
+          (Status.BAD_REQUEST, "INVALID_IDTYPE", Status.INTERNAL_SERVER_ERROR, InternalError),
           (Status.INTERNAL_SERVER_ERROR, "SERVER_ERROR", Status.INTERNAL_SERVER_ERROR, InternalError),
           (Status.SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", Status.INTERNAL_SERVER_ERROR, InternalError)
         )

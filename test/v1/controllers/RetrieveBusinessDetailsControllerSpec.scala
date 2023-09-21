@@ -171,7 +171,6 @@ class RetrieveBusinessDetailsControllerSpec
       service = mockRetrieveBusinessDetailsService,
       hateoasFactory = mockHateoasFactory,
       cc = cc,
-      appConfig = mockAppConfig,
       idGenerator = mockIdGenerator
     )
 

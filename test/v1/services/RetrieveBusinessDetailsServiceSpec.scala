@@ -271,6 +271,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
           ("INVALID_MTDBSA", InternalError),
           ("NOT_FOUND_NINO", NotFoundError),
           ("NOT_FOUND_MTDBSA", InternalError),
+          ("INVALID_IDTYPE", InternalError),
           ("SERVER_ERROR", InternalError),
           ("SERVICE_UNAVAILABLE", InternalError)
         )
