@@ -39,7 +39,7 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
       ctx: RequestContext,
       ec: ExecutionContext): Future[ServiceOutcome[RetrieveBusinessDetailsResponse]] = {
 
-    val isIfsEnabled = FeatureSwitches()(appConfig).isIfsEnabled
+    val isIfsEnabled                                                             = FeatureSwitches()(appConfig).isIfsEnabled
     implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(isIfsEnabled)
 
     val result = for {
@@ -53,7 +53,7 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
     result.value
   }
 
-  def retrieveAdditionalFieldsResponseMap(
+  private def retrieveAdditionalFieldsResponseMap(
       responseWrapper: ResponseWrapper[RetrieveBusinessDetailsResponse]): ServiceOutcome[RetrieveBusinessDetailsResponse] = {
     val response = responseWrapper.responseData
 
@@ -70,6 +70,7 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
       "INVALID_MTDBSA"      -> InternalError,
       "NOT_FOUND_NINO"      -> NotFoundError,
       "NOT_FOUND_MTDBSA"    -> InternalError,
+      "INVALID_IDTYPE"      -> InternalError,
       "SERVER_ERROR"        -> InternalError,
       "SERVICE_UNAVAILABLE" -> InternalError
     )
