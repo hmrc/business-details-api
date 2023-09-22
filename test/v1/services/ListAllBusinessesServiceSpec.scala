@@ -18,7 +18,16 @@ package v1.services
 
 import api.controllers.EndpointLogContext
 import api.models.domain.Nino
-import api.models.errors.{DownstreamErrorCode, DownstreamErrors, ErrorWrapper, InternalError, MtdError, NinoFormatError, NotFoundError}
+import api.models.errors.{
+  DownstreamErrorCode,
+  DownstreamErrors,
+  ErrorWrapper,
+  InternalError,
+  MtdError,
+  NinoFormatError,
+  NotFoundError,
+  RuleIncorrectGovTestScenarioError
+}
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import mocks.MockAppConfig
@@ -76,9 +85,11 @@ class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
 
       val input = Seq(
         ("INVALID_NINO", NinoFormatError),
-        ("INVALID_MTDBSA", InternalError),
-        ("NOT_FOUND_NINO", NotFoundError),
-        ("NOT_FOUND_MTDBSA", InternalError),
+        ("INVALID_MTD_ID", InternalError),
+        ("INVALID_CORRELATIONID", InternalError),
+        ("INVALID_IDTYPE", InternalError),
+        ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError),
+        ("NOT_FOUND", NotFoundError),
         ("SERVER_ERROR", InternalError),
         ("SERVICE_UNAVAILABLE", InternalError)
       )
