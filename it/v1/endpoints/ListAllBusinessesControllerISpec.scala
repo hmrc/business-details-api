@@ -16,15 +16,15 @@
 
 package v1.endpoints
 
-import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundError}
+import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundError, RuleIncorrectGovTestScenarioError}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import play.api.http.HeaderNames.ACCEPT
+import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import support.IntegrationBaseSpec
-import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status
 import play.api.test.Helpers.AUTHORIZATION
 import stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
+import support.IntegrationBaseSpec
 
 class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
 
@@ -126,7 +126,7 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         """.stripMargin
     )
 
-    val desResponseBodyBusinessData: JsValue = Json.parse(
+    val downstreamResponseBodyBusinessData: JsValue = Json.parse(
       """
         |{
         | "processingDate": "2023-07-05T09:16:58.655Z",
@@ -168,7 +168,7 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         """.stripMargin
     )
 
-    val desResponseBodyPropertyData: JsValue = Json.parse(
+    val downstreamResponseBodyPropertyData: JsValue = Json.parse(
       """
         |{
         | "processingDate": "2023-07-05T09:16:58.655Z",
@@ -201,7 +201,7 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         """.stripMargin
     )
 
-    val desResponseBodyBothData: JsValue = Json.parse(
+    val downstreamResponseBodyBothData: JsValue = Json.parse(
       """
         |{
         | "processingDate": "2023-07-05T09:16:58.655Z",
@@ -299,11 +299,11 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Status.OK, desResponseBodyBusinessData)
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, OK, downstreamResponseBodyBusinessData)
         }
 
         val response: WSResponse = await(request().get())
-        response.status shouldBe Status.OK
+        response.status shouldBe OK
         response.json shouldBe responseBodyBusinessData
         response.header("Content-Type") shouldBe Some("application/json")
       }
@@ -314,11 +314,11 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Status.OK, desResponseBodyPropertyData)
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, OK, downstreamResponseBodyPropertyData)
         }
 
         val response: WSResponse = await(request().get())
-        response.status shouldBe Status.OK
+        response.status shouldBe OK
         response.json shouldBe responseBodyPropertyData
         response.header("Content-Type") shouldBe Some("application/json")
       }
@@ -329,11 +329,11 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Status.OK, desResponseBodyBothData)
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, OK, downstreamResponseBodyBothData)
         }
 
         val response: WSResponse = await(request().get())
-        response.status shouldBe Status.OK
+        response.status shouldBe OK
         response.json shouldBe responseBodyBothData
         response.header("Content-Type") shouldBe Some("application/json")
       }
@@ -358,20 +358,20 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
           }
         }
         val input = Seq(
-          ("AA1123A", Status.BAD_REQUEST, NinoFormatError),
-          ("", Status.NOT_FOUND, NotFoundError)
+          ("AA1123A", BAD_REQUEST, NinoFormatError),
+          ("", NOT_FOUND, NotFoundError)
         )
         input.foreach(args => (validationErrorTest _).tupled(args))
       }
-      "des service error" when {
-        def serviceErrorTest(desStatus: Int, desCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"des returns an $desCode error and status $desStatus" in new ListAllBusinessesControllerTest {
+      "downstream service error" when {
+        def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"downstream returns an $downstreamCode error and status $downstreamStatus" in new ListAllBusinessesControllerTest {
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
               AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
-              DownstreamStub.onError(DownstreamStub.GET, desUri, desStatus, errorBody(desCode))
+              DownstreamStub.onError(DownstreamStub.GET, desUri, downstreamStatus, errorBody(downstreamCode))
             }
 
             val response: WSResponse = await(request().get())
@@ -381,10 +381,13 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         }
 
         val input = Seq(
-          (Status.BAD_REQUEST, "INVALID_NINO", Status.BAD_REQUEST, NinoFormatError),
-          (Status.NOT_FOUND, "NOT_FOUND_NINO", Status.NOT_FOUND, NotFoundError),
-          (Status.INTERNAL_SERVER_ERROR, "SERVER_ERROR", Status.INTERNAL_SERVER_ERROR, InternalError),
-          (Status.SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", Status.INTERNAL_SERVER_ERROR, InternalError)
+          (BAD_REQUEST, "INVALID_NINO", BAD_REQUEST, NinoFormatError),
+          (NOT_FOUND, "NOT_FOUND", NOT_FOUND, NotFoundError),
+          (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "INVALID_IDTYPE", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
+          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, InternalError),
+          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError)
         )
         input.foreach(args => (serviceErrorTest _).tupled(args))
       }

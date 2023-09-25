@@ -17,17 +17,16 @@
 package v1.services
 
 import api.controllers.RequestContext
-import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundError}
+import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundError, RuleIncorrectGovTestScenarioError}
 import api.services.{BaseService, ServiceOutcome}
 import cats.implicits._
 import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.Reads
-
-import javax.inject.{Inject, Singleton}
 import v1.connectors.ListAllBusinessesConnector
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -49,12 +48,14 @@ class ListAllBusinessesService @Inject() (connector: ListAllBusinessesConnector,
 
   private val downstreamErrorMap: Map[String, MtdError] =
     Map(
-      "INVALID_NINO"        -> NinoFormatError,
-      "INVALID_MTDBSA"      -> InternalError,
-      "NOT_FOUND_NINO"      -> NotFoundError,
-      "NOT_FOUND_MTDBSA"    -> InternalError,
-      "SERVER_ERROR"        -> InternalError,
-      "SERVICE_UNAVAILABLE" -> InternalError
+      "INVALID_NINO"          -> NinoFormatError,
+      "INVALID_MTD_ID"        -> InternalError,
+      "INVALID_CORRELATIONID" -> InternalError,
+      "INVALID_IDTYPE"        -> InternalError,
+      "UNMATCHED_STUB_ERROR"  -> RuleIncorrectGovTestScenarioError,
+      "NOT_FOUND"             -> NotFoundError,
+      "SERVER_ERROR"          -> InternalError,
+      "SERVICE_UNAVAILABLE"   -> InternalError
     )
 
 }
