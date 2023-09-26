@@ -270,6 +270,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         val errors = Seq(
           ("INVALID_NINO", NinoFormatError),
           ("INVALID_MTDBSA", InternalError),
+          ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError),
           ("NOT_FOUND_NINO", NotFoundError),
           ("NOT_FOUND_MTDBSA", InternalError),
           ("SERVER_ERROR", InternalError),
@@ -280,7 +281,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
           ("INVALID_MTD_ID", InternalError),
           ("INVALID_CORRELATIONID", InternalError),
           ("INVALID_IDTYPE", InternalError),
-          ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError),
           ("NOT_FOUND", NotFoundError)
         )
         (errors ++ extraIfsErrors).foreach(args => (serviceError _).tupled(args))

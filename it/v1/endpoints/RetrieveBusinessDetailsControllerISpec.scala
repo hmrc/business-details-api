@@ -327,6 +327,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         val errors = Seq(
           (BAD_REQUEST, "INVALID_NINO", BAD_REQUEST, NinoFormatError),
           (BAD_REQUEST, "INVALID_MTDBSA", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
           (NOT_FOUND, "NOT_FOUND_NINO", NOT_FOUND, NotFoundError),
           (NOT_FOUND, "NOT_FOUND_MTDBSA", INTERNAL_SERVER_ERROR, InternalError),
           (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, InternalError),
@@ -337,7 +338,6 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           (BAD_REQUEST, "INVALID_MTD_ID", INTERNAL_SERVER_ERROR, InternalError),
           (BAD_REQUEST, "INVALID_IDTYPE", INTERNAL_SERVER_ERROR, InternalError),
           (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, InternalError),
-          (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
           (NOT_FOUND, "NOT_FOUND", NOT_FOUND, NotFoundError)
         )
 
