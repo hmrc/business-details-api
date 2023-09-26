@@ -16,10 +16,10 @@
 
 package v1.endpoints
 
-import api.models.errors.{BusinessIdFormatError, InternalError, MtdError, NinoFormatError, NotFoundError}
+import api.models.errors.{BusinessIdFormatError, InternalError, MtdError, NinoFormatError, NotFoundError, RuleIncorrectGovTestScenarioError}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status
+import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
@@ -163,11 +163,11 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Status.OK, downstreamJson)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, downstreamJson)
         }
 
         val response: WSResponse = await(request().get())
-        response.status shouldBe Status.OK
+        response.status shouldBe OK
         response.json shouldBe responseBody
         response.header("Content-Type") shouldBe Some("application/json")
       }
@@ -272,11 +272,11 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Status.OK, downstreamJson)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, downstreamJson)
         }
 
         val response: WSResponse = await(request().get())
-        response.status shouldBe Status.OK
+        response.status shouldBe OK
         response.json shouldBe responseBody
         response.header("Content-Type") shouldBe Some("application/json")
       }
@@ -301,9 +301,9 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           }
         }
         val input = Seq(
-          ("AA1123A", "X0IS123456789012", Status.BAD_REQUEST, NinoFormatError),
-          ("", "X0IS123456789012", Status.NOT_FOUND, NotFoundError),
-          ("AA123456A", "X2", Status.BAD_REQUEST, BusinessIdFormatError)
+          ("AA1123A", "X0IS123456789012", BAD_REQUEST, NinoFormatError),
+          ("", "X0IS123456789012", NOT_FOUND, NotFoundError),
+          ("AA123456A", "X2", BAD_REQUEST, BusinessIdFormatError)
         )
         input.foreach(args => (validationErrorTest _).tupled(args))
       }
@@ -324,16 +324,24 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           }
         }
 
-        val input = Seq(
-          (Status.BAD_REQUEST, "INVALID_NINO", Status.BAD_REQUEST, NinoFormatError),
-          (Status.BAD_REQUEST, "INVALID_MTDBSA", Status.INTERNAL_SERVER_ERROR, InternalError),
-          (Status.NOT_FOUND, "NOT_FOUND_NINO", Status.NOT_FOUND, NotFoundError),
-          (Status.NOT_FOUND, "NOT_FOUND_MTDBSA", Status.INTERNAL_SERVER_ERROR, InternalError),
-          (Status.BAD_REQUEST, "INVALID_IDTYPE", Status.INTERNAL_SERVER_ERROR, InternalError),
-          (Status.INTERNAL_SERVER_ERROR, "SERVER_ERROR", Status.INTERNAL_SERVER_ERROR, InternalError),
-          (Status.SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", Status.INTERNAL_SERVER_ERROR, InternalError)
+        val errors = Seq(
+          (BAD_REQUEST, "INVALID_NINO", BAD_REQUEST, NinoFormatError),
+          (BAD_REQUEST, "INVALID_MTDBSA", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
+          (NOT_FOUND, "NOT_FOUND_NINO", NOT_FOUND, NotFoundError),
+          (NOT_FOUND, "NOT_FOUND_MTDBSA", INTERNAL_SERVER_ERROR, InternalError),
+          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, InternalError),
+          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError)
         )
-        input.foreach(args => (serviceErrorTest _).tupled(args))
+
+        val extraIfsErrors = Seq(
+          (BAD_REQUEST, "INVALID_MTD_ID", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "INVALID_IDTYPE", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, InternalError),
+          (NOT_FOUND, "NOT_FOUND", NOT_FOUND, NotFoundError)
+        )
+
+        (errors ++ extraIfsErrors).foreach(args => (serviceErrorTest _).tupled(args))
       }
     }
   }
