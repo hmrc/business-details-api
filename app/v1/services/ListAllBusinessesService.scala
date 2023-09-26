@@ -54,6 +54,7 @@ class ListAllBusinessesService @Inject() (connector: ListAllBusinessesConnector,
       "INVALID_IDTYPE"        -> InternalError,
       "UNMATCHED_STUB_ERROR"  -> RuleIncorrectGovTestScenarioError,
       "NOT_FOUND"             -> NotFoundError,
+      "NOT_FOUND_NINO"        -> NotFoundError,
       "SERVER_ERROR"          -> InternalError,
       "SERVICE_UNAVAILABLE"   -> InternalError
     )
