@@ -28,7 +28,8 @@ import api.models.errors.{
   MtdError,
   NinoFormatError,
   NoBusinessFoundError,
-  NotFoundError
+  NotFoundError,
+  RuleIncorrectGovTestScenarioError
 }
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
@@ -266,16 +267,23 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
             await(service.retrieveBusinessDetailsService(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
           }
 
-        val input = Seq(
+        val errors = Seq(
           ("INVALID_NINO", NinoFormatError),
           ("INVALID_MTDBSA", InternalError),
           ("NOT_FOUND_NINO", NotFoundError),
           ("NOT_FOUND_MTDBSA", InternalError),
-          ("INVALID_IDTYPE", InternalError),
           ("SERVER_ERROR", InternalError),
           ("SERVICE_UNAVAILABLE", InternalError)
         )
-        input.foreach(args => (serviceError _).tupled(args))
+
+        val extraIfsErrors = Seq(
+          ("INVALID_MTD_ID", InternalError),
+          ("INVALID_CORRELATIONID", InternalError),
+          ("INVALID_IDTYPE", InternalError),
+          ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError),
+          ("NOT_FOUND", NotFoundError)
+        )
+        (errors ++ extraIfsErrors).foreach(args => (serviceError _).tupled(args))
       }
     }
   }
