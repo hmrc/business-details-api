@@ -48,13 +48,13 @@ class ListAllBusinessesService @Inject() (connector: ListAllBusinessesConnector,
 
   private val downstreamErrorMap: Map[String, MtdError] = {
     val errors = Map(
-      "INVALID_NINO"        -> NinoFormatError,
-      "INVALID_MTDBSA"      -> InternalError,
-      "UNMATCHED_STUB_ERROR"  -> RuleIncorrectGovTestScenarioError,
-      "NOT_FOUND_NINO"      -> NotFoundError,
-      "NOT_FOUND_MTDBSA"    -> InternalError,
-      "SERVER_ERROR"        -> InternalError,
-      "SERVICE_UNAVAILABLE" -> InternalError,
+      "INVALID_NINO"         -> NinoFormatError,
+      "INVALID_MTDBSA"       -> InternalError,
+      "UNMATCHED_STUB_ERROR" -> RuleIncorrectGovTestScenarioError,
+      "NOT_FOUND_NINO"       -> NotFoundError,
+      "NOT_FOUND_MTDBSA"     -> InternalError,
+      "SERVER_ERROR"         -> InternalError,
+      "SERVICE_UNAVAILABLE"  -> InternalError
     )
 
     val extraIfsErrors = Map(

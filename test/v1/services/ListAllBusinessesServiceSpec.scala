@@ -90,7 +90,7 @@ class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
         ("NOT_FOUND_NINO", NotFoundError),
         ("NOT_FOUND_MTDBSA", InternalError),
         ("SERVER_ERROR", InternalError),
-        ("SERVICE_UNAVAILABLE", InternalError),
+        ("SERVICE_UNAVAILABLE", InternalError)
       )
 
       val extraIfsErrors = Seq(
