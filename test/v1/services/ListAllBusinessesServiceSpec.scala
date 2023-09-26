@@ -73,28 +73,34 @@ class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
       }
     }
     "a connector call is unsuccessful" should {
-      def serviceError(desErrorCode: String, error: MtdError): Unit =
-        s"return ${error.code} when $desErrorCode error is returned from the service" in new Test {
+      def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
+        s"return ${error.code} when $downstreamErrorCode error is returned from the service" in new Test {
 
           MockListAllBusinessesConnector
             .listAllBusinesses(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(desErrorCode))))))
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
 
           await(service.listAllBusinessesService(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
-      val input = Seq(
+      val errors = Seq(
         ("INVALID_NINO", NinoFormatError),
+        ("INVALID_MTDBSA", InternalError),
+        ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError),
+        ("NOT_FOUND_NINO", NotFoundError),
+        ("NOT_FOUND_MTDBSA", InternalError),
+        ("SERVER_ERROR", InternalError),
+        ("SERVICE_UNAVAILABLE", InternalError),
+      )
+
+      val extraIfsErrors = Seq(
         ("INVALID_MTD_ID", InternalError),
         ("INVALID_CORRELATIONID", InternalError),
         ("INVALID_IDTYPE", InternalError),
-        ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError),
-        ("NOT_FOUND", NotFoundError),
-        ("NOT_FOUND_NINO", NotFoundError),
-        ("SERVER_ERROR", InternalError),
-        ("SERVICE_UNAVAILABLE", InternalError)
+        ("NOT_FOUND", NotFoundError)
       )
-      input.foreach(args => (serviceError _).tupled(args))
+
+      (errors ++ extraIfsErrors).foreach(args => (serviceError _).tupled(args))
     }
   }
 
