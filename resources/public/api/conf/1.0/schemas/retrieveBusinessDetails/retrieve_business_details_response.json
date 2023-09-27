@@ -103,7 +103,7 @@
     },
     "accountingPeriods": {
       "type": "array",
-      "description": "A list of the accounting periods for the business.",
+      "description": "The start and end dates of the latest accounting period for the business. This array contains dates for the latest accounting period only.",
       "items": {
         "type": "object",
         "properties": {
