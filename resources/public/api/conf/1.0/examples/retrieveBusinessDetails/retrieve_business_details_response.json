@@ -2,14 +2,8 @@
   "businessId": "XAIS12345678910",
   "typeOfBusiness": "self-employment",
   "tradingName": "ABC Ltd.",
+  {{#if (enabled 'retrieveAdditionalFields')}}
   "yearOfMigration": "2022",
-  "accountingPeriods":
-  [
-    {
-      "start": "2023-04-06",
-      "end": "2024-04-05"
-    }
-  ],
   "firstAccountingPeriodStartDate": "2019-09-30",
   "firstAccountingPeriodEndDate": "2020-02-29",
   "latencyDetails": {
@@ -18,7 +12,14 @@
     "latencyIndicator1": "A",
     "taxYear2": "2019-20",
     "latencyIndicator2": "A"
-   },
+  },
+  {{/if}}
+  "accountingPeriods": [
+    {
+      "start": "2023-04-06",
+      "end": "2024-04-05"
+    }
+  ],
   "accountingType": "ACCRUALS",
   "commencementDate": "2023-04-06",
   "cessationDate": "2024-04-05",
