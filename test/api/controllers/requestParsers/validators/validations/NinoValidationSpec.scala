@@ -29,7 +29,13 @@ class NinoValidationSpec extends UnitSpec with JsonErrorValidators {
         val validNino        = "AA123456A"
         val validationResult = NinoValidation.validate(validNino)
         validationResult.isEmpty shouldBe true
+      }
 
+      "when a valid NINO without last letter is supplied" in {
+
+        val validNino        = "AA123456"
+        val validationResult = NinoValidation.validate(validNino)
+        validationResult.isEmpty shouldBe true
       }
     }
 
@@ -41,7 +47,6 @@ class NinoValidationSpec extends UnitSpec with JsonErrorValidators {
         validationResult.isEmpty shouldBe false
         validationResult.length shouldBe 1
         validationResult.head shouldBe NinoFormatError
-
       }
     }
 
