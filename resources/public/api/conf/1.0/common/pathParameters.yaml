@@ -4,7 +4,7 @@ components:
       name: nino
       in: path
       description: |
-        National Insurance number, in the format `AA999999A`
+        National Insurance number, in the format `AA999999A` (last letter is optional - the format `A999999` is also valid)
       schema:
         type: string
         example: TC663795B
