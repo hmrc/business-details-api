@@ -26,7 +26,7 @@ class OasFeatureRewriterSpec extends UnitSpec with MockAppConfig {
 
   private def setupCheckAndRewrite(oasFeatureEnabled: Boolean, oasFeatureReleasedInProd: Boolean): (CheckRewrite, Rewriter) = {
     MockAppConfig.featureSwitches returns Configuration(
-      "oasFeature.enabled"                -> oasFeatureEnabled,
+      "oasFeature.enabled" -> oasFeatureEnabled,
       "oasFeature.released-in-production" -> oasFeatureReleasedInProd
     )
 
@@ -54,7 +54,7 @@ class OasFeatureRewriterSpec extends UnitSpec with MockAppConfig {
 
     val yaml =
       """
-        |summary: Retrieve Employment Expenses
+        |summary: Retrieve Business Details
         |description: |
         |  This endpoint enables you to retrieve existing employment expenses.
         |  A National Insurance number and tax year must be provided.
@@ -74,7 +74,7 @@ class OasFeatureRewriterSpec extends UnitSpec with MockAppConfig {
 
         val expected =
           s"""
-             |summary: Retrieve Employment Expenses
+             |summary: Retrieve Business Details
              |description: |
              |  This endpoint enables you to retrieve existing employment expenses.
              |  A National Insurance number and tax year must be provided.
@@ -99,7 +99,7 @@ class OasFeatureRewriterSpec extends UnitSpec with MockAppConfig {
 
         val expected =
           s"""
-             |summary: Retrieve Employment Expenses
+             |summary: Retrieve Business Details
              |description: |
              |  This endpoint enables you to retrieve existing employment expenses.
              |  A National Insurance number and tax year must be provided.
@@ -124,7 +124,7 @@ class OasFeatureRewriterSpec extends UnitSpec with MockAppConfig {
 
         val expected =
           s"""
-             |summary: Retrieve Employment Expenses
+             |summary: Retrieve Business Details
              |description: |
              |  This endpoint enables you to retrieve existing employment expenses.
              |  A National Insurance number and tax year must be provided.
@@ -145,7 +145,7 @@ class OasFeatureRewriterSpec extends UnitSpec with MockAppConfig {
 
         val expected =
           s"""
-             |summary: Retrieve Employment Expenses
+             |summary: Retrieve Business Details
              |description: |
              |  This endpoint enables you to retrieve existing employment expenses.
              |  A National Insurance number and tax year must be provided.
