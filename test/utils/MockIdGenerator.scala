@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package api.controllers.requestParsers.validators.validations
+package utils
 
-import api.models.domain.Nino
-import api.models.errors.{MtdError, NinoFormatError}
+import org.scalamock.handlers.CallHandler
+import org.scalamock.scalatest.MockFactory
 
-object NinoValidation {
+trait MockIdGenerator extends MockFactory {
 
-  private val ninoRegex =
-    "^([ACEHJLMOPRSWXY][A-CEGHJ-NPR-TW-Z]|B[A-CEHJ-NPR-TW-Z]|G[ACEGHJ-NPR-TW-Z]|" +
-      "[KT][A-CEGHJ-MPR-TW-Z]|N[A-CEGHJL-NPR-SW-Z]|Z[A-CEGHJ-NPR-TW-Y])[0-9]{6}[A-D]?$"
+  val mockIdGenerator: IdGenerator = mock[IdGenerator]
 
-  def validate(nino: String): List[MtdError] = {
-    if (Nino.isValid(nino) && nino.matches(ninoRegex)) NoValidationErrors else List(NinoFormatError)
+  object MockIdGenerator {
+    def generateCorrelationId: CallHandler[String] = (mockIdGenerator.generateCorrelationId _).expects()
   }
 
 }

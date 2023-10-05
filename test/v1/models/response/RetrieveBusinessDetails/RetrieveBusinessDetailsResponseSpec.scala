@@ -19,7 +19,7 @@ package v1.models.response.RetrieveBusinessDetails
 import api.hateoas.Link
 import api.models.domain.{AccountingType, TypeOfBusiness}
 import api.hateoas.Method.GET
-import mocks.MockAppConfig
+import config.MockAppConfig
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator}

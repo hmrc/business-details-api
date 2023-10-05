@@ -17,7 +17,6 @@
 package v1.services
 
 import api.controllers.EndpointLogContext
-import api.mocks.MockAppConfig
 import api.models.domain.{AccountingType, BusinessId, Nino, TypeOfBusiness}
 import api.models.errors.{
   DownstreamErrorCode,
@@ -32,6 +31,7 @@ import api.models.errors.{
 }
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
+import config.MockAppConfig
 import play.api.Configuration
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.MockRetrieveBusinessDetailsConnector
@@ -206,7 +206,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
     val isEnabled: Boolean                      = true
 
-    MockAppConfig.featureSwitches
+    MockedAppConfig.featureSwitches
       .returns(Configuration("retrieveAdditionalFields.enabled" -> isEnabled))
       .anyNumberOfTimes()
 

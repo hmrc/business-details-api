@@ -23,8 +23,7 @@ import api.services.{EnrolmentsAuthService, MtdIdLookupService}
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
-import v1.controllers.requestParsers.RetrieveBusinessDetailsRequestParser
-import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRawData
+import v1.controllers.validators.RetrieveBusinessDetailsValidatorFactory
 import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsHateoasData
 import v1.services.RetrieveBusinessDetailsService
 
@@ -34,7 +33,7 @@ import scala.concurrent.ExecutionContext
 class RetrieveBusinessDetailsController @Inject() (val authService: EnrolmentsAuthService,
                                                    val lookupService: MtdIdLookupService,
                                                    service: RetrieveBusinessDetailsService,
-                                                   parser: RetrieveBusinessDetailsRequestParser,
+                                                   validatorFactory: RetrieveBusinessDetailsValidatorFactory,
                                                    hateoasFactory: HateoasFactory,
                                                    cc: ControllerComponents,
                                                    val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
@@ -47,15 +46,15 @@ class RetrieveBusinessDetailsController @Inject() (val authService: EnrolmentsAu
     authorisedAction(nino).async { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val rawData = RetrieveBusinessDetailsRawData(nino, businessId)
+      val validator = validatorFactory.validator(nino, businessId)
 
       val requestHandler =
         RequestHandler
-          .withParser(parser)
+          .withValidator(validator)
           .withService(service.retrieveBusinessDetailsService)
           .withHateoasResult(hateoasFactory)(RetrieveBusinessDetailsHateoasData(nino, businessId))
 
-      requestHandler.handleRequest(rawData)
+      requestHandler.handleRequest()
     }
   }
 

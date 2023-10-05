@@ -17,8 +17,7 @@
 package api.hateoas
 
 import cats.Functor
-import config.AppConfig
-import mocks.MockAppConfig
+import config.{AppConfig, MockAppConfig}
 import support.UnitSpec
 import Method.GET
 

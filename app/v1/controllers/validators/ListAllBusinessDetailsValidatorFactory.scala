@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package api.controllers.requestParsers.validators
+package v1.controllers.validators
 
+import api.controllers.validators.Validator
+import api.controllers.validators.resolvers.ResolveNino
 import api.models.errors.MtdError
-import api.models.request.RawData
+import cats.data.Validated
+import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
 
-trait Validator[A <: RawData] {
+import javax.inject.Singleton
 
-  type ValidationLevel[T] = T => List[MtdError]
+@Singleton
+class ListAllBusinessDetailsValidatorFactory {
 
-  def validate(data: A): List[MtdError]
+  def validator(nino: String): Validator[ListAllBusinessesRequestData] =
+    new Validator[ListAllBusinessesRequestData] {
 
-  def run(validationSet: List[A => List[List[MtdError]]], data: A): List[MtdError] = {
-    validationSet match {
-      case Nil => Nil
-      case thisLevel :: remainingLevels =>
-        thisLevel(data).flatten match {
-          case x if x.isEmpty => run(remainingLevels, data)
-          case x              => x
-        }
+      def validate: Validated[Seq[MtdError], ListAllBusinessesRequestData] =
+        ResolveNino(nino).map(ListAllBusinessesRequestData)
+
     }
-  }
 
 }

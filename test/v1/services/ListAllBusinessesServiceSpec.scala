@@ -30,7 +30,7 @@ import api.models.errors.{
 }
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
-import mocks.MockAppConfig
+import config.MockAppConfig
 import play.api.Configuration
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.MockListAllBusinessesConnector

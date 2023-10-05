@@ -18,8 +18,8 @@ package api.connectors
 
 import api.connectors.DownstreamUri.DesUri
 import api.models.outcomes.ResponseWrapper
-import config.AppConfig
-import mocks.{MockAppConfig, MockHttpClient}
+import config.{AppConfig, MockAppConfig}
+import mocks.MockHttpClient
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
 
 import scala.concurrent.Future

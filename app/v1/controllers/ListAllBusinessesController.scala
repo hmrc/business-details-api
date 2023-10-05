@@ -21,8 +21,7 @@ import api.hateoas.HateoasFactory
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
-import v1.controllers.requestParsers.ListAllBusinessesRequestParser
-import v1.models.request.listAllBusinesses.ListAllBusinessesRawData
+import v1.controllers.validators.ListAllBusinessDetailsValidatorFactory
 import v1.models.response.listAllBusiness.ListAllBusinessesHateoasData
 import v1.services.ListAllBusinessesService
 
@@ -33,7 +32,7 @@ import scala.concurrent.ExecutionContext
 class ListAllBusinessesController @Inject() (val authService: EnrolmentsAuthService,
                                              val lookupService: MtdIdLookupService,
                                              service: ListAllBusinessesService,
-                                             parser: ListAllBusinessesRequestParser,
+                                             validatorFactory: ListAllBusinessDetailsValidatorFactory,
                                              hateoasFactory: HateoasFactory,
                                              cc: ControllerComponents,
                                              idGenerator: IdGenerator)(implicit ec: ExecutionContext)
@@ -46,15 +45,15 @@ class ListAllBusinessesController @Inject() (val authService: EnrolmentsAuthServ
     authorisedAction(nino).async { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val rawData = ListAllBusinessesRawData(nino)
+      val validator = validatorFactory.validator(nino)
 
       val requestHandler =
         RequestHandler
-          .withParser(parser)
+          .withValidator(validator)
           .withService(service.listAllBusinessesService)
           .withResultCreator(ResultCreator.hateoasListWrapping(hateoasFactory)((_, _) => ListAllBusinessesHateoasData(nino)))
 
-      requestHandler.handleRequest(rawData)
+      requestHandler.handleRequest()
     }
 
 }
