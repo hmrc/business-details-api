@@ -65,7 +65,7 @@ class ListAllBusinessesConnectorSpec extends ConnectorSpec {
 
     val isEnabled: Boolean = true
 
-    MockAppConfig.featureSwitches
+    MockedAppConfig.featureSwitches
       .returns(Configuration("retrieveAdditionalFields.enabled" -> isEnabled))
       .anyNumberOfTimes()
 

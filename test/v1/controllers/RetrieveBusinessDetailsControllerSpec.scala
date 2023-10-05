@@ -17,23 +17,22 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.mocks.hateoas.MockHateoasFactory
-import api.mocks.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
+import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
 import api.mocks.{MockAppConfig, MockIdGenerator}
 import api.models.domain.accountingType.AccountingType
 import api.models.domain.{Nino, TypeOfBusiness}
 import api.models.errors._
-import api.models.hateoas.Method.GET
-import api.models.hateoas.{HateoasWrapper, Link}
+import api.hateoas.Method.GET
 import api.models.outcomes.ResponseWrapper
+import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Result
-import v1.mocks.requestParsers.MockRetrieveBusinessDetailsRequestParser
-import v1.mocks.services.MockRetrieveBusinessDetailsService
+import v1.controllers.requestParsers.MockRetrieveBusinessDetailsRequestParser
 import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest}
 import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
+import v1.services.MockRetrieveBusinessDetailsService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

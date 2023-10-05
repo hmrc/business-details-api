@@ -16,13 +16,13 @@
 
 package v1.models.response.RetrieveBusinessDetails
 
+import api.hateoas.Link
 import api.models.domain.TypeOfBusiness
 import api.models.domain.accountingType.AccountingType
-import api.models.hateoas.Method.GET
+import api.hateoas.Method.GET
 import mocks.MockAppConfig
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
-import api.models.hateoas.Link
 import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
 
@@ -302,7 +302,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
       "called" in {
         val nino       = "mynino"
         val businessId = "myid"
-        MockAppConfig.apiGatewayContext.returns("individuals/business/details").anyNumberOfTimes()
+        MockedAppConfig.apiGatewayContext.returns("individuals/business/details").anyNumberOfTimes()
         RetrieveBusinessDetailsResponse.RetrieveBusinessDetailsLinksFactory
           .links(mockAppConfig, RetrieveBusinessDetailsHateoasData(nino, businessId)) shouldBe Seq(
           Link(s"/individuals/business/details/$nino/$businessId", GET, "self")

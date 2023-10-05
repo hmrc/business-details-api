@@ -19,7 +19,7 @@ package v1.controllers.requestParsers
 import api.models.domain.Nino
 import api.models.errors.{ErrorWrapper, NinoFormatError}
 import support.UnitSpec
-import v1.mocks.validators.ListAllBusinessesMockValidator
+import v1.controllers.requestParsers.validators.ListAllBusinessesMockValidator
 import v1.models.request.listAllBusinesses.{ListAllBusinessesRawData, ListAllBusinessesRequest}
 
 class ListAllBusinessesRequestParserSpec extends UnitSpec {

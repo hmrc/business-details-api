@@ -16,9 +16,8 @@
 
 package v1.models.response.listAllBusiness
 
-import api.hateoas.{HateoasLinks, HateoasListLinksFactory}
-import api.models.hateoas.RelType.RETRIEVE_BUSINESS_DETAILS
-import api.models.hateoas.{HateoasData, Link}
+import api.hateoas.{HateoasData, HateoasLinks, HateoasListLinksFactory, Link}
+import api.hateoas.RelType.RETRIEVE_BUSINESS_DETAILS
 import cats.Functor
 import config.AppConfig
 import play.api.libs.json._

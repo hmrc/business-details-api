@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package api.mocks.connector
+package v1.controllers.requestParsers.validators
 
-import api.connectors.{MtdIdLookupConnector, MtdIdLookupOutcome}
-import org.scalamock.handlers.CallHandler
+import api.models.errors.MtdError
+import org.scalamock.handlers.CallHandler1
 import org.scalamock.scalatest.MockFactory
-import uk.gov.hmrc.http.HeaderCarrier
+import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRawData
 
-import scala.concurrent.{ExecutionContext, Future}
+class RetrieveBusinessDetailsMockValidator extends MockFactory {
 
-trait MockMtdIdLookupConnector extends MockFactory {
+  val mockValidator: RetrieveBusinessDetailsValidator = mock[RetrieveBusinessDetailsValidator]
 
-  val mockMtdIdLookupConnector: MtdIdLookupConnector = mock[MtdIdLookupConnector]
+  object RetrieveBusinessDetailsMockValidator {
 
-  object MockedMtdIdLookupConnector {
-
-    def lookup(nino: String): CallHandler[Future[MtdIdLookupOutcome]] = {
-      (mockMtdIdLookupConnector
-        .getMtdId(_: String)(_: HeaderCarrier, _: ExecutionContext))
-        .expects(nino, *, *)
+    def validate(data: RetrieveBusinessDetailsRawData): CallHandler1[RetrieveBusinessDetailsRawData, List[MtdError]] = {
+      (mockValidator
+        .validate(_: RetrieveBusinessDetailsRawData))
+        .expects(data)
     }
 
   }

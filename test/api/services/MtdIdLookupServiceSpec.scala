@@ -16,7 +16,7 @@
 
 package api.services
 
-import api.mocks.connector.MockMtdIdLookupConnector
+import api.connectors.MockMtdIdLookupConnector
 import api.models.domain.Nino
 import api.models.errors.{ClientNotAuthorisedError, InternalError, NinoFormatError}
 

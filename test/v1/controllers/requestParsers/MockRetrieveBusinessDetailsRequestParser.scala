@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package v1.mocks.validators
+package v1.controllers.requestParsers
 
-import api.models.errors.MtdError
-import org.scalamock.handlers.CallHandler1
+import api.models.errors.ErrorWrapper
+import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import v1.controllers.requestParsers.validators.RetrieveBusinessDetailsValidator
-import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRawData
+import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest}
 
-class RetrieveBusinessDetailsMockValidator extends MockFactory {
+trait MockRetrieveBusinessDetailsRequestParser extends MockFactory {
 
   val mockValidator: RetrieveBusinessDetailsValidator = mock[RetrieveBusinessDetailsValidator]
 
-  object RetrieveBusinessDetailsMockValidator {
+  val mockRequestParser: RetrieveBusinessDetailsRequestParser = mock[RetrieveBusinessDetailsRequestParser]
 
-    def validate(data: RetrieveBusinessDetailsRawData): CallHandler1[RetrieveBusinessDetailsRawData, List[MtdError]] = {
-      (mockValidator
-        .validate(_: RetrieveBusinessDetailsRawData))
-        .expects(data)
+  object MockRetrieveBusinessDetailsRequestParser {
+
+    def parse(data: RetrieveBusinessDetailsRawData): CallHandler[Either[ErrorWrapper, RetrieveBusinessDetailsRequest]] = {
+      (mockRequestParser.parseRequest(_: RetrieveBusinessDetailsRawData)(_: String)).expects(data, *)
     }
 
   }

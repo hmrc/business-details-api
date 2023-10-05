@@ -16,8 +16,7 @@
 
 package api.controllers
 
-import api.hateoas.{HateoasFactory, HateoasLinksFactory, HateoasListLinksFactory}
-import api.models.hateoas.{HateoasData, HateoasWrapper}
+import api.hateoas.{HateoasData, HateoasFactory, HateoasLinksFactory, HateoasListLinksFactory, HateoasWrapper}
 import api.models.request.RawData
 import cats.Functor
 import play.api.http.{HttpEntity, Status}

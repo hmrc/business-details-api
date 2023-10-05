@@ -33,7 +33,7 @@ import api.services.ServiceSpec
 import mocks.MockAppConfig
 import play.api.Configuration
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.mocks.connectors.MockListAllBusinessesConnector
+import v1.connectors.MockListAllBusinessesConnector
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
@@ -51,7 +51,7 @@ class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
     val isEnabled: Boolean                      = true
 
-    MockAppConfig.featureSwitches
+    MockedAppConfig.featureSwitches
       .returns(Configuration("retrieveAdditionalFields.enabled" -> isEnabled))
       .anyNumberOfTimes()
 

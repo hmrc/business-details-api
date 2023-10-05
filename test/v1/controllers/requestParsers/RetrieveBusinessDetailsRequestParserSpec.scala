@@ -19,7 +19,7 @@ package v1.controllers.requestParsers
 import api.models.domain.Nino
 import api.models.errors.{BadRequestError, BusinessIdFormatError, ErrorWrapper, NinoFormatError}
 import support.UnitSpec
-import v1.mocks.validators.RetrieveBusinessDetailsMockValidator
+import v1.controllers.requestParsers.validators.RetrieveBusinessDetailsMockValidator
 import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest}
 
 class RetrieveBusinessDetailsRequestParserSpec extends UnitSpec {

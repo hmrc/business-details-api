@@ -17,10 +17,21 @@
 package routing
 
 import play.api.http.HeaderNames.ACCEPT
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import routing.Version.VersionWrites
 import support.UnitSpec
 
 class VersionSpec extends UnitSpec {
+
+  "serialized to Json" must {
+    "return the expected Json output" in {
+      val version: Version = Version1
+      val expected = Json.parse(""" "1.0" """)
+      val result = Json.toJson(version)
+      result shouldBe expected
+    }
+  }
 
   "Versions" when {
     "retrieved from a request header" must {
@@ -30,6 +41,10 @@ class VersionSpec extends UnitSpec {
 
       "return an error if the version is unsupported" in {
         Versions.getFromRequest(FakeRequest().withHeaders((ACCEPT, "application/vnd.hmrc.3.0+json"))) shouldBe Left(VersionNotFound)
+      }
+
+      "return InvalidHeader when the version header is missing" in {
+        Versions.getFromRequest(FakeRequest().withHeaders()) shouldBe Left(InvalidHeader)
       }
 
       "return an error if the Accept header value is invalid" in {

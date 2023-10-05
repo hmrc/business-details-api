@@ -17,20 +17,19 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
+import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
 import api.mocks.MockIdGenerator
-import api.mocks.hateoas.MockHateoasFactory
-import api.mocks.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
 import api.models.domain.{Nino, TypeOfBusiness}
 import api.models.errors._
-import api.models.hateoas.Method.GET
+import api.hateoas.Method.GET
 import play.api.libs.json.Json
 import play.api.mvc.Result
-import v1.mocks.requestParsers.MockListAllBusinessesRequestParser
-import v1.mocks.services.MockListAllBusinessesService
 import v1.models.request.listAllBusinesses.{ListAllBusinessesRawData, ListAllBusinessesRequest}
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesHateoasData, ListAllBusinessesResponse}
-import api.models.hateoas.{HateoasWrapper, Link}
 import api.models.outcomes.ResponseWrapper
+import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
+import v1.controllers.requestParsers.MockListAllBusinessesRequestParser
+import v1.services.MockListAllBusinessesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

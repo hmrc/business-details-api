@@ -17,9 +17,8 @@
 package api.hateoas
 
 import config.AppConfig
-import api.models.hateoas.Link
-import api.models.hateoas.Method.GET
-import api.models.hateoas.RelType.SELF
+import Method.GET
+import RelType.SELF
 
 trait HateoasLinks {
 

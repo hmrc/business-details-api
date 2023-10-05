@@ -260,7 +260,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
     lazy val target = new EnrolmentsAuthService(mockAuthConnector, mockAppConfig)
 
     def mockConfidenceLevelCheckConfig(authValidationEnabled: Boolean = true, confidenceLevel: ConfidenceLevel = ConfidenceLevel.L200): Unit = {
-      MockAppConfig.confidenceLevelCheckEnabled.returns(
+      MockedAppConfig.confidenceLevelCheckEnabled.returns(
         ConfidenceLevelConfig(
           confidenceLevel = confidenceLevel,
           definitionEnabled = true,

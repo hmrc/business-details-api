@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-package api.models.hateoas
+package api.hateoas
 
-import play.api.libs.json.{Json, Writes}
-
-case class Link(
-    href: String,
-    method: Method,
-    rel: String
-)
-
-object Link {
-  implicit val writes: Writes[Link] = Json.writes[Link]
+object RelType {
+  val SELF                      = "self"
+  val RETRIEVE_BUSINESS_DETAILS = "retrieve-business-details"
 }

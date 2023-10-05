@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package v1.mocks.requestParsers
+package v1.controllers.requestParsers
 
 import api.models.errors.ErrorWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.controllers.requestParsers.ListAllBusinessesRequestParser
 import v1.controllers.requestParsers.validators.ListAllBusinessesValidator
 import v1.models.request.listAllBusinesses.{ListAllBusinessesRawData, ListAllBusinessesRequest}
 

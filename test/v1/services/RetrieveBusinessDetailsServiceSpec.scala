@@ -35,7 +35,7 @@ import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import play.api.Configuration
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.mocks.connectors.MockRetrieveBusinessDetailsConnector
+import v1.connectors.MockRetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
 import v1.models.response.retrieveBusinessDetails.downstream.{
   BusinessDetails,
