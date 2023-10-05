@@ -17,8 +17,7 @@
 package v1.models.response.RetrieveBusinessDetails
 
 import api.hateoas.Link
-import api.models.domain.TypeOfBusiness
-import api.models.domain.accountingType.AccountingType
+import api.models.domain.{AccountingType, TypeOfBusiness}
 import api.hateoas.Method.GET
 import mocks.MockAppConfig
 import play.api.libs.json.{JsValue, Json}

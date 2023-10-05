@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-package v1.models.request.retrieveBusinessDetails
+package api.models.domain
 
-import api.models.domain.Nino
+import play.api.libs.json.{JsObject, JsValue, Writes}
 
-case class RetrieveBusinessDetailsRequest(nino: Nino, businessId: String)
+object EmptyJsonBody {
+
+  implicit val writes: Writes[EmptyJsonBody.type] = new Writes[EmptyJsonBody.type] {
+    override def writes(o: EmptyJsonBody.type): JsValue = JsObject.empty
+  }
+}

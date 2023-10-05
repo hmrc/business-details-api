@@ -24,7 +24,7 @@ import api.models.errors._
 import api.hateoas.Method.GET
 import play.api.libs.json.Json
 import play.api.mvc.Result
-import v1.models.request.listAllBusinesses.{ListAllBusinessesRawData, ListAllBusinessesRequest}
+import v1.models.request.listAllBusinesses.{ListAllBusinessesRawData, ListAllBusinessesRequestData}
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesHateoasData, ListAllBusinessesResponse}
 import api.models.outcomes.ResponseWrapper
 import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
@@ -82,7 +82,7 @@ class ListAllBusinessesControllerSpec
   val hateoasResponse: ListAllBusinessesResponse[HateoasWrapper[Business]] = ListAllBusinessesResponse(
     Seq(HateoasWrapper(business, Seq(testInnerHateoasLink))))
 
-  private val requestData = ListAllBusinessesRequest(Nino(validNino))
+  private val requestData = ListAllBusinessesRequestData(Nino(validNino))
 
   private val rawData = ListAllBusinessesRawData(validNino)
 

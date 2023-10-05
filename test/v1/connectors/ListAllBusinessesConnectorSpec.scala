@@ -22,7 +22,7 @@ import api.models.domain.TypeOfBusiness.`self-employment`
 import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
 import play.api.libs.json.Reads
-import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
+import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
 import v1.models.response.listAllBusiness.ListAllBusinessesResponse.getReads
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
@@ -61,7 +61,7 @@ class ListAllBusinessesConnectorSpec extends ConnectorSpec {
   trait Test { _: ConnectorTest =>
     protected val connector: ListAllBusinessesConnector = new ListAllBusinessesConnector(http = mockHttpClient, appConfig = mockAppConfig)
 
-    protected val request: ListAllBusinessesRequest = ListAllBusinessesRequest(nino)
+    protected val request: ListAllBusinessesRequestData = ListAllBusinessesRequestData(nino)
 
     val isEnabled: Boolean = true
 

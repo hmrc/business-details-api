@@ -17,8 +17,7 @@
 package v1.models.response.retrieveBusinessDetails
 
 import api.hateoas.{HateoasData, HateoasLinks, HateoasLinksFactory, Link}
-import api.models.domain.accountingType.AccountingType
-import api.models.domain.{TaxYear, TypeOfBusiness}
+import api.models.domain.{AccountingType, TaxYear, TypeOfBusiness}
 import config.AppConfig
 import play.api.libs.json.{Json, OWrites, Reads}
 import v1.models.response.retrieveBusinessDetails.downstream.LatencyDetails

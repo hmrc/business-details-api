@@ -16,11 +16,11 @@
 
 package v1.controllers.requestParsers
 
-import api.models.domain.Nino
+import api.models.domain.{BusinessId, Nino}
 import api.models.errors.{BadRequestError, BusinessIdFormatError, ErrorWrapper, NinoFormatError}
 import support.UnitSpec
 import v1.controllers.requestParsers.validators.RetrieveBusinessDetailsMockValidator
-import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest}
+import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequestData}
 
 class RetrieveBusinessDetailsRequestParserSpec extends UnitSpec {
 
@@ -39,7 +39,7 @@ class RetrieveBusinessDetailsRequestParserSpec extends UnitSpec {
     "return a RetrieveBusinessDetailsRequest" when {
       "the validator returns no errors" in new Test {
         RetrieveBusinessDetailsMockValidator.validate(data).returns(Nil)
-        parser.parseRequest(data) shouldBe Right(RetrieveBusinessDetailsRequest(Nino(nino), businessId))
+        parser.parseRequest(data) shouldBe Right(RetrieveBusinessDetailsRequestData(Nino(nino), BusinessId(businessId)))
       }
     }
     "return an error wrapper" when {

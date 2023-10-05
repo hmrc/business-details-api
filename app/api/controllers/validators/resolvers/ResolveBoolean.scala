@@ -14,8 +14,22 @@
  * limitations under the License.
  */
 
-package v1.models.request.listAllBusinesses
+package api.controllers.validators.resolvers
 
-import api.models.domain.Nino
+import api.models.errors.MtdError
+import cats.data.Validated
+import cats.data.Validated.{Invalid, Valid}
 
-case class ListAllBusinessesRequest(nino: Nino)
+import scala.util.{Failure, Success, Try}
+
+object ResolveBoolean extends Resolver[String, Boolean] {
+
+  def apply(value: String, error: Option[MtdError], path: Option[String]): Validated[Seq[MtdError], Boolean] =
+    Try {
+      value.toBoolean
+    } match {
+      case Success(result) => Valid(result)
+      case Failure(_)      => Invalid(List(requireError(error, path)))
+    }
+
+}

@@ -16,8 +16,7 @@
 
 package v1.models.response.RetrieveBusinessDetails.downstream
 
-import api.models.domain.TypeOfBusiness
-import api.models.domain.accountingType.AccountingType
+import api.models.domain.{AccountingType, TypeOfBusiness}
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 import v1.models.response.retrieveBusinessDetails.AccountingPeriod

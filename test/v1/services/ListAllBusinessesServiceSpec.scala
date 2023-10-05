@@ -34,7 +34,7 @@ import mocks.MockAppConfig
 import play.api.Configuration
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.MockListAllBusinessesConnector
-import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
+import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.Future
@@ -42,7 +42,7 @@ import scala.concurrent.Future
 class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
 
   private val validNino   = Nino("AA123456A")
-  private val requestData = ListAllBusinessesRequest(validNino)
+  private val requestData = ListAllBusinessesRequestData(validNino)
 
   private val responseBody: ListAllBusinessesResponse[Business] = ListAllBusinessesResponse(Seq())
 

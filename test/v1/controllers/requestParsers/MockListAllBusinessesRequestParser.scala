@@ -20,7 +20,7 @@ import api.models.errors.ErrorWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import v1.controllers.requestParsers.validators.ListAllBusinessesValidator
-import v1.models.request.listAllBusinesses.{ListAllBusinessesRawData, ListAllBusinessesRequest}
+import v1.models.request.listAllBusinesses.{ListAllBusinessesRawData, ListAllBusinessesRequestData}
 
 trait MockListAllBusinessesRequestParser extends MockFactory {
 
@@ -30,7 +30,7 @@ trait MockListAllBusinessesRequestParser extends MockFactory {
 
   object MockListAllBusinessesRequestParser {
 
-    def parse(data: ListAllBusinessesRawData): CallHandler[Either[ErrorWrapper, ListAllBusinessesRequest]] = {
+    def parse(data: ListAllBusinessesRawData): CallHandler[Either[ErrorWrapper, ListAllBusinessesRequestData]] = {
       (mockRequestParser.parseRequest(_: ListAllBusinessesRawData)(_: String)).expects(data, *)
     }
 

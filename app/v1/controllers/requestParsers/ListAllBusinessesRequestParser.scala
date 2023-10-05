@@ -21,13 +21,13 @@ import api.models.domain.Nino
 
 import javax.inject.Inject
 import v1.controllers.requestParsers.validators.ListAllBusinessesValidator
-import v1.models.request.listAllBusinesses.{ListAllBusinessesRawData, ListAllBusinessesRequest}
+import v1.models.request.listAllBusinesses.{ListAllBusinessesRawData, ListAllBusinessesRequestData}
 
 class ListAllBusinessesRequestParser @Inject() (val validator: ListAllBusinessesValidator)
-    extends RequestParser[ListAllBusinessesRawData, ListAllBusinessesRequest] {
+    extends RequestParser[ListAllBusinessesRawData, ListAllBusinessesRequestData] {
 
-  override protected def requestFor(data: ListAllBusinessesRawData): ListAllBusinessesRequest = {
-    ListAllBusinessesRequest(Nino(data.nino))
+  override protected def requestFor(data: ListAllBusinessesRawData): ListAllBusinessesRequestData = {
+    ListAllBusinessesRequestData(Nino(data.nino))
   }
 
 }

@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package api.models.domain.accountingType
+package api.controllers.validators.resolvers
 
-import play.api.libs.json.Format
-import utils.enums.Enums
+import api.models.errors.MtdError
+import cats.data.Validated
+import play.api.libs.json._
 
-sealed trait AccountingType
+class ResolveJsonObject[T](implicit val reads: Reads[T]) extends Resolver[JsValue, T] with JsonObjectResolving[T] {
 
-object AccountingType {
-  case object CASH     extends AccountingType
-  case object ACCRUALS extends AccountingType
-
-  implicit val format: Format[AccountingType] = Enums.format[AccountingType]
+  def apply(data: JsValue, error: Option[MtdError], path: Option[String]): Validated[Seq[MtdError], T] =
+    validate(data).leftMap(errs => withErrors(error, errs, path))
 
 }

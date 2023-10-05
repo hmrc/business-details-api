@@ -19,8 +19,7 @@ package v1.controllers
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
 import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
 import api.mocks.{MockAppConfig, MockIdGenerator}
-import api.models.domain.accountingType.AccountingType
-import api.models.domain.{Nino, TypeOfBusiness}
+import api.models.domain.{AccountingType, BusinessId, Nino, TypeOfBusiness}
 import api.models.errors._
 import api.hateoas.Method.GET
 import api.models.outcomes.ResponseWrapper
@@ -29,7 +28,7 @@ import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import v1.controllers.requestParsers.MockRetrieveBusinessDetailsRequestParser
-import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest}
+import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequestData}
 import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
 import v1.services.MockRetrieveBusinessDetailsService
@@ -113,7 +112,7 @@ class RetrieveBusinessDetailsControllerSpec
     Some("2023")
   )
 
-  private val requestData = RetrieveBusinessDetailsRequest(Nino(nino), businessId)
+  private val requestData = RetrieveBusinessDetailsRequestData(Nino(nino), BusinessId(businessId))
 
   private val rawData = RetrieveBusinessDetailsRawData(nino, businessId)
 

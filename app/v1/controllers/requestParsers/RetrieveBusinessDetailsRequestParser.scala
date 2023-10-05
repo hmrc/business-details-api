@@ -17,17 +17,17 @@
 package v1.controllers.requestParsers
 
 import api.controllers.requestParsers.RequestParser
-import api.models.domain.Nino
+import api.models.domain.{BusinessId, Nino}
 
 import javax.inject.Inject
 import v1.controllers.requestParsers.validators.RetrieveBusinessDetailsValidator
-import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest}
+import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequestData}
 
 class RetrieveBusinessDetailsRequestParser @Inject() (val validator: RetrieveBusinessDetailsValidator)
-    extends RequestParser[RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest] {
+    extends RequestParser[RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequestData] {
 
-  override protected def requestFor(data: RetrieveBusinessDetailsRawData): RetrieveBusinessDetailsRequest = {
-    RetrieveBusinessDetailsRequest(Nino(data.nino), data.businessId)
+  override protected def requestFor(data: RetrieveBusinessDetailsRawData): RetrieveBusinessDetailsRequestData = {
+    RetrieveBusinessDetailsRequestData(Nino(data.nino), BusinessId(data.businessId))
   }
 
 }

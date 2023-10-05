@@ -14,16 +14,8 @@
  * limitations under the License.
  */
 
-package api.models.domain.accountingType
+package v1.models.request.listAllBusinesses
 
-import support.UnitSpec
-import utils.enums.EnumJsonSpecSupport
+import api.models.domain.Nino
 
-class AccountingTypeSpec extends UnitSpec with EnumJsonSpecSupport {
-
-  testRoundTrip[AccountingType](
-    ("CASH", AccountingType.CASH),
-    ("ACCRUALS", AccountingType.ACCRUALS)
-  )
-
-}
+case class ListAllBusinessesRequestData(nino: Nino)

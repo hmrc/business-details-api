@@ -18,8 +18,7 @@ package v1.services
 
 import api.controllers.EndpointLogContext
 import api.mocks.MockAppConfig
-import api.models.domain.accountingType.AccountingType
-import api.models.domain.{Nino, TypeOfBusiness}
+import api.models.domain.{AccountingType, BusinessId, Nino, TypeOfBusiness}
 import api.models.errors.{
   DownstreamErrorCode,
   DownstreamErrors,
@@ -36,7 +35,7 @@ import api.services.ServiceSpec
 import play.api.Configuration
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.MockRetrieveBusinessDetailsConnector
-import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
+import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
 import v1.models.response.retrieveBusinessDetails.downstream.{
   BusinessDetails,
   LatencyDetails,
@@ -49,10 +48,10 @@ import scala.concurrent.Future
 
 class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
 
-  private val validNino      = Nino("AA123456A")
-  private val validId        = "XAIS12345678910"
-  private val requestData    = RetrieveBusinessDetailsRequest(validNino, validId)
-  private val badRequestData = RetrieveBusinessDetailsRequest(validNino, "SDFG3456782190")
+  private val validNino       = Nino("AA123456A")
+  private val validBusinessId = BusinessId("XAIS12345678910")
+  private val requestData     = RetrieveBusinessDetailsRequestData(validNino, validBusinessId)
+  private val badRequestData  = RetrieveBusinessDetailsRequestData(validNino, BusinessId("SDFG3456782190"))
 
   private val responseBody = RetrieveBusinessDetailsResponse(
     "XAIS12345678910",

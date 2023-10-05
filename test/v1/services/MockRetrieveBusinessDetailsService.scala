@@ -21,7 +21,7 @@ import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
+import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
 import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponse
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,10 +33,10 @@ trait MockRetrieveBusinessDetailsService extends MockFactory {
   object MockRetrieveBusinessDetailsService {
 
     def retrieveBusinessDetailsService(
-        request: RetrieveBusinessDetailsRequest): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]]]] = {
+        request: RetrieveBusinessDetailsRequestData): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]]]] = {
       (
         mockRetrieveBusinessDetailsService
-          .retrieveBusinessDetailsService(_: RetrieveBusinessDetailsRequest)(
+          .retrieveBusinessDetailsService(_: RetrieveBusinessDetailsRequestData)(
             _: RequestContext,
             _: ExecutionContext
           )

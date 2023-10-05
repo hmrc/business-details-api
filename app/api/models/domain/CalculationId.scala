@@ -14,29 +14,8 @@
  * limitations under the License.
  */
 
-package api.models.errors
+package api.models.domain
 
-import play.api.libs.json.{JsValue, Json}
-import support.UnitSpec
-
-class ErrorSpec extends UnitSpec {
-
-  "MtdError" when {
-
-    val json: JsValue = Json.parse(
-      """
-        |{
-        |   "code": "FORMAT_NINO",
-        |   "message": "The provided NINO is invalid"
-        |}
-    """.stripMargin
-    )
-
-    "written to JSON" should {
-      "produce the expected JsObject" in {
-        NinoFormatError.asJson shouldBe json
-      }
-    }
-  }
-
+case class CalculationId(calculationId: String) {
+  override def toString: String = calculationId
 }

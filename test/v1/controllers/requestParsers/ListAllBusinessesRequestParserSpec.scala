@@ -20,7 +20,7 @@ import api.models.domain.Nino
 import api.models.errors.{ErrorWrapper, NinoFormatError}
 import support.UnitSpec
 import v1.controllers.requestParsers.validators.ListAllBusinessesMockValidator
-import v1.models.request.listAllBusinesses.{ListAllBusinessesRawData, ListAllBusinessesRequest}
+import v1.models.request.listAllBusinesses.{ListAllBusinessesRawData, ListAllBusinessesRequestData}
 
 class ListAllBusinessesRequestParserSpec extends UnitSpec {
 
@@ -37,7 +37,7 @@ class ListAllBusinessesRequestParserSpec extends UnitSpec {
     "return a ListAllBusinessesRequest" when {
       "the validator returns no errors" in new Test {
         ListAllBusinessesMockValidator.validate(data).returns(Nil)
-        parser.parseRequest(data) shouldBe Right(ListAllBusinessesRequest(Nino(nino)))
+        parser.parseRequest(data) shouldBe Right(ListAllBusinessesRequestData(Nino(nino)))
       }
     }
     "return an error wrapper" when {
