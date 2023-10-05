@@ -17,7 +17,7 @@
 package api.controllers.validators.resolvers
 
 import api.models.domain.TaxYear
-import api.models.errors.{RuleTaxYearRangeInvalid, TaxYearFormatError}
+import api.models.errors.{InvalidTaxYearParameterError, RuleTaxYearNotSupportedError, RuleTaxYearRangeInvalid, TaxYearFormatError}
 import cats.data.Validated.{Invalid, Valid}
 import support.UnitSpec
 
@@ -28,6 +28,13 @@ class ResolveTaxYearSpec extends UnitSpec {
       "passed a valid tax year" in {
         val validTaxYear = "2018-19"
         val result       = ResolveTaxYear(validTaxYear)
+        result shouldBe Valid(TaxYear.fromMtd(validTaxYear))
+      }
+
+      "passed a valid tax year with a minimum year requirement" in {
+        val validTaxYear   = "2018-19"
+        val minimumTaxYear = 2019
+        val result         = ResolveTaxYear(minimumTaxYear, validTaxYear, None, None)
         result shouldBe Valid(TaxYear.fromMtd(validTaxYear))
       }
     }
@@ -56,6 +63,31 @@ class ResolveTaxYearSpec extends UnitSpec {
       "the tax year is bad" in {
         val result = ResolveTaxYear("20177-17")
         result shouldBe Invalid(List(TaxYearFormatError))
+      }
+
+      "the tax year precedes the minimum year requirement" in {
+        val validTaxYear   = "2017-18"
+        val minimumTaxYear = 2019
+        val result         = ResolveTaxYear(minimumTaxYear, validTaxYear, None, None)
+        result shouldBe Invalid(List(RuleTaxYearNotSupportedError))
+      }
+    }
+  }
+
+  "ResolveTysTaxYear" should {
+
+    "return no errors" when {
+      "passed a valid tax year that's above or equal to TaxYear.tysTaxYear" in {
+        val validTaxYear = "2023-24"
+        val result       = ResolveTysTaxYear(validTaxYear)
+        result shouldBe Valid(TaxYear.fromMtd(validTaxYear))
+      }
+    }
+
+    "return an error" when {
+      "passed a valid tax year but below TaxYear.tysTaxYear" in {
+        val result = ResolveTysTaxYear("2021-22")
+        result shouldBe Invalid(List(InvalidTaxYearParameterError))
       }
     }
   }
