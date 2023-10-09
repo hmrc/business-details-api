@@ -16,20 +16,28 @@
 
 package api.controllers.validators.resolvers
 
-import api.models.domain.BusinessId
-import api.models.errors.{BusinessIdFormatError, MtdError}
+import api.models.errors.MtdError
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 
-object ResolveBusinessId extends Resolver[String, BusinessId] {
+import scala.util.matching.Regex
 
-  private val businessIdRegex = "^X[A-Z0-9]{1}IS[0-9]{11}$".r
+trait StringPatternResolving extends Resolver[String, String] {
 
-  def apply(value: String, maybeError: Option[MtdError], errorPath: Option[String]): Validated[Seq[MtdError], BusinessId] = {
-    if (businessIdRegex.matches(value))
-      Valid(BusinessId(value))
+  protected val regexFormat: Regex
+  protected val error: MtdError
+
+  protected def resolve(value: String, maybeError: Option[MtdError], path: Option[String]): Validated[Seq[MtdError], String] =
+    if (regexFormat.matches(value))
+      Valid(value)
     else
-      Invalid(List(maybeError.getOrElse(BusinessIdFormatError).maybeWithExtraPath(errorPath)))
-  }
+      Invalid(List(maybeError.getOrElse(error).maybeWithExtraPath(path)))
+
+}
+
+class ResolveStringPattern(protected val regexFormat: Regex, protected val error: MtdError) extends StringPatternResolving {
+
+  def apply(value: String, maybeError: Option[MtdError], path: Option[String]): Validated[Seq[MtdError], String] =
+    resolve(value, maybeError, path)
 
 }

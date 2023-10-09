@@ -68,7 +68,7 @@ class RetrieveBusinessDetailsValidatorFactorySpec extends UnitSpec {
           ErrorWrapper(
             correlationId,
             BadRequestError,
-            Some(List(NinoFormatError, BusinessIdFormatError))
+            Some(List(BusinessIdFormatError, NinoFormatError))
           )
         )
       }

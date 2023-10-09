@@ -19,33 +19,34 @@ package api.models.domain
 import play.api.libs.json.Writes
 
 import java.time.{LocalDate, ZoneOffset}
+import javax.inject.Singleton
 
 /** Opaque representation of a tax year.
- *
- * @param value
- *   A single-year representation, e.g. "2024" represents the tax year 2023-24.
- */
+  *
+  * @param value
+  *   A single-year representation, e.g. "2024" represents the tax year 2023-24.
+  */
 final case class TaxYear private (private val value: String) {
 
   /** The tax year as a number, e.g. for "2023-24" this will be 2024.
-   */
+    */
   val year: Int = value.toInt
 
   /** e.g. for tax year 2023-24, "2023-04-06"
-   */
+    */
   val taxYearStart: String = {
     val fromYear = year - 1
     s"$fromYear-04-06"
   }
 
   /** e.g. for tax year 2023-24, "2024-04-05"
-   */
+    */
   val taxYearEnd: String = {
     s"$year-04-05"
   }
 
   /** The tax year in MTD (vendor-facing) format, e.g. "2023-24".
-   */
+    */
   val asMtd: String = {
     val prefix  = value.take(2)
     val yearTwo = value.drop(2)
@@ -54,11 +55,11 @@ final case class TaxYear private (private val value: String) {
   }
 
   /** The tax year in the pre-TYS downstream format, e.g. "2024".
-   */
+    */
   val asDownstream: String = value
 
   /** The tax year in the Tax Year Specific downstream format, e.g. "23-24".
-   */
+    */
   val asTysDownstream: String = {
     val yearTwo = value.toInt - 2000
     val yearOne = yearTwo - 1
@@ -66,7 +67,7 @@ final case class TaxYear private (private val value: String) {
   }
 
   /** Use this for downstream API endpoints that are known to be TYS.
-   */
+    */
   def useTaxYearSpecificApi: Boolean = year >= 2024
 
   override def toString: String = s"TaxYear($value)"
@@ -79,26 +80,26 @@ object TaxYear {
   val minimumTaxYear = new TaxYear("2018")
 
   /** UK tax year starts on 6 April.
-   */
+    */
   private val taxYearMonthStart = 4
   private val taxYearDayStart   = 6
 
   /** @param taxYear
-   *   tax year in MTD format (e.g. 2017-18)
-   */
+    *   tax year in MTD format (e.g. 2017-18)
+    */
   def fromMtd(taxYear: String): TaxYear =
     TaxYear(taxYear.take(2) + taxYear.drop(5))
 
   def now(): TaxYear = TaxYear.fromIso(LocalDate.now().toString)
 
   /** @param date
-   *   the date in extended ISO-8601 format (e.g. 2020-04-05)
-   */
+    *   the date in extended ISO-8601 format (e.g. 2020-04-05)
+    */
   def fromIso(date: String): TaxYear = {
     val date1 = LocalDate.parse(date)
     val year = (
       if (isPreviousTaxYear(date1)) date1.getYear else date1.getYear + 1
-      ).toString
+    ).toString
 
     new TaxYear(year)
   }
@@ -114,10 +115,8 @@ object TaxYear {
   def fromDownstreamInt(taxYear: Int): TaxYear =
     new TaxYear(taxYear.toString)
 
-  type TodaySupplier = () => LocalDate
-
-  def currentTaxYear()(implicit todaySupplier: TodaySupplier = today _): TaxYear = {
-    val today            = todaySupplier()
+  def currentTaxYear()(implicit todaySupplier: TodaySupplier = new TodaySupplier): TaxYear = {
+    val today            = todaySupplier.today()
     val year             = today.getYear
     val taxYearStartDate = LocalDate.parse(s"$year-04-06")
 
@@ -131,4 +130,9 @@ object TaxYear {
   def today(): LocalDate = LocalDate.now(ZoneOffset.UTC)
 
   implicit val writes: Writes[TaxYear] = implicitly[Writes[String]].contramap(_.asMtd)
+}
+
+@Singleton
+class TodaySupplier {
+  def today(): LocalDate = LocalDate.now(ZoneOffset.UTC)
 }

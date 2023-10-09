@@ -19,13 +19,16 @@ package api.controllers.validators
 import api.models.errors.MtdError
 import cats.data.Validated
 import cats.data.Validated.Valid
-import cats.implicits.toFoldableOps
+import cats.implicits._
 
 /** For complex additional validating that needs to take place after the initial validation and parsing of the JSON payload.
+  *
+  * If the additional validating is fairly minor, it could just go into a method in the Validator/ValidatorFactory; but if it's sizeable and is
+  * primarily about validating business rules, then it'll make sense to separate it into a separate RulesValidator class.
   */
 trait RulesValidator[PARSED] {
 
-  /** Represents a successful validation result with no errors. */
+  /** A successful validation result with no errors. */
   protected val valid: Validated[Seq[MtdError], Unit] = Valid(())
 
   /** Validates the business rules for the given parsed data.
@@ -58,6 +61,7 @@ trait RulesValidator[PARSED] {
       *   A validation result containing either the parsed data or a sequence of errors.
       */
     def onSuccess(parsed: PARSED): Validated[Seq[MtdError], PARSED] = result.map(_ => parsed)
+    def toUnit: Validated[Seq[MtdError], Unit]                      = result.andThen(_ => valid)
   }
 
 }

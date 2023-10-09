@@ -16,18 +16,6 @@
 
 package api.models.domain
 
-import play.api.libs.json.Json
-import support.UnitSpec
+import java.time.LocalDate
 
-class EmptyJsonBodySpec extends UnitSpec {
-
-  "EmptyJsonBody.writes" should {
-    "return an empty JSON body" when {
-      "called" in {
-        val json = EmptyJsonBody
-        Json.toJson(json)(EmptyJsonBody.writes) shouldBe Json.obj()
-      }
-    }
-  }
-
-}
+case class DateRange(startDate: LocalDate, endDate: LocalDate)

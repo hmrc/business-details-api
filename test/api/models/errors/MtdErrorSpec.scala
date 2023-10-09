@@ -22,9 +22,11 @@ import support.UnitSpec
 
 class MtdErrorSpec extends UnitSpec {
 
+  private val error = MtdError("CODE", "some message", BAD_REQUEST)
+
   "writes" should {
     "generate the correct JSON" in {
-      Json.toJson(MtdError("CODE", "some message", BAD_REQUEST)) shouldBe Json.parse(
+      Json.toJson(error) shouldBe Json.parse(
         """
           |{
           |   "code": "CODE",
@@ -34,4 +36,14 @@ class MtdErrorSpec extends UnitSpec {
       )
     }
   }
+
+  "maybeWithExtraPath" should {
+    "add an extra path to the error" when {
+      "a path is provided" in {
+        val result = error.maybeWithExtraPath(Some("extra path")).paths
+        result shouldBe Some(List("extra path"))
+      }
+    }
+  }
+
 }

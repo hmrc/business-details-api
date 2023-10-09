@@ -69,4 +69,11 @@ class VersionSpec extends UnitSpec {
     }
   }
 
+  "toString" should {
+    "return the version name" in {
+      val result = Version1.toString
+      result shouldBe Version1.name
+    }
+  }
+
 }
