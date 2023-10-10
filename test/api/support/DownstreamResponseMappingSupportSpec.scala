@@ -17,14 +17,18 @@
 package api.support
 
 import api.controllers.EndpointLogContext
-import api.models.domain.TypeOfBusiness
-import api.models.domain.accountingType.AccountingType
+import api.models.domain.{AccountingType, BusinessId, TypeOfBusiness}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import play.api.http.Status.BAD_REQUEST
 import support.UnitSpec
 import utils.Logging
-import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
+import v1.models.response.retrieveBusinessDetails.downstream.{
+  BusinessDetails,
+  LatencyDetails,
+  LatencyIndicator,
+  RetrieveBusinessDetailsDownstreamResponse
+}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 class DownstreamResponseMappingSupportSpec extends UnitSpec {
@@ -77,7 +81,8 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
 
       "downstream returns UNMATCHED_STUB_ERROR" must {
         "return an RuleIncorrectGovTestScenario error" in {
-          mapping.mapDownstreamErrors(errorCodeMap)(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode("UNMATCHED_STUB_ERROR")))) shouldBe
+          mapping.mapDownstreamErrors(errorCodeMap)(
+            ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode("UNMATCHED_STUB_ERROR")))) shouldBe
             ErrorWrapper(correlationId, RuleIncorrectGovTestScenarioError)
         }
       }
@@ -256,28 +261,27 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
       firstAccountingPeriodStartDate = Some("2018-04-06"),
       firstAccountingPeriodEndDate = Some("2018-12-12"),
       latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-      yearOfMigration = Some("2023"),
+      yearOfMigration = Some("2023")
     )
 
     "return a single businesses details" when {
       "a single business is passed in with correct id" in {
-          mapping.filterId(ResponseWrapper("", desSingleBusiness), "XAIS12345678910") shouldBe Right(
-            ResponseWrapper("", responseBusiness))
+        mapping.filterId(ResponseWrapper("", desSingleBusiness), BusinessId("XAIS12345678910")) shouldBe Right(ResponseWrapper("", responseBusiness))
       }
       "multiple businesses are passed with one correct id" in {
-          mapping.filterId(ResponseWrapper("", desMultipleBusinessInSeq), "XAIS12345678910") shouldBe Right(
-            ResponseWrapper("", responseBusiness))
+        mapping.filterId(ResponseWrapper("", desMultipleBusinessInSeq), BusinessId("XAIS12345678910")) shouldBe Right(
+          ResponseWrapper("", responseBusiness))
       }
     }
     "return no business details error" when {
       "businesses are passed with none having the correct id" in {
-        mapping.filterId(ResponseWrapper("", desMultipleBusinessInSeq), "XAIS6789012345") shouldBe
+        mapping.filterId(ResponseWrapper("", desMultipleBusinessInSeq), BusinessId("XAIS6789012345")) shouldBe
           Left(ErrorWrapper("", NoBusinessFoundError))
       }
     }
     "return downstream error" when {
       "multiple businesses are passed with multiple having the correct id" in {
-        mapping.filterId(ResponseWrapper("", DesSingleBusinessDetailsRepeated), "XAIS12345678910") shouldBe
+        mapping.filterId(ResponseWrapper("", DesSingleBusinessDetailsRepeated), BusinessId("XAIS12345678910")) shouldBe
           Left(ErrorWrapper("", InternalError))
       }
     }

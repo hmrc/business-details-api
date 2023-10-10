@@ -17,20 +17,19 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.mocks.MockIdGenerator
-import api.mocks.hateoas.MockHateoasFactory
-import api.mocks.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
+import api.hateoas.Method.GET
+import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
 import api.models.domain.{Nino, TypeOfBusiness}
 import api.models.errors._
-import api.models.hateoas.Method.GET
+import api.models.outcomes.ResponseWrapper
+import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
 import play.api.libs.json.Json
 import play.api.mvc.Result
-import v1.mocks.requestParsers.MockListAllBusinessesRequestParser
-import v1.mocks.services.MockListAllBusinessesService
-import v1.models.request.listAllBusinesses.{ListAllBusinessesRawData, ListAllBusinessesRequest}
+import utils.MockIdGenerator
+import v1.controllers.validators.MockListAllBusinessDetailsValidatorFactory
+import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesHateoasData, ListAllBusinessesResponse}
-import api.models.hateoas.{HateoasWrapper, Link}
-import api.models.outcomes.ResponseWrapper
+import v1.services.MockListAllBusinessesService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -42,7 +41,7 @@ class ListAllBusinessesControllerSpec
     with MockMtdIdLookupService
     with MockListAllBusinessesService
     with MockHateoasFactory
-    with MockListAllBusinessesRequestParser
+    with MockListAllBusinessDetailsValidatorFactory
     with MockIdGenerator {
 
   private val validNino            = "AA123456A"
@@ -83,17 +82,12 @@ class ListAllBusinessesControllerSpec
   val hateoasResponse: ListAllBusinessesResponse[HateoasWrapper[Business]] = ListAllBusinessesResponse(
     Seq(HateoasWrapper(business, Seq(testInnerHateoasLink))))
 
-  private val requestData = ListAllBusinessesRequest(Nino(validNino))
-
-  private val rawData = ListAllBusinessesRawData(validNino)
+  private val requestData = ListAllBusinessesRequestData(Nino(validNino))
 
   "handleRequest" should {
     "return OK" when {
       "happy path" in new Test {
-
-        MockListAllBusinessesRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockListAllBusinessesService
           .listAllBusinessesService(requestData)
@@ -109,18 +103,14 @@ class ListAllBusinessesControllerSpec
     }
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-        MockListAllBusinessesRequestParser
-          .parse(rawData)
-          .returns(Left(ErrorWrapper(correlationId, NinoFormatError, None)))
+        willUseValidator(returning(NinoFormatError))
 
         runErrorTest(NinoFormatError)
 
       }
 
       "the service returns an error" in new Test {
-        MockListAllBusinessesRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockListAllBusinessesService
           .listAllBusinessesService(requestData)
@@ -137,7 +127,7 @@ class ListAllBusinessesControllerSpec
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       service = mockListAllBusinessesService,
-      parser = mockRequestParser,
+      validatorFactory = mockListAllBusinessDetailsValidatorFactory,
       hateoasFactory = mockHateoasFactory,
       cc = cc,
       idGenerator = mockIdGenerator

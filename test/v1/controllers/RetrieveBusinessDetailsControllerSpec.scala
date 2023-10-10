@@ -17,23 +17,22 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.mocks.hateoas.MockHateoasFactory
-import api.mocks.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
-import api.mocks.{MockAppConfig, MockIdGenerator}
-import api.models.domain.accountingType.AccountingType
-import api.models.domain.{Nino, TypeOfBusiness}
+import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
+import api.models.domain.{AccountingType, BusinessId, Nino, TypeOfBusiness}
 import api.models.errors._
-import api.models.hateoas.Method.GET
-import api.models.hateoas.{HateoasWrapper, Link}
+import api.hateoas.Method.GET
 import api.models.outcomes.ResponseWrapper
+import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
+import config.MockAppConfig
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Result
-import v1.mocks.requestParsers.MockRetrieveBusinessDetailsRequestParser
-import v1.mocks.services.MockRetrieveBusinessDetailsService
-import v1.models.request.retrieveBusinessDetails.{RetrieveBusinessDetailsRawData, RetrieveBusinessDetailsRequest}
+import utils.MockIdGenerator
+import v1.controllers.validators.MockRetrieveBusinessDetailsValidatorFactory
+import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
 import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
+import v1.services.MockRetrieveBusinessDetailsService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -45,7 +44,7 @@ class RetrieveBusinessDetailsControllerSpec
     with MockMtdIdLookupService
     with MockRetrieveBusinessDetailsService
     with MockHateoasFactory
-    with MockRetrieveBusinessDetailsRequestParser
+    with MockRetrieveBusinessDetailsValidatorFactory
     with MockIdGenerator
     with MockAppConfig {
 
@@ -114,17 +113,12 @@ class RetrieveBusinessDetailsControllerSpec
     Some("2023")
   )
 
-  private val requestData = RetrieveBusinessDetailsRequest(Nino(nino), businessId)
-
-  private val rawData = RetrieveBusinessDetailsRawData(nino, businessId)
+  private val requestData = RetrieveBusinessDetailsRequestData(Nino(nino), BusinessId(businessId))
 
   "handleRequest" should {
     "return successful response with status OK" when {
       "valid request" in new Test {
-
-        MockRetrieveBusinessDetailsRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockRetrieveBusinessDetailsService
           .retrieveBusinessDetailsService(requestData)
@@ -138,19 +132,16 @@ class RetrieveBusinessDetailsControllerSpec
 
       }
     }
+
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
-        MockRetrieveBusinessDetailsRequestParser
-          .parse(rawData)
-          .returns(Left(ErrorWrapper(correlationId, NinoFormatError, None)))
+        willUseValidator(returning(NinoFormatError))
 
         runErrorTest(NinoFormatError)
       }
 
       "the service returns an error" in new Test {
-        MockRetrieveBusinessDetailsRequestParser
-          .parse(rawData)
-          .returns(Right(requestData))
+        willUseValidator(returningSuccess(requestData))
 
         MockRetrieveBusinessDetailsService
           .retrieveBusinessDetailsService(requestData)
@@ -158,7 +149,6 @@ class RetrieveBusinessDetailsControllerSpec
 
         runErrorTest(TaxYearFormatError)
       }
-
     }
   }
 
@@ -167,14 +157,14 @@ class RetrieveBusinessDetailsControllerSpec
     val controller = new RetrieveBusinessDetailsController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      parser = mockRequestParser,
+      validatorFactory = mockRetrieveBusinessDetailsValidatorFactory,
       service = mockRetrieveBusinessDetailsService,
       hateoasFactory = mockHateoasFactory,
       cc = cc,
       idGenerator = mockIdGenerator
     )
 
-    MockAppConfig.featureSwitches
+    MockedAppConfig.featureSwitches
       .returns(Configuration("retrieveAdditionalFields.enabled" -> true))
       .anyNumberOfTimes()
 

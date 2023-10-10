@@ -23,7 +23,6 @@ import com.typesafe.config.ConfigFactory
 import config.rewriters._
 import controllers.{AssetsConfiguration, DefaultAssetsMetadata, RewriteableAssets}
 import definition.ApiDefinitionFactory
-import mocks.MockAppConfig
 import play.api.Configuration
 import play.api.http.{DefaultFileMimeTypes, DefaultHttpErrorHandler, FileMimeTypesConfiguration, HttpConfiguration}
 import play.api.mvc.Result
@@ -36,8 +35,8 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
 
   "/file endpoint" should {
     "return a file" in new Test {
-      MockAppConfig.apiVersionReleasedInProduction("1.0").anyNumberOfTimes() returns true
-      MockAppConfig.endpointsEnabled("1.0").anyNumberOfTimes() returns true
+      MockedAppConfig.apiVersionReleasedInProduction("1.0").anyNumberOfTimes() returns true
+      MockedAppConfig.endpointsEnabled("1.0").anyNumberOfTimes() returns true
       val response: Future[Result] = requestAsset("application.yaml")
       status(response) shouldBe OK
       await(response).body.contentLength.getOrElse(-99L) should be > 0L
@@ -47,8 +46,8 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
   "rewrite()" when {
     "the API version is disabled" should {
       "return the yaml with [test only] in the API title" in new Test {
-        MockAppConfig.apiVersionReleasedInProduction("1.0").anyNumberOfTimes() returns false
-        MockAppConfig.endpointsEnabled("1.0").anyNumberOfTimes() returns true
+        MockedAppConfig.apiVersionReleasedInProduction("1.0").anyNumberOfTimes() returns false
+        MockedAppConfig.endpointsEnabled("1.0").anyNumberOfTimes() returns true
 
         val response: Future[Result] = requestAsset("application.yaml")
         status(response) shouldBe OK
@@ -68,8 +67,8 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
     }
     "the API version is enabled" should {
       "return the yaml with the API title unchanged" in new Test {
-        MockAppConfig.apiVersionReleasedInProduction("1.0").anyNumberOfTimes() returns true
-        MockAppConfig.endpointsEnabled("1.0").anyNumberOfTimes() returns true
+        MockedAppConfig.apiVersionReleasedInProduction("1.0").anyNumberOfTimes() returns true
+        MockedAppConfig.endpointsEnabled("1.0").anyNumberOfTimes() returns true
 
         val response: Future[Result] = requestAsset("application.yaml", accept = "text/plain")
         status(response) shouldBe OK
@@ -103,7 +102,7 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
 
     protected def numberOfTestOnlyOccurrences(str: String): Int = "\\[test only]".r.findAllIn(str).size
 
-    MockAppConfig.featureSwitches returns Configuration("openApiFeatureTest.enabled" -> featureEnabled)
+    MockedAppConfig.featureSwitches returns Configuration("openApiFeatureTest.enabled" -> featureEnabled)
 
     private val apiFactory = new ApiDefinitionFactory(mockAppConfig)
 

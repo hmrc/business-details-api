@@ -22,7 +22,7 @@ import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
 import play.api.libs.json.Reads
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
+import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
 import javax.inject.{Inject, Singleton}
@@ -31,11 +31,11 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ListAllBusinessesConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  def listAllBusinesses(request: ListAllBusinessesRequest)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext,
-      correlationId: String,
-      responseReads: Reads[ListAllBusinessesResponse[Business]]): Future[DownstreamOutcome[ListAllBusinessesResponse[Business]]] = {
+  def listAllBusinesses(request: ListAllBusinessesRequestData)(implicit
+                                                               hc: HeaderCarrier,
+                                                               ec: ExecutionContext,
+                                                               correlationId: String,
+                                                               responseReads: Reads[ListAllBusinessesResponse[Business]]): Future[DownstreamOutcome[ListAllBusinessesResponse[Business]]] = {
 
     import request._
 

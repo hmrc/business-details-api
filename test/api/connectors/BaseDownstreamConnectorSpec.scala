@@ -18,8 +18,8 @@ package api.connectors
 
 import api.connectors.DownstreamUri.DesUri
 import api.models.outcomes.ResponseWrapper
-import config.AppConfig
-import mocks.{MockAppConfig, MockHttpClient}
+import config.{AppConfig, MockAppConfig}
+import mocks.MockHttpClient
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
 
 import scala.concurrent.Future
@@ -43,10 +43,10 @@ class BaseDownstreamConnectorSpec extends ConnectorSpec {
       val appConfig: AppConfig = mockAppConfig
     }
 
-    MockAppConfig.desBaseUrl returns baseUrl
-    MockAppConfig.desToken returns "des-token"
-    MockAppConfig.desEnvironment returns "des-environment"
-    MockAppConfig.desEnvironmentHeaders returns Some(allowedDesHeaders)
+    MockedAppConfig.desBaseUrl returns baseUrl
+    MockedAppConfig.desToken returns "des-token"
+    MockedAppConfig.desEnvironment returns "des-environment"
+    MockedAppConfig.desEnvironmentHeaders returns Some(allowedDesHeaders)
 
     val qps = List("param1" -> "value1")
   }

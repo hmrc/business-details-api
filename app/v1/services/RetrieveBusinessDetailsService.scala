@@ -24,7 +24,7 @@ import cats.data.EitherT
 import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.Reads
 import v1.connectors.RetrieveBusinessDetailsConnector
-import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
+import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
 import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponse
 import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse
 import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse.getReads
@@ -35,9 +35,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetailsConnector, appConfig: AppConfig) extends BaseService {
 
-  def retrieveBusinessDetailsService(request: RetrieveBusinessDetailsRequest)(implicit
-      ctx: RequestContext,
-      ec: ExecutionContext): Future[ServiceOutcome[RetrieveBusinessDetailsResponse]] = {
+  def retrieveBusinessDetailsService(request: RetrieveBusinessDetailsRequestData)(implicit
+                                                                                  ctx: RequestContext,
+                                                                                  ec: ExecutionContext): Future[ServiceOutcome[RetrieveBusinessDetailsResponse]] = {
 
     val isIfsEnabled                                                             = FeatureSwitches()(appConfig).isIfsEnabled
     implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(isIfsEnabled)

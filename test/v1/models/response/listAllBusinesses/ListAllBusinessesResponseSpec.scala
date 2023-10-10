@@ -16,13 +16,12 @@
 
 package v1.models.response.listAllBusinesses
 
-import api.hateoas.HateoasFactory
+import api.hateoas.{HateoasFactory, HateoasWrapper, Link}
 import api.models.domain.TypeOfBusiness
-import api.models.hateoas.Method.GET
-import mocks.MockAppConfig
+import api.hateoas.Method.GET
+import config.MockAppConfig
 import play.api.libs.json.{Json, Reads}
 import support.UnitSpec
-import api.models.hateoas.{HateoasWrapper, Link}
 import v1.models.response.listAllBusiness.ListAllBusinessesResponse.getReads
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesHateoasData, ListAllBusinessesResponse}
 import v1.models.response.listAllBusinesses.ListAllBusinessJson._
@@ -147,7 +146,7 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
     class Test extends MockAppConfig {
       val hateoasFactory = new HateoasFactory(mockAppConfig)
       val nino           = "someNino"
-      MockAppConfig.apiGatewayContext.returns("individuals/business/details").anyNumberOfTimes()
+      MockedAppConfig.apiGatewayContext.returns("individuals/business/details").anyNumberOfTimes()
     }
 
     "expose the correct links for list" in new Test {

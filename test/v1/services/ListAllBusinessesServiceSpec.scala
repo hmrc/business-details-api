@@ -30,11 +30,11 @@ import api.models.errors.{
 }
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
-import mocks.MockAppConfig
+import config.MockAppConfig
 import play.api.Configuration
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.mocks.connectors.MockListAllBusinessesConnector
-import v1.models.request.listAllBusinesses.ListAllBusinessesRequest
+import v1.connectors.MockListAllBusinessesConnector
+import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.Future
@@ -42,7 +42,7 @@ import scala.concurrent.Future
 class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
 
   private val validNino   = Nino("AA123456A")
-  private val requestData = ListAllBusinessesRequest(validNino)
+  private val requestData = ListAllBusinessesRequestData(validNino)
 
   private val responseBody: ListAllBusinessesResponse[Business] = ListAllBusinessesResponse(Seq())
 
@@ -51,7 +51,7 @@ class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
     implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
     val isEnabled: Boolean                      = true
 
-    MockAppConfig.featureSwitches
+    MockedAppConfig.featureSwitches
       .returns(Configuration("retrieveAdditionalFields.enabled" -> isEnabled))
       .anyNumberOfTimes()
 

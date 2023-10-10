@@ -17,7 +17,8 @@
 package api.connectors
 
 import api.models.errors.InternalError
-import mocks.{MockAppConfig, MockHttpClient}
+import config.MockAppConfig
+import mocks.MockHttpClient
 
 import scala.concurrent.Future
 
@@ -31,7 +32,7 @@ class MtdIdLookupConnectorSpec extends ConnectorSpec {
     )
 
     val baseUrl = "http://test-id-lookup-baseUrl"
-    MockAppConfig.mtdIdBaseUrl returns baseUrl
+    MockedAppConfig.mtdIdBaseUrl returns baseUrl
   }
 
   val nino  = "test-nino"

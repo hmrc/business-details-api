@@ -17,6 +17,7 @@
 package api.support
 
 import api.controllers.EndpointLogContext
+import api.models.domain.BusinessId
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import utils.Logging
@@ -28,10 +29,10 @@ trait DownstreamResponseMappingSupport {
 
   final def filterId(
       responseWrapper: ResponseWrapper[RetrieveBusinessDetailsDownstreamResponse],
-      businessId: String
+      businessId: BusinessId
   ): Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]] = {
     val filteredBusinesses: List[BusinessDetails] = responseWrapper.responseData.businessDetails.filter { businessDetails =>
-      businessId == businessDetails.businessId
+      businessId.businessId == businessDetails.businessId
     }.toList
 
     filteredBusinesses match {

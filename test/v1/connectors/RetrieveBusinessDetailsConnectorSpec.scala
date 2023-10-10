@@ -17,10 +17,10 @@
 package v1.connectors
 
 import api.connectors.{ConnectorSpec, DownstreamOutcome}
-import api.models.domain.{Nino, TypeOfBusiness}
+import api.models.domain.{BusinessId, Nino, TypeOfBusiness}
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.Reads
-import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequest
+import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
 import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse.getReads
 import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
@@ -30,7 +30,7 @@ import scala.concurrent.Future
 class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
 
   private val nino       = Nino("AA123456A")
-  private val businessId = "XAIS12345678910"
+  private val businessId = BusinessId("XAIS12345678910")
 
   "retrieveBusinessDetailsConnector" must {
     "send a request and return the expected response" in new DesTest with Test {
@@ -59,7 +59,7 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
   trait Test { _: ConnectorTest =>
     protected val connector: RetrieveBusinessDetailsConnector = new RetrieveBusinessDetailsConnector(http = mockHttpClient, appConfig = mockAppConfig)
 
-    protected val request: RetrieveBusinessDetailsRequest = RetrieveBusinessDetailsRequest(nino, businessId)
+    protected val request: RetrieveBusinessDetailsRequestData = RetrieveBusinessDetailsRequestData(nino, businessId)
 
     protected implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(false)
 
