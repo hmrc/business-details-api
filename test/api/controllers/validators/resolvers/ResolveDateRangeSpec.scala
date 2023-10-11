@@ -35,7 +35,7 @@ class ResolveDateRangeSpec extends UnitSpec {
 
   "ResolveDateRange" should {
     "return no errors" when {
-      "passed a valid start and end date" in {
+      "given a valid start and end date" in {
         val result = dateResolver(validStart -> validEnd)
         result shouldBe Valid(DateRange(LocalDate.parse(validStart), LocalDate.parse(validEnd)))
       }
@@ -54,32 +54,32 @@ class ResolveDateRangeSpec extends UnitSpec {
     }
 
     "return an error" when {
-      "passed an invalid start date" in {
+      "given an invalid start date" in {
         val result = dateResolver("not-a-date" -> validEnd)
         result shouldBe Invalid(List(StartDateFormatError))
       }
 
-      "passed an invalid end date" in {
+      "given an invalid end date" in {
         val result = dateResolver(validStart -> "not-a-date")
         result shouldBe Invalid(List(EndDateFormatError))
       }
 
-      "passed an end date before start date" in {
+      "given an end date before start date" in {
         val result = dateResolver(validEnd -> validStart)
         result shouldBe Invalid(List(RuleEndBeforeStartDateError))
       }
 
-      "passed a fromYear less than minimumYear" in {
+      "given a fromYear less than minimumYear" in {
         val result = dateResolver("1899-04-06" -> "2019-04-05")
         result shouldBe Invalid(List(StartDateFormatError))
       }
 
-      "passed a toYear greater than or equal to maximumYear" in {
+      "given a toYear greater than or equal to maximumYear" in {
         val result = dateResolver("2020-04-06" -> "2100-04-05")
         result shouldBe Invalid(List(EndDateFormatError))
       }
 
-      "passed both dates that are out of range" in {
+      "given both dates that are out of range" in {
         val result = dateResolver("0092-04-06" -> "2101-04-05")
         result shouldBe Invalid(List(StartDateFormatError, EndDateFormatError))
       }

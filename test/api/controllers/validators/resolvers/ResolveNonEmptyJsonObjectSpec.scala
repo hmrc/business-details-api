@@ -19,7 +19,7 @@ package api.controllers.validators.resolvers
 import api.models.errors.RuleIncorrectOrEmptyBodyError
 import api.utils.JsonErrorValidators
 import cats.data.Validated.{Invalid, Valid}
-import play.api.libs.json.{JsString, JsValue, Json, OFormat}
+import play.api.libs.json.{JsString, Json, OFormat}
 import shapeless.HNil
 import support.UnitSpec
 import utils.EmptinessChecker
@@ -66,8 +66,8 @@ class ResolveNonEmptyJsonObjectSpec extends UnitSpec with JsonErrorValidators {
       }
     }
 
-    "return an error " when {
-      "a required field is missing" in {
+    "return an error" when {
+      "given a JSON object with a missing required field" in {
         val json = Json.parse("""{ "field1" : "Something" }""")
 
         val result = resolveTestDataObject(json)
@@ -77,7 +77,7 @@ class ResolveNonEmptyJsonObjectSpec extends UnitSpec with JsonErrorValidators {
           ))
       }
 
-      "a required field is missing in an array object" in {
+      "given a JSON object with a missing required field in an array object" in {
         val json = Json.parse("""{ "arrayField" : [{ "field1" : "Something" }]}""")
 
         val result = resolveTestDataWrapper(json)
@@ -87,15 +87,15 @@ class ResolveNonEmptyJsonObjectSpec extends UnitSpec with JsonErrorValidators {
           ))
       }
 
-      "a required field is missing in multiple array objects" in {
+      "given a JSON object with a missing required field in multiple array objects" in {
         val json = Json.parse("""
-            |{
-            |  "arrayField" : [
-            |    { "field1" : "Something" },
-            |    { "field1" : "Something" }
-            |  ]
-            |}
-            |""".stripMargin)
+                                |{
+                                |  "arrayField" : [
+                                |    { "field1" : "Something" },
+                                |    { "field1" : "Something" }
+                                |  ]
+                                |}
+                                |""".stripMargin)
 
         val result = resolveTestDataWrapper(json)
         result shouldBe Invalid(
@@ -108,28 +108,28 @@ class ResolveNonEmptyJsonObjectSpec extends UnitSpec with JsonErrorValidators {
           ))
       }
 
-      "an empty body is submitted" in {
+      "given an empty JSON object" in {
         val json = Json.parse("""{}""")
 
         val result = resolveTestDataObject(json)
         result shouldBe Invalid(List(RuleIncorrectOrEmptyBodyError))
       }
 
-      "an empty body is submitted during pre-parse validation" in {
+      "given an empty JSON object during pre-parse validation" in {
         val json = Json.parse("""{}""")
 
         val result = ResolveNonEmptyJsonObject.validateNonEmpty(json)
         result shouldBe Invalid(List(RuleIncorrectOrEmptyBodyError))
       }
 
-      "an body containing only a JsValue id submitted during pre-parse validation" in {
-        val json: JsValue = JsString("value")
+      "given a JSON object containing only a JsValue id during pre-parse validation" in {
+        val json = JsString("value")
 
         val result = ResolveNonEmptyJsonObject.validateNonEmpty(json)
         result shouldBe Invalid(List(RuleIncorrectOrEmptyBodyError))
       }
 
-      "a non-empty body is supplied without any expected fields" in {
+      "given a non-empty JSON object without any expected fields" in {
         val json = Json.parse("""{"field": "value"}""")
 
         val result = resolveTestDataObject(json)
@@ -139,7 +139,7 @@ class ResolveNonEmptyJsonObjectSpec extends UnitSpec with JsonErrorValidators {
           ))
       }
 
-      "a field is supplied with the wrong data type" in {
+      "given a field with the wrong data type" in {
         val json = Json.parse("""{"field1": true, "field2": "value"}""")
 
         val result = resolveTestDataObject(json)
