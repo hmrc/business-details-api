@@ -96,6 +96,20 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
       openAPI.get.getInfo.getTitle shouldBe "Business Details (MTD)"
       openAPI.get.getInfo.getVersion shouldBe "1.0"
     }
+
+    "return the documentation with the correct accept header for version 1.0" in {
+      val response: WSResponse = await(buildRequest("/api/conf/1.0/common/headers.yaml").get())
+      response.status shouldBe Status.OK
+      val contents = response.body[String]
+
+      val headerRegex = """(?s).*?application/vnd\.hmrc\.(\d+\.\d+)\+json.*?""".r
+      val header      = headerRegex.findFirstMatchIn(contents)
+      header.isDefined shouldBe true
+
+      val versionFromHeader = header.get.group(1)
+      versionFromHeader shouldBe "1.0"
+
+    }
   }
 
 }
