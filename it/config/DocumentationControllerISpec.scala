@@ -86,7 +86,7 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
       val response: WSResponse = await(buildRequest("/api/conf/1.0/application.yaml").get())
       response.status shouldBe Status.OK
 
-      val contents     = response.body[String]
+      val contents     = response.body
       val parserResult = Try(new OpenAPIV3Parser().readContents(contents))
       parserResult.isSuccess shouldBe true
 
@@ -95,6 +95,20 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
       openAPI.get.getOpenapi shouldBe "3.0.3"
       openAPI.get.getInfo.getTitle shouldBe "Business Details (MTD)"
       openAPI.get.getInfo.getVersion shouldBe "1.0"
+    }
+
+    "return the documentation with the correct accept header for version 1.0" in {
+      val response: WSResponse = await(buildRequest("/api/conf/1.0/common/headers.yaml").get())
+      response.status shouldBe Status.OK
+      val contents = response.body
+
+      val headerRegex = """(?s).*?application/vnd\.hmrc\.(\d+\.\d+)\+json.*?""".r
+      val header      = headerRegex.findFirstMatchIn(contents)
+      header.isDefined shouldBe true
+
+      val versionFromHeader = header.get.group(1)
+      versionFromHeader shouldBe "1.0"
+
     }
   }
 
