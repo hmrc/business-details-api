@@ -74,7 +74,7 @@ case class BusinessDetails(businessId: String,
                            firstAccountingPeriodEndDate: Option[String],
                            latencyDetails: Option[LatencyDetails],
                            yearOfMigration: Option[String],
-                           accountingType: Option[AccountingType],
+                           accountingType: AccountingType,
                            commencementDate: Option[String],
                            cessationDate: Option[String],
                            businessAddressLineOne: Option[String],
@@ -108,18 +108,18 @@ case class BusinessDetails(businessId: String,
 
 object BusinessDetails {
 
-  private def cashOrAccrualsReads(field: String)(implicit isIfsEnabled: Boolean): Reads[Option[AccountingType]] = {
+  private def cashOrAccrualsReads(field: String)(implicit isIfsEnabled: Boolean): Reads[AccountingType] = {
     if (isIfsEnabled || field == "cashOrAccrualsFlag") {
       (JsPath \ field).readNullable[Boolean].map {
-        case Some(true)  => Some(AccountingType.ACCRUALS)
-        case Some(false) => Some(AccountingType.CASH)
-        case None        => None
+        case Some(true)  => AccountingType.ACCRUALS
+        case Some(false) => AccountingType.CASH
+        case None        => AccountingType.CASH
       }
     } else {
       (JsPath \ field).readNullable[String].map {
-        case Some("cash")     => Some(AccountingType.CASH)
-        case Some("accruals") => Some(AccountingType.ACCRUALS)
-        case _                => None
+        case Some("cash")     => AccountingType.CASH
+        case Some("accruals") => AccountingType.ACCRUALS
+        case _                => AccountingType.CASH
       }
     }
   }
