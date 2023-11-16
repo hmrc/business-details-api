@@ -223,7 +223,7 @@ class BusinessDetailsSpec extends UnitSpec {
           None,
           None,
           None,
-          AccountingType.ACCRUALS,
+          AccountingType.CASH,
           None,
           None,
           None,
