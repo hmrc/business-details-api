@@ -17,7 +17,7 @@
 package v1.connectors
 
 import api.connectors.{ConnectorSpec, DownstreamOutcome}
-import api.models.domain.{BusinessId, Nino, TypeOfBusiness}
+import api.models.domain.{AccountingType, BusinessId, Nino, TypeOfBusiness}
 import api.models.outcomes.ResponseWrapper
 import play.api.libs.json.Reads
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
@@ -68,7 +68,7 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
       TypeOfBusiness.`self-employment`,
       None,
       Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-      None,
+      AccountingType.CASH,
       None,
       None,
       None,
