@@ -54,6 +54,9 @@ trait JsonErrorValidators {
 
   }
 
+  private def jsPathFrom(str: String) =
+    str.split("/").filter(_.nonEmpty).foldLeft[JsPath](__)(_ \ _)
+
   implicit class JsValueOps(json: JsValue) {
 
     def removeProperty(path: JsPath): JsValue = {
@@ -63,6 +66,14 @@ trait JsonErrorValidators {
           invalid = errs => fail(s"an error occurred when reading $path: $errs"),
           valid = x => x
         )
+    }
+
+    def update(path: String, replacement: JsValue): JsValue =
+      update(jsPathFrom(path), replacement)
+
+    def update(path: JsPath, replacement: JsValue): JsValue = {
+      val updateReads: Reads[JsObject] = __.json.update(path.json.put(replacement))
+      json.as[JsObject](updateReads)
     }
 
   }

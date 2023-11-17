@@ -16,17 +16,24 @@
 
 package v1.models.request.createAmendQuarterlyPeriodType
 
-import play.api.libs.json.{Json, Reads, Writes}
-import v1.models.domain.QuarterlyReportingType
+import play.api.libs.json.{Json, OWrites, Reads}
+import shapeless.HNil
+import utils.EmptinessChecker
+import v1.models.domain.QuarterlyPeriodType
 
-case class CreateAmendQuarterlyPeriodTypeRequestBody(quarterlyReportingType: QuarterlyReportingType)
+import scala.annotation.nowarn
+
+case class CreateAmendQuarterlyPeriodTypeRequestBody(quarterlyPeriodType: QuarterlyPeriodType)
 
 object CreateAmendQuarterlyPeriodTypeRequestBody {
 
-  implicit val reads: Reads[CreateAmendQuarterlyPeriodTypeRequestBody] = Json.reads
-
-  implicit val writes: Writes[CreateAmendQuarterlyPeriodTypeRequestBody] = Writes { body =>
-    Json.obj("QRT" -> body.quarterlyReportingType)
+  @nowarn("cat=lint-byname-implicit")
+  implicit val emptinessChecker: EmptinessChecker[CreateAmendQuarterlyPeriodTypeRequestBody] = EmptinessChecker.use { o =>
+    "quarterlyPeriodType" -> o.quarterlyPeriodType.toString :: HNil
   }
+
+  implicit val reads: Reads[CreateAmendQuarterlyPeriodTypeRequestBody] = Json.reads[CreateAmendQuarterlyPeriodTypeRequestBody]
+
+  implicit val writes: OWrites[CreateAmendQuarterlyPeriodTypeRequestBody] = body => Json.obj("QRT" -> body.quarterlyPeriodType.asDownstream)
 
 }

@@ -19,23 +19,23 @@ package v1.models.domain
 import play.api.libs.json.{Reads, Writes}
 import utils.enums.Enums
 
-sealed trait QuarterlyReportingType {
+sealed trait QuarterlyPeriodType {
   val asDownstream: String
 }
 
-object QuarterlyReportingType {
+object QuarterlyPeriodType {
 
-  implicit val writes: Writes[QuarterlyReportingType] = implicitly[Writes[String]].contramap(_.asDownstream)
+  implicit val writes: Writes[QuarterlyPeriodType] = implicitly[Writes[String]].contramap(_.asDownstream)
 
-  implicit val reads: Reads[QuarterlyReportingType] = Enums.reads[QuarterlyReportingType]
+  implicit val reads: Reads[QuarterlyPeriodType] = Enums.reads[QuarterlyPeriodType]
 
-  val parser: PartialFunction[String, QuarterlyReportingType] = Enums.parser[QuarterlyReportingType]
+  val parser: PartialFunction[String, QuarterlyPeriodType] = Enums.parser[QuarterlyPeriodType]
 
-  case object `standard` extends QuarterlyReportingType {
+  case object `standard` extends QuarterlyPeriodType {
     val asDownstream: String = "Standard"
   }
 
-  case object `calendar` extends QuarterlyReportingType {
+  case object `calendar` extends QuarterlyPeriodType {
     val asDownstream: String = "Calendar"
   }
 
