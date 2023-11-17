@@ -65,7 +65,7 @@ class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
   "service" when {
     "a connector call is successful" should {
       "return a mapped result" in new Test {
-        MockListAllBusinessesConnector
+        MockedListAllBusinessesConnector
           .listAllBusinesses(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseBody))))
 
@@ -76,7 +76,7 @@ class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
       def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
         s"return ${error.code} when $downstreamErrorCode error is returned from the service" in new Test {
 
-          MockListAllBusinessesConnector
+          MockedListAllBusinessesConnector
             .listAllBusinesses(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
 
