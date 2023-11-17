@@ -30,12 +30,24 @@ import scala.concurrent.Future
 
 class ListAllBusinessesConnectorSpec extends ConnectorSpec {
 
-  private val nino = Nino("AA123456A")
+  private val nino    = Nino("AA123456A")
+  private val request = ListAllBusinessesRequestData(nino)
 
   "listAllBusinessesConnector" must {
     "send a request and return the expected response" in new DesTest with Test {
+      val isIfsEnabled: Boolean = false
+
+      MockedAppConfig.featureSwitches
+        .returns(
+          Configuration(
+            "retrieveAdditionalFields.enabled" -> true,
+            "ifs.enabled"                      -> isIfsEnabled
+          )
+        )
+        .anyNumberOfTimes()
+
       val outcome: Right[Nothing, ResponseWrapper[ListAllBusinessesResponse[Business]]] =
-        Right(ResponseWrapper(correlationId, ListAllBusinessesResponse(Seq(Business(`self-employment`, "123456789012345", Some("RCDTS"))))))
+        Right(ResponseWrapper(correlationId, ListAllBusinessesResponse(List(Business(`self-employment`, "123456789012345", Some("RCDTS"))))))
 
       willGet(
         url = s"$baseUrl/registration/business-details/nino/$nino"
@@ -46,8 +58,19 @@ class ListAllBusinessesConnectorSpec extends ConnectorSpec {
     }
 
     "send a request and return the expected response for Release 10" in new IfsTest with Test {
+      val isIfsEnabled: Boolean = true
+
+      MockedAppConfig.featureSwitches
+        .returns(
+          Configuration(
+            "retrieveAdditionalFields.enabled" -> true,
+            "ifs.enabled"                      -> isIfsEnabled
+          )
+        )
+        .anyNumberOfTimes()
+
       val outcome: Right[Nothing, ResponseWrapper[ListAllBusinessesResponse[Business]]] =
-        Right(ResponseWrapper(correlationId, ListAllBusinessesResponse(Seq(Business(`self-employment`, "123456789012345", Some("RCDTS"))))))
+        Right(ResponseWrapper(correlationId, ListAllBusinessesResponse(List(Business(`self-employment`, "123456789012345", Some("RCDTS"))))))
 
       willGet(
         url = s"$baseUrl/registration/business-details/nino/$nino"
@@ -59,18 +82,13 @@ class ListAllBusinessesConnectorSpec extends ConnectorSpec {
   }
 
   trait Test { _: ConnectorTest =>
-    protected val connector: ListAllBusinessesConnector = new ListAllBusinessesConnector(http = mockHttpClient, appConfig = mockAppConfig)
 
-    protected val request: ListAllBusinessesRequestData = ListAllBusinessesRequestData(nino)
+    protected val connector: ListAllBusinessesConnector = new ListAllBusinessesConnector(mockHttpClient, mockAppConfig)
 
-    val isEnabled: Boolean = true
+    protected val isIfsEnabled: Boolean
 
-    MockedAppConfig.featureSwitches
-      .returns(Configuration("retrieveAdditionalFields.enabled" -> isEnabled))
-      .anyNumberOfTimes()
+    implicit protected val responseReads: Reads[ListAllBusinessesResponse[Business]] = getReads(isIfsEnabled)
 
-    val isIfsEnabled = true
-    implicit val responseReads: Reads[ListAllBusinessesResponse[Business]] = getReads(isIfsEnabled)
   }
 
 }
