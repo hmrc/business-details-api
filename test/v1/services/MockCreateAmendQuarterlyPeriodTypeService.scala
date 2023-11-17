@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package v1.connectors
+package v1.services
 
-import api.connectors.DownstreamOutcome
+import api.controllers.RequestContext
+import api.models.errors.ErrorWrapper
+import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import uk.gov.hmrc.http.HeaderCarrier
 import v1.models.request.createAmendQuarterlyPeriodType.CreateAmendQuarterlyPeriodTypeRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockCreateAmendQuarterlyPeriodTypeConnector extends MockFactory {
+trait MockCreateAmendQuarterlyPeriodTypeService extends MockFactory {
 
-  val mockCreateAmendQuarterlyPeriodTypeConnector: CreateAmendQuarterlyPeriodTypeConnector = mock[CreateAmendQuarterlyPeriodTypeConnector]
+  val mockCreateAmendQuarterlyPeriodTypeService: CreateAmendQuarterlyPeriodTypeService = mock[CreateAmendQuarterlyPeriodTypeService]
 
-  object MockedCreateAmendQuarterlyPeriodTypeConnector {
+  object MockCreateAmendQuarterlyPeriodTypeService {
 
-    def create(requestData: CreateAmendQuarterlyPeriodTypeRequestData): CallHandler[Future[DownstreamOutcome[Unit]]] = {
+    def create(request: CreateAmendQuarterlyPeriodTypeRequestData): CallHandler[Future[Either[ErrorWrapper, ResponseWrapper[Unit]]]] = {
       (
-        mockCreateAmendQuarterlyPeriodTypeConnector
+        mockCreateAmendQuarterlyPeriodTypeService
           .create(_: CreateAmendQuarterlyPeriodTypeRequestData)(
-            _: HeaderCarrier,
-            _: ExecutionContext,
-            _: String
+            _: RequestContext,
+            _: ExecutionContext
           )
         )
-        .expects(requestData, *, *, *)
+        .expects(request, *, *)
     }
 
   }

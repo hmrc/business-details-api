@@ -32,7 +32,7 @@ class CreateAmendQuarterlyPeriodTypeConnectorSpec extends ConnectorSpec {
   private val taxYear    = TaxYear.fromMtd("2023-24")
   private val body       = CreateAmendQuarterlyPeriodTypeRequestBody(QuarterlyPeriodType.`standard`)
 
-  protected val request: CreateAmendQuarterlyPeriodTypeRequestData = CreateAmendQuarterlyPeriodTypeRequestData(nino, businessId, taxYear, body)
+  private val request = CreateAmendQuarterlyPeriodTypeRequestData(nino, businessId, taxYear, body)
 
   "retrieveBusinessDetailsConnector" must {
     "return a successful response" when {

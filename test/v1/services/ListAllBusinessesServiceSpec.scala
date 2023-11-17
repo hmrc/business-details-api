@@ -16,7 +16,6 @@
 
 package v1.services
 
-import api.controllers.EndpointLogContext
 import api.models.domain.Nino
 import api.models.errors.{
   DownstreamErrorCode,
@@ -29,10 +28,9 @@ import api.models.errors.{
   RuleIncorrectGovTestScenarioError
 }
 import api.models.outcomes.ResponseWrapper
-import api.services.ServiceSpec
+import api.services.{ServiceOutcome, ServiceSpec}
 import config.MockAppConfig
 import play.api.Configuration
-import uk.gov.hmrc.http.HeaderCarrier
 import v1.connectors.MockListAllBusinessesConnector
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
 import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
@@ -41,26 +39,9 @@ import scala.concurrent.Future
 
 class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
 
-  private val validNino   = Nino("AA123456A")
-  private val requestData = ListAllBusinessesRequestData(validNino)
-
-  private val responseBody: ListAllBusinessesResponse[Business] = ListAllBusinessesResponse(Seq())
-
-  trait Test extends MockListAllBusinessesConnector {
-    implicit val hc: HeaderCarrier              = HeaderCarrier()
-    implicit val logContext: EndpointLogContext = EndpointLogContext("c", "ep")
-    val isEnabled: Boolean                      = true
-
-    MockedAppConfig.featureSwitches
-      .returns(Configuration("retrieveAdditionalFields.enabled" -> isEnabled))
-      .anyNumberOfTimes()
-
-    val service = new ListAllBusinessesService(
-      connector = mockListAllBusinessesConnector,
-      mockAppConfig
-    )
-
-  }
+  private val validNino    = Nino("AA123456A")
+  private val requestData  = ListAllBusinessesRequestData(validNino)
+  private val responseBody = ListAllBusinessesResponse(List[Business]())
 
   "service" when {
     "a connector call is successful" should {
@@ -69,7 +50,8 @@ class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
           .listAllBusinesses(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseBody))))
 
-        await(service.listAllBusinessesService(requestData)) shouldBe Right(ResponseWrapper(correlationId, responseBody))
+        val result: ServiceOutcome[ListAllBusinessesResponse[Business]] = await(service.listAllBusinessesService(requestData))
+        result shouldBe Right(ResponseWrapper(correlationId, responseBody))
       }
     }
     "a connector call is unsuccessful" should {
@@ -80,10 +62,11 @@ class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
             .listAllBusinesses(requestData)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
 
-          await(service.listAllBusinessesService(requestData)) shouldBe Left(ErrorWrapper(correlationId, error))
+          val result: ServiceOutcome[ListAllBusinessesResponse[Business]] = await(service.listAllBusinessesService(requestData))
+          result shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
-      val errors = Seq(
+      val errors = List(
         ("INVALID_NINO", NinoFormatError),
         ("INVALID_MTDBSA", InternalError),
         ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError),
@@ -93,15 +76,25 @@ class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
         ("SERVICE_UNAVAILABLE", InternalError)
       )
 
-      val extraIfsErrors = Seq(
+      val extraIfsErrors = List(
         ("INVALID_MTD_ID", InternalError),
         ("INVALID_CORRELATIONID", InternalError),
         ("INVALID_IDTYPE", InternalError),
         ("NOT_FOUND", NotFoundError)
       )
 
-      (errors ++ extraIfsErrors).foreach(args => (serviceError _).tupled(args))
+      (errors ++ extraIfsErrors).foreach((serviceError _).tupled)
     }
+  }
+
+  private trait Test extends MockListAllBusinessesConnector {
+
+    MockedAppConfig.featureSwitches
+      .returns(Configuration("retrieveAdditionalFields.enabled" -> true))
+      .anyNumberOfTimes()
+
+    protected val service = new ListAllBusinessesService(mockListAllBusinessesConnector, mockAppConfig)
+
   }
 
 }
