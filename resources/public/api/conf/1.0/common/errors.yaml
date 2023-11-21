@@ -17,6 +17,27 @@ components:
         code: FORMAT_BUSINESS_ID
         message: The provided Business ID is invalid
 
+    formatTaxYear:
+      description: |
+        The format of the supplied taxYear value is not valid.
+      value:
+        code: FORMAT_TAX_YEAR
+        message: The provided tax year is invalid
+
+    ruleBusinessIdStateConflict:
+      description: |
+        The request conflicts with the current state of the business ID.
+      value:
+        code: RULE_BUSINESS_ID_STATE_CONFLICT
+        message: The request conflicts with the current state of the business ID
+
+    ruleQuarterlyPeriodUpdating:
+      description: |
+        Quarterly period type cannot be changed for the current year as the business is treated as commencing in the following year.
+      value:
+        code: RULE_QUARTERLY_PERIOD_UPDATING
+        message: Quarterly period type cannot be changed for the current year as the business is treated as commencing in the following year
+
     ruleIncorrectGovTestScenario:
       description: |
         The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
@@ -48,4 +69,11 @@ components:
         No business found for given NINO with given Business ID.
       value:
         code: NO_BUSINESS_FOUND
+        message: No business found for given NINO and Business ID
+
+    ruleBusinessIdNotFound:
+      description: |
+        No business found for given NINO with given Business ID.
+      value:
+        code: RULE_BUSINESS_ID_NOT_FOUND
         message: No business found for given NINO and Business ID

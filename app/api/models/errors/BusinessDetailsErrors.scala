@@ -18,10 +18,10 @@ package api.models.errors
 
 import play.api.http.Status._
 
-object RuleIncomeSourceNotFoundError extends MtdError("RULE_INCOME_SOURCE_NOT_FOUND", "The business ID provided is not found", NOT_FOUND)
+object RuleBusinessIdNotFoundError extends MtdError("RULE_BUSINESS_ID_NOT_FOUND", "The business ID provided is not found", NOT_FOUND)
 
-object RuleIncomeSourceStateConflictError
-    extends MtdError("RULE_INCOME_SOURCE_STATE_CONFLICT", "The request conflicts with the current state of the income source", BAD_REQUEST)
+object RuleBusinessIdStateConflictError
+    extends MtdError("RULE_BUSINESS_ID_STATE_CONFLICT", "The request conflicts with the current state of the business ID", BAD_REQUEST)
 
 object RuleQuarterlyPeriodUpdatingError
     extends MtdError(

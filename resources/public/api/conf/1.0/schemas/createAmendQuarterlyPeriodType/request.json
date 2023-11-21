@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Create & Amend Quarterly Period Type for a Business ID",
+  "description": "Create & Amend Quarterly Period Type request",
+  "type": "object",
+  "properties": {
+    "quarterlyPeriodType": {
+      "type": "string",
+      "description": "The quarterly period type that is being set for the business id.",
+      "example": "standard",
+      "enum": [
+        "standard",
+        "calendar"
+      ]
+    }
+  },
+  "required": [
+    "quarterlyPeriodType"
+  ],
+  "additionalProperties": false
+}
