@@ -58,7 +58,7 @@ class CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBaseSpec 
           DownstreamStub
             .when(DownstreamStub.PUT, downstreamUri)
             .withRequestBody(downstreamRequestBodyJson)
-            .thenReturn(NO_CONTENT, JsObject.empty)
+            .thenReturn(OK, JsObject.empty)
         }
 
         val response: WSResponse = await(request().put(requestBodyJson))

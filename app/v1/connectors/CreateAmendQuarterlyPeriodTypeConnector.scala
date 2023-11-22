@@ -20,6 +20,7 @@ import api.connectors.DownstreamUri.IfsUri
 import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
+import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import v1.models.request.createAmendQuarterlyPeriodType.CreateAmendQuarterlyPeriodTypeRequestData
 
@@ -36,6 +37,8 @@ class CreateAmendQuarterlyPeriodTypeConnector @Inject() (val http: HttpClient, v
   ): Future[DownstreamOutcome[Unit]] = {
 
     import request._
+
+    implicit val successCode: SuccessCode = SuccessCode(OK)
 
     val downstreamUri = IfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/income-sources/reporting-type/$nino/$businessId")
 
