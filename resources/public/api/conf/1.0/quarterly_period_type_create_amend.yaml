@@ -1,5 +1,5 @@
 put:
-  summary: Create & Amend Quarterly Period Type for a Business{{#unless (releasedInProduction 'endpoint-2089')}} [Test only]{{/unless}}
+  summary: Create and Amend Quarterly Period Type for a Business{{#unless (releasedInProduction 'endpoint-2089')}} [Test only]{{/unless}}
   description: |
     This endpoint enables you to create and amend the type of quarterly reporting period used for a business for a specific tax year.
     You can choose standard quarterly periods (where the first period is 6 April to 5 July) or calendar quarterly periods (first period 1 April to 30 June) for each tax year.
