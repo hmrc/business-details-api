@@ -63,6 +63,8 @@ put:
               $ref: './common/errors.yaml#/components/examples/ruleBusinessIdStateConflict'
             RULE_QUARTERLY_PERIOD_UPDATING:
               $ref: './common/errors.yaml#/components/examples/ruleQuarterlyPeriodUpdating'
+            RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
+              $ref: './common/errors.yaml#/components/examples/ruleIncorrectOrEmptyBodySubmitted'
             RULE_INCORRECT_GOV_TEST_SCENARIO:
               $ref: './common/errors.yaml#/components/examples/ruleIncorrectGovTestScenario'
 

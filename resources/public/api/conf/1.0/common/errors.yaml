@@ -38,6 +38,13 @@ components:
         code: RULE_QUARTERLY_PERIOD_UPDATING
         message: Quarterly period type cannot be changed for the current year as the business is treated as commencing in the following year
 
+    ruleIncorrectOrEmptyBodySubmitted:
+      description: |
+        An empty or non-matching body was submitted.
+      value:
+        code: RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED
+        message: An empty or non-matching body was submitted
+
     ruleIncorrectGovTestScenario:
       description: |
         The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for 
@@ -73,7 +80,7 @@ components:
 
     ruleBusinessIdNotFound:
       description: |
-        No business found for given NINO with given Business ID.
+        The business ID provided is not found.
       value:
         code: RULE_BUSINESS_ID_NOT_FOUND
-        message: No business found for given NINO and Business ID
+        message: The business ID provided is not found
