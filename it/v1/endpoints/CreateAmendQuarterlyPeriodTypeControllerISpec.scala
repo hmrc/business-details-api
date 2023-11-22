@@ -134,7 +134,7 @@ class CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBaseSpec 
           (UNPROCESSABLE_ENTITY, "ANNUAL_INCOME_SOURCE", BAD_REQUEST, RuleBusinessIdStateConflictError),
           (UNPROCESSABLE_ENTITY, "QUARTER_REPORTING_UPDATING_ERROR", BAD_REQUEST, RuleQuarterlyPeriodUpdatingError),
           (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, InternalError),
-          (INTERNAL_SERVER_ERROR, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError)
+          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError)
         )
 
         errors.foreach((serviceErrorTest _).tupled)
