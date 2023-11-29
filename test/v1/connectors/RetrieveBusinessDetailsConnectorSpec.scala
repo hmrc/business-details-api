@@ -17,7 +17,7 @@
 package v1.connectors
 
 import api.connectors.{ConnectorSpec, DownstreamOutcome}
-import api.models.domain.{BusinessId, Nino, TypeOfBusiness}
+import api.models.domain.{AccountingType, BusinessId, Nino, TypeOfBusiness}
 import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
 import play.api.libs.json.Reads
@@ -37,7 +37,7 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
   // @formatter:off
   private val response: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
     "XAIS12345678910", TypeOfBusiness.`self-employment`, None, List(AccountingPeriod("2018-04-06", "2019-04-05")),
-    None, None, None, None, None, None, None, None, None, Some("2018-04-06"), Some("2018-12-12"),
+    AccountingType.CASH, None, None, None, None, None, None, None, None, Some("2018-04-06"), Some("2018-12-12"),
     Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
     Some("2023")
   )
