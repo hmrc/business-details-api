@@ -19,31 +19,27 @@ package v1.connectors
 import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import play.api.libs.json.Reads
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
-import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse
+import v1.models.request.createAmendQuarterlyPeriodType.CreateAmendQuarterlyPeriodTypeRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockRetrieveBusinessDetailsConnector extends MockFactory {
+trait MockCreateAmendQuarterlyPeriodTypeConnector extends MockFactory {
 
-  val mockRetrieveBusinessDetailsConnector: RetrieveBusinessDetailsConnector = mock[RetrieveBusinessDetailsConnector]
+  val mockCreateAmendQuarterlyPeriodTypeConnector: CreateAmendQuarterlyPeriodTypeConnector = mock[CreateAmendQuarterlyPeriodTypeConnector]
 
-  object MockedRetrieveBusinessDetailsConnector {
+  object MockedCreateAmendQuarterlyPeriodTypeConnector {
 
-    def retrieveBusinessDetails(
-        requestData: RetrieveBusinessDetailsRequestData): CallHandler[Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]]] = {
+    def create(requestData: CreateAmendQuarterlyPeriodTypeRequestData): CallHandler[Future[DownstreamOutcome[Unit]]] = {
       (
-        mockRetrieveBusinessDetailsConnector
-          .retrieveBusinessDetails(_: RetrieveBusinessDetailsRequestData)(
+        mockCreateAmendQuarterlyPeriodTypeConnector
+          .create(_: CreateAmendQuarterlyPeriodTypeRequestData)(
             _: HeaderCarrier,
             _: ExecutionContext,
-            _: String,
-            _: Reads[RetrieveBusinessDetailsDownstreamResponse]
+            _: String
           )
         )
-        .expects(requestData, *, *, *, *)
+        .expects(requestData, *, *, *)
     }
 
   }

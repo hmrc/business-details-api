@@ -21,29 +21,46 @@ import support.UnitSpec
 
 class FeatureSwitchesSpec extends UnitSpec {
 
-  private val configuration = Configuration(
-    "feature-switch.enabled" -> true,
-    "retrieveAdditionalFields.enabled"     -> false,
-    "ifs.enabled"        -> false
-  )
-
-  private val featureSwitches = FeatureSwitches(configuration)
-
   "FeatureSwitches" should {
-    "return the correct value" when {
+    "return true" when {
       "the feature switch is set to true" in {
-        featureSwitches.featureSwitchConfig.getOptional[Boolean]("feature-switch.enabled") shouldBe Some(true)
+        val config = Configuration(
+          "retrieveAdditionalFields.enabled" -> true,
+          "ifs.enabled"                      -> true,
+          "endpoint-2089.enabled"            -> true
+        )
+
+        val featureSwitches = FeatureSwitches(config)
+
+        featureSwitches.isRetrieveAdditionalFieldsEnabled shouldBe true
+        featureSwitches.isIfsEnabled shouldBe true
+        featureSwitches.isEndpoint2089Enabled shouldBe true
       }
 
-      "the feature switch is set to false" in {
-        featureSwitches.featureSwitchConfig.getOptional[Boolean]("retrieveAdditionalFields.enabled") shouldBe Some(false)
-        featureSwitches.featureSwitchConfig.getOptional[Boolean]("ifs.enabled") shouldBe Some(false)
-      }
-
-    }
-    "return false" when {
       "the feature switch is not present in the config" in {
-        featureSwitches.featureSwitchConfig.getOptional[Boolean]("invalid") shouldBe None
+        val config = Configuration.empty
+
+        val featureSwitches = FeatureSwitches(config)
+
+        featureSwitches.isRetrieveAdditionalFieldsEnabled shouldBe true
+        featureSwitches.isIfsEnabled shouldBe true
+        featureSwitches.isEndpoint2089Enabled shouldBe true
+      }
+    }
+
+    "return false" when {
+      "the feature switch is set to false" in {
+        val config = Configuration(
+          "retrieveAdditionalFields.enabled" -> false,
+          "ifs.enabled"                      -> false,
+          "endpoint-2089.enabled"            -> false
+        )
+
+        val featureSwitches = FeatureSwitches(config)
+
+        featureSwitches.isRetrieveAdditionalFieldsEnabled shouldBe false
+        featureSwitches.isIfsEnabled shouldBe false
+        featureSwitches.isEndpoint2089Enabled shouldBe false
       }
     }
   }

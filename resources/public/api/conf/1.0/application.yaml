@@ -53,3 +53,7 @@ paths:
     $ref: "./list.yaml"
   /individuals/business/details/{nino}/{businessId}:
     $ref: "./retrieve.yaml"
+# {{#if (enabled 'endpoint-2089')}}
+  /individuals/business/details/{nino}/{businessId}/{taxYear}:
+    $ref: "./quarterly_period_type_create_amend.yaml"
+# {{/if}}

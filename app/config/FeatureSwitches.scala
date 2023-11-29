@@ -22,7 +22,8 @@ case class FeatureSwitches(featureSwitchConfig: Configuration) {
 
   val isRetrieveAdditionalFieldsEnabled: Boolean = isEnabled("retrieveAdditionalFields")
   val isIfsEnabled: Boolean                      = isEnabled("ifs")
-  def isEnabled(key: String): Boolean     = isConfigTrue(key + ".enabled")
+  val isEndpoint2089Enabled: Boolean             = isEnabled("endpoint-2089")
+  def isEnabled(key: String): Boolean            = isConfigTrue(key + ".enabled")
 
   def isReleasedInProduction(feature: String): Boolean = isConfigTrue(feature + ".released-in-production")
   private def isConfigTrue(key: String): Boolean       = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)

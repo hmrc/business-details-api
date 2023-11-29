@@ -30,7 +30,7 @@ trait MockListAllBusinessesConnector extends MockFactory {
 
   val mockListAllBusinessesConnector: ListAllBusinessesConnector = mock[ListAllBusinessesConnector]
 
-  object MockListAllBusinessesConnector {
+  object MockedListAllBusinessesConnector {
 
     def listAllBusinesses(requestData: ListAllBusinessesRequestData): CallHandler[Future[DownstreamOutcome[ListAllBusinessesResponse[Business]]]] = {
       (mockListAllBusinessesConnector
