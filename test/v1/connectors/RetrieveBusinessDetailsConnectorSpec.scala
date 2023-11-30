@@ -17,7 +17,7 @@
 package v1.connectors
 
 import api.connectors.{ConnectorSpec, DownstreamOutcome}
-import api.models.domain.{AccountingType, BusinessId, Nino, TypeOfBusiness}
+import api.models.domain.{AccountingType, BusinessId, Nino, TaxYear, TypeOfBusiness}
 import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
 import play.api.libs.json.Reads
@@ -30,15 +30,15 @@ import scala.concurrent.Future
 
 class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
 
-  private val nino       = Nino("AA123456A")
+  private val nino = Nino("AA123456A")
   private val businessId = BusinessId("XAIS12345678910")
-  private val request    = RetrieveBusinessDetailsRequestData(nino, businessId)
+  private val request = RetrieveBusinessDetailsRequestData(nino, businessId)
 
   // @formatter:off
   private val response: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
     "XAIS12345678910", TypeOfBusiness.`self-employment`, None, List(AccountingPeriod("2018-04-06", "2019-04-05")),
     AccountingType.CASH, None, None, None, None, None, None, None, None, Some("2018-04-06"), Some("2018-12-12"),
-    Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+    Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
     Some("2023")
   )
   // @formatter:on
@@ -73,7 +73,8 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
     }
   }
 
-  trait Test { _: ConnectorTest =>
+  trait Test {
+    _: ConnectorTest =>
     protected val connector: RetrieveBusinessDetailsConnector = new RetrieveBusinessDetailsConnector(http = mockHttpClient, appConfig = mockAppConfig)
   }
 

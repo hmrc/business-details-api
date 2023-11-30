@@ -17,9 +17,9 @@
 package v1.models.response.retrieveBusinessDetails
 
 import api.hateoas.{HateoasData, HateoasLinks, HateoasLinksFactory, Link}
-import api.models.domain.{AccountingType, TaxYear, TypeOfBusiness}
+import api.models.domain.{AccountingType, TypeOfBusiness}
 import config.AppConfig
-import play.api.libs.json.{Json, OWrites, Reads}
+import play.api.libs.json.{Json, OWrites}
 import v1.models.response.retrieveBusinessDetails.downstream.LatencyDetails
 
 case class RetrieveBusinessDetailsResponse(businessId: String,
@@ -40,6 +40,7 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            latencyDetails: Option[LatencyDetails],
                                            yearOfMigration: Option[String]) {
 
+  // FIXME does this really serve any purpose?
   def addRetrieveAdditionalFields: RetrieveBusinessDetailsResponse = {
     val updatedResponse = this.copy(
       firstAccountingPeriodStartDate = if (firstAccountingPeriodStartDate.isEmpty) None else firstAccountingPeriodStartDate,
@@ -49,23 +50,11 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
     )
     updatedResponse
   }
-
-  def reformatLatencyDetailsTaxYears: RetrieveBusinessDetailsResponse = {
-    val updatedLatencyDetails = latencyDetails.map(details => details.copy(
-      taxYear1 = TaxYear.fromDownstream(details.taxYear1).asMtd,
-      taxYear2 = TaxYear.fromDownstream(details.taxYear2).asMtd
-    ))
-    copy(latencyDetails = updatedLatencyDetails)
-  }
-
 }
 
 object RetrieveBusinessDetailsResponse extends HateoasLinks {
 
   implicit val writes: OWrites[RetrieveBusinessDetailsResponse] = Json.writes[RetrieveBusinessDetailsResponse]
-
-  // FIXME this should not be here: we should only ever write RetrieveBusinessDetailsResponse, but a test depends on it ???
-  implicit val reads: Reads[RetrieveBusinessDetailsResponse]    = Json.reads[RetrieveBusinessDetailsResponse]
 
   implicit object RetrieveBusinessDetailsLinksFactory
       extends HateoasLinksFactory[RetrieveBusinessDetailsResponse, RetrieveBusinessDetailsHateoasData] {

@@ -18,7 +18,7 @@ package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
 import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
-import api.models.domain.{AccountingType, BusinessId, Nino, TypeOfBusiness}
+import api.models.domain.{AccountingType, BusinessId, Nino, TaxYear, TypeOfBusiness}
 import api.models.errors._
 import api.hateoas.Method.GET
 import api.models.outcomes.ResponseWrapper
@@ -38,7 +38,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RetrieveBusinessDetailsControllerSpec
-    extends ControllerBaseSpec
+  extends ControllerBaseSpec
     with ControllerTestRunner
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
@@ -48,7 +48,7 @@ class RetrieveBusinessDetailsControllerSpec
     with MockIdGenerator
     with MockAppConfig {
 
-  private val businessId      = "XAIS12345678910"
+  private val businessId = "XAIS12345678910"
   private val testHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
 
   private val responseBody = Json.parse(
@@ -109,7 +109,7 @@ class RetrieveBusinessDetailsControllerSpec
     Some("GB"),
     Some("2018-04-06"),
     Some("2018-12-12"),
-    Some(LatencyDetails("2018-12-12", "2017-18", LatencyIndicator.Annual, "2018-19", LatencyIndicator.Quarterly)),
+    Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
     Some("2023")
   )
 

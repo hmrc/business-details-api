@@ -16,7 +16,7 @@
 
 package v1.services
 
-import api.models.domain.{AccountingType, BusinessId, Nino, TypeOfBusiness}
+import api.models.domain.{AccountingType, BusinessId, Nino, TaxYear, TypeOfBusiness}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
@@ -24,12 +24,7 @@ import config.MockAppConfig
 import play.api.Configuration
 import v1.connectors.MockRetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
-import v1.models.response.retrieveBusinessDetails.downstream.{
-  BusinessDetails,
-  LatencyDetails,
-  LatencyIndicator,
-  RetrieveBusinessDetailsDownstreamResponse
-}
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
@@ -57,7 +52,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     Some("GB"),
     Some("2018-04-06"),
     Some("2018-12-12"),
-    Some(LatencyDetails("2018-12-12", "2017-18", LatencyIndicator.Annual, "2018-19", LatencyIndicator.Quarterly)),
+    Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
     Some("2023")
   )
 
@@ -90,7 +85,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
         Some("2018-04-06"),
         Some("2018-12-12"),
-        Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+        Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
         Some("2023"),
         AccountingType.ACCRUALS,
         Some("2016-09-24"),
@@ -112,7 +107,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
         Some("2018-04-06"),
         Some("2018-12-12"),
-        Some(LatencyDetails("2018-12-12", "2017-18", LatencyIndicator.Annual, "2018-19", LatencyIndicator.Quarterly)),
+        Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
         Some("2023"),
         AccountingType.ACCRUALS,
         Some("2016-09-24"),
@@ -156,7 +151,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
         Some("2018-04-06"),
         Some("2018-12-12"),
-        Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+        Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
         Some("2023"),
         AccountingType.ACCRUALS,
         Some("2016-09-24"),
@@ -175,7 +170,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
         Some("2018-04-06"),
         Some("2018-12-12"),
-        Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+        Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
         Some("2023"),
         AccountingType.ACCRUALS,
         Some("2016-09-24"),

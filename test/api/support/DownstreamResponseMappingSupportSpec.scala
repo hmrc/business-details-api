@@ -17,18 +17,13 @@
 package api.support
 
 import api.controllers.EndpointLogContext
-import api.models.domain.{AccountingType, BusinessId, TypeOfBusiness}
+import api.models.domain.{AccountingType, BusinessId, TaxYear, TypeOfBusiness}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import play.api.http.Status.BAD_REQUEST
 import support.UnitSpec
 import utils.Logging
-import v1.models.response.retrieveBusinessDetails.downstream.{
-  BusinessDetails,
-  LatencyDetails,
-  LatencyIndicator,
-  RetrieveBusinessDetailsDownstreamResponse
-}
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 class DownstreamResponseMappingSupportSpec extends UnitSpec {
@@ -50,7 +45,7 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
   val errorCodeMap: PartialFunction[String, MtdError] = {
     case "ERR1" => Error1
     case "ERR2" => Error2
-    case "DS"   => InternalError
+    case "DS" => InternalError
   }
 
   "mapping Des errors" when {
@@ -120,6 +115,9 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
   }
 
   "filterId" should {
+    val taxYear1 = TaxYear.fromDownstream("2018")
+    val taxYear2 = TaxYear.fromDownstream("2019")
+
     val desSingleBusiness: RetrieveBusinessDetailsDownstreamResponse = RetrieveBusinessDetailsDownstreamResponse(
       Seq(BusinessDetails(
         businessId = "XAIS12345678910",
@@ -128,7 +126,7 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
         accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
         firstAccountingPeriodStartDate = Some("2018-04-06"),
         firstAccountingPeriodEndDate = Some("2018-12-12"),
-        latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+        latencyDetails = Some(LatencyDetails("2018-12-12", taxYear1, LatencyIndicator.Annual, taxYear2, LatencyIndicator.Quarterly)),
         yearOfMigration = Some("2023"),
         accountingType = AccountingType.ACCRUALS,
         commencementDate = Some("2016-09-24"),
@@ -149,7 +147,7 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
           accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
           firstAccountingPeriodStartDate = Some("2018-04-06"),
           firstAccountingPeriodEndDate = Some("2018-12-12"),
-          latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          latencyDetails = Some(LatencyDetails("2018-12-12", taxYear1, LatencyIndicator.Annual, taxYear2, LatencyIndicator.Quarterly)),
           yearOfMigration = Some("2023"),
           accountingType = AccountingType.ACCRUALS,
           commencementDate = Some("2016-09-24"),
@@ -168,7 +166,7 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
           accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
           firstAccountingPeriodStartDate = Some("2018-04-06"),
           firstAccountingPeriodEndDate = Some("2018-12-12"),
-          latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          latencyDetails = Some(LatencyDetails("2018-12-12", taxYear1, LatencyIndicator.Annual, taxYear2, LatencyIndicator.Quarterly)),
           yearOfMigration = Some("2023"),
           accountingType = AccountingType.ACCRUALS,
           commencementDate = Some("2016-09-24"),
@@ -191,7 +189,7 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
           accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
           firstAccountingPeriodStartDate = Some("2018-04-06"),
           firstAccountingPeriodEndDate = Some("2018-12-12"),
-          latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          latencyDetails = Some(LatencyDetails("2018-12-12", taxYear1, LatencyIndicator.Annual, taxYear2, LatencyIndicator.Quarterly)),
           yearOfMigration = Some("2023"),
           accountingType = AccountingType.ACCRUALS,
           commencementDate = Some("2016-09-24"),
@@ -210,7 +208,7 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
           accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
           firstAccountingPeriodStartDate = Some("2018-04-06"),
           firstAccountingPeriodEndDate = Some("2018-12-12"),
-          latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          latencyDetails = Some(LatencyDetails("2018-12-12", taxYear1, LatencyIndicator.Annual, taxYear2, LatencyIndicator.Quarterly)),
           yearOfMigration = Some("2023"),
           accountingType = AccountingType.ACCRUALS,
           commencementDate = Some("2016-09-24"),
@@ -223,26 +221,6 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
           businessAddressCountryCode = Some("GB")
         )
       ))
-
-//    val responseBusinessR10Additional = RetrieveBusinessDetailsResponse(
-//      businessId = "XAIS12345678910",
-//      typeOfBusiness = TypeOfBusiness.`self-employment`,
-//      tradingName = Some("Aardvark Window Cleaning Services"),
-//      accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-//      accountingType = Some(AccountingType.ACCRUALS),
-//      commencementDate = Some("2016-09-24"),
-//      cessationDate = Some("2020-03-24"),
-//      businessAddressLineOne = Some("6 Harpic Drive"),
-//      businessAddressLineTwo = Some("Domestos Wood"),
-//      businessAddressLineThree = Some("ToiletDucktown"),
-//      businessAddressLineFour = Some("CIFSHIRE"),
-//      businessAddressPostcode = Some("SW4F 3GA"),
-//      businessAddressCountryCode = Some("GB"),
-//      firstAccountingPeriodStartDate = Some("2018-04-06"),
-//      firstAccountingPeriodEndDate = Some("2018-12-12"),
-//      latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-//      yearOfMigration = Some("2023")
-//    )
 
     val responseBusiness = RetrieveBusinessDetailsResponse(
       businessId = "XAIS12345678910",
@@ -260,7 +238,7 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
       businessAddressCountryCode = Some("GB"),
       firstAccountingPeriodStartDate = Some("2018-04-06"),
       firstAccountingPeriodEndDate = Some("2018-12-12"),
-      latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+      latencyDetails = Some(LatencyDetails("2018-12-12", taxYear1, LatencyIndicator.Annual, taxYear2, LatencyIndicator.Quarterly)),
       yearOfMigration = Some("2023")
     )
 

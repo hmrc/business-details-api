@@ -16,7 +16,7 @@
 
 package v1.models.response.retrieveBusinessDetails.downstream
 
-import api.models.domain.{AccountingType, TypeOfBusiness}
+import api.models.domain.{AccountingType, TaxYear, TypeOfBusiness}
 import play.api.libs.json.Json
 import support.UnitSpec
 import v1.models.response.retrieveBusinessDetails.AccountingPeriod
@@ -74,7 +74,7 @@ class BusinessDetailsSpec extends UnitSpec {
             accountingPeriods = Seq(AccountingPeriod("2001-01-01", "2001-01-02")),
             firstAccountingPeriodStartDate = Some("2018-04-06"),
             firstAccountingPeriodEndDate = Some("2018-12-12"),
-            latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+            latencyDetails = Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
             yearOfMigration = Some("2023"),
             accountingType = AccountingType.CASH,
             commencementDate = Some("2001-01-01"),
@@ -130,7 +130,7 @@ class BusinessDetailsSpec extends UnitSpec {
             accountingPeriods = Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
             firstAccountingPeriodStartDate = Some("2018-04-06"),
             firstAccountingPeriodEndDate = Some("2018-12-12"),
-            latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+            latencyDetails = Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
             yearOfMigration = Some("2023"),
             accountingType = AccountingType.ACCRUALS,
             commencementDate = Some("2017-07-24"),
@@ -179,7 +179,7 @@ class BusinessDetailsSpec extends UnitSpec {
           accountingPeriods = Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
           firstAccountingPeriodStartDate = Some("2018-04-06"),
           firstAccountingPeriodEndDate = Some("2018-12-12"),
-          latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          latencyDetails = Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
           yearOfMigration = Some("2023"),
           accountingType = AccountingType.CASH,
           commencementDate = None,

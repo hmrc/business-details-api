@@ -17,281 +17,137 @@
 package v1.models.response.retrieveBusinessDetails
 
 import api.hateoas.Link
-import api.models.domain.{AccountingType, TypeOfBusiness}
 import api.hateoas.Method.GET
+import api.models.domain.{AccountingType, TaxYear, TypeOfBusiness}
 import config.MockAppConfig
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import support.UnitSpec
 import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator}
-import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
 
 class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
 
-  "reads" should {
-    "read from json" when {
-      "A full json is supplied" in {
-
-        val responseBody: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
-          "XAIS12345678910",
-          TypeOfBusiness.`self-employment`,
-          Some("Aardvark Window Cleaning Services"),
-          Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-          AccountingType.ACCRUALS,
-          Some("2016-09-24"),
-          Some("2020-03-24"),
-          Some("6 Harpic Drive"),
-          Some("Domestos Wood"),
-          Some("ToiletDucktown"),
-          Some("CIFSHIRE"),
-          Some("SW4F 3GA"),
-          Some("GB"),
-          Some("2018-04-06"),
-          Some("2018-12-12"),
-          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-          Some("2023"),
-        )
-
-        val desJson: JsValue = Json.parse(
-          """
-            |{
-            |   "businessId": "XAIS12345678910",
-            |   "typeOfBusiness": "self-employment",
-            |   "tradingName": "Aardvark Window Cleaning Services",
-            |   "accountingPeriods": [{
-            |      "accountingPeriodStartDate": "2018-04-06",
-            |      "accountingPeriodEndDate": "2019-04-05"
-            |      }
-            |   ],
-            |   "accountingType": "ACCRUALS",
-            |   "commencementDate": "2016-09-24",
-            |   "cessationDate": "2020-03-24",
-            |   "businessAddressLineOne": "6 Harpic Drive",
-            |   "businessAddressLineTwo": "Domestos Wood",
-            |   "businessAddressLineThree": "ToiletDucktown",
-            |   "businessAddressLineFour": "CIFSHIRE",
-            |   "businessAddressPostcode": "SW4F 3GA",
-            |   "businessAddressCountryCode": "GB",
-            |   "firstAccountingPeriodStartDate": "2018-04-06",
-            |   "firstAccountingPeriodEndDate": "2018-12-12",
-            |   "latencyDetails": {
-            |     "latencyEndDate": "2018-12-12",
-            |     "taxYear1": "2018",
-            |     "latencyIndicator1": "A",
-            |     "taxYear2": "2019",
-            |     "latencyIndicator2": "Q"
-            |   },
-            |   "yearOfMigration": "2023"
-            |}
-            |""".stripMargin
-        )
-
-        desJson.as[RetrieveBusinessDetailsResponse] shouldBe responseBody
-      }
-      "A partial json is supplied with end missing" in {
-
-        val responseBody: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
-          "XAIS12345678910",
-          TypeOfBusiness.`self-employment`,
-          Some("Aardvark Window Cleaning Services"),
-          Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-          AccountingType.ACCRUALS,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-        )
-
-        val desJson: JsValue = Json.parse(
-          """
-            |{
-            |   "businessId": "XAIS12345678910",
-            |   "typeOfBusiness": "self-employment",
-            |   "tradingName": "Aardvark Window Cleaning Services",
-            |   "accountingPeriods": [{
-            |      "accountingPeriodStartDate": "2018-04-06",
-            |      "accountingPeriodEndDate": "2019-04-05"
-            |      }
-            |   ],
-            |   "accountingType": "ACCRUALS"
-            |}
-            |""".stripMargin
-        )
-
-        desJson.as[RetrieveBusinessDetailsResponse] shouldBe responseBody
-      }
-      "A partial json is supplied with middle missing" in {
-
-        val responseBody: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
-          "XAIS12345678910",
-          TypeOfBusiness.`self-employment`,
-          Some("Aardvark Window Cleaning Services"),
-          Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-          AccountingType.ACCRUALS,
-          Some("2016-09-24"),
-          Some("2020-03-24"),
-          None,
-          None,
-          None,
-          None,
-          None,
-          Some("CM"),
-          Some("2018-04-06"),
-          Some("2018-12-12"),
-          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-          Some("2023"),
-        )
-
-        val desJson: JsValue = Json.parse(
-          """
-            |{
-            |   "businessId": "XAIS12345678910",
-            |   "typeOfBusiness": "self-employment",
-            |   "tradingName": "Aardvark Window Cleaning Services",
-            |   "accountingPeriods": [{
-            |      "accountingPeriodStartDate": "2018-04-06",
-            |      "accountingPeriodEndDate": "2019-04-05"
-            |      }
-            |   ],
-            |   "accountingType": "ACCRUALS",
-            |   "commencementDate": "2016-09-24",
-            |   "cessationDate": "2020-03-24",
-            |   "businessAddressCountryCode": "CM",
-            |   "firstAccountingPeriodStartDate": "2018-04-06",
-            |   "firstAccountingPeriodEndDate": "2018-12-12",
-            |   "latencyDetails": {
-            |     "latencyEndDate": "2018-12-12",
-            |     "taxYear1": "2018",
-            |     "latencyIndicator1": "A",
-            |     "taxYear2": "2019",
-            |     "latencyIndicator2": "Q"
-            |   },
-            |   "yearOfMigration": "2023"
-            |}
-            |""".stripMargin
-        )
-
-        desJson.as[RetrieveBusinessDetailsResponse] shouldBe responseBody
-      }
+  "writes" should {
+    "output JSON as per spec" in {
+      Json.toJson(RetrieveBusinessDetailsResponse(
+        businessId = "businessId",
+        typeOfBusiness = TypeOfBusiness.`self-employment`,
+        tradingName = Some("tradingName"),
+        accountingPeriods = Seq(AccountingPeriod("2001-01-01", "2001-01-02")),
+        accountingType = AccountingType.ACCRUALS,
+        commencementDate = Some("2001-01-01"),
+        cessationDate = Some("2010-01-01"),
+        businessAddressLineOne = Some("line1"),
+        businessAddressLineTwo = Some("line2"),
+        businessAddressLineThree = Some("line3"),
+        businessAddressLineFour = Some("line4"),
+        businessAddressPostcode = Some("postCode"),
+        businessAddressCountryCode = Some("country"),
+        firstAccountingPeriodStartDate = Some("2018-04-06"),
+        firstAccountingPeriodEndDate = Some("2018-12-12"),
+        latencyDetails = Some(LatencyDetails(
+          latencyEndDate = "2018-12-12",
+          taxYear1 = TaxYear.fromDownstream("2018"),
+          latencyIndicator1 = LatencyIndicator.Annual,
+          taxYear2 = TaxYear.fromDownstream("2019"),
+          latencyIndicator2 = LatencyIndicator.Quarterly
+        )),
+        yearOfMigration = Some("2023")
+      )) shouldBe Json.parse(
+        s"""
+           |{
+           |   "businessId": "businessId",
+           |   "typeOfBusiness": "self-employment",
+           |   "tradingName": "tradingName",
+           |   "accountingPeriods": [
+           |     {
+           |       "start": "2001-01-01",
+           |       "end": "2001-01-02"
+           |     }
+           |   ],
+           |   "accountingType": "ACCRUALS",
+           |   "commencementDate": "2001-01-01",
+           |   "cessationDate": "2010-01-01",
+           |   "businessAddressLineOne": "line1",
+           |   "businessAddressLineTwo": "line2",
+           |   "businessAddressLineThree": "line3",
+           |   "businessAddressLineFour": "line4",
+           |   "businessAddressPostcode": "postCode",
+           |   "businessAddressCountryCode": "country",
+           |   "firstAccountingPeriodStartDate": "2018-04-06",
+           |   "firstAccountingPeriodEndDate": "2018-12-12",
+           |   "latencyDetails": {
+           |     "latencyEndDate": "2018-12-12",
+           |     "taxYear1": "2017-18",
+           |     "latencyIndicator1": "A",
+           |     "taxYear2": "2018-19",
+           |     "latencyIndicator2": "Q"
+           |   },
+           |   "yearOfMigration": "2023"
+           |}
+           |""".stripMargin
+      )
     }
   }
 
   "addRetrieveAdditionalFields" when {
     "one of the additional fields is missing" should {
-        "return None for that field" in {
+      "return None for that field" in {
+        fail()
 
-          val responseBody: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
-            "XAIS12345678910",
-            TypeOfBusiness.`self-employment`,
-            Some("Aardvark Window Cleaning Services"),
-            Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-            AccountingType.ACCRUALS,
-            Some("2016-09-24"),
-            Some("2020-03-24"),
-            Some("6 Harpic Drive"),
-            Some("Domestos Wood"),
-            Some("ToiletDucktown"),
-            Some("CIFSHIRE"),
-            Some("SW4F 3GA"),
-            Some("GB"),
-            Some("2018-04-06"),
-            None,
-            Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-            Some("2023"),
-          )
-
-          val responseJson: JsValue = Json.parse(
-            """
-              |{
-              |   "businessId": "XAIS12345678910",
-              |   "typeOfBusiness": "self-employment",
-              |   "tradingName": "Aardvark Window Cleaning Services",
-              |   "accountingPeriods": [{
-              |      "accountingPeriodStartDate": "2018-04-06",
-              |      "accountingPeriodEndDate": "2019-04-05"
-              |      }
-              |   ],
-              |   "accountingType": "ACCRUALS",
-              |   "commencementDate": "2016-09-24",
-              |   "cessationDate": "2020-03-24",
-              |   "businessAddressLineOne": "6 Harpic Drive",
-              |   "businessAddressLineTwo": "Domestos Wood",
-              |   "businessAddressLineThree": "ToiletDucktown",
-              |   "businessAddressLineFour": "CIFSHIRE",
-              |   "businessAddressPostcode": "SW4F 3GA",
-              |   "businessAddressCountryCode": "GB",
-              |   "firstAccountingPeriodStartDate": "2018-04-06",
-              |   "latencyDetails": {
-              |     "latencyEndDate": "2018-12-12",
-              |     "taxYear1": "2018",
-              |     "latencyIndicator1": "A",
-              |     "taxYear2": "2019",
-              |     "latencyIndicator2": "Q"
-              |   },
-              |   "yearOfMigration": "2023"
-              |}
-              |""".stripMargin
-          )
-
-          responseBody.addRetrieveAdditionalFields shouldBe responseJson.as[RetrieveBusinessDetailsResponse]
-        }
-      }
-  }
-
-  "reformatLatencyDetailsTaxYears" when {
-    "taxYear1 and taxYear2 is of YYYY format" should {
-      "return both in YYYY-YY format" in {
-        val responseBody: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
-          "XAIS12345678910",
-          TypeOfBusiness.`self-employment`,
-          Some("Aardvark Window Cleaning Services"),
-          Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-          AccountingType.ACCRUALS,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-          None,
-        )
-
-        val responseJson: JsValue = Json.parse(
-          """
-            |{
-            |   "businessId": "XAIS12345678910",
-            |   "typeOfBusiness": "self-employment",
-            |   "tradingName": "Aardvark Window Cleaning Services",
-            |   "accountingPeriods": [{
-            |      "accountingPeriodStartDate": "2018-04-06",
-            |      "accountingPeriodEndDate": "2019-04-05"
-            |      }
-            |   ],
-            |   "accountingType": "ACCRUALS",
-            |   "latencyDetails": {
-            |     "latencyEndDate": "2018-12-12",
-            |     "taxYear1": "2017-18",
-            |     "latencyIndicator1": "A",
-            |     "taxYear2": "2018-19",
-            |     "latencyIndicator2": "Q"
-            |   }
-            |}
-            |""".stripMargin
-        )
-
-        responseBody.reformatLatencyDetailsTaxYears shouldBe responseJson.as[RetrieveBusinessDetailsResponse]
+//        val responseBody: RetrieveBusinessDetailsResponse = RetrieveBusinessDetailsResponse(
+//          "XAIS12345678910",
+//          TypeOfBusiness.`self-employment`,
+//          Some("Aardvark Window Cleaning Services"),
+//          Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+//          AccountingType.ACCRUALS,
+//          Some("2016-09-24"),
+//          Some("2020-03-24"),
+//          Some("6 Harpic Drive"),
+//          Some("Domestos Wood"),
+//          Some("ToiletDucktown"),
+//          Some("CIFSHIRE"),
+//          Some("SW4F 3GA"),
+//          Some("GB"),
+//          Some("2018-04-06"),
+//          None,
+//          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+//          Some("2023"),
+//        )
+//
+//        val responseJson: JsValue = Json.parse(
+//          """
+//            |{
+//            |   "businessId": "XAIS12345678910",
+//            |   "typeOfBusiness": "self-employment",
+//            |   "tradingName": "Aardvark Window Cleaning Services",
+//            |   "accountingPeriods": [{
+//            |      "accountingPeriodStartDate": "2018-04-06",
+//            |      "accountingPeriodEndDate": "2019-04-05"
+//            |      }
+//            |   ],
+//            |   "accountingType": "ACCRUALS",
+//            |   "commencementDate": "2016-09-24",
+//            |   "cessationDate": "2020-03-24",
+//            |   "businessAddressLineOne": "6 Harpic Drive",
+//            |   "businessAddressLineTwo": "Domestos Wood",
+//            |   "businessAddressLineThree": "ToiletDucktown",
+//            |   "businessAddressLineFour": "CIFSHIRE",
+//            |   "businessAddressPostcode": "SW4F 3GA",
+//            |   "businessAddressCountryCode": "GB",
+//            |   "firstAccountingPeriodStartDate": "2018-04-06",
+//            |   "latencyDetails": {
+//            |     "latencyEndDate": "2018-12-12",
+//            |     "taxYear1": "2018",
+//            |     "latencyIndicator1": "A",
+//            |     "taxYear2": "2019",
+//            |     "latencyIndicator2": "Q"
+//            |   },
+//            |   "yearOfMigration": "2023"
+//            |}
+//            |""".stripMargin
+//        )
+//
+//        responseBody.addRetrieveAdditionalFields shouldBe responseJson.as[RetrieveBusinessDetailsResponse]
       }
     }
   }
@@ -299,7 +155,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
   "LinksFactory" should {
     "expose the correct links" when {
       "called" in {
-        val nino       = "mynino"
+        val nino = "mynino"
         val businessId = "myid"
         MockedAppConfig.apiGatewayContext.returns("individuals/business/details").anyNumberOfTimes()
         RetrieveBusinessDetailsResponse.RetrieveBusinessDetailsLinksFactory

@@ -16,18 +16,12 @@
 
 package v1.models.response.retrieveBusinessDetails.downstream
 
-import api.models.domain.{AccountingType, TypeOfBusiness}
+import api.models.domain.{AccountingType, TaxYear, TypeOfBusiness}
 import play.api.libs.json.{JsValue, Json, Reads}
 import support.UnitSpec
-
 import v1.models.response.retrieveBusinessDetails.AccountingPeriod
 import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse.getReads
-import v1.models.response.retrieveBusinessDetails.downstream.{
-  BusinessDetails,
-  LatencyDetails,
-  LatencyIndicator,
-  RetrieveBusinessDetailsDownstreamResponse
-}
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
 
 class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
 
@@ -90,7 +84,7 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             Seq(AccountingPeriod("2001-01-01", "2001-01-01")),
             Some("2018-04-06"),
             Some("2018-12-12"),
-            Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+            Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
             Some("2023"),
             AccountingType.CASH,
             Some("2001-01-01"),
@@ -155,7 +149,7 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
             Some("2018-04-06"),
             Some("2018-12-12"),
-            Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+            Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
             Some("2023"),
             AccountingType.ACCRUALS,
             Some("2017-07-24"),
@@ -234,7 +228,7 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             Seq(AccountingPeriod("2001-01-01", "2001-01-01")),
             Some("2018-04-06"),
             Some("2018-12-12"),
-            Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+            Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
             Some("2023"),
             AccountingType.CASH,
             Some("2001-01-01"),
@@ -302,7 +296,7 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
             Some("2018-04-06"),
             Some("2018-12-12"),
-            Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+            Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
             Some("2023"),
             AccountingType.ACCRUALS,
             Some("2017-07-24"),
