@@ -17,18 +17,19 @@
 package v1.models.response.retrieveBusinessDetails.downstream
 
 import api.models.domain.{AccountingType, TaxYear, TypeOfBusiness}
+import config.MockFeatureSwitches
 import play.api.libs.json.{JsValue, Json, Reads}
 import support.UnitSpec
 import v1.models.response.retrieveBusinessDetails.AccountingPeriod
-import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse.getReads
-import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
 
-class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
+class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec with MockFeatureSwitches {
 
   "reads" should {
     "read the response from DES" when {
       "only business data is supplied" in new Test {
-        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(false)
+        MockFeatureSwitches.isIfsEnabled.returns(false).anyNumberOfTimes()
+        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = RetrieveBusinessDetailsDownstreamResponse.reads
+
         val downstreamJson: JsValue = Json.parse(
           """
             |{
@@ -100,7 +101,8 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
         responseBody shouldBe downstreamJson.as[RetrieveBusinessDetailsDownstreamResponse]
       }
       "only property data is supplied" in new Test {
-        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(false)
+        MockFeatureSwitches.isIfsEnabled.returns(false).anyNumberOfTimes()
+        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = RetrieveBusinessDetailsDownstreamResponse.reads
 
         val downstreamJson: JsValue = Json.parse(
           """
@@ -168,7 +170,8 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
 
     "read the response from IFS" when {
       "only business data is supplied" in new Test {
-        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(true)
+        MockFeatureSwitches.isIfsEnabled.returns(true).anyNumberOfTimes()
+        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = RetrieveBusinessDetailsDownstreamResponse.reads
 
         val downstreamJson: JsValue = Json.parse(
           """
@@ -244,7 +247,8 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
         responseBody shouldBe downstreamJson.as[RetrieveBusinessDetailsDownstreamResponse]
       }
       "only property data is supplied" in new Test {
-        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(true)
+        MockFeatureSwitches.isIfsEnabled.returns(true).anyNumberOfTimes()
+        implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = RetrieveBusinessDetailsDownstreamResponse.reads
 
         val downstreamJson: JsValue = Json.parse(
           """

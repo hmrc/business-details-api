@@ -17,6 +17,7 @@
 package v1.models.response.retrieveBusinessDetails.downstream
 
 import api.models.domain.{AccountingType, TaxYear, TypeOfBusiness}
+import config.FeatureSwitches
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
@@ -41,7 +42,7 @@ object LatencyIndicator {
     json.as[String] match {
       case "A" | "a" => JsSuccess(Annual)
       case "Q" | "q" => JsSuccess(Quarterly)
-      case other     => JsError(s"Unknown latency indicator: $other")
+      case other => JsError(s"Unknown latency indicator: $other")
     }
   }
 
@@ -51,7 +52,7 @@ case class LatencyDetails(latencyEndDate: String,
                           taxYear1: TaxYear,
                           latencyIndicator1: LatencyIndicator,
                           taxYear2: TaxYear,
-                          latencyIndicator2: LatencyIndicator) {}
+                          latencyIndicator2: LatencyIndicator)
 
 object LatencyDetails {
   implicit val writes: OWrites[LatencyDetails] = Json.writes[LatencyDetails]
@@ -63,7 +64,7 @@ object LatencyDetails {
       (JsPath \ "latencyIndicator1").read[LatencyIndicator] and
       (JsPath \ "taxYear2").read[TaxYear] and
       (JsPath \ "latencyIndicator2").read[LatencyIndicator]
-  )(LatencyDetails.apply _)
+    )(LatencyDetails.apply _)
 
 }
 
@@ -109,18 +110,18 @@ case class BusinessDetails(businessId: String,
 
 object BusinessDetails {
 
-  private def cashOrAccrualsReads(field: String)(implicit isIfsEnabled: Boolean): Reads[AccountingType] = {
-    if (isIfsEnabled || field == "cashOrAccrualsFlag") {
+  private def cashOrAccrualsReads(field: String)(implicit featureSwitches: FeatureSwitches): Reads[AccountingType] = {
+    if (featureSwitches.isIfsEnabled || field == "cashOrAccrualsFlag") {
       (JsPath \ field).readNullable[Boolean].map {
-        case Some(true)  => AccountingType.ACCRUALS
+        case Some(true) => AccountingType.ACCRUALS
         case Some(false) => AccountingType.CASH
-        case None        => AccountingType.CASH
+        case None => AccountingType.CASH
       }
     } else {
       (JsPath \ field).readNullable[String].map {
-        case Some("cash")     => AccountingType.CASH
+        case Some("cash") => AccountingType.CASH
         case Some("accruals") => AccountingType.ACCRUALS
-        case _                => AccountingType.CASH
+        case _ => AccountingType.CASH
       }
     }
   }
@@ -128,9 +129,9 @@ object BusinessDetails {
   private val accountingPeriodReads: Reads[Seq[AccountingPeriod]] = (
     (JsPath \ "accountingPeriodStartDate").read[String] and
       (JsPath \ "accountingPeriodEndDate").read[String]
-  ).apply((start, end) => Seq(AccountingPeriod(start, end)))
+    ).apply((start, end) => Seq(AccountingPeriod(start, end)))
 
-  val readsBusinessData: Boolean => Reads[BusinessDetails] = { implicit isIfsEnabled: Boolean =>
+  def readsBusinessData(implicit featureSwitches: FeatureSwitches): Reads[BusinessDetails] =
     (
       (JsPath \ "incomeSourceId").read[String] and
         Reads.pure(TypeOfBusiness.`self-employment`) and
@@ -149,22 +150,17 @@ object BusinessDetails {
         (JsPath \ "businessAddressDetails" \ "addressLine4").readNullable[String] and
         (JsPath \ "businessAddressDetails" \ "postalCode").readNullable[String] and
         (JsPath \ "businessAddressDetails" \ "countryCode").readNullable[String]
-    )(BusinessDetails.apply _)
-  }
+      )(BusinessDetails.apply _)
 
-  val readsSeqBusinessData: Boolean => Reads[Seq[BusinessDetails]] = { implicit isIfsEnabled: Boolean =>
-    Reads.traversableReads[Seq, BusinessDetails](implicitly, readsBusinessData(isIfsEnabled))
-  }
-
-  private def cashOrAccrualsReadsForPropertyData(implicit isIfsEnabled: Boolean) = {
-    if (isIfsEnabled) {
+  private def cashOrAccrualsReadsForPropertyData(implicit featureSwitches: FeatureSwitches) = {
+    if (featureSwitches.isIfsEnabled) {
       cashOrAccrualsReads("cashOrAccruals")
     } else {
       cashOrAccrualsReads("cashOrAccrualsFlag")
     }
   }
 
-  val readsPropertyData: Boolean => Reads[BusinessDetails] = { implicit isIfsEnabled: Boolean =>
+  def readsPropertyData(implicit featureSwitches: FeatureSwitches): Reads[BusinessDetails] =
     (
       (JsPath \ "incomeSourceId").read[String] and
         (JsPath \ "incomeSourceType").readNullable[TypeOfBusiness].map(_.getOrElse(TypeOfBusiness.`property-unspecified`)) and
@@ -183,11 +179,6 @@ object BusinessDetails {
         Reads.pure(None) and
         Reads.pure(None) and
         Reads.pure(None)
-    )(BusinessDetails.apply _)
-  }
-
-  val readsSeqPropertyData: Boolean => Reads[Seq[BusinessDetails]] = { implicit isIfsEnabled: Boolean =>
-    Reads.traversableReads[Seq, BusinessDetails](implicitly, readsPropertyData(isIfsEnabled))
-  }
+      )(BusinessDetails.apply _)
 
 }

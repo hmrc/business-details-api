@@ -16,19 +16,43 @@
 
 package config
 
+import com.google.inject.ImplementedBy
 import play.api.Configuration
 
-case class FeatureSwitches(featureSwitchConfig: Configuration) {
+import javax.inject.{Inject, Singleton}
+
+@ImplementedBy(classOf[FeatureSwitchesImpl])
+trait FeatureSwitches {
+  def isRetrieveAdditionalFieldsEnabled: Boolean
+
+  def isIfsEnabled: Boolean
+
+  def isEndpoint2089Enabled: Boolean
+
+  def isEnabled(key: String): Boolean
+
+  def isReleasedInProduction(feature: String): Boolean
+}
+
+@Singleton
+class FeatureSwitchesImpl(featureSwitchConfig: Configuration) extends FeatureSwitches {
+
+  @Inject
+  def this(appConfig: AppConfig) = this(appConfig.featureSwitches)
 
   val isRetrieveAdditionalFieldsEnabled: Boolean = isEnabled("retrieveAdditionalFields")
-  val isIfsEnabled: Boolean                      = isEnabled("ifs")
-  val isEndpoint2089Enabled: Boolean             = isEnabled("endpoint-2089")
-  def isEnabled(key: String): Boolean            = isConfigTrue(key + ".enabled")
+  val isIfsEnabled: Boolean = isEnabled("ifs")
+  val isEndpoint2089Enabled: Boolean = isEnabled("endpoint-2089")
+
+  def isEnabled(key: String): Boolean = isConfigTrue(key + ".enabled")
 
   def isReleasedInProduction(feature: String): Boolean = isConfigTrue(feature + ".released-in-production")
-  private def isConfigTrue(key: String): Boolean       = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)
+
+  private def isConfigTrue(key: String): Boolean = featureSwitchConfig.getOptional[Boolean](key).getOrElse(true)
 }
 
 object FeatureSwitches {
-  def apply()(implicit appConfig: AppConfig): FeatureSwitches = FeatureSwitches(appConfig.featureSwitches)
+  def apply(configuration: Configuration): FeatureSwitches = new FeatureSwitchesImpl(configuration)
+
+  def apply(appConfig: AppConfig): FeatureSwitches = new FeatureSwitchesImpl(appConfig)
 }

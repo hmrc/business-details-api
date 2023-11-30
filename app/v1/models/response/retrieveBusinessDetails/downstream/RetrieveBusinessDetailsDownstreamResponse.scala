@@ -16,28 +16,28 @@
 
 package v1.models.response.retrieveBusinessDetails.downstream
 
+import config.FeatureSwitches
 import play.api.libs.json.{JsPath, Reads}
-import v1.models.response.retrieveBusinessDetails.downstream.BusinessDetails.{readsSeqBusinessData, readsSeqPropertyData}
 
 case class RetrieveBusinessDetailsDownstreamResponse(businessDetails: Seq[BusinessDetails])
 
 object RetrieveBusinessDetailsDownstreamResponse {
 
-  private def getDownstreamPath(data: String)(implicit isIfsEnabled: Boolean): JsPath =
-    if (isIfsEnabled) JsPath \ "taxPayerDisplayResponse" \ data else JsPath \ data
+  def reads(implicit featureSwitches: FeatureSwitches): Reads[RetrieveBusinessDetailsDownstreamResponse] = {
 
-  val getReads: Boolean => Reads[RetrieveBusinessDetailsDownstreamResponse] = { implicit isIfsEnabled: Boolean =>
-    val businessDataReads: Reads[Seq[BusinessDetails]] =
-      getDownstreamPath("businessData").readNullable[Seq[BusinessDetails]](readsSeqBusinessData(isIfsEnabled)).map(_.getOrElse(Nil))
-    val propertyDataReads: Reads[Seq[BusinessDetails]] =
-      getDownstreamPath("propertyData").readNullable[Seq[BusinessDetails]](readsSeqPropertyData(isIfsEnabled)).map(_.getOrElse(Nil))
-    val yearOfMigrationReads: Reads[Option[String]] =
-      getDownstreamPath("yearOfMigration").readNullable[String]
+    val readsSeqBusinessData: Reads[Seq[BusinessDetails]] =
+      Reads.traversableReads[Seq, BusinessDetails](implicitly, BusinessDetails.readsBusinessData)
+
+    val readsSeqPropertyData: Reads[Seq[BusinessDetails]] =
+      Reads.traversableReads[Seq, BusinessDetails](implicitly, BusinessDetails.readsPropertyData)
+
+    def getDownstreamPath(pathSegment: String): JsPath =
+      if (featureSwitches.isIfsEnabled) JsPath \ "taxPayerDisplayResponse" \ pathSegment else JsPath \ pathSegment
 
     for {
-      businessData    <- businessDataReads
-      propertyData    <- propertyDataReads
-      yearOfMigration <- yearOfMigrationReads
+      businessData <- getDownstreamPath("businessData").readNullable[Seq[BusinessDetails]](readsSeqBusinessData).map(_.getOrElse(Nil))
+      propertyData <- getDownstreamPath("propertyData").readNullable[Seq[BusinessDetails]](readsSeqPropertyData).map(_.getOrElse(Nil))
+      yearOfMigration <- getDownstreamPath("yearOfMigration").readNullable[String]
     } yield {
       val businessDataWithYearOfMigration: Seq[BusinessDetails] = businessData.map(_.copy(yearOfMigration = yearOfMigration))
       val propertyDataWithYearOfMigration: Seq[BusinessDetails] = propertyData.map(_.copy(yearOfMigration = yearOfMigration))

@@ -38,26 +38,14 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            firstAccountingPeriodStartDate: Option[String],
                                            firstAccountingPeriodEndDate: Option[String],
                                            latencyDetails: Option[LatencyDetails],
-                                           yearOfMigration: Option[String]) {
-
-  // FIXME does this really serve any purpose?
-  def addRetrieveAdditionalFields: RetrieveBusinessDetailsResponse = {
-    val updatedResponse = this.copy(
-      firstAccountingPeriodStartDate = if (firstAccountingPeriodStartDate.isEmpty) None else firstAccountingPeriodStartDate,
-      firstAccountingPeriodEndDate = if (firstAccountingPeriodEndDate.isEmpty) None else firstAccountingPeriodEndDate,
-      latencyDetails = if (latencyDetails.isEmpty) None else latencyDetails,
-      yearOfMigration = if (yearOfMigration.isEmpty) None else yearOfMigration
-    )
-    updatedResponse
-  }
-}
+                                           yearOfMigration: Option[String])
 
 object RetrieveBusinessDetailsResponse extends HateoasLinks {
 
   implicit val writes: OWrites[RetrieveBusinessDetailsResponse] = Json.writes[RetrieveBusinessDetailsResponse]
 
   implicit object RetrieveBusinessDetailsLinksFactory
-      extends HateoasLinksFactory[RetrieveBusinessDetailsResponse, RetrieveBusinessDetailsHateoasData] {
+    extends HateoasLinksFactory[RetrieveBusinessDetailsResponse, RetrieveBusinessDetailsHateoasData] {
 
     override def links(appConfig: AppConfig, data: RetrieveBusinessDetailsHateoasData): Seq[Link] = {
       import data._

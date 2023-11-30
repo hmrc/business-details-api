@@ -37,7 +37,7 @@ class ListAllBusinessesService @Inject() (connector: ListAllBusinessesConnector,
                                                                       ec: ExecutionContext
   ): Future[ServiceOutcome[ListAllBusinessesResponse[Business]]] = {
 
-    val isIfsEnabled: Boolean                                              = FeatureSwitches()(appConfig).isIfsEnabled
+    val isIfsEnabled: Boolean                                              = FeatureSwitches(appConfig).isIfsEnabled
     implicit val responseReads: Reads[ListAllBusinessesResponse[Business]] = ListAllBusinessesResponse.getReads(isIfsEnabled)
 
     connector

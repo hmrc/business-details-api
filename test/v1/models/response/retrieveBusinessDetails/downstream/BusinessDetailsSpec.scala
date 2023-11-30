@@ -17,15 +17,18 @@
 package v1.models.response.retrieveBusinessDetails.downstream
 
 import api.models.domain.{AccountingType, TaxYear, TypeOfBusiness}
+import config.MockFeatureSwitches
 import play.api.libs.json.Json
 import support.UnitSpec
 import v1.models.response.retrieveBusinessDetails.AccountingPeriod
 
-class BusinessDetailsSpec extends UnitSpec {
+class BusinessDetailsSpec extends UnitSpec with MockFeatureSwitches {
+
 
   "reads" should {
     "read from business json" when {
       "A full json is supplied" in {
+        MockFeatureSwitches.isIfsEnabled.returns(true).anyNumberOfTimes()
 
         Json.parse(
           """
@@ -66,7 +69,7 @@ class BusinessDetailsSpec extends UnitSpec {
             |  "paperLess": true
             |}
             |""".stripMargin
-        ).as[BusinessDetails](BusinessDetails.readsBusinessData.apply(true)) shouldBe
+        ).as[BusinessDetails](BusinessDetails.readsBusinessData) shouldBe
           BusinessDetails(
             businessId = "XAIS12345678910",
             typeOfBusiness = TypeOfBusiness.`self-employment`,
@@ -91,6 +94,7 @@ class BusinessDetailsSpec extends UnitSpec {
 
     "read from property json" when {
       "A full json is supplied" in {
+        MockFeatureSwitches.isIfsEnabled.returns(true).anyNumberOfTimes()
 
         Json.parse(
           """
@@ -122,7 +126,7 @@ class BusinessDetailsSpec extends UnitSpec {
             |  "incomeSourceStartDate": "2019-07-14"
             |}
             |""".stripMargin
-        ).as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe
+        ).as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe
           BusinessDetails(
             businessId = "X0IS123456789012",
             typeOfBusiness = TypeOfBusiness.`foreign-property`,
@@ -145,6 +149,8 @@ class BusinessDetailsSpec extends UnitSpec {
       }
 
       "A partial json is supplied" in {
+        MockFeatureSwitches.isIfsEnabled.returns(true).anyNumberOfTimes()
+
         Json.parse(
           """
             |{
@@ -172,7 +178,7 @@ class BusinessDetailsSpec extends UnitSpec {
             |  }
             |}
             |""".stripMargin
-        ).as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe BusinessDetails(
+        ).as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe BusinessDetails(
           businessId = "X0IS123456789012",
           typeOfBusiness = TypeOfBusiness.`property-unspecified`,
           tradingName = None,
@@ -194,6 +200,8 @@ class BusinessDetailsSpec extends UnitSpec {
       }
 
       "A the minimum json is supplied" in {
+        MockFeatureSwitches.isIfsEnabled.returns(true).anyNumberOfTimes()
+
         Json.parse(
           """
             |{
@@ -202,26 +210,26 @@ class BusinessDetailsSpec extends UnitSpec {
             |  "accountingPeriodEndDate": "2020-04-05"
             |}
             |""".stripMargin
-        ).as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe
+        ).as[BusinessDetails](BusinessDetails.readsPropertyData) shouldBe
           BusinessDetails(
-          businessId = "X0IS123456789012",
-          typeOfBusiness = TypeOfBusiness.`property-unspecified`,
-          tradingName = None,
-          accountingPeriods = Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
-          firstAccountingPeriodStartDate = None,
-          firstAccountingPeriodEndDate = None,
-          latencyDetails = None,
-          yearOfMigration = None,
-          accountingType = AccountingType.CASH,
-          commencementDate = None,
-          cessationDate = None,
-          businessAddressLineOne = None,
-          businessAddressLineTwo = None,
-          businessAddressLineThree = None,
-          businessAddressLineFour = None,
-          businessAddressPostcode = None,
-          businessAddressCountryCode = None
-        )
+            businessId = "X0IS123456789012",
+            typeOfBusiness = TypeOfBusiness.`property-unspecified`,
+            tradingName = None,
+            accountingPeriods = Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+            firstAccountingPeriodStartDate = None,
+            firstAccountingPeriodEndDate = None,
+            latencyDetails = None,
+            yearOfMigration = None,
+            accountingType = AccountingType.CASH,
+            commencementDate = None,
+            cessationDate = None,
+            businessAddressLineOne = None,
+            businessAddressLineTwo = None,
+            businessAddressLineThree = None,
+            businessAddressLineFour = None,
+            businessAddressPostcode = None,
+            businessAddressCountryCode = None
+          )
       }
     }
   }

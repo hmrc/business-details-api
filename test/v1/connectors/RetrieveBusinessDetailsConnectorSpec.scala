@@ -17,18 +17,18 @@
 package v1.connectors
 
 import api.connectors.{ConnectorSpec, DownstreamOutcome}
-import api.models.domain.{AccountingType, BusinessId, Nino, TaxYear, TypeOfBusiness}
+import api.models.domain._
 import api.models.outcomes.ResponseWrapper
+import config.MockFeatureSwitches
 import play.api.Configuration
 import play.api.libs.json.Reads
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
-import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse.getReads
 import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
 
-class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
+class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec with MockFeatureSwitches {
 
   private val nino = Nino("AA123456A")
   private val businessId = BusinessId("XAIS12345678910")
@@ -43,7 +43,9 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
   )
   // @formatter:on
 
-  implicit private val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = getReads(false)
+  MockFeatureSwitches.isIfsEnabled.returns(false).anyNumberOfTimes()
+
+  implicit private val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = RetrieveBusinessDetailsDownstreamResponse.reads
 
   "retrieveBusinessDetailsConnector" must {
     "send a request and return the expected response" in new DesTest with Test {
