@@ -22,8 +22,8 @@ import api.hateoas.Method.GET
 import config.MockAppConfig
 import play.api.libs.json.{Json, Reads}
 import support.UnitSpec
-import v1.models.response.listAllBusiness.ListAllBusinessesResponse.getReads
-import v1.models.response.listAllBusiness.{Business, ListAllBusinessesHateoasData, ListAllBusinessesResponse}
+import v1.models.response.listAllBusinesses.ListAllBusinessesResponse.getReads
+import v1.models.response.listAllBusinesses.{Business, ListAllBusinessesHateoasData, ListAllBusinessesResponse}
 import v1.models.response.listAllBusinesses.ListAllBusinessJson._
 
 class ListAllBusinessesResponseSpec extends UnitSpec {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.models.response.RetrieveBusinessDetails
+package v1.models.response.retrieveBusinessDetails
 
 import api.hateoas.Link
 import api.models.domain.{AccountingType, TypeOfBusiness}
@@ -85,7 +85,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
             |""".stripMargin
         )
 
-        responseBody shouldBe desJson.as[RetrieveBusinessDetailsResponse]
+        desJson.as[RetrieveBusinessDetailsResponse] shouldBe responseBody
       }
       "A partial json is supplied with end missing" in {
 
@@ -125,7 +125,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
             |""".stripMargin
         )
 
-        responseBody shouldBe desJson.as[RetrieveBusinessDetailsResponse]
+        desJson.as[RetrieveBusinessDetailsResponse] shouldBe responseBody
       }
       "A partial json is supplied with middle missing" in {
 
@@ -178,7 +178,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig {
             |""".stripMargin
         )
 
-        responseBody shouldBe desJson.as[RetrieveBusinessDetailsResponse]
+        desJson.as[RetrieveBusinessDetailsResponse] shouldBe responseBody
       }
     }
   }

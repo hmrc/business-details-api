@@ -63,6 +63,8 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
 object RetrieveBusinessDetailsResponse extends HateoasLinks {
 
   implicit val writes: OWrites[RetrieveBusinessDetailsResponse] = Json.writes[RetrieveBusinessDetailsResponse]
+
+  // FIXME this should not be here: we should only ever write RetrieveBusinessDetailsResponse, but a test depends on it ???
   implicit val reads: Reads[RetrieveBusinessDetailsResponse]    = Json.reads[RetrieveBusinessDetailsResponse]
 
   implicit object RetrieveBusinessDetailsLinksFactory

@@ -24,7 +24,7 @@ import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.Reads
 import v1.connectors.ListAllBusinessesConnector
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
-import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
+import v1.models.response.listAllBusinesses.{Business, ListAllBusinessesResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

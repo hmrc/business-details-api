@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.models.response.listAllBusiness
+package v1.models.response.listAllBusinesses
 
 import api.hateoas.{HateoasData, HateoasLinks, HateoasListLinksFactory, Link}
 import api.hateoas.RelType.RETRIEVE_BUSINESS_DETAILS

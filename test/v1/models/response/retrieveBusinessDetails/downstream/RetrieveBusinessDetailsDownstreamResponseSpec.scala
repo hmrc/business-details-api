@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.models.response.RetrieveBusinessDetails.downstream
+package v1.models.response.retrieveBusinessDetails.downstream
 
 import api.models.domain.{AccountingType, TypeOfBusiness}
 import play.api.libs.json.{JsValue, Json, Reads}

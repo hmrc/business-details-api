@@ -37,7 +37,7 @@ object LatencyIndicator {
     JsString(latencyIndicator.toString)
   }
 
-  implicit val latencyIndicatorReads: Reads[LatencyIndicator] = Reads { json =>
+  implicit val reads: Reads[LatencyIndicator] = Reads { json =>
     json.as[String] match {
       case "A" | "a" => JsSuccess(Annual)
       case "Q" | "q" => JsSuccess(Quarterly)
@@ -129,6 +129,7 @@ object BusinessDetails {
       (JsPath \ "accountingPeriodEndDate").read[String]
   ).apply((start, end) => Seq(AccountingPeriod(start, end)))
 
+  // FIXME this should not be here: we should only ever read BusinessDetails, but a test depends on it ???
   implicit val writes: OWrites[BusinessDetails] = Json.writes[BusinessDetails]
 
   val readsBusinessData: Boolean => Reads[BusinessDetails] = { implicit isIfsEnabled: Boolean =>

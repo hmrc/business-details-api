@@ -28,7 +28,7 @@ import play.api.mvc.Result
 import utils.MockIdGenerator
 import v1.controllers.validators.MockListAllBusinessDetailsValidatorFactory
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
-import v1.models.response.listAllBusiness.{Business, ListAllBusinessesHateoasData, ListAllBusinessesResponse}
+import v1.models.response.listAllBusinesses.{Business, ListAllBusinessesHateoasData, ListAllBusinessesResponse}
 import v1.services.MockListAllBusinessesService
 
 import scala.concurrent.ExecutionContext.Implicits.global

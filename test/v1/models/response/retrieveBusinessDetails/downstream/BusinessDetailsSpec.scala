@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package v1.models.response.RetrieveBusinessDetails.downstream
+package v1.models.response.retrieveBusinessDetails.downstream
 
 import api.models.domain.{AccountingType, TypeOfBusiness}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import support.UnitSpec
 import v1.models.response.retrieveBusinessDetails.AccountingPeriod
-import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, LatencyDetails, LatencyIndicator}
 
 class BusinessDetailsSpec extends UnitSpec {
 
@@ -28,12 +27,12 @@ class BusinessDetailsSpec extends UnitSpec {
     "read from business json" when {
       "A full json is supplied" in {
 
-        val businessDesJson: JsValue = Json.parse(
+        Json.parse(
           """
             |{
             |  "incomeSourceId": "XAIS12345678910",
             |  "accountingPeriodStartDate": "2001-01-01",
-            |  "accountingPeriodEndDate": "2001-01-01",
+            |  "accountingPeriodEndDate": "2001-01-02",
             |  "firstAccountingPeriodStartDate": "2018-04-06",
             |  "firstAccountingPeriodEndDate":   "2018-12-12",
             |  "yearOfMigration": "2023",
@@ -67,34 +66,33 @@ class BusinessDetailsSpec extends UnitSpec {
             |  "paperLess": true
             |}
             |""".stripMargin
-        )
-
-        val responseBody = BusinessDetails(
-          "XAIS12345678910",
-          TypeOfBusiness.`self-employment`,
-          Some("RCDTS"),
-          Seq(AccountingPeriod("2001-01-01", "2001-01-01")),
-          Some("2018-04-06"),
-          Some("2018-12-12"),
-          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-          Some("2023"),
-          AccountingType.CASH,
-          Some("2001-01-01"),
-          Some("2001-01-01"),
-          Some("100 SuttonStreet"),
-          Some("Wokingham"),
-          Some("Surrey"),
-          Some("London"),
-          Some("DH14EJ"),
-          Some("GB")
-        )
-        businessDesJson.as[BusinessDetails](BusinessDetails.readsBusinessData.apply(true)) shouldBe responseBody
+        ).as[BusinessDetails](BusinessDetails.readsBusinessData.apply(true)) shouldBe
+          BusinessDetails(
+            businessId = "XAIS12345678910",
+            typeOfBusiness = TypeOfBusiness.`self-employment`,
+            tradingName = Some("RCDTS"),
+            accountingPeriods = Seq(AccountingPeriod("2001-01-01", "2001-01-02")),
+            firstAccountingPeriodStartDate = Some("2018-04-06"),
+            firstAccountingPeriodEndDate = Some("2018-12-12"),
+            latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+            yearOfMigration = Some("2023"),
+            accountingType = AccountingType.CASH,
+            commencementDate = Some("2001-01-01"),
+            cessationDate = Some("2001-01-01"),
+            businessAddressLineOne = Some("100 SuttonStreet"),
+            businessAddressLineTwo = Some("Wokingham"),
+            businessAddressLineThree = Some("Surrey"),
+            businessAddressLineFour = Some("London"),
+            businessAddressPostcode = Some("DH14EJ"),
+            businessAddressCountryCode = Some("GB")
+          )
       }
     }
+
     "read from property json" when {
       "A full json is supplied" in {
 
-        val propertyDesJson: JsValue = Json.parse(
+        Json.parse(
           """
             |{
             |  "incomeSourceType": "foreign-property",
@@ -124,34 +122,30 @@ class BusinessDetailsSpec extends UnitSpec {
             |  "incomeSourceStartDate": "2019-07-14"
             |}
             |""".stripMargin
-        )
-
-        val responseBody = BusinessDetails(
-          "X0IS123456789012",
-          TypeOfBusiness.`foreign-property`,
-          None,
-          Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
-          Some("2018-04-06"),
-          Some("2018-12-12"),
-          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-          Some("2023"),
-          AccountingType.ACCRUALS,
-          Some("2017-07-24"),
-          Some("2020-01-01"),
-          None,
-          None,
-          None,
-          None,
-          None,
-          None
-        )
-
-        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe responseBody
+        ).as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe
+          BusinessDetails(
+            businessId = "X0IS123456789012",
+            typeOfBusiness = TypeOfBusiness.`foreign-property`,
+            tradingName = None,
+            accountingPeriods = Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+            firstAccountingPeriodStartDate = Some("2018-04-06"),
+            firstAccountingPeriodEndDate = Some("2018-12-12"),
+            latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+            yearOfMigration = Some("2023"),
+            accountingType = AccountingType.ACCRUALS,
+            commencementDate = Some("2017-07-24"),
+            cessationDate = Some("2020-01-01"),
+            businessAddressLineOne = None,
+            businessAddressLineTwo = None,
+            businessAddressLineThree = None,
+            businessAddressLineFour = None,
+            businessAddressPostcode = None,
+            businessAddressCountryCode = None
+          )
       }
 
       "A partial json is supplied" in {
-
-        val propertyDesJson: JsValue = Json.parse(
+        Json.parse(
           """
             |{
             |  "incomeSourceId": "X0IS123456789012",
@@ -178,33 +172,29 @@ class BusinessDetailsSpec extends UnitSpec {
             |  }
             |}
             |""".stripMargin
+        ).as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe BusinessDetails(
+          businessId = "X0IS123456789012",
+          typeOfBusiness = TypeOfBusiness.`property-unspecified`,
+          tradingName = None,
+          accountingPeriods = Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+          firstAccountingPeriodStartDate = Some("2018-04-06"),
+          firstAccountingPeriodEndDate = Some("2018-12-12"),
+          latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
+          yearOfMigration = Some("2023"),
+          accountingType = AccountingType.CASH,
+          commencementDate = None,
+          cessationDate = None,
+          businessAddressLineOne = None,
+          businessAddressLineTwo = None,
+          businessAddressLineThree = None,
+          businessAddressLineFour = None,
+          businessAddressPostcode = None,
+          businessAddressCountryCode = None
         )
-
-        val responseBody = BusinessDetails(
-          "X0IS123456789012",
-          TypeOfBusiness.`property-unspecified`,
-          None,
-          Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
-          Some("2018-04-06"),
-          Some("2018-12-12"),
-          Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-          Some("2023"),
-          AccountingType.CASH,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None
-        )
-
-        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe responseBody
       }
-      "A the minimum json is supplied" in {
 
-        val propertyDesJson: JsValue = Json.parse(
+      "A the minimum json is supplied" in {
+        Json.parse(
           """
             |{
             |  "incomeSourceId": "X0IS123456789012",
@@ -212,29 +202,26 @@ class BusinessDetailsSpec extends UnitSpec {
             |  "accountingPeriodEndDate": "2020-04-05"
             |}
             |""".stripMargin
+        ).as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe
+          BusinessDetails(
+          businessId = "X0IS123456789012",
+          typeOfBusiness = TypeOfBusiness.`property-unspecified`,
+          tradingName = None,
+          accountingPeriods = Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
+          firstAccountingPeriodStartDate = None,
+          firstAccountingPeriodEndDate = None,
+          latencyDetails = None,
+          yearOfMigration = None,
+          accountingType = AccountingType.CASH,
+          commencementDate = None,
+          cessationDate = None,
+          businessAddressLineOne = None,
+          businessAddressLineTwo = None,
+          businessAddressLineThree = None,
+          businessAddressLineFour = None,
+          businessAddressPostcode = None,
+          businessAddressCountryCode = None
         )
-
-        val responseBody = BusinessDetails(
-          "X0IS123456789012",
-          TypeOfBusiness.`property-unspecified`,
-          None,
-          Seq(AccountingPeriod("2019-04-06", "2020-04-05")),
-          None,
-          None,
-          None,
-          None,
-          AccountingType.CASH,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None,
-          None
-        )
-
-        propertyDesJson.as[BusinessDetails](BusinessDetails.readsPropertyData.apply(true)) shouldBe responseBody
       }
     }
   }

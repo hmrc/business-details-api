@@ -16,7 +16,7 @@
 
 package v1.models.response.retrieveBusinessDetails.downstream
 
-import play.api.libs.json.{JsPath, Json, OWrites, Reads}
+import play.api.libs.json.{JsPath, Reads}
 import v1.models.response.retrieveBusinessDetails.downstream.BusinessDetails.{readsSeqBusinessData, readsSeqPropertyData}
 
 case class RetrieveBusinessDetailsDownstreamResponse(businessDetails: Seq[BusinessDetails])
@@ -44,6 +44,4 @@ object RetrieveBusinessDetailsDownstreamResponse {
       RetrieveBusinessDetailsDownstreamResponse(businessDataWithYearOfMigration ++ propertyDataWithYearOfMigration)
     }
   }
-
-  implicit val writes: OWrites[RetrieveBusinessDetailsDownstreamResponse] = Json.writes[RetrieveBusinessDetailsDownstreamResponse]
 }
