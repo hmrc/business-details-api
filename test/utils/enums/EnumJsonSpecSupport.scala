@@ -16,7 +16,7 @@
 
 package utils.enums
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format, JsString, JsValue, Json, Reads, Writes}
 import support.UnitSpec
 
 trait EnumJsonSpecSupport {
@@ -25,16 +25,16 @@ trait EnumJsonSpecSupport {
   /** Tests round-tripping
     *
     * @param namesAndValues
-    *   Pairs (name, object) for all the objects in the enumeration under test
+    * Pairs (name, object) for all the objects in the enumeration under test
     * @tparam A
-    *   the type of enumeration (sealed trait of objects) being tested
+    * the type of enumeration (sealed trait of objects) being tested
     */
 
   def testRoundTrip[A: Format](namesAndValues: (String, A)*): Unit =
     "JSON formats" must {
       "support round trip" in {
         namesAndValues.foreach { case (name, obj) =>
-          val json = Json.parse(s""""$name"""")
+          val json = toJson(name)
 
           Json.toJson(obj) shouldBe json
           json.as[A] shouldBe obj
@@ -42,4 +42,25 @@ trait EnumJsonSpecSupport {
       }
     }
 
+
+  def testReads[A: Reads](namesAndValues: (String, A)*): Unit =
+    "JSON reads" must {
+      "work" in {
+        namesAndValues.foreach { case (name, obj) =>
+          toJson(name).as[A] shouldBe obj
+        }
+      }
+    }
+
+
+  def testWrites[A: Writes](namesAndValues: (String, A)*): Unit =
+    "JSON writes" must {
+      "work" in {
+        namesAndValues.foreach { case (name, obj) =>
+          Json.toJson(obj) shouldBe toJson(name)
+        }
+      }
+    }
+
+  private def toJson(name: String): JsValue = JsString(name)
 }

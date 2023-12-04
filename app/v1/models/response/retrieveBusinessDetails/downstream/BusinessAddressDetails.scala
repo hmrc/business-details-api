@@ -16,20 +16,17 @@
 
 package v1.models.response.retrieveBusinessDetails.downstream
 
-import play.api.libs.json.{JsPath, Json, Reads}
+import play.api.libs.json.{Json, Reads}
 
+case class BusinessAddressDetails(
+                                   addressLine1: String,
+                                   addressLine2: Option[String],
+                                   addressLine3: Option[String],
+                                   addressLine4: Option[String],
+                                   postalCode: Option[String],
+                                   countryCode: String
+                                 )
 
-case class RetrieveBusinessDetailsDownstreamResponse(
-                yearOfMigration: Option[String],
-                businessData: Option[Seq[BusinessData]],
-                propertyData: Option[Seq[PropertyData]])
-
-object RetrieveBusinessDetailsDownstreamResponse {
-
-  implicit val reads: Reads[RetrieveBusinessDetailsDownstreamResponse] = {
-    val defaultReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = Json.reads
-
-    (JsPath \ "taxPayerDisplayResponse").read[RetrieveBusinessDetailsDownstreamResponse](defaultReads) orElse defaultReads
-  }
+object BusinessAddressDetails {
+  implicit val reads: Reads[BusinessAddressDetails] = Json.reads
 }
-

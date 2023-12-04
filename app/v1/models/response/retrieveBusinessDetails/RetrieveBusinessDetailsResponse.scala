@@ -18,15 +18,16 @@ package v1.models.response.retrieveBusinessDetails
 
 import api.hateoas.{HateoasData, HateoasLinks, HateoasLinksFactory, Link}
 import api.models.domain.{AccountingType, TypeOfBusiness}
-import config.AppConfig
+import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.{Json, OWrites}
-import v1.models.response.retrieveBusinessDetails.downstream.LatencyDetails
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessData, LatencyDetails, PropertyData}
+
 
 case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,
                                            tradingName: Option[String],
                                            accountingPeriods: Seq[AccountingPeriod],
-                                           accountingType: AccountingType,
+                                           accountingType: Option[AccountingType],
                                            commencementDate: Option[String],
                                            cessationDate: Option[String],
                                            businessAddressLineOne: Option[String],
@@ -54,6 +55,66 @@ object RetrieveBusinessDetailsResponse extends HateoasLinks {
       )
     }
 
+  }
+
+  sealed trait FilterResult
+
+  object FilterResult {
+    case class FoundBusiness(retrieveBusinessDetailsResponse: RetrieveBusinessDetailsResponse) extends FilterResult
+
+    case object NotFoundBusiness extends FilterResult
+
+    case object FoundDuplicateBusinesses extends FilterResult
+  }
+
+  def fromBusinessData(businessData: BusinessData, yearOfMigration: Option[String])(implicit featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
+    import businessData._
+
+    RetrieveBusinessDetailsResponse(
+      businessId = incomeSourceId,
+      typeOfBusiness = TypeOfBusiness.`self-employment`,
+      tradingName = tradingName,
+      accountingPeriods = Seq(AccountingPeriod(accountingPeriodStartDate, accountingPeriodEndDate)),
+      accountingType = cashOrAccruals.orElse(defaultAccountingType),
+      commencementDate = tradingStartDate,
+      cessationDate = cessationDate,
+      businessAddressLineOne = businessAddressDetails.map(_.addressLine1),
+      businessAddressLineTwo = businessAddressDetails.flatMap(_.addressLine2),
+      businessAddressLineThree = businessAddressDetails.flatMap(_.addressLine3),
+      businessAddressLineFour = businessAddressDetails.flatMap(_.addressLine4),
+      businessAddressPostcode = businessAddressDetails.flatMap(_.postalCode),
+      businessAddressCountryCode = businessAddressDetails.map(_.countryCode),
+      firstAccountingPeriodStartDate: Option[String],
+      firstAccountingPeriodEndDate: Option[String],
+      latencyDetails: Option[LatencyDetails],
+      yearOfMigration: Option[String])
+  }
+
+  def fromPropertyData(propertyData: PropertyData, yearOfMigration: Option[String])(implicit featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
+    import propertyData._
+
+    RetrieveBusinessDetailsResponse(
+      businessId = incomeSourceId,
+      typeOfBusiness = incomeSourceType.getOrElse(TypeOfBusiness.`property-unspecified`),
+      tradingName = None,
+      accountingPeriods = Seq(AccountingPeriod(accountingPeriodStartDate, accountingPeriodEndDate)),
+      accountingType = cashOrAccruals.orElse(defaultAccountingType),
+      commencementDate = tradingStartDate,
+      cessationDate = cessationDate,
+      businessAddressLineOne = None,
+      businessAddressLineTwo = None,
+      businessAddressLineThree = None,
+      businessAddressLineFour = None,
+      businessAddressPostcode = None,
+      businessAddressCountryCode = None,
+      firstAccountingPeriodStartDate: Option[String],
+      firstAccountingPeriodEndDate: Option[String],
+      latencyDetails: Option[LatencyDetails],
+      yearOfMigration: Option[String])
+  }
+
+  private def defaultAccountingType(implicit featureSwitches: FeatureSwitches) = {
+    if (featureSwitches.isIfsEnabled) Some(AccountingType.CASH) else None
   }
 
 }

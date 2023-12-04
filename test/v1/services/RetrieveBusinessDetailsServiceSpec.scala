@@ -16,262 +16,215 @@
 
 package v1.services
 
-import api.models.domain.{AccountingType, BusinessId, Nino, TaxYear, TypeOfBusiness}
+import api.models.domain.{AccountingType, BusinessId, Nino, TypeOfBusiness}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
-import config.MockAppConfig
-import play.api.Configuration
+import config.MockFeatureSwitches
 import v1.connectors.MockRetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
-import v1.models.response.retrieveBusinessDetails.downstream.{BusinessDetails, LatencyDetails, LatencyIndicator, RetrieveBusinessDetailsDownstreamResponse}
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessData, PropertyData, RetrieveBusinessDetailsDownstreamResponse}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
 
 class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
 
-  private val validNino       = Nino("AA123456A")
-  private val validBusinessId = BusinessId("XAIS12345678910")
-  private val requestData     = RetrieveBusinessDetailsRequestData(validNino, validBusinessId)
-  private val badRequestData  = RetrieveBusinessDetailsRequestData(validNino, BusinessId("SDFG3456782190"))
+  private val nino = Nino("AA123456A")
 
-  private val responseBody = RetrieveBusinessDetailsResponse(
-    "XAIS12345678910",
-    TypeOfBusiness.`self-employment`,
-    Some("Aardvark Window Cleaning Services"),
-    Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-    AccountingType.ACCRUALS,
-    Some("2016-09-24"),
-    Some("2020-03-24"),
-    Some("6 Harpic Drive"),
-    Some("Domestos Wood"),
-    Some("ToiletDucktown"),
-    Some("CIFSHIRE"),
-    Some("SW4F 3GA"),
-    Some("GB"),
-    Some("2018-04-06"),
-    Some("2018-12-12"),
-    Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
-    Some("2023")
+  private def requestDataFor(businessId: String) = RetrieveBusinessDetailsRequestData(nino, BusinessId(businessId))
+
+  private val cashOrAcruals = Some(AccountingType.ACCRUALS)
+  private val yearOfMigration = Some("migrationYear")
+
+  private def propertyData(incomeSourceId: String) =
+    PropertyData(
+      incomeSourceType = Some(TypeOfBusiness.`foreign-property`),
+      incomeSourceId = incomeSourceId,
+      accountingPeriodStartDate = "accStartDate",
+      accountingPeriodEndDate = "accEndDate",
+      firstAccountingPeriodStartDate = None,
+      firstAccountingPeriodEndDate = None,
+      latencyDetails = None,
+      cashOrAccruals = cashOrAcruals,
+      tradingStartDate = None,
+      cessationDate = None
+    )
+
+  private def propertyResponse(incomeSourceId: String) = RetrieveBusinessDetailsResponse(
+    businessId = incomeSourceId,
+    typeOfBusiness = TypeOfBusiness.`foreign-property`,
+    tradingName = None,
+    accountingPeriods = Seq(AccountingPeriod("accStartDate", "accEndDate")),
+    accountingType = cashOrAcruals,
+    commencementDate = None,
+    cessationDate = None,
+    businessAddressLineOne = None,
+    businessAddressLineTwo = None,
+    businessAddressLineThree = None,
+    businessAddressLineFour = None,
+    businessAddressPostcode = None,
+    businessAddressCountryCode = None,
+    firstAccountingPeriodStartDate = None,
+    firstAccountingPeriodEndDate = None,
+    latencyDetails = None,
+    yearOfMigration = yearOfMigration
   )
 
-  private val responseBodyWithoutAdditionalFields = RetrieveBusinessDetailsResponse(
-    "XAIS12345678910",
-    TypeOfBusiness.`self-employment`,
-    Some("Aardvark Window Cleaning Services"),
-    Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-    AccountingType.ACCRUALS,
-    Some("2016-09-24"),
-    Some("2020-03-24"),
-    Some("6 Harpic Drive"),
-    Some("Domestos Wood"),
-    Some("ToiletDucktown"),
-    Some("CIFSHIRE"),
-    Some("SW4F 3GA"),
-    Some("GB"),
-    None,
-    None,
-    None,
-    None
+  private def businessData(incomeSourceId: String) =
+    BusinessData(
+      incomeSourceId = incomeSourceId,
+      accountingPeriodStartDate = "accStartDate",
+      accountingPeriodEndDate = "accEndDate",
+      tradingName = None,
+      businessAddressDetails = None,
+      firstAccountingPeriodStartDate = None,
+      firstAccountingPeriodEndDate = None,
+      latencyDetails = None,
+      cashOrAccruals = cashOrAcruals,
+      tradingStartDate = None,
+      cessationDate = None
+    )
+
+
+  private def selfEmploymentResponse(incomeSourceId: String) = RetrieveBusinessDetailsResponse(
+    businessId = incomeSourceId,
+    typeOfBusiness = TypeOfBusiness.`self-employment`,
+    tradingName = None,
+    accountingPeriods = Seq(AccountingPeriod("accStartDate", "accEndDate")),
+    accountingType = cashOrAcruals,
+    commencementDate = None,
+    cessationDate = None,
+    businessAddressLineOne = None,
+    businessAddressLineTwo = None,
+    businessAddressLineThree = None,
+    businessAddressLineFour = None,
+    businessAddressPostcode = None,
+    businessAddressCountryCode = None,
+    firstAccountingPeriodStartDate = None,
+    firstAccountingPeriodEndDate = None,
+    latencyDetails = None,
+    yearOfMigration = yearOfMigration
   )
 
-  private val downstreamSingleResponseBody = RetrieveBusinessDetailsDownstreamResponse(
-    Seq(
-      BusinessDetails(
-        "XAIS12345678910",
-        TypeOfBusiness.`self-employment`,
-        Some("Aardvark Window Cleaning Services"),
-        Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-        Some("2018-04-06"),
-        Some("2018-12-12"),
-        Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
-        Some("2023"),
-        AccountingType.ACCRUALS,
-        Some("2016-09-24"),
-        Some("2020-03-24"),
-        Some("6 Harpic Drive"),
-        Some("Domestos Wood"),
-        Some("ToiletDucktown"),
-        Some("CIFSHIRE"),
-        Some("SW4F 3GA"),
-        Some("GB")
-      )))
-
-  private val downstreamWithoutAdditionalFieldsSingleResponseBody = RetrieveBusinessDetailsDownstreamResponse(
-    Seq(
-      BusinessDetails(
-        "XAIS12345678910",
-        TypeOfBusiness.`self-employment`,
-        Some("Aardvark Window Cleaning Services"),
-        Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-        Some("2018-04-06"),
-        Some("2018-12-12"),
-        Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
-        Some("2023"),
-        AccountingType.ACCRUALS,
-        Some("2016-09-24"),
-        Some("2020-03-24"),
-        Some("6 Harpic Drive"),
-        Some("Domestos Wood"),
-        Some("ToiletDucktown"),
-        Some("CIFSHIRE"),
-        Some("SW4F 3GA"),
-        Some("GB")
-      )))
-
-  private val downstreamSingleWithoutAdditionalFieldsResponseBody = RetrieveBusinessDetailsDownstreamResponse(
-    Seq(
-      BusinessDetails(
-        "XAIS12345678910",
-        TypeOfBusiness.`self-employment`,
-        Some("Aardvark Window Cleaning Services"),
-        Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-        None,
-        None,
-        None,
-        None,
-        AccountingType.ACCRUALS,
-        Some("2016-09-24"),
-        Some("2020-03-24"),
-        Some("6 Harpic Drive"),
-        Some("Domestos Wood"),
-        Some("ToiletDucktown"),
-        Some("CIFSHIRE"),
-        Some("SW4F 3GA"),
-        Some("GB")
-      )))
-
-  private val downstreamMultiResponseBody = RetrieveBusinessDetailsDownstreamResponse(
-    Seq(
-      BusinessDetails(
-        "XAIS12345678910",
-        TypeOfBusiness.`self-employment`,
-        Some("Aardvark Window Cleaning Services"),
-        Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-        Some("2018-04-06"),
-        Some("2018-12-12"),
-        Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
-        Some("2023"),
-        AccountingType.ACCRUALS,
-        Some("2016-09-24"),
-        Some("2020-03-24"),
-        Some("6 Harpic Drive"),
-        Some("Domestos Wood"),
-        Some("ToiletDucktown"),
-        Some("CIFSHIRE"),
-        Some("SW4F 3GA"),
-        Some("GB")
-      ),
-      BusinessDetails(
-        "XAIS0987654321",
-        TypeOfBusiness.`self-employment`,
-        Some("Aardvark Window Cleaning Services"),
-        Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-        Some("2018-04-06"),
-        Some("2018-12-12"),
-        Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
-        Some("2023"),
-        AccountingType.ACCRUALS,
-        Some("2016-09-24"),
-        Some("2020-03-24"),
-        Some("6 Harpic Drive"),
-        Some("Domestos Wood"),
-        Some("ToiletDucktown"),
-        Some("CIFSHIRE"),
-        Some("SW4F 3GA"),
-        Some("GB")
-      )
-    ))
 
   "service" when {
-    "a connector call is successful" should {
-      "return a mapped result from a single downstream response" in new Test {
-        MockedRetrieveBusinessDetailsConnector
-          .retrieveBusinessDetails(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamSingleResponseBody))))
-
-        val result: ServiceOutcome[RetrieveBusinessDetailsResponse] = await(service.retrieveBusinessDetailsService(requestData))
-        result shouldBe Right(ResponseWrapper(correlationId, responseBody))
+    "a connector call is successful" when {
+      "a unique matching property business is found" must {
+        s"find and convert to MTD" in new Test {
+          testServiceWith(requestDataFor("businessId"),
+            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration,
+              businessData = None,
+              propertyData = Some(Seq(propertyData("otherBusinessId"), propertyData("businessId")))
+            )) shouldBe Right(ResponseWrapper(correlationId, propertyResponse("businessId")))
+        }
       }
 
-      "return a mapped result from a downstream response when retrieveAdditionalFields is disabled" in new Test {
-        override val isRetrieveAdditionalFieldsEnabled: Boolean = false
-        MockedRetrieveBusinessDetailsConnector
-          .retrieveBusinessDetails(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamWithoutAdditionalFieldsSingleResponseBody))))
-
-        val result: ServiceOutcome[RetrieveBusinessDetailsResponse] = await(service.retrieveBusinessDetailsService(requestData))
-        result shouldBe Right(ResponseWrapper(correlationId, responseBody))
+      "a unique matching self-employment business is found" must {
+        "find and convert to MTD" in new Test {
+          testServiceWith(requestDataFor("businessId"),
+            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration,
+              businessData = Some(Seq(businessData("otherBusinessId"), businessData("businessId"))),
+              propertyData = None
+            )) shouldBe Right(ResponseWrapper(correlationId, selfEmploymentResponse("businessId")))
+        }
       }
 
-      "return a mapped result from multiple downstream responses" in new Test {
-        MockedRetrieveBusinessDetailsConnector
-          .retrieveBusinessDetails(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamMultiResponseBody))))
-
-        val result: ServiceOutcome[RetrieveBusinessDetailsResponse] = await(service.retrieveBusinessDetailsService(requestData))
-        result shouldBe Right(ResponseWrapper(correlationId, responseBody))
+      "multiple matching property businesses are found" must {
+        "return duplicate result" in new Test {
+          testServiceWith(requestDataFor("businessId"),
+            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration,
+              businessData = None,
+              propertyData = Some(Seq(propertyData("businessId"), propertyData("businessId")))
+            )) shouldBe Left(ErrorWrapper(correlationId, InternalError))
+        }
       }
-      "return a mapped result when additional fields are not present" in new Test {
-        MockedRetrieveBusinessDetailsConnector
-          .retrieveBusinessDetails(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamSingleWithoutAdditionalFieldsResponseBody))))
 
-        val result: ServiceOutcome[RetrieveBusinessDetailsResponse] = await(service.retrieveBusinessDetailsService(requestData))
-        result shouldBe Right(ResponseWrapper(correlationId, responseBodyWithoutAdditionalFields))
+      "multiple matching self-employment businesses are found" must {
+        "return an internal error" in new Test {
+          testServiceWith(requestDataFor("businessId"),
+            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration,
+              businessData = Some(Seq(businessData("businessId"), businessData("businessId"))),
+              propertyData = None
+            )) shouldBe Left(ErrorWrapper(correlationId, InternalError))
+        }
+      }
+
+      "a matching property business and a self-employment business are found" must {
+        "return duplicate result" in new Test {
+          testServiceWith(requestDataFor("businessId"),
+            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration,
+              businessData = Some(Seq(businessData("businessId"))),
+              propertyData = Some(Seq(propertyData("businessId")))
+            )) shouldBe Left(ErrorWrapper(correlationId, InternalError))
+        }
+      }
+
+      "nothing matching is found" must {
+        "return a not found result" in new Test {
+          testServiceWith(requestDataFor("businessId"),
+            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration,
+              businessData = None,
+              propertyData = None
+            )) shouldBe Left(ErrorWrapper(correlationId, NoBusinessFoundError))
+        }
+      }
+
+      "nothing found when the property/business data arrays are present but empty" must {
+        "return a not found result" in new Test {
+          testServiceWith(requestDataFor("businessId"),
+            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration,
+              businessData = Some(Nil),
+              propertyData = Some(Nil)
+            )) shouldBe Left(ErrorWrapper(correlationId, NoBusinessFoundError))
+        }
       }
     }
+
     "a connector call is unsuccessful" should {
-      "return not found error for no matching id" in new Test {
-        MockedRetrieveBusinessDetailsConnector
-          .retrieveBusinessDetails(badRequestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, downstreamMultiResponseBody))))
+      def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
+        s"return ${error.code} when $downstreamErrorCode error is returned from the service" in new Test {
+          val requestData = requestDataFor("someBusinessId")
 
-        val result: ServiceOutcome[RetrieveBusinessDetailsResponse] = await(service.retrieveBusinessDetailsService(badRequestData))
-        result shouldBe Left(ErrorWrapper(correlationId, NoBusinessFoundError))
-      }
-      "a connector call is unsuccessful" should {
-        def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
-          s"return ${error.code} when $downstreamErrorCode error is returned from the service" in new Test {
-            MockedRetrieveBusinessDetailsConnector
-              .retrieveBusinessDetails(requestData)
-              .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
+          MockedRetrieveBusinessDetailsConnector
+            .retrieveBusinessDetails(requestData)
+            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
 
-            val result: ServiceOutcome[RetrieveBusinessDetailsResponse] = await(service.retrieveBusinessDetailsService(requestData))
-            result shouldBe Left(ErrorWrapper(correlationId, error))
-          }
+          val result: ServiceOutcome[RetrieveBusinessDetailsResponse] = await(service.retrieveBusinessDetailsService(requestData))
+          result shouldBe Left(ErrorWrapper(correlationId, error))
+        }
 
-        val errors = List(
-          ("INVALID_NINO", NinoFormatError),
-          ("INVALID_MTDBSA", InternalError),
-          ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError),
-          ("NOT_FOUND_NINO", NotFoundError),
-          ("NOT_FOUND_MTDBSA", InternalError),
-          ("SERVER_ERROR", InternalError),
-          ("SERVICE_UNAVAILABLE", InternalError)
-        )
+      val errors = List(
+        ("INVALID_NINO", NinoFormatError),
+        ("INVALID_MTDBSA", InternalError),
+        ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError),
+        ("NOT_FOUND_NINO", NotFoundError),
+        ("NOT_FOUND_MTDBSA", InternalError),
+        ("SERVER_ERROR", InternalError),
+        ("SERVICE_UNAVAILABLE", InternalError)
+      )
 
-        val extraIfsErrors = List(
-          ("INVALID_MTD_ID", InternalError),
-          ("INVALID_CORRELATIONID", InternalError),
-          ("INVALID_IDTYPE", InternalError),
-          ("NOT_FOUND", NotFoundError)
-        )
+      val extraIfsErrors = List(
+        ("INVALID_MTD_ID", InternalError),
+        ("INVALID_CORRELATIONID", InternalError),
+        ("INVALID_IDTYPE", InternalError),
+        ("NOT_FOUND", NotFoundError)
+      )
 
-        (errors ++ extraIfsErrors).foreach((serviceError _).tupled)
-      }
+      (errors ++ extraIfsErrors).foreach((serviceError _).tupled)
     }
   }
 
-  private trait Test extends MockRetrieveBusinessDetailsConnector with MockAppConfig {
-    protected val isRetrieveAdditionalFieldsEnabled: Boolean = true
+  private trait Test extends MockRetrieveBusinessDetailsConnector with MockFeatureSwitches {
+    MockFeatureSwitches.isIfsEnabled.returns(true).anyNumberOfTimes()
 
-    MockedAppConfig.featureSwitches
-      .returns(Configuration("retrieveAdditionalFields.enabled" -> isRetrieveAdditionalFieldsEnabled))
-      .anyNumberOfTimes()
+    protected val service = new RetrieveBusinessDetailsService(mockRetrieveBusinessDetailsConnector)
 
-    protected val service = new RetrieveBusinessDetailsService(mockRetrieveBusinessDetailsConnector, mockAppConfig)
+    protected def testServiceWith(requestData: RetrieveBusinessDetailsRequestData, downstreamResponse: RetrieveBusinessDetailsDownstreamResponse): ServiceOutcome[RetrieveBusinessDetailsResponse] = {
+      MockedRetrieveBusinessDetailsConnector
+        .retrieveBusinessDetails(requestData) returns Future.successful(Right(ResponseWrapper(correlationId, downstreamResponse)))
+
+      await(service.retrieveBusinessDetailsService(requestData))
+    }
   }
-
 }

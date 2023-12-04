@@ -16,7 +16,7 @@
 
 package api.models.domain
 
-import play.api.libs.json.Format
+import play.api.libs.json.Writes
 import utils.enums.Enums
 
 sealed trait AccountingType
@@ -25,6 +25,6 @@ object AccountingType {
   case object CASH     extends AccountingType
   case object ACCRUALS extends AccountingType
 
-  implicit val format: Format[AccountingType] = Enums.format[AccountingType]
+  implicit val writes: Writes[AccountingType] = Enums.writes[AccountingType]
 
 }
