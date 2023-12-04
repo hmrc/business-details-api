@@ -22,51 +22,6 @@ import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
-trait LatencyIndicator
-
-object LatencyIndicator {
-
-  case object Annual extends LatencyIndicator {
-    override def toString: String = "A"
-  }
-
-  case object Quarterly extends LatencyIndicator {
-    override def toString: String = "Q"
-  }
-
-  implicit val writes: Writes[LatencyIndicator] = Writes { (latencyIndicator: LatencyIndicator) =>
-    JsString(latencyIndicator.toString)
-  }
-
-  implicit val reads: Reads[LatencyIndicator] = Reads { json =>
-    json.as[String] match {
-      case "A" | "a" => JsSuccess(Annual)
-      case "Q" | "q" => JsSuccess(Quarterly)
-      case other => JsError(s"Unknown latency indicator: $other")
-    }
-  }
-
-}
-
-case class LatencyDetails(latencyEndDate: String,
-                          taxYear1: TaxYear,
-                          latencyIndicator1: LatencyIndicator,
-                          taxYear2: TaxYear,
-                          latencyIndicator2: LatencyIndicator)
-
-object LatencyDetails {
-  implicit val writes: OWrites[LatencyDetails] = Json.writes[LatencyDetails]
-
-  implicit val taxYearReads: Reads[TaxYear] = implicitly[Reads[String]].map(TaxYear.fromDownstream)
-  implicit val reads: Reads[LatencyDetails] = (
-    (JsPath \ "latencyEndDate").read[String] and
-      (JsPath \ "taxYear1").read[TaxYear] and
-      (JsPath \ "latencyIndicator1").read[LatencyIndicator] and
-      (JsPath \ "taxYear2").read[TaxYear] and
-      (JsPath \ "latencyIndicator2").read[LatencyIndicator]
-    )(LatencyDetails.apply _)
-
-}
 
 case class BusinessDetails(businessId: String,
                            typeOfBusiness: TypeOfBusiness,
