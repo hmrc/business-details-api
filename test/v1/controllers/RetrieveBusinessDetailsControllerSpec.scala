@@ -17,14 +17,13 @@
 package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
-import api.models.domain.{AccountingType, BusinessId, Nino, TaxYear, TypeOfBusiness}
-import api.models.errors._
 import api.hateoas.Method.GET
+import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
+import api.models.domain._
+import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
 import config.MockAppConfig
-import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import utils.MockIdGenerator
@@ -163,10 +162,6 @@ class RetrieveBusinessDetailsControllerSpec
       cc = cc,
       idGenerator = mockIdGenerator
     )
-
-    MockedAppConfig.featureSwitches
-      .returns(Configuration("retrieveAdditionalFields.enabled" -> true))
-      .anyNumberOfTimes()
 
     protected def callController(): Future[Result] = controller.handleRequest(nino, businessId)(fakeGetRequest)
 

@@ -25,14 +25,12 @@ class FeatureSwitchesSpec extends UnitSpec {
     "return true" when {
       "the feature switch is set to true" in {
         val config = Configuration(
-          "retrieveAdditionalFields.enabled" -> true,
           "ifs.enabled"                      -> true,
           "endpoint-2089.enabled"            -> true
         )
 
         val featureSwitches = FeatureSwitches(config)
 
-        featureSwitches.isRetrieveAdditionalFieldsEnabled shouldBe true
         featureSwitches.isIfsEnabled shouldBe true
         featureSwitches.isEndpoint2089Enabled shouldBe true
       }
@@ -42,7 +40,6 @@ class FeatureSwitchesSpec extends UnitSpec {
 
         val featureSwitches = FeatureSwitches(config)
 
-        featureSwitches.isRetrieveAdditionalFieldsEnabled shouldBe true
         featureSwitches.isIfsEnabled shouldBe true
         featureSwitches.isEndpoint2089Enabled shouldBe true
       }
@@ -51,14 +48,12 @@ class FeatureSwitchesSpec extends UnitSpec {
     "return false" when {
       "the feature switch is set to false" in {
         val config = Configuration(
-          "retrieveAdditionalFields.enabled" -> false,
           "ifs.enabled"                      -> false,
           "endpoint-2089.enabled"            -> false
         )
 
         val featureSwitches = FeatureSwitches(config)
 
-        featureSwitches.isRetrieveAdditionalFieldsEnabled shouldBe false
         featureSwitches.isIfsEnabled shouldBe false
         featureSwitches.isEndpoint2089Enabled shouldBe false
       }

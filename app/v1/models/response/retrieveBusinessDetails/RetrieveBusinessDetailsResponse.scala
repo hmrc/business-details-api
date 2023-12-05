@@ -57,16 +57,6 @@ object RetrieveBusinessDetailsResponse extends HateoasLinks {
 
   }
 
-  sealed trait FilterResult
-
-  object FilterResult {
-    case class FoundBusiness(retrieveBusinessDetailsResponse: RetrieveBusinessDetailsResponse) extends FilterResult
-
-    case object NotFoundBusiness extends FilterResult
-
-    case object FoundDuplicateBusinesses extends FilterResult
-  }
-
   def fromBusinessData(businessData: BusinessData, yearOfMigration: Option[String])(implicit featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
     import businessData._
 

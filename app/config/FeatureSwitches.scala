@@ -23,7 +23,6 @@ import javax.inject.{Inject, Singleton}
 
 @ImplementedBy(classOf[FeatureSwitchesImpl])
 trait FeatureSwitches {
-  def isRetrieveAdditionalFieldsEnabled: Boolean
 
   def isIfsEnabled: Boolean
 
@@ -40,7 +39,6 @@ class FeatureSwitchesImpl(featureSwitchConfig: Configuration) extends FeatureSwi
   @Inject
   def this(appConfig: AppConfig) = this(appConfig.featureSwitches)
 
-  val isRetrieveAdditionalFieldsEnabled: Boolean = isEnabled("retrieveAdditionalFields")
   val isIfsEnabled: Boolean = isEnabled("ifs")
   val isEndpoint2089Enabled: Boolean = isEnabled("endpoint-2089")
 

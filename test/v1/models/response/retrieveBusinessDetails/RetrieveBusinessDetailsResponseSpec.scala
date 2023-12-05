@@ -98,17 +98,18 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
       behave like convert(Some(TypeOfBusiness.`uk-property`), TypeOfBusiness.`uk-property`)
       behave like convert(None, TypeOfBusiness.`property-unspecified`)
 
-      def propertyData(typeOfBusiness: Option[TypeOfBusiness] = None, cashOrAccruals: Option[AccountingType] = Some(AccountingType.ACCRUALS)) = PropertyData(incomeSourceType = typeOfBusiness,
-        incomeSourceId = "businessId",
-        accountingPeriodStartDate = "accStartDate",
-        accountingPeriodEndDate = "accEndDate",
-        firstAccountingPeriodStartDate = Some("firstStartDate"),
-        firstAccountingPeriodEndDate = Some("firstEndDate"),
-        latencyDetails = latencyDetails,
-        cashOrAccruals = cashOrAccruals,
-        tradingStartDate = Some("tradingStartDate"),
-        cessationDate = Some("cessationDate")
-      )
+      def propertyData(typeOfBusiness: Option[TypeOfBusiness] = None, cashOrAccruals: Option[AccountingType] = Some(AccountingType.ACCRUALS)) =
+        PropertyData(incomeSourceType = typeOfBusiness,
+          incomeSourceId = "businessId",
+          accountingPeriodStartDate = "accStartDate",
+          accountingPeriodEndDate = "accEndDate",
+          firstAccountingPeriodStartDate = Some("firstStartDate"),
+          firstAccountingPeriodEndDate = Some("firstEndDate"),
+          latencyDetails = latencyDetails,
+          cashOrAccruals = cashOrAccruals,
+          tradingStartDate = Some("tradingStartDate"),
+          cessationDate = Some("cessationDate")
+        )
 
       def propertyResponse(expectedTypeOfBusiness: TypeOfBusiness = TypeOfBusiness.`property-unspecified`, cashOrAccruals: Option[AccountingType] = Some(AccountingType.ACCRUALS)) = {
         RetrieveBusinessDetailsResponse(

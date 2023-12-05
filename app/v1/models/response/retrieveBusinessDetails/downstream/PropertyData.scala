@@ -20,7 +20,7 @@ import api.models.domain.{AccountingType, TypeOfBusiness}
 import play.api.libs.json.{JsPath, Json, Reads}
 
 case class PropertyData(
-                         incomeSourceType: Option[TypeOfBusiness], // FIXME tie down
+                         incomeSourceType: Option[TypeOfBusiness],
                          incomeSourceId: String,
                          accountingPeriodStartDate: String,
                          accountingPeriodEndDate: String,

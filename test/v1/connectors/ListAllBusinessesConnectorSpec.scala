@@ -40,7 +40,6 @@ class ListAllBusinessesConnectorSpec extends ConnectorSpec {
       MockedAppConfig.featureSwitches
         .returns(
           Configuration(
-            "retrieveAdditionalFields.enabled" -> true,
             "ifs.enabled"                      -> isIfsEnabled
           )
         )
@@ -63,7 +62,6 @@ class ListAllBusinessesConnectorSpec extends ConnectorSpec {
       MockedAppConfig.featureSwitches
         .returns(
           Configuration(
-            "retrieveAdditionalFields.enabled" -> true,
             "ifs.enabled"                      -> isIfsEnabled
           )
         )

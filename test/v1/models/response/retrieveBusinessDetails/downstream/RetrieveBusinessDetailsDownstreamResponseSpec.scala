@@ -16,11 +16,10 @@
 
 package v1.models.response.retrieveBusinessDetails.downstream
 
-import config.MockFeatureSwitches
 import play.api.libs.json.{JsValue, Json, Reads}
 import support.UnitSpec
 
-class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec with MockFeatureSwitches {
+class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
 
   "reads" should {
     "read the response from DES" when {

@@ -17,16 +17,7 @@
 package v1.services
 
 import api.models.domain.Nino
-import api.models.errors.{
-  DownstreamErrorCode,
-  DownstreamErrors,
-  ErrorWrapper,
-  InternalError,
-  MtdError,
-  NinoFormatError,
-  NotFoundError,
-  RuleIncorrectGovTestScenarioError
-}
+import api.models.errors.{DownstreamErrorCode, DownstreamErrors, ErrorWrapper, InternalError, MtdError, NinoFormatError, NotFoundError, RuleIncorrectGovTestScenarioError}
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import config.MockAppConfig
@@ -90,7 +81,7 @@ class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
   private trait Test extends MockListAllBusinessesConnector {
 
     MockedAppConfig.featureSwitches
-      .returns(Configuration("retrieveAdditionalFields.enabled" -> true))
+      .returns(Configuration.empty)
       .anyNumberOfTimes()
 
     protected val service = new ListAllBusinessesService(mockListAllBusinessesConnector, mockAppConfig)
