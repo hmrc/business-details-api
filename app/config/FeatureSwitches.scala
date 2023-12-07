@@ -26,8 +26,8 @@ trait FeatureSwitches {
 
   def isIfsEnabled: Boolean
   def isEndpoint2089Enabled: Boolean
-  def isEnabled(key: String): Boolean
   def isScp005a_QuarterlyTypeChoiceEnabled: Boolean
+  def isEnabled(key: String): Boolean
   def isReleasedInProduction(feature: String): Boolean
 }
 
