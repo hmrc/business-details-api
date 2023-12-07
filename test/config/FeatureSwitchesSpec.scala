@@ -25,14 +25,16 @@ class FeatureSwitchesSpec extends UnitSpec {
     "return true" when {
       "the feature switch is set to true" in {
         val config = Configuration(
-          "ifs.enabled"                      -> true,
-          "endpoint-2089.enabled"            -> true
+          "ifs.enabled"                         -> true,
+          "endpoint-2089.enabled"               -> true,
+          "scp005a_QuarterlyTypeChoice.enabled" -> true
         )
 
         val featureSwitches = FeatureSwitches(config)
 
         featureSwitches.isIfsEnabled shouldBe true
         featureSwitches.isEndpoint2089Enabled shouldBe true
+        featureSwitches.isScp005a_QuarterlyTypeChoiceEnabled shouldBe true
       }
 
       "the feature switch is not present in the config" in {
@@ -42,20 +44,23 @@ class FeatureSwitchesSpec extends UnitSpec {
 
         featureSwitches.isIfsEnabled shouldBe true
         featureSwitches.isEndpoint2089Enabled shouldBe true
+        featureSwitches.isScp005a_QuarterlyTypeChoiceEnabled shouldBe true
       }
     }
 
     "return false" when {
       "the feature switch is set to false" in {
         val config = Configuration(
-          "ifs.enabled"                      -> false,
-          "endpoint-2089.enabled"            -> false
+          "ifs.enabled"                         -> false,
+          "endpoint-2089.enabled"               -> false,
+          "scp005a_QuarterlyTypeChoice.enabled" -> false
         )
 
         val featureSwitches = FeatureSwitches(config)
 
         featureSwitches.isIfsEnabled shouldBe false
         featureSwitches.isEndpoint2089Enabled shouldBe false
+        featureSwitches.isScp005a_QuarterlyTypeChoiceEnabled shouldBe false
       }
     }
   }
