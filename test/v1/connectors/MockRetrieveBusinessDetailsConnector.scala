@@ -19,7 +19,6 @@ package v1.connectors
 import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import play.api.libs.json.Reads
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
 import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse
@@ -33,18 +32,13 @@ trait MockRetrieveBusinessDetailsConnector extends MockFactory {
   object MockedRetrieveBusinessDetailsConnector {
 
     def retrieveBusinessDetails(
-        requestData: RetrieveBusinessDetailsRequestData): CallHandler[Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]]] = {
-      (
-        mockRetrieveBusinessDetailsConnector
-          .retrieveBusinessDetails(_: RetrieveBusinessDetailsRequestData)(
-            _: HeaderCarrier,
-            _: ExecutionContext,
-            _: String,
-            _: Reads[RetrieveBusinessDetailsDownstreamResponse]
-          )
-        )
-        .expects(requestData, *, *, *, *)
-    }
+                                 requestData: RetrieveBusinessDetailsRequestData): CallHandler[Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]]] =
+      (mockRetrieveBusinessDetailsConnector
+        .retrieveBusinessDetails(_: RetrieveBusinessDetailsRequestData)(
+          _: HeaderCarrier,
+          _: ExecutionContext,
+          _: String
+        )).expects(requestData, *, *, *)
 
   }
 

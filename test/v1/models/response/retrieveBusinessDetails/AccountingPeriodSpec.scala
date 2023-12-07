@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.models.response.RetrieveBusinessDetails
+package v1.models.response.retrieveBusinessDetails
 
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec

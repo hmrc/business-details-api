@@ -22,7 +22,7 @@ import api.services.{EnrolmentsAuthService, MtdIdLookupService}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
 import v1.controllers.validators.ListAllBusinessDetailsValidatorFactory
-import v1.models.response.listAllBusiness.ListAllBusinessesHateoasData
+import v1.models.response.listAllBusinesses.ListAllBusinessesHateoasData
 import v1.services.ListAllBusinessesService
 
 import javax.inject.{Inject, Singleton}

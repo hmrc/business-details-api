@@ -16,20 +16,30 @@
 
 package v1.models.response.retrieveBusinessDetails.downstream
 
-import play.api.libs.json.{JsPath, Json, Reads}
+import play.api.libs.json._
 
+trait LatencyIndicator
 
-case class RetrieveBusinessDetailsDownstreamResponse(
-                yearOfMigration: Option[String],
-                businessData: Option[Seq[BusinessData]],
-                propertyData: Option[Seq[PropertyData]])
+object LatencyIndicator {
 
-object RetrieveBusinessDetailsDownstreamResponse {
-
-  implicit val reads: Reads[RetrieveBusinessDetailsDownstreamResponse] = {
-    val defaultReads: Reads[RetrieveBusinessDetailsDownstreamResponse] = Json.reads
-
-    (JsPath \ "taxPayerDisplayResponse").read[RetrieveBusinessDetailsDownstreamResponse](defaultReads) orElse defaultReads
+  case object Annual extends LatencyIndicator {
+    override def toString: String = "A"
   }
-}
 
+  case object Quarterly extends LatencyIndicator {
+    override def toString: String = "Q"
+  }
+
+  implicit val writes: Writes[LatencyIndicator] = Writes { (latencyIndicator: LatencyIndicator) =>
+    JsString(latencyIndicator.toString)
+  }
+
+  implicit val reads: Reads[LatencyIndicator] = Reads { json =>
+    json.as[String] match {
+      case "A" | "a" => JsSuccess(Annual)
+      case "Q" | "q" => JsSuccess(Quarterly)
+      case other => JsError(s"Unknown latency indicator: $other")
+    }
+  }
+
+}

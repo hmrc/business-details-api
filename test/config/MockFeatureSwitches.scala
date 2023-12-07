@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package api.models.domain
+package config
 
-import play.api.libs.json.Writes
-import utils.enums.Enums
+import org.scalamock.handlers.CallHandler
+import org.scalamock.scalatest.MockFactory
 
-sealed trait AccountingType
+trait MockFeatureSwitches extends MockFactory {
+  implicit val mockFeatureSwitches: FeatureSwitches = mock[FeatureSwitches]
 
-object AccountingType {
-  case object CASH     extends AccountingType
-  case object ACCRUALS extends AccountingType
-
-  implicit val writes: Writes[AccountingType] = Enums.writes[AccountingType]
-
+  object MockFeatureSwitches {
+    def isIfsEnabled: CallHandler[Boolean] = (() => mockFeatureSwitches.isIfsEnabled).expects()
+  }
 }

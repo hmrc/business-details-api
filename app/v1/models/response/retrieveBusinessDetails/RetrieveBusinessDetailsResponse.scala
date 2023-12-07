@@ -17,10 +17,11 @@
 package v1.models.response.retrieveBusinessDetails
 
 import api.hateoas.{HateoasData, HateoasLinks, HateoasLinksFactory, Link}
-import api.models.domain.{AccountingType, TaxYear, TypeOfBusiness}
-import config.AppConfig
-import play.api.libs.json.{Json, OWrites, Reads}
-import v1.models.response.retrieveBusinessDetails.downstream.LatencyDetails
+import api.models.domain.{AccountingType, TypeOfBusiness}
+import config.{AppConfig, FeatureSwitches}
+import play.api.libs.json.{Json, OWrites}
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessData, LatencyDetails, PropertyData}
+
 
 case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,
@@ -38,35 +39,14 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            firstAccountingPeriodStartDate: Option[String],
                                            firstAccountingPeriodEndDate: Option[String],
                                            latencyDetails: Option[LatencyDetails],
-                                           yearOfMigration: Option[String]) {
-
-  def addRetrieveAdditionalFields: RetrieveBusinessDetailsResponse = {
-    val updatedResponse = this.copy(
-      firstAccountingPeriodStartDate = if (firstAccountingPeriodStartDate.isEmpty) None else firstAccountingPeriodStartDate,
-      firstAccountingPeriodEndDate = if (firstAccountingPeriodEndDate.isEmpty) None else firstAccountingPeriodEndDate,
-      latencyDetails = if (latencyDetails.isEmpty) None else latencyDetails,
-      yearOfMigration = if (yearOfMigration.isEmpty) None else yearOfMigration
-    )
-    updatedResponse
-  }
-
-  def reformatLatencyDetailsTaxYears: RetrieveBusinessDetailsResponse = {
-    val updatedLatencyDetails = latencyDetails.map(details => details.copy(
-      taxYear1 = TaxYear.fromDownstream(details.taxYear1).asMtd,
-      taxYear2 = TaxYear.fromDownstream(details.taxYear2).asMtd
-    ))
-    copy(latencyDetails = updatedLatencyDetails)
-  }
-
-}
+                                           yearOfMigration: Option[String])
 
 object RetrieveBusinessDetailsResponse extends HateoasLinks {
 
   implicit val writes: OWrites[RetrieveBusinessDetailsResponse] = Json.writes[RetrieveBusinessDetailsResponse]
-  implicit val reads: Reads[RetrieveBusinessDetailsResponse]    = Json.reads[RetrieveBusinessDetailsResponse]
 
   implicit object RetrieveBusinessDetailsLinksFactory
-      extends HateoasLinksFactory[RetrieveBusinessDetailsResponse, RetrieveBusinessDetailsHateoasData] {
+    extends HateoasLinksFactory[RetrieveBusinessDetailsResponse, RetrieveBusinessDetailsHateoasData] {
 
     override def links(appConfig: AppConfig, data: RetrieveBusinessDetailsHateoasData): Seq[Link] = {
       import data._
@@ -75,6 +55,56 @@ object RetrieveBusinessDetailsResponse extends HateoasLinks {
       )
     }
 
+  }
+
+  def fromBusinessData(businessData: BusinessData, yearOfMigration: Option[String])(implicit featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
+    import businessData._
+
+    RetrieveBusinessDetailsResponse(
+      businessId = incomeSourceId,
+      typeOfBusiness = TypeOfBusiness.`self-employment`,
+      tradingName = tradingName,
+      accountingPeriods = Seq(AccountingPeriod(accountingPeriodStartDate, accountingPeriodEndDate)),
+      accountingType = cashOrAccruals.orElse(defaultAccountingType),
+      commencementDate = tradingStartDate,
+      cessationDate = cessationDate,
+      businessAddressLineOne = businessAddressDetails.map(_.addressLine1),
+      businessAddressLineTwo = businessAddressDetails.flatMap(_.addressLine2),
+      businessAddressLineThree = businessAddressDetails.flatMap(_.addressLine3),
+      businessAddressLineFour = businessAddressDetails.flatMap(_.addressLine4),
+      businessAddressPostcode = businessAddressDetails.flatMap(_.postalCode),
+      businessAddressCountryCode = businessAddressDetails.map(_.countryCode),
+      firstAccountingPeriodStartDate: Option[String],
+      firstAccountingPeriodEndDate: Option[String],
+      latencyDetails: Option[LatencyDetails],
+      yearOfMigration: Option[String])
+  }
+
+  def fromPropertyData(propertyData: PropertyData, yearOfMigration: Option[String])(implicit featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
+    import propertyData._
+
+    RetrieveBusinessDetailsResponse(
+      businessId = incomeSourceId,
+      typeOfBusiness = incomeSourceType.getOrElse(TypeOfBusiness.`property-unspecified`),
+      tradingName = None,
+      accountingPeriods = Seq(AccountingPeriod(accountingPeriodStartDate, accountingPeriodEndDate)),
+      accountingType = cashOrAccruals.orElse(defaultAccountingType),
+      commencementDate = tradingStartDate,
+      cessationDate = cessationDate,
+      businessAddressLineOne = None,
+      businessAddressLineTwo = None,
+      businessAddressLineThree = None,
+      businessAddressLineFour = None,
+      businessAddressPostcode = None,
+      businessAddressCountryCode = None,
+      firstAccountingPeriodStartDate: Option[String],
+      firstAccountingPeriodEndDate: Option[String],
+      latencyDetails: Option[LatencyDetails],
+      yearOfMigration: Option[String])
+  }
+
+  private def defaultAccountingType(implicit featureSwitches: FeatureSwitches) = {
+    if (featureSwitches.isIfsEnabled) Some(AccountingType.CASH) else None
   }
 
 }

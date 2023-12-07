@@ -17,19 +17,11 @@
 package api.support
 
 import api.controllers.EndpointLogContext
-import api.models.domain.{AccountingType, BusinessId, TypeOfBusiness}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import play.api.http.Status.BAD_REQUEST
 import support.UnitSpec
 import utils.Logging
-import v1.models.response.retrieveBusinessDetails.downstream.{
-  BusinessDetails,
-  LatencyDetails,
-  LatencyIndicator,
-  RetrieveBusinessDetailsDownstreamResponse
-}
-import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 class DownstreamResponseMappingSupportSpec extends UnitSpec {
 
@@ -50,7 +42,7 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
   val errorCodeMap: PartialFunction[String, MtdError] = {
     case "ERR1" => Error1
     case "ERR2" => Error2
-    case "DS"   => InternalError
+    case "DS" => InternalError
   }
 
   "mapping Des errors" when {
@@ -118,173 +110,4 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
       }
     }
   }
-
-  "filterId" should {
-    val desSingleBusiness: RetrieveBusinessDetailsDownstreamResponse = RetrieveBusinessDetailsDownstreamResponse(
-      Seq(BusinessDetails(
-        businessId = "XAIS12345678910",
-        typeOfBusiness = TypeOfBusiness.`self-employment`,
-        tradingName = Some("Aardvark Window Cleaning Services"),
-        accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-        firstAccountingPeriodStartDate = Some("2018-04-06"),
-        firstAccountingPeriodEndDate = Some("2018-12-12"),
-        latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-        yearOfMigration = Some("2023"),
-        accountingType = Some(AccountingType.ACCRUALS),
-        commencementDate = Some("2016-09-24"),
-        cessationDate = Some("2020-03-24"),
-        businessAddressLineOne = Some("6 Harpic Drive"),
-        businessAddressLineTwo = Some("Domestos Wood"),
-        businessAddressLineThree = Some("ToiletDucktown"),
-        businessAddressLineFour = Some("CIFSHIRE"),
-        businessAddressPostcode = Some("SW4F 3GA"),
-        businessAddressCountryCode = Some("GB")
-      )))
-    val desMultipleBusinessInSeq = RetrieveBusinessDetailsDownstreamResponse(
-      Seq(
-        BusinessDetails(
-          businessId = "XAIS12345678910",
-          typeOfBusiness = TypeOfBusiness.`self-employment`,
-          tradingName = Some("Aardvark Window Cleaning Services"),
-          accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-          firstAccountingPeriodStartDate = Some("2018-04-06"),
-          firstAccountingPeriodEndDate = Some("2018-12-12"),
-          latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-          yearOfMigration = Some("2023"),
-          accountingType = Some(AccountingType.ACCRUALS),
-          commencementDate = Some("2016-09-24"),
-          cessationDate = Some("2020-03-24"),
-          businessAddressLineOne = Some("6 Harpic Drive"),
-          businessAddressLineTwo = Some("Domestos Wood"),
-          businessAddressLineThree = Some("ToiletDucktown"),
-          businessAddressLineFour = Some("CIFSHIRE"),
-          businessAddressPostcode = Some("SW4F 3GA"),
-          businessAddressCountryCode = Some("GB")
-        ),
-        BusinessDetails(
-          businessId = "XAIS0987654321",
-          typeOfBusiness = TypeOfBusiness.`self-employment`,
-          tradingName = Some("Aardvark Window Cleaning Services"),
-          accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-          firstAccountingPeriodStartDate = Some("2018-04-06"),
-          firstAccountingPeriodEndDate = Some("2018-12-12"),
-          latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-          yearOfMigration = Some("2023"),
-          accountingType = Some(AccountingType.ACCRUALS),
-          commencementDate = Some("2016-09-24"),
-          cessationDate = Some("2020-03-24"),
-          businessAddressLineOne = Some("6 Test Drive"),
-          businessAddressLineTwo = Some("Test Wood"),
-          businessAddressLineThree = Some("Test Town"),
-          businessAddressLineFour = Some("TESTSHIRE"),
-          businessAddressPostcode = Some("TE4 3ST"),
-          businessAddressCountryCode = Some("FR")
-        )
-      ))
-
-    val DesSingleBusinessDetailsRepeated = RetrieveBusinessDetailsDownstreamResponse(
-      Seq(
-        BusinessDetails(
-          businessId = "XAIS12345678910",
-          typeOfBusiness = TypeOfBusiness.`self-employment`,
-          tradingName = Some("Aardvark Window Cleaning Services"),
-          accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-          firstAccountingPeriodStartDate = Some("2018-04-06"),
-          firstAccountingPeriodEndDate = Some("2018-12-12"),
-          latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-          yearOfMigration = Some("2023"),
-          accountingType = Some(AccountingType.ACCRUALS),
-          commencementDate = Some("2016-09-24"),
-          cessationDate = Some("2020-03-24"),
-          businessAddressLineOne = Some("6 Harpic Drive"),
-          businessAddressLineTwo = Some("Domestos Wood"),
-          businessAddressLineThree = Some("ToiletDucktown"),
-          businessAddressLineFour = Some("CIFSHIRE"),
-          businessAddressPostcode = Some("SW4F 3GA"),
-          businessAddressCountryCode = Some("GB")
-        ),
-        BusinessDetails(
-          businessId = "XAIS12345678910",
-          typeOfBusiness = TypeOfBusiness.`self-employment`,
-          tradingName = Some("Aardvark Window Cleaning Services"),
-          accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-          firstAccountingPeriodStartDate = Some("2018-04-06"),
-          firstAccountingPeriodEndDate = Some("2018-12-12"),
-          latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-          yearOfMigration = Some("2023"),
-          accountingType = Some(AccountingType.ACCRUALS),
-          commencementDate = Some("2016-09-24"),
-          cessationDate = Some("2020-03-24"),
-          businessAddressLineOne = Some("6 Harpic Drive"),
-          businessAddressLineTwo = Some("Domestos Wood"),
-          businessAddressLineThree = Some("ToiletDucktown"),
-          businessAddressLineFour = Some("CIFSHIRE"),
-          businessAddressPostcode = Some("SW4F 3GA"),
-          businessAddressCountryCode = Some("GB")
-        )
-      ))
-
-//    val responseBusinessR10Additional = RetrieveBusinessDetailsResponse(
-//      businessId = "XAIS12345678910",
-//      typeOfBusiness = TypeOfBusiness.`self-employment`,
-//      tradingName = Some("Aardvark Window Cleaning Services"),
-//      accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-//      accountingType = Some(AccountingType.ACCRUALS),
-//      commencementDate = Some("2016-09-24"),
-//      cessationDate = Some("2020-03-24"),
-//      businessAddressLineOne = Some("6 Harpic Drive"),
-//      businessAddressLineTwo = Some("Domestos Wood"),
-//      businessAddressLineThree = Some("ToiletDucktown"),
-//      businessAddressLineFour = Some("CIFSHIRE"),
-//      businessAddressPostcode = Some("SW4F 3GA"),
-//      businessAddressCountryCode = Some("GB"),
-//      firstAccountingPeriodStartDate = Some("2018-04-06"),
-//      firstAccountingPeriodEndDate = Some("2018-12-12"),
-//      latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-//      yearOfMigration = Some("2023")
-//    )
-
-    val responseBusiness = RetrieveBusinessDetailsResponse(
-      businessId = "XAIS12345678910",
-      typeOfBusiness = TypeOfBusiness.`self-employment`,
-      tradingName = Some("Aardvark Window Cleaning Services"),
-      accountingPeriods = Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
-      accountingType = Some(AccountingType.ACCRUALS),
-      commencementDate = Some("2016-09-24"),
-      cessationDate = Some("2020-03-24"),
-      businessAddressLineOne = Some("6 Harpic Drive"),
-      businessAddressLineTwo = Some("Domestos Wood"),
-      businessAddressLineThree = Some("ToiletDucktown"),
-      businessAddressLineFour = Some("CIFSHIRE"),
-      businessAddressPostcode = Some("SW4F 3GA"),
-      businessAddressCountryCode = Some("GB"),
-      firstAccountingPeriodStartDate = Some("2018-04-06"),
-      firstAccountingPeriodEndDate = Some("2018-12-12"),
-      latencyDetails = Some(LatencyDetails("2018-12-12", "2018", LatencyIndicator.Annual, "2019", LatencyIndicator.Quarterly)),
-      yearOfMigration = Some("2023")
-    )
-
-    "return a single businesses details" when {
-      "a single business is passed in with correct id" in {
-        mapping.filterId(ResponseWrapper("", desSingleBusiness), BusinessId("XAIS12345678910")) shouldBe Right(ResponseWrapper("", responseBusiness))
-      }
-      "multiple businesses are passed with one correct id" in {
-        mapping.filterId(ResponseWrapper("", desMultipleBusinessInSeq), BusinessId("XAIS12345678910")) shouldBe Right(
-          ResponseWrapper("", responseBusiness))
-      }
-    }
-    "return no business details error" when {
-      "businesses are passed with none having the correct id" in {
-        mapping.filterId(ResponseWrapper("", desMultipleBusinessInSeq), BusinessId("XAIS6789012345")) shouldBe
-          Left(ErrorWrapper("", NoBusinessFoundError))
-      }
-    }
-    "return downstream error" when {
-      "multiple businesses are passed with multiple having the correct id" in {
-        mapping.filterId(ResponseWrapper("", DesSingleBusinessDetailsRepeated), BusinessId("XAIS12345678910")) shouldBe
-          Left(ErrorWrapper("", InternalError))
-      }
-    }
-  }
-
 }

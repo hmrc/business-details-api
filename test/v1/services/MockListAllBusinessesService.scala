@@ -22,7 +22,7 @@ import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
-import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
+import v1.models.response.listAllBusinesses.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 

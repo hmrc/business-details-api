@@ -31,7 +31,7 @@ trait BaseDownstreamConnector {
 
   protected val logger: Logger = Logger(this.getClass)
 
-  implicit protected lazy val featureSwitches: FeatureSwitches = FeatureSwitches(appConfig.featureSwitches)
+  implicit protected lazy val featureSwitches: FeatureSwitches = FeatureSwitches(appConfig)
 
   private val jsonContentTypeHeader = HeaderNames.CONTENT_TYPE -> MimeTypes.JSON
 

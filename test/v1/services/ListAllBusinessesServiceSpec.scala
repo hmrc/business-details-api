@@ -17,23 +17,14 @@
 package v1.services
 
 import api.models.domain.Nino
-import api.models.errors.{
-  DownstreamErrorCode,
-  DownstreamErrors,
-  ErrorWrapper,
-  InternalError,
-  MtdError,
-  NinoFormatError,
-  NotFoundError,
-  RuleIncorrectGovTestScenarioError
-}
+import api.models.errors.{DownstreamErrorCode, DownstreamErrors, ErrorWrapper, InternalError, MtdError, NinoFormatError, NotFoundError, RuleIncorrectGovTestScenarioError}
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import config.MockAppConfig
 import play.api.Configuration
 import v1.connectors.MockListAllBusinessesConnector
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
-import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
+import v1.models.response.listAllBusinesses.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.Future
 
@@ -90,7 +81,7 @@ class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
   private trait Test extends MockListAllBusinessesConnector {
 
     MockedAppConfig.featureSwitches
-      .returns(Configuration("retrieveAdditionalFields.enabled" -> true))
+      .returns(Configuration.empty)
       .anyNumberOfTimes()
 
     protected val service = new ListAllBusinessesService(mockListAllBusinessesConnector, mockAppConfig)

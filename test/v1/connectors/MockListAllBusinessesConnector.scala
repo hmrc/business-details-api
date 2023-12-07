@@ -22,7 +22,7 @@ import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.Reads
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
-import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
+import v1.models.response.listAllBusinesses.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 

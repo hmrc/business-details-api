@@ -23,8 +23,8 @@ import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
 import play.api.libs.json.Reads
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
-import v1.models.response.listAllBusiness.ListAllBusinessesResponse.getReads
-import v1.models.response.listAllBusiness.{Business, ListAllBusinessesResponse}
+import v1.models.response.listAllBusinesses.ListAllBusinessesResponse.getReads
+import v1.models.response.listAllBusinesses.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.Future
 
@@ -40,7 +40,6 @@ class ListAllBusinessesConnectorSpec extends ConnectorSpec {
       MockedAppConfig.featureSwitches
         .returns(
           Configuration(
-            "retrieveAdditionalFields.enabled" -> true,
             "ifs.enabled"                      -> isIfsEnabled
           )
         )
@@ -63,7 +62,6 @@ class ListAllBusinessesConnectorSpec extends ConnectorSpec {
       MockedAppConfig.featureSwitches
         .returns(
           Configuration(
-            "retrieveAdditionalFields.enabled" -> true,
             "ifs.enabled"                      -> isIfsEnabled
           )
         )

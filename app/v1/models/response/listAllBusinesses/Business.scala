@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.models.response.listAllBusiness
+package v1.models.response.listAllBusinesses
 
 import api.models.domain.TypeOfBusiness
 import play.api.libs.functional.syntax._
