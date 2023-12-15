@@ -81,7 +81,7 @@ class RetrieveBusinessDetailsControllerSpec
       |     "latencyIndicator2": "Q"
       |   },
       |   "yearOfMigration": "2023",
-      |   "quarterTypeChoice": {
+      |   "quarterlyTypeChoice": {
       |     "quarterlyPeriodType": "standard",
       |     "taxYearOfChoice": "2023-24"
       |   },

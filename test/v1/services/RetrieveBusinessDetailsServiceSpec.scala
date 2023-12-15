@@ -76,7 +76,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     firstAccountingPeriodEndDate = None,
     latencyDetails = None,
     yearOfMigration = yearOfMigration,
-    quarterTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`CALENDAR`, TaxYear.fromMtd("2023-24")))
+    quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`CALENDAR`, TaxYear.fromMtd("2023-24")))
   )
 
   private def businessData(incomeSourceId: String) =
@@ -113,7 +113,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     firstAccountingPeriodEndDate = None,
     latencyDetails = None,
     yearOfMigration = yearOfMigration,
-    quarterTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`CALENDAR`, TaxYear.fromMtd("2023-24")))
+    quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`CALENDAR`, TaxYear.fromMtd("2023-24")))
   )
 
   "service" when {
@@ -135,7 +135,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
               yearOfMigration,
               businessData = None,
               propertyData = Some(List(propertyData("otherBusinessId"), propertyData("businessId"))))
-          ) shouldBe Right(ResponseWrapper(correlationId, propertyResponse("businessId").copy(quarterTypeChoice = None)))
+          ) shouldBe Right(ResponseWrapper(correlationId, propertyResponse("businessId").copy(quarterlyTypeChoice = None)))
         }
       }
 

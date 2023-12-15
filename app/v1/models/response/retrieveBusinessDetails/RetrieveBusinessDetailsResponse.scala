@@ -39,7 +39,7 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            firstAccountingPeriodEndDate: Option[String],
                                            latencyDetails: Option[LatencyDetails],
                                            yearOfMigration: Option[String],
-                                           quarterTypeChoice: Option[QuarterTypeElection])
+                                           quarterlyTypeChoice: Option[QuarterTypeElection])
 
 object RetrieveBusinessDetailsResponse extends HateoasLinks {
 
@@ -79,7 +79,7 @@ object RetrieveBusinessDetailsResponse extends HateoasLinks {
       firstAccountingPeriodEndDate: Option[String],
       latencyDetails: Option[LatencyDetails],
       yearOfMigration: Option[String],
-      quarterTypeChoice = quarterTypeElection
+      quarterlyTypeChoice = quarterTypeElection
     )
   }
 
@@ -105,7 +105,7 @@ object RetrieveBusinessDetailsResponse extends HateoasLinks {
       firstAccountingPeriodEndDate: Option[String],
       latencyDetails: Option[LatencyDetails],
       yearOfMigration: Option[String],
-      quarterTypeChoice = quarterTypeElection
+      quarterlyTypeChoice = quarterTypeElection
     )
   }
 

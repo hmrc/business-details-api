@@ -48,10 +48,10 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
       ec: ExecutionContext): Future[ServiceOutcome[RetrieveBusinessDetailsResponse]] = {
 
     val result = for {
-      downstreamResponseWrapper  <- EitherT(connector.retrieveBusinessDetails(request)).leftMap(mapDownstreamErrors(downstreamErrorMap))
-      mtdResponseWrapper         <- EitherT.fromEither[Future](filterIdAndConvert(downstreamResponseWrapper, request.businessId))
-      maybeWithQuarterTypeChoice <- EitherT.fromEither[Future](featureSwitchQuarterlyTypeChoice(mtdResponseWrapper))
-    } yield maybeWithQuarterTypeChoice
+      downstreamResponseWrapper    <- EitherT(connector.retrieveBusinessDetails(request)).leftMap(mapDownstreamErrors(downstreamErrorMap))
+      mtdResponseWrapper           <- EitherT.fromEither[Future](filterIdAndConvert(downstreamResponseWrapper, request.businessId))
+      maybeWithQuarterlyTypeChoice <- EitherT.fromEither[Future](featureSwitchQuarterlyTypeChoice(mtdResponseWrapper))
+    } yield maybeWithQuarterlyTypeChoice
 
     result.value
   }
@@ -59,7 +59,7 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
   private def featureSwitchQuarterlyTypeChoice(
       responseWrapper: ResponseWrapper[RetrieveBusinessDetailsResponse]): Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]] =
     if (featureSwitches.isScp005aQuarterlyTypeChoiceEnabled) Right(responseWrapper)
-    else Right(responseWrapper.copy(responseData = responseWrapper.responseData.copy(quarterTypeChoice = None)))
+    else Right(responseWrapper.copy(responseData = responseWrapper.responseData.copy(quarterlyTypeChoice = None)))
 
   private def filterIdAndConvert(
       responseWrapper: ResponseWrapper[RetrieveBusinessDetailsDownstreamResponse],
