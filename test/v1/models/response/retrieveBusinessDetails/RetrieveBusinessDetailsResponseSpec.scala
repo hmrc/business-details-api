@@ -28,69 +28,85 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
 
   "writes" should {
     "output JSON as per spec" in {
-      Json.toJson(RetrieveBusinessDetailsResponse(
-        businessId = "businessId",
-        typeOfBusiness = TypeOfBusiness.`self-employment`,
-        tradingName = Some("tradingName"),
-        accountingPeriods = Seq(AccountingPeriod("2001-01-01", "2001-01-02")),
-        accountingType = Some(AccountingType.ACCRUALS),
-        commencementDate = Some("2001-01-01"),
-        cessationDate = Some("2010-01-01"),
-        businessAddressLineOne = Some("line1"),
-        businessAddressLineTwo = Some("line2"),
-        businessAddressLineThree = Some("line3"),
-        businessAddressLineFour = Some("line4"),
-        businessAddressPostcode = Some("postCode"),
-        businessAddressCountryCode = Some("country"),
-        firstAccountingPeriodStartDate = Some("2018-04-06"),
-        firstAccountingPeriodEndDate = Some("2018-12-12"),
-        latencyDetails = Some(LatencyDetails(
-          latencyEndDate = "2018-12-12",
-          taxYear1 = TaxYear.fromDownstream("2018"),
-          latencyIndicator1 = LatencyIndicator.Annual,
-          taxYear2 = TaxYear.fromDownstream("2019"),
-          latencyIndicator2 = LatencyIndicator.Quarterly
-        )),
-        yearOfMigration = Some("2023")
-      )) shouldBe Json.parse(
-        s"""
-           |{
-           |   "businessId": "businessId",
-           |   "typeOfBusiness": "self-employment",
-           |   "tradingName": "tradingName",
-           |   "accountingPeriods": [
-           |     {
-           |       "start": "2001-01-01",
-           |       "end": "2001-01-02"
-           |     }
-           |   ],
-           |   "accountingType": "ACCRUALS",
-           |   "commencementDate": "2001-01-01",
-           |   "cessationDate": "2010-01-01",
-           |   "businessAddressLineOne": "line1",
-           |   "businessAddressLineTwo": "line2",
-           |   "businessAddressLineThree": "line3",
-           |   "businessAddressLineFour": "line4",
-           |   "businessAddressPostcode": "postCode",
-           |   "businessAddressCountryCode": "country",
-           |   "firstAccountingPeriodStartDate": "2018-04-06",
-           |   "firstAccountingPeriodEndDate": "2018-12-12",
-           |   "latencyDetails": {
-           |     "latencyEndDate": "2018-12-12",
-           |     "taxYear1": "2017-18",
-           |     "latencyIndicator1": "A",
-           |     "taxYear2": "2018-19",
-           |     "latencyIndicator2": "Q"
-           |   },
-           |   "yearOfMigration": "2023"
-           |}
-           |""".stripMargin
+      val result = Json.toJson(
+        RetrieveBusinessDetailsResponse(
+          businessId = "businessId",
+          typeOfBusiness = TypeOfBusiness.`self-employment`,
+          tradingName = Some("tradingName"),
+          accountingPeriods = Seq(AccountingPeriod("2001-01-01", "2001-01-02")),
+          accountingType = Some(AccountingType.ACCRUALS),
+          commencementDate = Some("2001-01-01"),
+          cessationDate = Some("2010-01-01"),
+          businessAddressLineOne = Some("line1"),
+          businessAddressLineTwo = Some("line2"),
+          businessAddressLineThree = Some("line3"),
+          businessAddressLineFour = Some("line4"),
+          businessAddressPostcode = Some("postCode"),
+          businessAddressCountryCode = Some("country"),
+          firstAccountingPeriodStartDate = Some("2018-04-06"),
+          firstAccountingPeriodEndDate = Some("2018-12-12"),
+          latencyDetails = Some(LatencyDetails(
+            latencyEndDate = "2018-12-12",
+            taxYear1 = TaxYear.fromDownstream("2018"),
+            latencyIndicator1 = LatencyIndicator.Annual,
+            taxYear2 = TaxYear.fromDownstream("2019"),
+            latencyIndicator2 = LatencyIndicator.Quarterly
+          )),
+          yearOfMigration = Some("2023"),
+          quarterTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear.fromMtd("2023-24")))
+        ))
+
+      val expected = Json.parse(
+        """
+             |{
+             |   "businessId": "businessId",
+             |   "typeOfBusiness": "self-employment",
+             |   "tradingName": "tradingName",
+             |   "accountingPeriods": [
+             |     {
+             |       "start": "2001-01-01",
+             |       "end": "2001-01-02"
+             |     }
+             |   ],
+             |   "accountingType": "ACCRUALS",
+             |   "commencementDate": "2001-01-01",
+             |   "cessationDate": "2010-01-01",
+             |   "businessAddressLineOne": "line1",
+             |   "businessAddressLineTwo": "line2",
+             |   "businessAddressLineThree": "line3",
+             |   "businessAddressLineFour": "line4",
+             |   "businessAddressPostcode": "postCode",
+             |   "businessAddressCountryCode": "country",
+             |   "firstAccountingPeriodStartDate": "2018-04-06",
+             |   "firstAccountingPeriodEndDate": "2018-12-12",
+             |   "latencyDetails": {
+             |     "latencyEndDate": "2018-12-12",
+             |     "taxYear1": "2017-18",
+             |     "latencyIndicator1": "A",
+             |     "taxYear2": "2018-19",
+             |     "latencyIndicator2": "Q"
+             |   },
+             |   "yearOfMigration": "2023",
+             |   "quarterTypeChoice": {
+             |    "quarterlyPeriodType": "standard",
+             |    "taxYearOfChoice": "2023-24"
+             |   }
+             |}
+             |""".stripMargin
       )
+
+      result shouldBe expected
     }
   }
 
   "creating from response" when {
-    val latencyDetails = Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly))
+    val latencyDetails = Some(
+      LatencyDetails(
+        "2018-12-12",
+        TaxYear.fromDownstream("2018"),
+        LatencyIndicator.Annual,
+        TaxYear.fromDownstream("2019"),
+        LatencyIndicator.Quarterly))
     val yearOfMigration = Some("migrationYear")
 
     "from property data" must {
@@ -99,7 +115,8 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
       behave like convert(None, TypeOfBusiness.`property-unspecified`)
 
       def propertyData(typeOfBusiness: Option[TypeOfBusiness] = None, cashOrAccruals: Option[AccountingType] = Some(AccountingType.ACCRUALS)) =
-        PropertyData(incomeSourceType = typeOfBusiness,
+        PropertyData(
+          incomeSourceType = typeOfBusiness,
           incomeSourceId = "businessId",
           accountingPeriodStartDate = "accStartDate",
           accountingPeriodEndDate = "accEndDate",
@@ -108,10 +125,12 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           latencyDetails = latencyDetails,
           cashOrAccruals = cashOrAccruals,
           tradingStartDate = Some("tradingStartDate"),
-          cessationDate = Some("cessationDate")
+          cessationDate = Some("cessationDate"),
+          quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear.fromDownstream("2024")))
         )
 
-      def propertyResponse(expectedTypeOfBusiness: TypeOfBusiness = TypeOfBusiness.`property-unspecified`, cashOrAccruals: Option[AccountingType] = Some(AccountingType.ACCRUALS)) = {
+      def propertyResponse(expectedTypeOfBusiness: TypeOfBusiness = TypeOfBusiness.`property-unspecified`,
+                           cashOrAccruals: Option[AccountingType] = Some(AccountingType.ACCRUALS)) = {
         RetrieveBusinessDetailsResponse(
           businessId = "businessId",
           typeOfBusiness = expectedTypeOfBusiness,
@@ -129,7 +148,8 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           firstAccountingPeriodStartDate = Some("firstStartDate"),
           firstAccountingPeriodEndDate = Some("firstEndDate"),
           latencyDetails = latencyDetails,
-          yearOfMigration = yearOfMigration
+          yearOfMigration = yearOfMigration,
+          quarterTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear.fromDownstream("2024")))
         )
       }
 
@@ -155,7 +175,10 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
     "from business data" must {
       val businessAddressDetails = Some(BusinessAddressDetails("line1", Some("line2"), Some("line3"), Some("line4"), Some("postcode"), "countryCode"))
 
-      def businessData(businessAddressDetails: Option[BusinessAddressDetails] = businessAddressDetails, cashOrAccruals: Option[AccountingType] = Some(AccountingType.ACCRUALS)) =
+      def businessData(businessAddressDetails: Option[BusinessAddressDetails] = businessAddressDetails,
+                       cashOrAccruals: Option[AccountingType] = Some(AccountingType.ACCRUALS),
+                       quarterTypeElection: Option[QuarterTypeElection] =
+                         Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear.fromDownstream("2023")))) =
         BusinessData(
           incomeSourceId = "businessId",
           accountingPeriodStartDate = "accStartDate",
@@ -167,7 +190,8 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           latencyDetails = latencyDetails,
           cashOrAccruals = cashOrAccruals,
           tradingStartDate = Some("tradingStartDate"),
-          cessationDate = Some("cessationDate")
+          cessationDate = Some("cessationDate"),
+          quarterTypeElection = quarterTypeElection
         )
 
       def businessResponse(cashOrAccruals: Option[AccountingType] = Some(AccountingType.ACCRUALS)) = {
@@ -188,7 +212,8 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           firstAccountingPeriodStartDate = Some("firstStartDate"),
           firstAccountingPeriodEndDate = Some("firstEndDate"),
           latencyDetails = latencyDetails,
-          yearOfMigration = yearOfMigration
+          yearOfMigration = yearOfMigration,
+          quarterTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear.fromDownstream("2023")))
         )
       }
 
@@ -199,7 +224,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
 
       "for only mandatory address fields" in {
         val businessAddressDetails = Some(BusinessAddressDetails("line1", None, None, None, None, "countryCode"))
-        RetrieveBusinessDetailsResponse.fromBusinessData(businessData(businessAddressDetails), yearOfMigration) shouldBe
+        RetrieveBusinessDetailsResponse.fromBusinessData(businessData(businessAddressDetails, quarterTypeElection = None), yearOfMigration) shouldBe
           RetrieveBusinessDetailsResponse(
             businessId = "businessId",
             typeOfBusiness = TypeOfBusiness.`self-employment`,
@@ -217,7 +242,8 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
             firstAccountingPeriodStartDate = Some("firstStartDate"),
             firstAccountingPeriodEndDate = Some("firstEndDate"),
             latencyDetails = latencyDetails,
-            yearOfMigration = yearOfMigration
+            yearOfMigration = yearOfMigration,
+            quarterTypeChoice = None
           )
       }
 
@@ -240,7 +266,8 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
             firstAccountingPeriodStartDate = Some("firstStartDate"),
             firstAccountingPeriodEndDate = Some("firstEndDate"),
             latencyDetails = latencyDetails,
-            yearOfMigration = yearOfMigration
+            yearOfMigration = yearOfMigration,
+            quarterTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear("2023")))
           )
       }
 
@@ -263,7 +290,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
   "LinksFactory" should {
     "expose the correct links" when {
       "called" in {
-        val nino = "mynino"
+        val nino       = "mynino"
         val businessId = "myid"
         MockedAppConfig.apiGatewayContext.returns("individuals/business/details").anyNumberOfTimes()
         RetrieveBusinessDetailsResponse.RetrieveBusinessDetailsLinksFactory

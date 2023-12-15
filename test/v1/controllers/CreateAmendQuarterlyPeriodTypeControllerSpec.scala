@@ -27,8 +27,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import utils.MockIdGenerator
 import v1.controllers.validators.MockCreateAmendQuarterlyPeriodTypeValidatorFactory
-import v1.models.domain.QuarterlyPeriodType
-import v1.models.request.createAmendQuarterlyPeriodType.{CreateAmendQuarterlyPeriodTypeRequestBody, CreateAmendQuarterlyPeriodTypeRequestData}
+import v1.models.request.createAmendQuarterlyPeriodType.{CreateAmendQuarterlyPeriodTypeRequestBody, CreateAmendQuarterlyPeriodTypeRequestData, QuarterlyPeriodType}
 import v1.services.MockCreateAmendQuarterlyPeriodTypeService
 
 import scala.concurrent.ExecutionContext.Implicits.global

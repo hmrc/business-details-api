@@ -24,8 +24,9 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
   "reads" should {
     "read the response from DES" when {
       "only business data is supplied" in {
-        Json.parse(
-          """
+        Json
+          .parse(
+            """
             |{
             |  "safeId": "XE00001234567890",
             |  "nino": "AA123456A",
@@ -39,10 +40,11 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             |  }]
             |}
             |""".stripMargin
-        ).as[RetrieveBusinessDetailsDownstreamResponse] shouldBe RetrieveBusinessDetailsDownstreamResponse(
+          )
+          .as[RetrieveBusinessDetailsDownstreamResponse] shouldBe RetrieveBusinessDetailsDownstreamResponse(
           yearOfMigration = Some("2023"),
-          businessData = Some(Seq(
-            BusinessData(
+          businessData = Some(
+            Seq(BusinessData(
               incomeSourceId = "XAIS12345678910",
               tradingName = None,
               accountingPeriodStartDate = "2001-01-01",
@@ -53,13 +55,17 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
               cashOrAccruals = None,
               tradingStartDate = None,
               cessationDate = None,
-              businessAddressDetails = None))),
-          propertyData = None)
+              businessAddressDetails = None,
+              quarterTypeElection = None
+            ))),
+          propertyData = None
+        )
       }
 
       "only property data is supplied" in {
-        Json.parse(
-          """
+        Json
+          .parse(
+            """
             |{
             |  "safeId": "XE00001234567890",
             |  "nino": "AA123456A",
@@ -73,28 +79,34 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             |  }]
             |}
             |""".stripMargin
-        ).as[RetrieveBusinessDetailsDownstreamResponse] shouldBe RetrieveBusinessDetailsDownstreamResponse(
+          )
+          .as[RetrieveBusinessDetailsDownstreamResponse] shouldBe RetrieveBusinessDetailsDownstreamResponse(
           yearOfMigration = Some("2023"),
           businessData = None,
-          propertyData = Some(Seq(PropertyData(
-            incomeSourceType = None,
-            incomeSourceId = "X0IS123456789012",
-            accountingPeriodStartDate = "2019-04-06",
-            accountingPeriodEndDate = "2020-04-05",
-            firstAccountingPeriodStartDate = None,
-            firstAccountingPeriodEndDate = None,
-            latencyDetails = None,
-            cashOrAccruals = None,
-            tradingStartDate = None,
-            cessationDate = None))))
+          propertyData = Some(
+            Seq(PropertyData(
+              incomeSourceType = None,
+              incomeSourceId = "X0IS123456789012",
+              accountingPeriodStartDate = "2019-04-06",
+              accountingPeriodEndDate = "2020-04-05",
+              firstAccountingPeriodStartDate = None,
+              firstAccountingPeriodEndDate = None,
+              latencyDetails = None,
+              cashOrAccruals = None,
+              tradingStartDate = None,
+              cessationDate = None,
+              quarterTypeElection = None
+            )))
+        )
       }
     }
 
     "read the response from IFS" when {
       "only business data is supplied" in {
 
-        Json.parse(
-          """
+        Json
+          .parse(
+            """
             |{
             |  "processingDate": "2023-07-05T09:16:58.655Z",
             |  "taxPayerDisplayResponse": {
@@ -111,10 +123,11 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             |  }
             |}
             |""".stripMargin
-        ).as[RetrieveBusinessDetailsDownstreamResponse] shouldBe RetrieveBusinessDetailsDownstreamResponse(
+          )
+          .as[RetrieveBusinessDetailsDownstreamResponse] shouldBe RetrieveBusinessDetailsDownstreamResponse(
           yearOfMigration = Some("2023"),
-          businessData = Some(Seq(
-            BusinessData(
+          businessData = Some(
+            Seq(BusinessData(
               incomeSourceId = "XAIS12345678910",
               tradingName = None,
               accountingPeriodStartDate = "2001-01-01",
@@ -125,13 +138,17 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
               cashOrAccruals = None,
               tradingStartDate = None,
               cessationDate = None,
-              businessAddressDetails = None))),
-          propertyData = None)
+              businessAddressDetails = None,
+              quarterTypeElection = None
+            ))),
+          propertyData = None
+        )
       }
 
       "only property data is supplied" in {
-        Json.parse(
-          """
+        Json
+          .parse(
+            """
             |{
             |  "processingDate": "2023-07-05T09:16:58.655Z",
             |  "taxPayerDisplayResponse": {
@@ -148,20 +165,25 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             |  }
             |}
             |""".stripMargin
-        ).as[RetrieveBusinessDetailsDownstreamResponse] shouldBe RetrieveBusinessDetailsDownstreamResponse(
+          )
+          .as[RetrieveBusinessDetailsDownstreamResponse] shouldBe RetrieveBusinessDetailsDownstreamResponse(
           yearOfMigration = Some("2023"),
           businessData = None,
-          propertyData = Some(Seq(PropertyData(
-            incomeSourceType = None,
-            incomeSourceId = "X0IS123456789012",
-            accountingPeriodStartDate = "2019-04-06",
-            accountingPeriodEndDate = "2020-04-05",
-            firstAccountingPeriodStartDate = None,
-            firstAccountingPeriodEndDate = None,
-            latencyDetails = None,
-            cashOrAccruals = None,
-            tradingStartDate = None,
-            cessationDate = None))))
+          propertyData = Some(
+            Seq(PropertyData(
+              incomeSourceType = None,
+              incomeSourceId = "X0IS123456789012",
+              accountingPeriodStartDate = "2019-04-06",
+              accountingPeriodEndDate = "2020-04-05",
+              firstAccountingPeriodStartDate = None,
+              firstAccountingPeriodEndDate = None,
+              latencyDetails = None,
+              cashOrAccruals = None,
+              tradingStartDate = None,
+              cessationDate = None,
+              quarterTypeElection = None
+            )))
+        )
       }
     }
   }

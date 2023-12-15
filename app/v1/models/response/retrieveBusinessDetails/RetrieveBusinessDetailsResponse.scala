@@ -20,8 +20,7 @@ import api.hateoas.{HateoasData, HateoasLinks, HateoasLinksFactory, Link}
 import api.models.domain.{AccountingType, TypeOfBusiness}
 import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.{Json, OWrites}
-import v1.models.response.retrieveBusinessDetails.downstream.{BusinessData, LatencyDetails, PropertyData}
-
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessData, LatencyDetails, PropertyData, QuarterTypeElection}
 
 case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,
@@ -39,25 +38,27 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            firstAccountingPeriodStartDate: Option[String],
                                            firstAccountingPeriodEndDate: Option[String],
                                            latencyDetails: Option[LatencyDetails],
-                                           yearOfMigration: Option[String])
+                                           yearOfMigration: Option[String],
+                                           quarterTypeChoice: Option[QuarterTypeElection])
 
 object RetrieveBusinessDetailsResponse extends HateoasLinks {
 
   implicit val writes: OWrites[RetrieveBusinessDetailsResponse] = Json.writes[RetrieveBusinessDetailsResponse]
 
   implicit object RetrieveBusinessDetailsLinksFactory
-    extends HateoasLinksFactory[RetrieveBusinessDetailsResponse, RetrieveBusinessDetailsHateoasData] {
+      extends HateoasLinksFactory[RetrieveBusinessDetailsResponse, RetrieveBusinessDetailsHateoasData] {
 
     override def links(appConfig: AppConfig, data: RetrieveBusinessDetailsHateoasData): Seq[Link] = {
       import data._
-      Seq(
+      List(
         retrieveBusinessDetails(appConfig, nino, businessId)
       )
     }
 
   }
 
-  def fromBusinessData(businessData: BusinessData, yearOfMigration: Option[String])(implicit featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
+  def fromBusinessData(businessData: BusinessData, yearOfMigration: Option[String])(implicit
+      featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
     import businessData._
 
     RetrieveBusinessDetailsResponse(
@@ -77,10 +78,13 @@ object RetrieveBusinessDetailsResponse extends HateoasLinks {
       firstAccountingPeriodStartDate: Option[String],
       firstAccountingPeriodEndDate: Option[String],
       latencyDetails: Option[LatencyDetails],
-      yearOfMigration: Option[String])
+      yearOfMigration: Option[String],
+      quarterTypeChoice = quarterTypeElection
+    )
   }
 
-  def fromPropertyData(propertyData: PropertyData, yearOfMigration: Option[String])(implicit featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
+  def fromPropertyData(propertyData: PropertyData, yearOfMigration: Option[String])(implicit
+      featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
     import propertyData._
 
     RetrieveBusinessDetailsResponse(
@@ -100,7 +104,9 @@ object RetrieveBusinessDetailsResponse extends HateoasLinks {
       firstAccountingPeriodStartDate: Option[String],
       firstAccountingPeriodEndDate: Option[String],
       latencyDetails: Option[LatencyDetails],
-      yearOfMigration: Option[String])
+      yearOfMigration: Option[String],
+      quarterTypeChoice = quarterTypeElection
+    )
   }
 
   private def defaultAccountingType(implicit featureSwitches: FeatureSwitches) = {

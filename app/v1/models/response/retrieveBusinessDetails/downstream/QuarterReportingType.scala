@@ -14,17 +14,27 @@
  * limitations under the License.
  */
 
-package config
+package v1.models.response.retrieveBusinessDetails.downstream
 
-import org.scalamock.handlers.CallHandler
-import org.scalamock.scalatest.MockFactory
+import play.api.libs.json.{Reads, Writes}
+import utils.enums.Enums
 
-trait MockFeatureSwitches extends MockFactory {
-  implicit val mockFeatureSwitches: FeatureSwitches = mock[FeatureSwitches]
+sealed trait QuarterReportingType {
+  val asMtd: String
+}
 
-  object MockFeatureSwitches {
-    def isIfsEnabled: CallHandler[Boolean]                        = (() => mockFeatureSwitches.isIfsEnabled).expects()
-    def isScp005aQuarterlyTypeChoiceEnabled: CallHandler[Boolean] = (() => mockFeatureSwitches.isScp005aQuarterlyTypeChoiceEnabled).expects()
+object QuarterReportingType {
+
+  implicit val reads: Reads[QuarterReportingType] = Enums.reads[QuarterReportingType]
+
+  implicit val writes: Writes[QuarterReportingType] = implicitly[Writes[String]].contramap(_.asMtd)
+
+  case object `STANDARD` extends QuarterReportingType {
+    val asMtd: String = "standard"
+  }
+
+  case object `CALENDAR` extends QuarterReportingType {
+    val asMtd: String = "calendar"
   }
 
 }

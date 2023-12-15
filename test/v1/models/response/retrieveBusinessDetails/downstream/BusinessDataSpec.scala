@@ -21,12 +21,13 @@ import play.api.libs.json.Json
 import support.UnitSpec
 
 class BusinessDataSpec extends UnitSpec {
+
   "BusinessData" when {
     "read from JSON" must {
       "work" in {
-
-        Json.parse(
-          """
+        Json
+          .parse(
+            """
             |{
             |  "incomeSourceId": "XAIS12345678910",
             |  "accountingPeriodStartDate": "2001-01-01",
@@ -56,10 +57,15 @@ class BusinessDataSpec extends UnitSpec {
             |  "seasonal": true,
             |  "cessationDate": "2001-01-01",
             |  "cessationReason": "002",
-            |  "paperLess": true
+            |  "paperLess": true,
+            |  "quarterTypeElection": {
+            |   "quarterReportingType": "STANDARD",
+            |   "taxYearOfElection": "2023"
+            |  }
             |}
             |""".stripMargin
-        ).as[BusinessData] shouldBe
+          )
+          .as[BusinessData] shouldBe
           BusinessData(
             incomeSourceId = "XAIS12345678910",
             tradingName = Some("RCDTS"),
@@ -67,13 +73,26 @@ class BusinessDataSpec extends UnitSpec {
             accountingPeriodEndDate = "2001-01-02",
             firstAccountingPeriodStartDate = Some("2018-04-06"),
             firstAccountingPeriodEndDate = Some("2018-12-12"),
-            latencyDetails = Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
+            latencyDetails = Some(
+              LatencyDetails(
+                "2018-12-12",
+                TaxYear.fromDownstream("2018"),
+                LatencyIndicator.Annual,
+                TaxYear.fromDownstream("2019"),
+                LatencyIndicator.Quarterly)),
             cashOrAccruals = Some(AccountingType.CASH),
             tradingStartDate = Some("2001-01-01"),
             cessationDate = Some("2001-01-01"),
-            businessAddressDetails = Some(BusinessAddressDetails(
-              addressLine1 = "100 SuttonStreet", None, None, None, None, countryCode = "GB"
-            ))
+            businessAddressDetails = Some(
+              BusinessAddressDetails(
+                addressLine1 = "100 SuttonStreet",
+                None,
+                None,
+                None,
+                None,
+                countryCode = "GB"
+              )),
+            quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear.fromDownstream("2023")))
           )
       }
 
@@ -90,7 +109,9 @@ class BusinessDataSpec extends UnitSpec {
             cashOrAccruals = accountingType,
             tradingStartDate = None,
             cessationDate = None,
-            businessAddressDetails = None)
+            businessAddressDetails = None,
+            quarterTypeElection = None
+          )
 
         "using IFS (which has boolean cashOrAccruals)" when {
           def json(cashOrAccruals: Boolean) =
@@ -114,15 +135,17 @@ class BusinessDataSpec extends UnitSpec {
           }
 
           "field is missing" in {
-            Json.parse(
-              s"""
+            Json
+              .parse(
+                s"""
                  |{
                  |  "incomeSourceId": "XAIS12345678910",
                  |  "accountingPeriodStartDate": "2001-01-01",
                  |  "accountingPeriodEndDate": "2001-01-02"
                  |}
                  |""".stripMargin
-            ).as[BusinessData] shouldBe data(None)
+              )
+              .as[BusinessData] shouldBe data(None)
           }
         }
 
@@ -149,17 +172,20 @@ class BusinessDataSpec extends UnitSpec {
         }
 
         "field is absent" in {
-          Json.parse(
-            s"""
+          Json
+            .parse(
+              s"""
                |{
                |  "incomeSourceId": "XAIS12345678910",
                |  "accountingPeriodStartDate": "2001-01-01",
                |  "accountingPeriodEndDate": "2001-01-02"
                |}
                |""".stripMargin
-          ).as[BusinessData] shouldBe data(None)
+            )
+            .as[BusinessData] shouldBe data(None)
         }
       }
     }
   }
+
 }

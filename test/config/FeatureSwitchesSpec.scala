@@ -34,7 +34,7 @@ class FeatureSwitchesSpec extends UnitSpec {
 
         featureSwitches.isIfsEnabled shouldBe true
         featureSwitches.isEndpoint2089Enabled shouldBe true
-        featureSwitches.isScp005a_QuarterlyTypeChoiceEnabled shouldBe true
+        featureSwitches.isScp005aQuarterlyTypeChoiceEnabled shouldBe true
       }
 
       "the feature switch is not present in the config" in {
@@ -44,7 +44,7 @@ class FeatureSwitchesSpec extends UnitSpec {
 
         featureSwitches.isIfsEnabled shouldBe true
         featureSwitches.isEndpoint2089Enabled shouldBe true
-        featureSwitches.isScp005a_QuarterlyTypeChoiceEnabled shouldBe true
+        featureSwitches.isScp005aQuarterlyTypeChoiceEnabled shouldBe true
       }
     }
 
@@ -60,7 +60,7 @@ class FeatureSwitchesSpec extends UnitSpec {
 
         featureSwitches.isIfsEnabled shouldBe false
         featureSwitches.isEndpoint2089Enabled shouldBe false
-        featureSwitches.isScp005a_QuarterlyTypeChoiceEnabled shouldBe false
+        featureSwitches.isScp005aQuarterlyTypeChoiceEnabled shouldBe false
       }
     }
   }
