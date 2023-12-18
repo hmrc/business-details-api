@@ -29,11 +29,11 @@ object QuarterReportingType {
 
   implicit val writes: Writes[QuarterReportingType] = implicitly[Writes[String]].contramap(_.asMtd)
 
-  case object `STANDARD` extends QuarterReportingType {
+  case object STANDARD extends QuarterReportingType {
     val asMtd: String = "standard"
   }
 
-  case object `CALENDAR` extends QuarterReportingType {
+  case object CALENDAR extends QuarterReportingType {
     val asMtd: String = "calendar"
   }
 

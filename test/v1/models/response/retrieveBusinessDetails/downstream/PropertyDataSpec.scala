@@ -56,7 +56,7 @@ class PropertyDataSpec extends UnitSpec {
             |  "incomeSourceStartDate": "2019-07-14",
             |  "quarterTypeElection": {
             |   "quarterReportingType": "STANDARD",
-            |   "taxYearOfElection": "2023"
+            |   "taxYearofElection": "2023"
             |  }
             |}
             |""".stripMargin
@@ -79,7 +79,7 @@ class PropertyDataSpec extends UnitSpec {
             cashOrAccruals = Some(AccountingType.ACCRUALS),
             tradingStartDate = Some("2017-07-24"),
             cessationDate = Some("2020-01-01"),
-            quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear.fromDownstream("2023")))
+            quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2023")))
           )
       }
 

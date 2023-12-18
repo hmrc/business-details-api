@@ -120,7 +120,7 @@ class RetrieveBusinessDetailsControllerSpec
         TaxYear.fromDownstream("2019"),
         LatencyIndicator.Quarterly)),
     Some("2023"),
-    Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear.fromMtd("2023-24")))
+    Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromMtd("2023-24")))
   )
 
   private val requestData = RetrieveBusinessDetailsRequestData(Nino(nino), BusinessId(businessId))

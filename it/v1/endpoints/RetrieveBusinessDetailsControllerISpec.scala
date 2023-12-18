@@ -64,6 +64,10 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         |     "latencyIndicator2": "Q"
         |   },
         |   "yearOfMigration": "2023",
+        |   "quarterlyTypeChoice": {
+        |     "quarterlyPeriodType": "standard",
+        |     "taxYearOfChoice": "2022-23"
+        |   },
         |   "links": [
         |     {
         |       "href": "/individuals/business/details/$nino/$businessId",
@@ -152,6 +156,10 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |      "latencyIndicator1": "A",
             |      "taxYear2": "2019",
             |      "latencyIndicator2": "Q"
+            |   },
+            |   "quarterTypeElection": {
+            |     "quarterReportingType": "STANDARD",
+            |     "taxYearofElection": "2023"
             |   }
             |  }]
             |  }
@@ -218,7 +226,11 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |      "latencyIndicator1": "A",
             |      "taxYear2": "2019",
             |      "latencyIndicator2": "Q"
-            |     }
+            |     },
+            |     "quarterTypeElection": {
+            |          "quarterReportingType": "STANDARD",
+            |          "taxYearofElection": "2023"
+            |    }
             |  },
             |  {
             |    "incomeSourceId": "XAIS12345671111",
@@ -341,7 +353,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           (NOT_FOUND, "NOT_FOUND", NOT_FOUND, NotFoundError)
         )
 
-        (errors ++ extraIfsErrors).foreach(args => (serviceErrorTest _).tupled(args))
+        (errors ++ extraIfsErrors).foreach((serviceErrorTest _).tupled)
       }
     }
   }

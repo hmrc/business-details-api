@@ -20,7 +20,7 @@ import api.models.domain.TaxYear
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 
-case class QuarterTypeElection(quarterReportingType: QuarterReportingType, taxYearOfElection: TaxYear)
+case class QuarterTypeElection(quarterReportingType: QuarterReportingType, taxYearofElection: TaxYear)
 
 object QuarterTypeElection {
   implicit val taxYearReads: Reads[TaxYear] = implicitly[Reads[String]].map(TaxYear.fromDownstream)

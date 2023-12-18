@@ -53,7 +53,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
             latencyIndicator2 = LatencyIndicator.Quarterly
           )),
           yearOfMigration = Some("2023"),
-          quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear.fromMtd("2023-24")))
+          quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromMtd("2023-24")))
         ))
 
       val expected = Json.parse(
@@ -126,7 +126,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           cashOrAccruals = cashOrAccruals,
           tradingStartDate = Some("tradingStartDate"),
           cessationDate = Some("cessationDate"),
-          quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear.fromDownstream("2024")))
+          quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2024")))
         )
 
       def propertyResponse(expectedTypeOfBusiness: TypeOfBusiness = TypeOfBusiness.`property-unspecified`,
@@ -149,7 +149,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           firstAccountingPeriodEndDate = Some("firstEndDate"),
           latencyDetails = latencyDetails,
           yearOfMigration = yearOfMigration,
-          quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear.fromDownstream("2024")))
+          quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2024")))
         )
       }
 
@@ -178,7 +178,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
       def businessData(businessAddressDetails: Option[BusinessAddressDetails] = businessAddressDetails,
                        cashOrAccruals: Option[AccountingType] = Some(AccountingType.ACCRUALS),
                        quarterTypeElection: Option[QuarterTypeElection] =
-                         Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear.fromDownstream("2023")))) =
+                         Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2023")))) =
         BusinessData(
           incomeSourceId = "businessId",
           accountingPeriodStartDate = "accStartDate",
@@ -213,7 +213,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           firstAccountingPeriodEndDate = Some("firstEndDate"),
           latencyDetails = latencyDetails,
           yearOfMigration = yearOfMigration,
-          quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear.fromDownstream("2023")))
+          quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2023")))
         )
       }
 
@@ -267,7 +267,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
             firstAccountingPeriodEndDate = Some("firstEndDate"),
             latencyDetails = latencyDetails,
             yearOfMigration = yearOfMigration,
-            quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear("2023")))
+            quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear("2023")))
           )
       }
 

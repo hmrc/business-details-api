@@ -22,17 +22,17 @@ import support.UnitSpec
 
 class QuarterTypeElectionSpec extends UnitSpec {
 
-  private val quarterReportingType = QuarterReportingType.`STANDARD`
-  private val taxYearOfElection    = TaxYear.fromMtd("2023-24")
+  private val quarterReportingType = QuarterReportingType.STANDARD
+  private val taxYearofElection    = TaxYear.fromMtd("2023-24")
 
   private val downstreamJson = Json.parse("""
      |{
      | "quarterReportingType": "STANDARD",
-     | "taxYearOfElection": "2024"
+     | "taxYearofElection": "2024"
      |}
      |""".stripMargin)
 
-  private val model = QuarterTypeElection(quarterReportingType, taxYearOfElection)
+  private val model = QuarterTypeElection(quarterReportingType, taxYearofElection)
 
   private val mtdJson = Json.parse("""
       |{

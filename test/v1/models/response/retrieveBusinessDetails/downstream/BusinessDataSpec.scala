@@ -60,7 +60,7 @@ class BusinessDataSpec extends UnitSpec {
             |  "paperLess": true,
             |  "quarterTypeElection": {
             |   "quarterReportingType": "STANDARD",
-            |   "taxYearOfElection": "2023"
+            |   "taxYearofElection": "2023"
             |  }
             |}
             |""".stripMargin
@@ -92,7 +92,7 @@ class BusinessDataSpec extends UnitSpec {
                 None,
                 countryCode = "GB"
               )),
-            quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.`STANDARD`, TaxYear.fromDownstream("2023")))
+            quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2023")))
           )
       }
 
