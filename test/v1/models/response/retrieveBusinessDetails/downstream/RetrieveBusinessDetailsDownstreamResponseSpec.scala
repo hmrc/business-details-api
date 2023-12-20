@@ -16,7 +16,8 @@
 
 package v1.models.response.retrieveBusinessDetails.downstream
 
-import play.api.libs.json.{JsValue, Json, Reads}
+import api.models.domain.TaxYear
+import play.api.libs.json.Json
 import support.UnitSpec
 
 class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
@@ -24,25 +25,35 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
   "reads" should {
     "read the response from DES" when {
       "only business data is supplied" in {
-        Json.parse(
-          """
-            |{
-            |  "safeId": "XE00001234567890",
-            |  "nino": "AA123456A",
-            |  "mtdbsa": "123456789012345",
-            |  "yearOfMigration": "2023",
-            |  "propertyIncome": false,
-            |  "businessData": [{
-            |    "incomeSourceId": "XAIS12345678910",
-            |    "accountingPeriodStartDate": "2001-01-01",
-            |    "accountingPeriodEndDate": "2001-01-02"
-            |  }]
-            |}
-            |""".stripMargin
-        ).as[RetrieveBusinessDetailsDownstreamResponse] shouldBe RetrieveBusinessDetailsDownstreamResponse(
+        val result = Json
+          .parse(
+            """
+              |{
+              |  "safeId": "XE00001234567890",
+              |  "nino": "AA123456A",
+              |  "mtdbsa": "123456789012345",
+              |  "yearOfMigration": "2023",
+              |  "propertyIncome": false,
+              |  "businessData": [
+              |   {
+              |    "incomeSourceId": "XAIS12345678910",
+              |    "accountingPeriodStartDate": "2001-01-01",
+              |    "accountingPeriodEndDate": "2001-01-02",
+              |    "quarterTypeElection": {
+              |      "quarterReportingType": "STANDARD",
+              |      "taxYearofElection": "2024"
+              |    }
+              |   }
+              |  ]
+              |}
+              |""".stripMargin
+          )
+          .as[RetrieveBusinessDetailsDownstreamResponse]
+
+        val expected = RetrieveBusinessDetailsDownstreamResponse(
           yearOfMigration = Some("2023"),
-          businessData = Some(Seq(
-            BusinessData(
+          businessData = Some(
+            List(BusinessData(
               incomeSourceId = "XAIS12345678910",
               tradingName = None,
               accountingPeriodStartDate = "2001-01-01",
@@ -53,68 +64,86 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
               cashOrAccruals = None,
               tradingStartDate = None,
               cessationDate = None,
-              businessAddressDetails = None))),
-          propertyData = None)
+              businessAddressDetails = None,
+              quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromMtd("2023-24")))
+            ))),
+          propertyData = None
+        )
+
+        result shouldBe expected
       }
 
       "only property data is supplied" in {
-        Json.parse(
-          """
-            |{
-            |  "safeId": "XE00001234567890",
-            |  "nino": "AA123456A",
-            |  "mtdbsa": "123456789012345",
-            |  "propertyIncome": true,
-            |  "yearOfMigration": "2023",
-            |  "propertyData": [{
-            |    "incomeSourceId": "X0IS123456789012",
-            |    "accountingPeriodStartDate": "2019-04-06",
-            |    "accountingPeriodEndDate": "2020-04-05"
-            |  }]
-            |}
-            |""".stripMargin
-        ).as[RetrieveBusinessDetailsDownstreamResponse] shouldBe RetrieveBusinessDetailsDownstreamResponse(
+        val result = Json
+          .parse(
+            """
+              |{
+              |  "safeId": "XE00001234567890",
+              |  "nino": "AA123456A",
+              |  "mtdbsa": "123456789012345",
+              |  "propertyIncome": true,
+              |  "yearOfMigration": "2023",
+              |  "propertyData": [{
+              |    "incomeSourceId": "X0IS123456789012",
+              |    "accountingPeriodStartDate": "2019-04-06",
+              |    "accountingPeriodEndDate": "2020-04-05"
+              |  }]
+              |}
+              |""".stripMargin
+          )
+          .as[RetrieveBusinessDetailsDownstreamResponse]
+
+        val expected = RetrieveBusinessDetailsDownstreamResponse(
           yearOfMigration = Some("2023"),
           businessData = None,
-          propertyData = Some(Seq(PropertyData(
-            incomeSourceType = None,
-            incomeSourceId = "X0IS123456789012",
-            accountingPeriodStartDate = "2019-04-06",
-            accountingPeriodEndDate = "2020-04-05",
-            firstAccountingPeriodStartDate = None,
-            firstAccountingPeriodEndDate = None,
-            latencyDetails = None,
-            cashOrAccruals = None,
-            tradingStartDate = None,
-            cessationDate = None))))
+          propertyData = Some(
+            List(PropertyData(
+              incomeSourceType = None,
+              incomeSourceId = "X0IS123456789012",
+              accountingPeriodStartDate = "2019-04-06",
+              accountingPeriodEndDate = "2020-04-05",
+              firstAccountingPeriodStartDate = None,
+              firstAccountingPeriodEndDate = None,
+              latencyDetails = None,
+              cashOrAccruals = None,
+              tradingStartDate = None,
+              cessationDate = None,
+              quarterTypeElection = None
+            )))
+        )
+
+        result shouldBe expected
       }
     }
 
     "read the response from IFS" when {
       "only business data is supplied" in {
+        val result = Json
+          .parse(
+            """
+                |{
+                |  "processingDate": "2023-07-05T09:16:58.655Z",
+                |  "taxPayerDisplayResponse": {
+                |    "safeId": "XE00001234567890",
+                |    "nino": "AA123456A",
+                |    "mtdbsa": "123456789012345",
+                |    "yearOfMigration": "2023",
+                |    "propertyIncome": false,
+                |    "businessData": [{
+                |      "incomeSourceId": "XAIS12345678910",
+                |      "accountingPeriodStartDate": "2001-01-01",
+                |      "accountingPeriodEndDate": "2001-01-02"
+                |    }]
+                |  }
+                |}
+                |""".stripMargin
+          )
+          .as[RetrieveBusinessDetailsDownstreamResponse]
 
-        Json.parse(
-          """
-            |{
-            |  "processingDate": "2023-07-05T09:16:58.655Z",
-            |  "taxPayerDisplayResponse": {
-            |    "safeId": "XE00001234567890",
-            |    "nino": "AA123456A",
-            |    "mtdbsa": "123456789012345",
-            |    "yearOfMigration": "2023",
-            |    "propertyIncome": false,
-            |    "businessData": [{
-            |      "incomeSourceId": "XAIS12345678910",
-            |      "accountingPeriodStartDate": "2001-01-01",
-            |      "accountingPeriodEndDate": "2001-01-02"
-            |    }]
-            |  }
-            |}
-            |""".stripMargin
-        ).as[RetrieveBusinessDetailsDownstreamResponse] shouldBe RetrieveBusinessDetailsDownstreamResponse(
+        val expected = RetrieveBusinessDetailsDownstreamResponse(
           yearOfMigration = Some("2023"),
-          businessData = Some(Seq(
-            BusinessData(
+          businessData = Some(
+            List(BusinessData(
               incomeSourceId = "XAIS12345678910",
               tradingName = None,
               accountingPeriodStartDate = "2001-01-01",
@@ -125,51 +154,60 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
               cashOrAccruals = None,
               tradingStartDate = None,
               cessationDate = None,
-              businessAddressDetails = None))),
-          propertyData = None)
+              businessAddressDetails = None,
+              quarterTypeElection = None
+            ))),
+          propertyData = None
+        )
+
+        result shouldBe expected
       }
 
       "only property data is supplied" in {
-        Json.parse(
-          """
-            |{
-            |  "processingDate": "2023-07-05T09:16:58.655Z",
-            |  "taxPayerDisplayResponse": {
-            |    "safeId": "XE00001234567890",
-            |    "nino": "AA123456A",
-            |    "mtdbsa": "123456789012345",
-            |    "propertyIncome": true,
-            |    "yearOfMigration": "2023",
-            |    "propertyData": [{
-            |      "incomeSourceId": "X0IS123456789012",
-            |      "accountingPeriodStartDate": "2019-04-06",
-            |      "accountingPeriodEndDate": "2020-04-05"
-            |    }]
-            |  }
-            |}
-            |""".stripMargin
-        ).as[RetrieveBusinessDetailsDownstreamResponse] shouldBe RetrieveBusinessDetailsDownstreamResponse(
+        val result = Json
+          .parse(
+            """
+              |{
+              |  "processingDate": "2023-07-05T09:16:58.655Z",
+              |  "taxPayerDisplayResponse": {
+              |    "safeId": "XE00001234567890",
+              |    "nino": "AA123456A",
+              |    "mtdbsa": "123456789012345",
+              |    "propertyIncome": true,
+              |    "yearOfMigration": "2023",
+              |    "propertyData": [{
+              |      "incomeSourceId": "X0IS123456789012",
+              |      "accountingPeriodStartDate": "2019-04-06",
+              |      "accountingPeriodEndDate": "2020-04-05"
+              |    }]
+              |  }
+              |}
+              |""".stripMargin
+          )
+          .as[RetrieveBusinessDetailsDownstreamResponse]
+
+        val expected = RetrieveBusinessDetailsDownstreamResponse(
           yearOfMigration = Some("2023"),
           businessData = None,
-          propertyData = Some(Seq(PropertyData(
-            incomeSourceType = None,
-            incomeSourceId = "X0IS123456789012",
-            accountingPeriodStartDate = "2019-04-06",
-            accountingPeriodEndDate = "2020-04-05",
-            firstAccountingPeriodStartDate = None,
-            firstAccountingPeriodEndDate = None,
-            latencyDetails = None,
-            cashOrAccruals = None,
-            tradingStartDate = None,
-            cessationDate = None))))
+          propertyData = Some(
+            List(PropertyData(
+              incomeSourceType = None,
+              incomeSourceId = "X0IS123456789012",
+              accountingPeriodStartDate = "2019-04-06",
+              accountingPeriodEndDate = "2020-04-05",
+              firstAccountingPeriodStartDate = None,
+              firstAccountingPeriodEndDate = None,
+              latencyDetails = None,
+              cashOrAccruals = None,
+              tradingStartDate = None,
+              cessationDate = None,
+              quarterTypeElection = None
+            )))
+        )
+
+        result shouldBe expected
       }
     }
-  }
-
-  trait Test {
-    val downstreamJson: JsValue
-    val responseBody: RetrieveBusinessDetailsDownstreamResponse
-    implicit val responseReads: Reads[RetrieveBusinessDetailsDownstreamResponse]
   }
 
 }

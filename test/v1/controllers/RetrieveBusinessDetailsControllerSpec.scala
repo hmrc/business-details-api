@@ -29,7 +29,7 @@ import play.api.mvc.Result
 import utils.MockIdGenerator
 import v1.controllers.validators.MockRetrieveBusinessDetailsValidatorFactory
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
-import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator}
+import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator, QuarterReportingType, QuarterTypeElection}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
 import v1.services.MockRetrieveBusinessDetailsService
 
@@ -37,7 +37,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RetrieveBusinessDetailsControllerSpec
-  extends ControllerBaseSpec
+    extends ControllerBaseSpec
     with ControllerTestRunner
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
@@ -47,7 +47,7 @@ class RetrieveBusinessDetailsControllerSpec
     with MockIdGenerator
     with MockAppConfig {
 
-  private val businessId = "XAIS12345678910"
+  private val businessId      = "XAIS12345678910"
   private val testHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
 
   private val responseBody = Json.parse(
@@ -81,6 +81,10 @@ class RetrieveBusinessDetailsControllerSpec
       |     "latencyIndicator2": "Q"
       |   },
       |   "yearOfMigration": "2023",
+      |   "quarterlyTypeChoice": {
+      |     "quarterlyPeriodType": "standard",
+      |     "taxYearOfChoice": "2023-24"
+      |   },
       |   "links": [
       |     {
       |       "href": "/foo/bar",
@@ -108,8 +112,15 @@ class RetrieveBusinessDetailsControllerSpec
     Some("GB"),
     Some("2018-04-06"),
     Some("2018-12-12"),
-    Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
-    Some("2023")
+    Some(
+      LatencyDetails(
+        "2018-12-12",
+        TaxYear.fromDownstream("2018"),
+        LatencyIndicator.Annual,
+        TaxYear.fromDownstream("2019"),
+        LatencyIndicator.Quarterly)),
+    Some("2023"),
+    Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromMtd("2023-24")))
   )
 
   private val requestData = RetrieveBusinessDetailsRequestData(Nino(nino), BusinessId(businessId))

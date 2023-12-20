@@ -20,29 +20,31 @@ import api.models.domain.AccountingType
 import play.api.libs.json.{JsPath, Json, Reads}
 
 case class BusinessData(
-                         incomeSourceId: String,
-                         accountingPeriodStartDate: String,
-                         accountingPeriodEndDate: String,
-                         tradingName: Option[String],
-                         businessAddressDetails: Option[BusinessAddressDetails],
-                         tradingStartDate: Option[String],
-                         cashOrAccruals: Option[AccountingType],
-                         cessationDate: Option[String],
-                         firstAccountingPeriodStartDate: Option[String],
-                         firstAccountingPeriodEndDate: Option[String],
-                         latencyDetails: Option[LatencyDetails]
-                       )
+    incomeSourceId: String,
+    accountingPeriodStartDate: String,
+    accountingPeriodEndDate: String,
+    tradingName: Option[String],
+    businessAddressDetails: Option[BusinessAddressDetails],
+    tradingStartDate: Option[String],
+    cashOrAccruals: Option[AccountingType],
+    cessationDate: Option[String],
+    firstAccountingPeriodStartDate: Option[String],
+    firstAccountingPeriodEndDate: Option[String],
+    latencyDetails: Option[LatencyDetails],
+    quarterTypeElection: Option[QuarterTypeElection]
+)
 
 object BusinessData {
+
   private implicit val acctTypeReads: Reads[AccountingType] = {
     val readBoolean: Reads[AccountingType] = JsPath.read[Boolean].map { flag =>
       if (flag) AccountingType.ACCRUALS else AccountingType.CASH
     }
 
     val readString: Reads[AccountingType] = JsPath.read[String].map {
-      case "cash" => AccountingType.CASH
+      case "cash"     => AccountingType.CASH
       case "accruals" => AccountingType.ACCRUALS
-      case other => throw new RuntimeException(s"Unexpected cashOrAccruals '$other'")
+      case other      => throw new RuntimeException(s"Unexpected cashOrAccruals '$other'")
     }
 
     readBoolean orElse readString

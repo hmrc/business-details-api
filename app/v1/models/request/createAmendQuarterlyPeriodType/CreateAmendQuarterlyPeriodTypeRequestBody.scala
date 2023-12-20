@@ -19,7 +19,6 @@ package v1.models.request.createAmendQuarterlyPeriodType
 import play.api.libs.json.{Json, OWrites, Reads}
 import shapeless.HNil
 import utils.EmptinessChecker
-import v1.models.domain.QuarterlyPeriodType
 
 import scala.annotation.nowarn
 

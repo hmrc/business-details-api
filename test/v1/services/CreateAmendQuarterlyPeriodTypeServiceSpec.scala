@@ -21,8 +21,7 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import v1.connectors.MockCreateAmendQuarterlyPeriodTypeConnector
-import v1.models.domain.QuarterlyPeriodType
-import v1.models.request.createAmendQuarterlyPeriodType.{CreateAmendQuarterlyPeriodTypeRequestBody, CreateAmendQuarterlyPeriodTypeRequestData}
+import v1.models.request.createAmendQuarterlyPeriodType.{CreateAmendQuarterlyPeriodTypeRequestBody, CreateAmendQuarterlyPeriodTypeRequestData, QuarterlyPeriodType}
 
 import scala.concurrent.Future
 

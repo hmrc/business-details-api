@@ -20,6 +20,12 @@
       "end": "2024-04-05"
     }
   ],
+  {{#if (enabled 'scp005a_QuarterlyTypeChoice')}}
+  "quarterlyTypeChoice": {
+    "quarterlyPeriodType": "standard",
+    "taxYearOfChoice": "2023-24"
+  },
+  {{/if}}
   "accountingType": "ACCRUALS",
   "commencementDate": "2023-04-06",
   "cessationDate": "2024-04-05",

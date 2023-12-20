@@ -103,6 +103,30 @@
       ]
     },
     {{/if}}
+    {{#if (enabled 'scp005a_QuarterlyTypeChoice')}}
+    "quarterlyTypeChoice": {
+      "type": "object",
+      "description": "{{#unless (releasedInProduction 'scp005a_QuarterlyTypeChoice')}}[Test only] {{/unless}}Quarterly reporting period type.",
+      "properties": {
+        "quarterlyPeriodType": {
+          "type": "string",
+          "enum": ["standard", "calendar"],
+          "description": "The quarterly period type that is being chosen for the business ID.",
+          "example": "standard"
+        },
+        "taxYearOfChoice": {
+          "type": "string",
+          "description": "The tax year for which the quarterly period type was chosen.",
+          "pattern": "^2[0-9]{3}-[0-9]{2}$",
+          "example": "2023-24"
+        }
+      },
+      "taxYearOfChoice": [
+        "quarterlyPeriodType",
+        "taxYear1"
+      ]
+    },
+    {{/if}}
     "accountingPeriods": {
       "type": "array",
       "description": "The start and end dates of the latest accounting period for the business. This array contains dates for the latest accounting period only.",

@@ -16,14 +16,20 @@
 
 package v1.services
 
-import api.models.domain.{AccountingType, BusinessId, Nino, TypeOfBusiness}
+import api.models.domain.{AccountingType, BusinessId, Nino, TaxYear, TypeOfBusiness}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import config.MockFeatureSwitches
 import v1.connectors.MockRetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
-import v1.models.response.retrieveBusinessDetails.downstream.{BusinessData, PropertyData, RetrieveBusinessDetailsDownstreamResponse}
+import v1.models.response.retrieveBusinessDetails.downstream.{
+  BusinessData,
+  PropertyData,
+  QuarterReportingType,
+  QuarterTypeElection,
+  RetrieveBusinessDetailsDownstreamResponse
+}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
@@ -34,7 +40,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
 
   private def requestDataFor(businessId: String) = RetrieveBusinessDetailsRequestData(nino, BusinessId(businessId))
 
-  private val cashOrAcruals = Some(AccountingType.ACCRUALS)
+  private val cashOrAcruals   = Some(AccountingType.ACCRUALS)
   private val yearOfMigration = Some("migrationYear")
 
   private def propertyData(incomeSourceId: String) =
@@ -48,14 +54,15 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
       latencyDetails = None,
       cashOrAccruals = cashOrAcruals,
       tradingStartDate = None,
-      cessationDate = None
+      cessationDate = None,
+      quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.`CALENDAR`, TaxYear.fromMtd("2023-24")))
     )
 
   private def propertyResponse(incomeSourceId: String) = RetrieveBusinessDetailsResponse(
     businessId = incomeSourceId,
     typeOfBusiness = TypeOfBusiness.`foreign-property`,
     tradingName = None,
-    accountingPeriods = Seq(AccountingPeriod("accStartDate", "accEndDate")),
+    accountingPeriods = List(AccountingPeriod("accStartDate", "accEndDate")),
     accountingType = cashOrAcruals,
     commencementDate = None,
     cessationDate = None,
@@ -68,7 +75,8 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     firstAccountingPeriodStartDate = None,
     firstAccountingPeriodEndDate = None,
     latencyDetails = None,
-    yearOfMigration = yearOfMigration
+    yearOfMigration = yearOfMigration,
+    quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`CALENDAR`, TaxYear.fromMtd("2023-24")))
   )
 
   private def businessData(incomeSourceId: String) =
@@ -83,15 +91,15 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
       latencyDetails = None,
       cashOrAccruals = cashOrAcruals,
       tradingStartDate = None,
-      cessationDate = None
+      cessationDate = None,
+      quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.`CALENDAR`, TaxYear.fromMtd("2023-24")))
     )
-
 
   private def selfEmploymentResponse(incomeSourceId: String) = RetrieveBusinessDetailsResponse(
     businessId = incomeSourceId,
     typeOfBusiness = TypeOfBusiness.`self-employment`,
     tradingName = None,
-    accountingPeriods = Seq(AccountingPeriod("accStartDate", "accEndDate")),
+    accountingPeriods = List(AccountingPeriod("accStartDate", "accEndDate")),
     accountingType = cashOrAcruals,
     commencementDate = None,
     cessationDate = None,
@@ -104,87 +112,104 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     firstAccountingPeriodStartDate = None,
     firstAccountingPeriodEndDate = None,
     latencyDetails = None,
-    yearOfMigration = yearOfMigration
+    yearOfMigration = yearOfMigration,
+    quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`CALENDAR`, TaxYear.fromMtd("2023-24")))
   )
-
 
   "service" when {
     "a connector call is successful" when {
       "a unique matching property business is found" must {
-        s"find and convert to MTD" in new Test {
-          testServiceWith(requestDataFor("businessId"),
-            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration,
+        "find and convert to MTD" in new Test with scp005aEnabled {
+          testServiceWith(
+            requestDataFor("businessId"),
+            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration, businessData = None, propertyData = Some(List(propertyData("businessId"))))
+          ) shouldBe Right(ResponseWrapper(correlationId, propertyResponse("businessId")))
+        }
+      }
+
+      "the scp005a_quarterlyTypeChoice feature switch is disabled" must {
+        "return a response with the quarterlyTypeChoice field removed" in new Test with scp005aDisabled {
+          testServiceWith(
+            requestDataFor("businessId"),
+            RetrieveBusinessDetailsDownstreamResponse(
+              yearOfMigration,
               businessData = None,
-              propertyData = Some(Seq(propertyData("otherBusinessId"), propertyData("businessId")))
-            )) shouldBe Right(ResponseWrapper(correlationId, propertyResponse("businessId")))
+              propertyData = Some(List(propertyData("otherBusinessId"), propertyData("businessId"))))
+          ) shouldBe Right(ResponseWrapper(correlationId, propertyResponse("businessId").copy(quarterlyTypeChoice = None)))
         }
       }
 
       "a unique matching self-employment business is found" must {
-        "find and convert to MTD" in new Test {
-          testServiceWith(requestDataFor("businessId"),
-            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration,
-              businessData = Some(Seq(businessData("otherBusinessId"), businessData("businessId"))),
-              propertyData = None
-            )) shouldBe Right(ResponseWrapper(correlationId, selfEmploymentResponse("businessId")))
+        "find and convert to MTD" in new Test with scp005aEnabled {
+          testServiceWith(
+            requestDataFor("businessId"),
+            RetrieveBusinessDetailsDownstreamResponse(
+              yearOfMigration,
+              businessData = Some(List(businessData("otherBusinessId"), businessData("businessId"))),
+              propertyData = None)
+          ) shouldBe Right(ResponseWrapper(correlationId, selfEmploymentResponse("businessId")))
         }
       }
 
       "multiple matching property businesses are found" must {
-        "return duplicate result" in new Test {
-          testServiceWith(requestDataFor("businessId"),
-            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration,
+        "return duplicate result" in new Test with scp005aEnabled {
+          testServiceWith(
+            requestDataFor("businessId"),
+            RetrieveBusinessDetailsDownstreamResponse(
+              yearOfMigration,
               businessData = None,
-              propertyData = Some(Seq(propertyData("businessId"), propertyData("businessId")))
-            )) shouldBe Left(ErrorWrapper(correlationId, InternalError))
+              propertyData = Some(List(propertyData("businessId"), propertyData("businessId"))))
+          ) shouldBe Left(ErrorWrapper(correlationId, InternalError))
         }
       }
 
       "multiple matching self-employment businesses are found" must {
-        "return an internal error" in new Test {
-          testServiceWith(requestDataFor("businessId"),
-            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration,
-              businessData = Some(Seq(businessData("businessId"), businessData("businessId"))),
-              propertyData = None
-            )) shouldBe Left(ErrorWrapper(correlationId, InternalError))
+        "return an internal error" in new Test with scp005aEnabled {
+          testServiceWith(
+            requestDataFor("businessId"),
+            RetrieveBusinessDetailsDownstreamResponse(
+              yearOfMigration,
+              businessData = Some(List(businessData("businessId"), businessData("businessId"))),
+              propertyData = None)
+          ) shouldBe Left(ErrorWrapper(correlationId, InternalError))
         }
       }
 
       "a matching property business and a self-employment business are found" must {
-        "return duplicate result" in new Test {
-          testServiceWith(requestDataFor("businessId"),
-            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration,
-              businessData = Some(Seq(businessData("businessId"))),
-              propertyData = Some(Seq(propertyData("businessId")))
-            )) shouldBe Left(ErrorWrapper(correlationId, InternalError))
+        "return duplicate result" in new Test with scp005aEnabled {
+          testServiceWith(
+            requestDataFor("businessId"),
+            RetrieveBusinessDetailsDownstreamResponse(
+              yearOfMigration,
+              businessData = Some(List(businessData("businessId"))),
+              propertyData = Some(List(propertyData("businessId"))))
+          ) shouldBe Left(ErrorWrapper(correlationId, InternalError))
         }
       }
 
       "nothing matching is found" must {
-        "return a not found result" in new Test {
-          testServiceWith(requestDataFor("businessId"),
-            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration,
-              businessData = None,
-              propertyData = None
-            )) shouldBe Left(ErrorWrapper(correlationId, NoBusinessFoundError))
+        "return a not found result" in new Test with scp005aEnabled {
+          testServiceWith(
+            requestDataFor("businessId"),
+            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration, businessData = None, propertyData = None)) shouldBe Left(
+            ErrorWrapper(correlationId, NoBusinessFoundError))
         }
       }
 
       "nothing found when the property/business data arrays are present but empty" must {
-        "return a not found result" in new Test {
-          testServiceWith(requestDataFor("businessId"),
-            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration,
-              businessData = Some(Nil),
-              propertyData = Some(Nil)
-            )) shouldBe Left(ErrorWrapper(correlationId, NoBusinessFoundError))
+        "return a not found result" in new Test with scp005aEnabled {
+          testServiceWith(
+            requestDataFor("businessId"),
+            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration, businessData = Some(Nil), propertyData = Some(Nil))) shouldBe Left(
+            ErrorWrapper(correlationId, NoBusinessFoundError))
         }
       }
     }
 
     "a connector call is unsuccessful" should {
       def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
-        s"return ${error.code} when $downstreamErrorCode error is returned from the service" in new Test {
-          val requestData = requestDataFor("someBusinessId")
+        s"return ${error.code} when $downstreamErrorCode error is returned from the service" in new Test with scp005aEnabled {
+          val requestData: RetrieveBusinessDetailsRequestData = requestDataFor("someBusinessId")
 
           MockedRetrieveBusinessDetailsConnector
             .retrieveBusinessDetails(requestData)
@@ -220,11 +245,22 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
 
     protected val service = new RetrieveBusinessDetailsService(mockRetrieveBusinessDetailsConnector)
 
-    protected def testServiceWith(requestData: RetrieveBusinessDetailsRequestData, downstreamResponse: RetrieveBusinessDetailsDownstreamResponse): ServiceOutcome[RetrieveBusinessDetailsResponse] = {
+    protected def testServiceWith(requestData: RetrieveBusinessDetailsRequestData,
+                                  downstreamResponse: RetrieveBusinessDetailsDownstreamResponse): ServiceOutcome[RetrieveBusinessDetailsResponse] = {
       MockedRetrieveBusinessDetailsConnector
         .retrieveBusinessDetails(requestData) returns Future.successful(Right(ResponseWrapper(correlationId, downstreamResponse)))
 
       await(service.retrieveBusinessDetailsService(requestData))
     }
+
   }
+
+  private trait scp005aEnabled extends MockFeatureSwitches {
+    MockFeatureSwitches.isScp005aQuarterlyTypeChoiceEnabled.returns(true).anyNumberOfTimes()
+  }
+
+  private trait scp005aDisabled extends MockFeatureSwitches {
+    MockFeatureSwitches.isScp005aQuarterlyTypeChoiceEnabled.returns(false).anyNumberOfTimes()
+  }
+
 }

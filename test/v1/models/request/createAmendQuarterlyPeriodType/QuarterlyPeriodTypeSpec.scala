@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package v1.models.domain
+package v1.models.request.createAmendQuarterlyPeriodType
 
 import play.api.libs.json._
 import support.UnitSpec
-import v1.models.domain.QuarterlyPeriodType._
+import v1.models.request.createAmendQuarterlyPeriodType.QuarterlyPeriodType._
 
 class QuarterlyPeriodTypeSpec extends UnitSpec {
 

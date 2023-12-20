@@ -26,7 +26,7 @@ trait FeatureSwitches {
 
   def isIfsEnabled: Boolean
   def isEndpoint2089Enabled: Boolean
-  def isScp005a_QuarterlyTypeChoiceEnabled: Boolean
+  def isScp005aQuarterlyTypeChoiceEnabled: Boolean
   def isEnabled(key: String): Boolean
   def isReleasedInProduction(feature: String): Boolean
 }
@@ -39,7 +39,7 @@ class FeatureSwitchesImpl(featureSwitchConfig: Configuration) extends FeatureSwi
 
   val isIfsEnabled: Boolean                         = isEnabled("ifs")
   val isEndpoint2089Enabled: Boolean                = isEnabled("endpoint-2089")
-  val isScp005a_QuarterlyTypeChoiceEnabled: Boolean = isEnabled("scp005a_QuarterlyTypeChoice")
+  val isScp005aQuarterlyTypeChoiceEnabled: Boolean = isEnabled("scp005a_QuarterlyTypeChoice")
 
   def isEnabled(key: String): Boolean = isConfigTrue(key + ".enabled")
 

@@ -21,12 +21,14 @@ import play.api.libs.json.Json
 import support.UnitSpec
 
 class PropertyDataSpec extends UnitSpec {
+
   "PropertyData" when {
     "read from JSON" must {
       "work" in {
 
-        Json.parse(
-          """
+        Json
+          .parse(
+            """
             |{
             |  "incomeSourceType": "foreign-property",
             |  "incomeSourceId": "X0IS123456789012",
@@ -51,10 +53,15 @@ class PropertyDataSpec extends UnitSpec {
             |  "cessationDate": "2020-01-01",
             |  "cessationReason": "002",
             |  "paperLess": true,
-            |  "incomeSourceStartDate": "2019-07-14"
+            |  "incomeSourceStartDate": "2019-07-14",
+            |  "quarterTypeElection": {
+            |   "quarterReportingType": "STANDARD",
+            |   "taxYearofElection": "2023"
+            |  }
             |}
             |""".stripMargin
-        ).as[PropertyData] shouldBe
+          )
+          .as[PropertyData] shouldBe
           PropertyData(
             incomeSourceType = Some(TypeOfBusiness.`foreign-property`),
             incomeSourceId = "X0IS123456789012",
@@ -62,10 +69,17 @@ class PropertyDataSpec extends UnitSpec {
             accountingPeriodEndDate = "2020-04-05",
             firstAccountingPeriodStartDate = Some("2018-04-06"),
             firstAccountingPeriodEndDate = Some("2018-12-12"),
-            latencyDetails = Some(LatencyDetails("2018-12-12", TaxYear.fromDownstream("2018"), LatencyIndicator.Annual, TaxYear.fromDownstream("2019"), LatencyIndicator.Quarterly)),
+            latencyDetails = Some(
+              LatencyDetails(
+                "2018-12-12",
+                TaxYear.fromDownstream("2018"),
+                LatencyIndicator.Annual,
+                TaxYear.fromDownstream("2019"),
+                LatencyIndicator.Quarterly)),
             cashOrAccruals = Some(AccountingType.ACCRUALS),
             tradingStartDate = Some("2017-07-24"),
-            cessationDate = Some("2020-01-01")
+            cessationDate = Some("2020-01-01"),
+            quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2023")))
           )
       }
 
@@ -81,7 +95,9 @@ class PropertyDataSpec extends UnitSpec {
             latencyDetails = None,
             cashOrAccruals = accountingType,
             tradingStartDate = None,
-            cessationDate = None)
+            cessationDate = None,
+            quarterTypeElection = None
+          )
 
         "using IFS (which has boolean cashOrAccruals)" when {
           def json(cashOrAccruals: Boolean) =
@@ -105,15 +121,17 @@ class PropertyDataSpec extends UnitSpec {
           }
 
           "field is missing" in {
-            Json.parse(
-              s"""
+            Json
+              .parse(
+                s"""
                  |{
                  |  "incomeSourceId": "XAIS12345678910",
                  |  "accountingPeriodStartDate": "2001-01-01",
                  |  "accountingPeriodEndDate": "2001-01-02"
                  |}
                  |""".stripMargin
-            ).as[PropertyData] shouldBe data(None)
+              )
+              .as[PropertyData] shouldBe data(None)
           }
         }
 
@@ -140,18 +158,21 @@ class PropertyDataSpec extends UnitSpec {
         }
 
         "field is absent" in {
-          Json.parse(
-            s"""
+          Json
+            .parse(
+              s"""
                |{
                |  "incomeSourceId": "XAIS12345678910",
                |  "accountingPeriodStartDate": "2001-01-01",
                |  "accountingPeriodEndDate": "2001-01-02"
                |}
                |""".stripMargin
-          ).as[PropertyData] shouldBe data(None)
+            )
+            .as[PropertyData] shouldBe data(None)
         }
       }
     }
 
   }
+
 }
