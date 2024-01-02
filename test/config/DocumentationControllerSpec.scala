@@ -39,6 +39,12 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
       status(response) shouldBe OK
       await(response).body.contentLength.getOrElse(-99L) should be > 0L
     }
+
+    "return not found" in new Test {
+      val response: Future[Result] = requestAsset("cant-find")
+
+      status(response) shouldBe NOT_FOUND
+    }
   }
 
   "rewrite()" when {

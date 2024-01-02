@@ -16,6 +16,7 @@
 
 package api.models.errors
 
+import play.api.http.Status.BAD_REQUEST
 import play.api.libs.json.Json
 import support.UnitSpec
 
@@ -88,6 +89,28 @@ class ErrorWrapperSpec extends UnitSpec {
 
     "generate the correct JSON" in {
       Json.toJson(error) shouldBe json
+    }
+  }
+
+  "containsAnyOf" should {
+    "return true when the error matches one of the errorsToCheck" in {
+      val error1 = MtdError("ERROR_1", "Error message 1", BAD_REQUEST)
+      val error2 = MtdError("ERROR_2", "Error message 2", BAD_REQUEST)
+
+      val errorWrapper = ErrorWrapper("correlationId", error1)
+
+      val result = errorWrapper.containsAnyOf(error1, error2)
+      result shouldBe true
+    }
+
+    "return false when the error does not match one of the errorsToCheck" in {
+      val error1 = MtdError("ERROR_1", "Error message 1", BAD_REQUEST)
+      val error2 = MtdError("ERROR_2", "Error message 2", BAD_REQUEST)
+
+      val errorWrapper = ErrorWrapper("correlationId", error1)
+
+      val result = errorWrapper.containsAnyOf(error2)
+      result shouldBe false
     }
   }
 
