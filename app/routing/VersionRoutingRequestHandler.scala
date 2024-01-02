@@ -36,7 +36,7 @@ class VersionRoutingRequestHandler @Inject() (versionRoutingMap: VersionRoutingM
     extends DefaultHttpRequestHandler(
       webCommands = new DefaultWebCommands,
       optDevContext = None,
-      router = versionRoutingMap.defaultRouter,
+      router = () => versionRoutingMap.defaultRouter,
       errorHandler = errorHandler,
       configuration = httpConfiguration,
       filters = filters.filters
@@ -52,14 +52,14 @@ class VersionRoutingRequestHandler @Inject() (versionRoutingMap: VersionRoutingM
 
     def apiHandler: Option[Handler] =
       Versions.getFromRequest(request) match {
-        case Left(InvalidHeader) => Some(invalidAcceptHeaderError)
+        case Left(InvalidHeader)   => Some(invalidAcceptHeaderError)
         case Left(VersionNotFound) => Some(unsupportedVersionAction)
 
         case Right(version) =>
           versionRoutingMap.versionRouter(version) match {
             case Some(versionRouter) if config.endpointsEnabled(version) => routeWith(versionRouter)(request)
-            case Some(_) => Some(unsupportedVersionAction)
-            case None => Some(unsupportedVersionAction)
+            case Some(_)                                                 => Some(unsupportedVersionAction)
+            case None                                                    => Some(unsupportedVersionAction)
           }
       }
 
@@ -71,7 +71,7 @@ class VersionRoutingRequestHandler @Inject() (versionRoutingMap: VersionRoutingM
       .handlerFor(request)
       .orElse {
         if (request.path.endsWith("/")) {
-          val pathWithoutSlash = request.path.dropRight(1)
+          val pathWithoutSlash        = request.path.dropRight(1)
           val requestWithModifiedPath = request.withTarget(request.target.withPath(pathWithoutSlash))
           router.handlerFor(requestWithModifiedPath)
         } else {

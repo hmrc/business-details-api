@@ -16,14 +16,12 @@
 
 package config
 
-import akka.actor.ActorSystem
-import akka.stream.Materializer
 import api.controllers.ControllerBaseSpec
 import com.typesafe.config.ConfigFactory
 import config.rewriters._
 import controllers.{AssetsConfiguration, DefaultAssetsMetadata, RewriteableAssets}
 import definition.ApiDefinitionFactory
-import play.api.Configuration
+import play.api.{Configuration, Environment}
 import play.api.http.{DefaultFileMimeTypes, DefaultHttpErrorHandler, FileMimeTypesConfiguration, HttpConfiguration}
 import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier
@@ -73,9 +71,6 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
         val response: Future[Result] = requestAsset("application.yaml", accept = "text/plain")
         status(response) shouldBe OK
 
-        val as: ActorSystem                     = ActorSystem()
-        implicit val materializer: Materializer = Materializer(as) // needed for contentAsString(), which defaults to NoMaterializer
-
         private val result = contentAsString(response)
 
         result should include("""  title: Business Details (MTD)""")
@@ -97,7 +92,7 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
     protected def requestAsset(filename: String, accept: String = "text/yaml"): Future[Result] =
       controller.asset("1.0", filename)(fakeGetRequest.withHeaders(ACCEPT -> accept))
 
-    protected def invalidAsset(filename:String, accept:String = "text/yaml"): Future[Result] =
+    protected def invalidAsset(filename: String, accept: String = "text/yaml"): Future[Result] =
       controller.asset("1.0", filename)(fakeGetRequest.withHeaders(ACCEPT -> accept))
 
     protected def numberOfTestOnlyOccurrences(str: String): Int = "\\[test only]".r.findAllIn(str).size
@@ -127,7 +122,7 @@ class DocumentationControllerSpec extends ControllerBaseSpec with MockAppConfig 
       new OasFeatureRewriter()(mockAppConfig)
     )
 
-    private val assets       = new RewriteableAssets(errorHandler, assetsMetadata, mockAppConfig)
+    private val assets       = new RewriteableAssets(errorHandler, assetsMetadata, mock[Environment])
     protected val controller = new DocumentationController(apiFactory, docRewriters, assets, cc)
   }
 
