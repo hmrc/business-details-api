@@ -118,7 +118,7 @@ class TaxYearSpec extends UnitSpec {
     }
   }
 
-  "TaxYear.currentTaxYear()" should {
+  "TaxYear.currentTaxYear" should {
     "return the current tax year" in {
       val today = LocalDate.now(ZoneId.of("UTC"))
       val year  = today.getYear
@@ -130,6 +130,26 @@ class TaxYearSpec extends UnitSpec {
 
       val result = TaxYear.currentTaxYear()
       result.year shouldBe expectedYear
+    }
+  }
+
+  "TaxYear.useTaxYearSpecificApi()" should {
+    "return true" when {
+      "the taxYear is tax year specific" in {
+        val taxYear = TaxYear.fromMtd("2023-24")
+
+        val result = taxYear.useTaxYearSpecificApi
+        result shouldBe true
+      }
+    }
+
+    "return false" when {
+      "the taxYear is tax year specific" in {
+        val taxYear = TaxYear.fromMtd("2022-23")
+
+        val result = taxYear.useTaxYearSpecificApi
+        result shouldBe false
+      }
     }
   }
 
