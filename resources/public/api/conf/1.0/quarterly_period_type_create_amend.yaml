@@ -14,6 +14,7 @@ put:
     | BUSINESS_ID_NOT_FOUND	           | Simulates the scenario in which the business ID is not found.                                    |
     | BUSINESS_ID_STATE_CONFLICT       | Simulates the scenario in which the request conflicts with the current state of the business ID. |
     | QUARTERLY_PERIOD_UPDATING        | Simulates the scenario in which the quarterly period type cannot be changed for the current year as the business is treated as commencing in the following year. |
+    | STATEFUL                         | Performs a stateful create and update.                                                            |
 
   parameters:
     - $ref: './common/pathParameters.yaml#/components/parameters/nino'
