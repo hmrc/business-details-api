@@ -8,13 +8,13 @@ put:
     ### Test data
     Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.    
     
-    | Header Value (Gov-Test-Scenario) | Scenario                                                                                         |
-    |----------------------------------|--------------------------------------------------------------------------------------------------|
-    | N/A - DEFAULT                    | Simulate a successful response.                                                                  |
-    | BUSINESS_ID_NOT_FOUND	           | Simulates the scenario in which the business ID is not found.                                    |
-    | BUSINESS_ID_STATE_CONFLICT       | Simulates the scenario in which the request conflicts with the current state of the business ID. |
+    | Header Value (Gov-Test-Scenario) | Scenario                                                                                                                                                         |
+    |----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | N/A - DEFAULT                    | Simulate a successful response.                                                                                                                                  |
+    | BUSINESS_ID_NOT_FOUND	           | Simulates the scenario in which the business ID is not found.                                                                                                    |
+    | BUSINESS_ID_STATE_CONFLICT       | Simulates the scenario in which the request conflicts with the current state of the business ID.                                                                 |
     | QUARTERLY_PERIOD_UPDATING        | Simulates the scenario in which the quarterly period type cannot be changed for the current year as the business is treated as commencing in the following year. |
-    | STATEFUL                         | Performs a stateful create and update.                                                            |
+    | STATEFUL                         | Performs a stateful create and update.                                                                                                                           |
 
   parameters:
     - $ref: './common/pathParameters.yaml#/components/parameters/nino'
@@ -45,7 +45,7 @@ put:
       headers:
         X-CorrelationId:
           $ref: './common/headers.yaml#/components/parameters/correlationId'
-      content: {}
+      content: { }
 
     "400":
       description: Bad request
