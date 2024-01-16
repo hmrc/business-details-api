@@ -21,7 +21,7 @@ import api.hateoas.{HateoasData, HateoasLinks, HateoasListLinksFactory, Link}
 import cats.Functor
 import config.AppConfig
 import play.api.libs.json._
-import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse
+import v1.models.response.downstream.retrieveBusinessDetails.RetrieveBusinessDetailsDownstreamResponse
 
 case class ListAllBusinessesResponse[I](listOfBusinesses: Seq[I])
 

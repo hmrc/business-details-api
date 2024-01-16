@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package v1.models.response.retrieveBusinessDetails.downstream
+package v1.models.response.downstream.retrieveBusinessDetails
 
 import play.api.libs.json._
 import support.UnitSpec
-import v1.models.response.retrieveBusinessDetails.downstream.QuarterReportingType._
+import QuarterReportingType.{CALENDAR, STANDARD}
+import QuarterReportingType._
 
 class QuarterReportingTypeSpec extends UnitSpec {
 

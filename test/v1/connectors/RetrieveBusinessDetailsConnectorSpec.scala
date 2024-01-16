@@ -20,7 +20,7 @@ import api.connectors.ConnectorSpec
 import api.models.domain._
 import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
-import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse
+import v1.models.response.downstream.retrieveBusinessDetails.RetrieveBusinessDetailsDownstreamResponse
 
 import scala.concurrent.Future
 

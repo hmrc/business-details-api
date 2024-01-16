@@ -24,8 +24,8 @@ import cats.data.EitherT
 import cats.implicits._
 import v1.connectors.RetrieveBusinessDetailsConnector
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
+import v1.models.response.downstream.retrieveBusinessDetails.RetrieveBusinessDetailsDownstreamResponse
 import v1.models.response.listAllBusinesses.{Business, ListAllBusinessesResponse}
-import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

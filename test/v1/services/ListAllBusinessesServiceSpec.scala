@@ -22,8 +22,8 @@ import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import v1.connectors.MockRetrieveBusinessDetailsConnector
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
+import v1.models.response.downstream.retrieveBusinessDetails.{BusinessData, RetrieveBusinessDetailsDownstreamResponse}
 import v1.models.response.listAllBusinesses.{Business, ListAllBusinessesResponse}
-import v1.models.response.retrieveBusinessDetails.downstream.{BusinessData, RetrieveBusinessDetailsDownstreamResponse}
 
 import scala.concurrent.Future
 

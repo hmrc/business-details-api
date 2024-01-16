@@ -20,7 +20,7 @@ import api.hateoas.{HateoasData, HateoasLinks, HateoasLinksFactory, Link}
 import api.models.domain.{AccountingType, TypeOfBusiness}
 import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.{Json, OWrites}
-import v1.models.response.retrieveBusinessDetails.downstream.{BusinessData, LatencyDetails, PropertyData, QuarterTypeElection}
+import v1.models.response.downstream.retrieveBusinessDetails.{BusinessData, LatencyDetails, PropertyData, QuarterTypeElection}
 
 case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,

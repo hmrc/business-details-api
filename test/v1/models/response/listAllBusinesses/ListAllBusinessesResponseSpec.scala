@@ -23,7 +23,7 @@ import api.models.domain.TypeOfBusiness._
 import config.MockAppConfig
 import play.api.libs.json.Json
 import support.UnitSpec
-import v1.models.response.retrieveBusinessDetails.downstream.{BusinessData, PropertyData, RetrieveBusinessDetailsDownstreamResponse}
+import v1.models.response.downstream.retrieveBusinessDetails.{BusinessData, PropertyData, RetrieveBusinessDetailsDownstreamResponse}
 
 class ListAllBusinessesResponseSpec extends UnitSpec {
 

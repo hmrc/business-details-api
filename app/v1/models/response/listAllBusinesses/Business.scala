@@ -18,7 +18,7 @@ package v1.models.response.listAllBusinesses
 
 import api.models.domain.TypeOfBusiness
 import play.api.libs.json.{Json, OWrites}
-import v1.models.response.retrieveBusinessDetails.downstream.{BusinessData, PropertyData}
+import v1.models.response.downstream.retrieveBusinessDetails.{BusinessData, PropertyData}
 
 case class Business(typeOfBusiness: TypeOfBusiness, businessId: String, tradingName: Option[String])
 
