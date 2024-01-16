@@ -17,10 +17,10 @@
 package v1.connectors
 
 import api.connectors.DownstreamOutcome
+import api.models.domain.Nino
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
-import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
 import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,13 +32,13 @@ trait MockRetrieveBusinessDetailsConnector extends MockFactory {
   object MockedRetrieveBusinessDetailsConnector {
 
     def retrieveBusinessDetails(
-                                 requestData: RetrieveBusinessDetailsRequestData): CallHandler[Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]]] =
+                                 nino: Nino): CallHandler[Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]]] =
       (mockRetrieveBusinessDetailsConnector
-        .retrieveBusinessDetails(_: RetrieveBusinessDetailsRequestData)(
+        .retrieveBusinessDetails(_: Nino)(
           _: HeaderCarrier,
           _: ExecutionContext,
           _: String
-        )).expects(requestData, *, *, *)
+        )).expects(nino, *, *, *)
 
   }
 

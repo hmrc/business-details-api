@@ -20,7 +20,6 @@ import api.connectors.ConnectorSpec
 import api.models.domain._
 import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
-import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
 import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse
 
 import scala.concurrent.Future
@@ -28,8 +27,6 @@ import scala.concurrent.Future
 class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
 
   private val nino = Nino("AA123456A")
-  private val businessId = BusinessId("XAIS12345678910")
-  private val request = RetrieveBusinessDetailsRequestData(nino, businessId)
 
   private val response: RetrieveBusinessDetailsDownstreamResponse = RetrieveBusinessDetailsDownstreamResponse(Some("2023"), None, None)
 
@@ -37,31 +34,32 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
     "send a request and return the expected response" in new DesTest with Test {
       MockedAppConfig.featureSwitches returns Configuration("ifs.enabled" -> false)
 
-      val outcome: Right[Nothing, ResponseWrapper[Seq[RetrieveBusinessDetailsDownstreamResponse]]] = Right(ResponseWrapper(correlationId, Seq(response)))
+      private val outcome = Right(ResponseWrapper(correlationId, response))
 
-      willGet(
-        url = s"$baseUrl/registration/business-details/nino/${request.nino}"
-      ).returns(Future.successful(outcome))
+      willGet(url = s"$baseUrl/registration/business-details/nino/${nino.nino}") returns
+        Future.successful(outcome)
 
-      await(connector.retrieveBusinessDetails(request)) shouldBe outcome
+      await(connector.retrieveBusinessDetails(nino)) shouldBe outcome
     }
 
     "send a request and return the expected response when ifs feature switch is enabled" in new IfsTest with Test {
       MockedAppConfig.featureSwitches returns Configuration("ifs.enabled" -> true)
 
-      val outcome: Right[Nothing, ResponseWrapper[Seq[RetrieveBusinessDetailsDownstreamResponse]]] = Right(ResponseWrapper(correlationId, Seq(response)))
+      private val outcome = Right(ResponseWrapper(correlationId, response))
 
-      willGet(
-        url = s"$baseUrl/registration/business-details/nino/${request.nino}"
-      ).returns(Future.successful(outcome))
+      willGet(url = s"$baseUrl/registration/business-details/nino/${nino.nino}") returns
+        Future.successful(outcome)
 
-      await(connector.retrieveBusinessDetails(request)) shouldBe outcome
+      await(connector.retrieveBusinessDetails(nino)) shouldBe outcome
     }
   }
 
   trait Test {
     _: ConnectorTest =>
-    protected val connector: RetrieveBusinessDetailsConnector = new RetrieveBusinessDetailsConnector(http = mockHttpClient, appConfig = mockAppConfig)
+
+    protected val connector: RetrieveBusinessDetailsConnector =
+      new RetrieveBusinessDetailsConnector(http = mockHttpClient, appConfig = mockAppConfig)
+
   }
 
 }

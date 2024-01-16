@@ -19,9 +19,9 @@ package v1.connectors
 import api.connectors.DownstreamUri.{DesUri, IfsUri}
 import api.connectors.httpparsers.StandardDownstreamHttpParser.reads
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
+import api.models.domain.Nino
 import config.AppConfig
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
 import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse
 
 import javax.inject.Inject
@@ -29,12 +29,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RetrieveBusinessDetailsConnector @Inject()(val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
-  def retrieveBusinessDetails(request: RetrieveBusinessDetailsRequestData)(implicit
-                                                                           hc: HeaderCarrier,
-                                                                           ec: ExecutionContext,
-                                                                           correlationId: String): Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]] = {
-
-    import request._
+  def retrieveBusinessDetails(nino: Nino)(implicit
+                                             hc: HeaderCarrier,
+                                             ec: ExecutionContext,
+                                             correlationId: String): Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]] = {
 
     val downstreamUri = s"registration/business-details/nino/$nino"
 

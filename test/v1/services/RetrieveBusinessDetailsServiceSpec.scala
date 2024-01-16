@@ -212,7 +212,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
           val requestData: RetrieveBusinessDetailsRequestData = requestDataFor("someBusinessId")
 
           MockedRetrieveBusinessDetailsConnector
-            .retrieveBusinessDetails(requestData)
+            .retrieveBusinessDetails(nino)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
 
           val result: ServiceOutcome[RetrieveBusinessDetailsResponse] = await(service.retrieveBusinessDetailsService(requestData))
@@ -248,7 +248,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     protected def testServiceWith(requestData: RetrieveBusinessDetailsRequestData,
                                   downstreamResponse: RetrieveBusinessDetailsDownstreamResponse): ServiceOutcome[RetrieveBusinessDetailsResponse] = {
       MockedRetrieveBusinessDetailsConnector
-        .retrieveBusinessDetails(requestData) returns Future.successful(Right(ResponseWrapper(correlationId, downstreamResponse)))
+        .retrieveBusinessDetails(nino) returns Future.successful(Right(ResponseWrapper(correlationId, downstreamResponse)))
 
       await(service.retrieveBusinessDetailsService(requestData))
     }

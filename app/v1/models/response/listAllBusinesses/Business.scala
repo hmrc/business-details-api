@@ -17,8 +17,8 @@
 package v1.models.response.listAllBusinesses
 
 import api.models.domain.TypeOfBusiness
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, Json, OWrites, Reads}
+import play.api.libs.json.{Json, OWrites}
+import v1.models.response.retrieveBusinessDetails.downstream.{BusinessData, PropertyData}
 
 case class Business(typeOfBusiness: TypeOfBusiness, businessId: String, tradingName: Option[String])
 
@@ -26,19 +26,21 @@ object Business {
 
   implicit val writes: OWrites[Business] = Json.writes[Business]
 
-  val readsBusinessData: Reads[Business] = (
-    Reads.pure(TypeOfBusiness.`self-employment`) and
-      (JsPath \ "incomeSourceId").read[String] and
-      (JsPath \ "tradingName").readNullable[String]
-  )(Business.apply _)
+  def fromDownstreamBusiness(businessData: BusinessData): Business = {
+    import businessData._
+    Business(
+      TypeOfBusiness.`self-employment`,
+      businessId = incomeSourceId,
+      tradingName
+    )
+  }
 
-  val readsSeqBusinessData: Reads[Seq[Business]] = Reads.traversableReads[Seq, Business](implicitly, readsBusinessData)
-
-  val readsPropertyData: Reads[Business] = (
-    (JsPath \ "incomeSourceType").readNullable[TypeOfBusiness].map(_.getOrElse(TypeOfBusiness.`property-unspecified`)) and
-      (JsPath \ "incomeSourceId").read[String] and
-      Reads.pure(None)
-  )(Business.apply _)
-
-  val readsSeqPropertyData: Reads[Seq[Business]] = Reads.traversableReads[Seq, Business](implicitly, readsPropertyData)
+  def fromDownstreamProperty(propertyData: PropertyData): Business = {
+    import propertyData._
+    Business(
+      propertyData.incomeSourceType.getOrElse(TypeOfBusiness.`property-unspecified`),
+      businessId = incomeSourceId,
+      tradingName = None
+    )
+  }
 }

@@ -48,7 +48,7 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
       ec: ExecutionContext): Future[ServiceOutcome[RetrieveBusinessDetailsResponse]] = {
 
     val result = for {
-      downstreamResponseWrapper    <- EitherT(connector.retrieveBusinessDetails(request)).leftMap(mapDownstreamErrors(downstreamErrorMap))
+      downstreamResponseWrapper    <- EitherT(connector.retrieveBusinessDetails(request.nino)).leftMap(mapDownstreamErrors(downstreamErrorMap))
       mtdResponseWrapper           <- EitherT.fromEither[Future](filterIdAndConvert(downstreamResponseWrapper, request.businessId))
       maybeWithQuarterlyTypeChoice <- EitherT.fromEither[Future](featureSwitchQuarterlyTypeChoice(mtdResponseWrapper))
     } yield maybeWithQuarterlyTypeChoice
