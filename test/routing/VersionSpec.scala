@@ -17,62 +17,44 @@
 package routing
 
 import play.api.http.HeaderNames.ACCEPT
-import play.api.libs.json.{JsError, JsResult, JsString, JsSuccess, JsValue, Json}
+import play.api.libs.json.{JsString, Json}
 import play.api.test.FakeRequest
-import routing.Version.{VersionReads, VersionWrites}
 import support.UnitSpec
 
 class VersionSpec extends UnitSpec {
 
   "serialized to Json" must {
+
     "return the expected Json output" in {
-      val version: Version = Version1
-      val expected         = Json.parse(""" "1.0" """)
-      val result           = Json.toJson(version)
-      result shouldBe expected
+      Json.toJson(Version("1.2")) shouldBe JsString("1.2")
     }
   }
 
   "Versions" when {
     "retrieved from a request header" must {
       "return the specified version" in {
-        Versions.getFromRequest(FakeRequest().withHeaders((ACCEPT, "application/vnd.hmrc.1.0+json"))) shouldBe Right(Version1)
+        Versions.getFromRequest(FakeRequest().withHeaders((ACCEPT, "application/vnd.hmrc.1.2+json"))) shouldBe Right(Version("1.2"))
       }
+    }
 
-      "return an error if the version is unsupported" in {
-        Versions.getFromRequest(FakeRequest().withHeaders((ACCEPT, "application/vnd.hmrc.3.0+json"))) shouldBe Left(VersionNotFound)
-      }
+    "return InvalidHeader when the version header is missing" in {
+      Versions.getFromRequest(FakeRequest().withHeaders()) shouldBe Left(InvalidHeader)
+    }
 
-      "return InvalidHeader when the version header is missing" in {
-        Versions.getFromRequest(FakeRequest().withHeaders()) shouldBe Left(InvalidHeader)
-      }
-
-      "return an error if the Accept header value is invalid" in {
-        Versions.getFromRequest(FakeRequest().withHeaders((ACCEPT, "application/XYZ.2.0+json"))) shouldBe Left(InvalidHeader)
-      }
+    "return an error if the Accept header value is invalid" in {
+      Versions.getFromRequest(FakeRequest().withHeaders((ACCEPT, "application/XYZ.2.0+json"))) shouldBe Left(InvalidHeader)
     }
   }
 
   "VersionReads" should {
-    "successfully read Version2" in {
-      val versionJson: JsValue      = JsString(Version1.name)
-      val result: JsResult[Version] = VersionReads.reads(versionJson)
-
-      result shouldEqual JsSuccess(Version1)
-    }
-
-    "return error for unrecognised version" in {
-      val versionJson: JsValue      = JsString("UnknownVersion")
-      val result: JsResult[Version] = VersionReads.reads(versionJson)
-
-      result shouldBe a[JsError]
+    "successfully read Version" in {
+      JsString("1.2").as[Version] shouldBe Version("1.2")
     }
   }
 
   "toString" should {
     "return the version name" in {
-      val result = Version1.toString
-      result shouldBe Version1.name
+      Version("1.2").toString shouldBe "1.2"
     }
   }
 

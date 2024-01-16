@@ -20,7 +20,7 @@ import config.{ConfidenceLevelConfig, MockAppConfig}
 import definition.APIStatus.{ALPHA, BETA}
 import mocks.MockHttpClient
 import play.api.Configuration
-import routing.Version1
+import routing.Versions.Version1
 import support.UnitSpec
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 

@@ -17,11 +17,12 @@
 package definition
 
 import config.AppConfig
-import routing.{Version, Version1}
+import routing.Version
+import routing.Versions.Version1
 import uk.gov.hmrc.auth.core.ConfidenceLevel
+import utils.Logging
 
 import javax.inject.{Inject, Singleton}
-import utils.Logging
 
 @Singleton
 class ApiDefinitionFactory @Inject() (appConfig: AppConfig) extends Logging {
