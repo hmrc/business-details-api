@@ -16,7 +16,7 @@
 
 package routing
 
-import api.models.errors.{InvalidAcceptHeaderError, UnsupportedVersionError}
+import api.models.errors.{InvalidAcceptHeaderError, MtdError, UnsupportedVersionError}
 import config.MockAppConfig
 import org.apache.pekko.actor.ActorSystem
 import org.scalatest.Inside
@@ -31,7 +31,6 @@ import play.api.test.Helpers._
 import support.UnitSpec
 
 class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockAppConfig with GuiceOneAppPerSuite {
-  test =>
 
   implicit private val actorSystem: ActorSystem = ActorSystem("test")
   val action: DefaultActionBuilder              = app.injector.instanceOf[DefaultActionBuilder]
@@ -39,25 +38,29 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
   import play.api.mvc.Handler
   import play.api.routing.sird._
 
-  object DefaultHandler extends Handler
-  object V1Handler      extends Handler
-  object V2Handler      extends Handler
-  object V3Handler      extends Handler
+  case object DefaultHandler extends Handler
 
-  private val defaultRouter = Router.from { case GET(p"") =>
-    DefaultHandler
-  }
+  case object V1Handler extends Handler
 
-  private val v1Router = Router.from { case GET(p"/v1") =>
-    V1Handler
-  }
+  case object V2Handler extends Handler
+
+  private val version1_enabled  = Version("1.0")
+  private val version2_disabled = Version("2.0")
 
   private val routingMap = new VersionRoutingMap {
-    override val defaultRouter: Router     = test.defaultRouter
-    override val map: Map[Version, Router] = Map(Version1 -> v1Router)
+    override val defaultRouter: Router = Router.from { case GET(p"/docs") => DefaultHandler }
+
+    override val map: Map[Version, Router] = Map(
+      version1_enabled  -> Router.from { case GET(p"/v1") => V1Handler },
+      version2_disabled -> Router.from { case GET(p"/v2") => V2Handler }
+    )
+
   }
 
-  class Test(implicit acceptHeader: Option[String]) {
+  class Test {
+    MockedAppConfig.endpointsEnabled(version1_enabled).returns(true).anyNumberOfTimes()
+    MockedAppConfig.endpointsEnabled(version2_disabled).returns(false).anyNumberOfTimes()
+
     val httpConfiguration: HttpConfiguration = HttpConfiguration("context")
     private val errorHandler                 = mock[HttpErrorHandler]
     private val filters                      = mock[HttpFilters]
@@ -66,117 +69,93 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
     val requestHandler: VersionRoutingRequestHandler =
       new VersionRoutingRequestHandler(routingMap, errorHandler, httpConfiguration, mockAppConfig, filters, action)
 
-    def buildRequest(path: String): RequestHeader =
-      acceptHeader
-        .foldLeft(FakeRequest("GET", path)) { (req, accept) =>
-          req.withHeaders((ACCEPT, accept))
-        }
+    def buildRequest(path: String)(implicit acceptHeader: Option[String]): RequestHeader =
+      acceptHeader.foldLeft(FakeRequest("GET", path)) { (req, accept) => req.withHeaders((ACCEPT, accept)) }
 
   }
 
-  "Routing requests with no version" should {
-    implicit val acceptHeader: None.type = None
+  private def returnHandler(path: String, maybeExpectedHandler: Option[Handler])(implicit acceptHeader: Option[String]): Unit =
+    s"return handler $maybeExpectedHandler" in new Test {
+      requestHandler.routeRequest(buildRequest(path)) shouldBe maybeExpectedHandler
+    }
 
-    handleWithDefaultRoutes()
-  }
+  private def returnHandlerIgnoringTrailingSlash(path: String, expectedHandler: Handler)(implicit acceptHeader: Option[String]): Unit = {
+    "matches exactly" must {
+      returnHandler(path, Some(expectedHandler))
+    }
 
-  "Routing requests with valid version" should {
-    implicit val acceptHeader: Some[String] = Some("application/vnd.hmrc.1.0+json")
-
-    handleWithDefaultRoutes()
-  }
-
-  "Routing requests with v1" should {
-    implicit val acceptHeader: Some[String] = Some("application/vnd.hmrc.1.0+json")
-
-    handleWithVersionRoutes("/v1", V1Handler, Version1)
-  }
-
-  private def handleWithDefaultRoutes()(implicit acceptHeader: Option[String]): Unit = {
-    "if the request ends with a trailing slash" when {
-      "handler found" should {
-        "use it" in new Test {
-          MockedAppConfig.endpointsEnabled(Version1).returns(true).anyNumberOfTimes()
-
-          requestHandler.routeRequest(buildRequest("/")) shouldBe Some(DefaultHandler)
-        }
-      }
-
-      "handler not found" should {
-        "try without the trailing slash" in new Test {
-          MockedAppConfig.endpointsEnabled(Version1).returns(true).anyNumberOfTimes()
-
-          requestHandler.routeRequest(buildRequest("")) shouldBe Some(DefaultHandler)
-        }
-      }
+    "matches except for a trailing slash" must {
+      returnHandler(s"$path/", Some(expectedHandler))
     }
   }
 
-  private def handleWithVersionRoutes(path: String, handler: Handler, version: Version)(implicit acceptHeader: Option[String]): Unit = {
-    "if the request ends with a trailing slash" when {
-      "handler found" should {
-        "use it" in new Test {
-          MockedAppConfig.endpointsEnabled(version).returns(true).anyNumberOfTimes()
+  private def returnHandlerThatRespondsWithError(path: String = "/ignored", mtdError: MtdError)(implicit acceptHeader: Option[String]): Unit =
+    s"return a handler that responds with $mtdError" in new Test {
+      val request: RequestHeader = buildRequest(path)
 
-          requestHandler.routeRequest(buildRequest(s"$path/")) shouldBe Some(handler)
-        }
+      inside(requestHandler.routeRequest(request)) { case Some(action: EssentialAction) =>
+        val result = action.apply(request)
+
+        status(result) shouldBe mtdError.httpStatus
+        contentAsJson(result) shouldBe Json.toJson(mtdError)
       }
 
-      "handler not found" should {
-        "try without the trailing slash" in new Test {
-          MockedAppConfig.endpointsEnabled(version).returns(true).anyNumberOfTimes()
+    }
 
-          requestHandler.routeRequest(buildRequest(s"$path")) shouldBe Some(handler)
+  "Routing requests" when {
+    "no version is in the accept header" when {
+      implicit val acceptHeader: Option[String] = None
+
+      "the path matches a handler in the documentation (default) router" must {
+        returnHandlerIgnoringTrailingSlash("/docs", DefaultHandler)
+      }
+
+      "the path does not match a handler in the documentation (default) router" must {
+        "expect a versioned accept header and return a handler that responds with 406 (InvalidAcceptHeaderError)" must {
+          returnHandlerThatRespondsWithError(path = "/unmatched", mtdError = InvalidAcceptHeaderError)
         }
       }
     }
-  }
 
-  "Routing requests to non default router with no version" should {
-    implicit val acceptHeader: None.type = None
+    "a well-formed and enabled version string is in the accept header" when {
+      implicit val acceptHeader: Option[String] = Some("application/vnd.hmrc.1.0+json")
 
-    "return 406" in new Test {
-
-      val request: RequestHeader = buildRequest("/v1")
-      inside(requestHandler.routeRequest(request)) { case Some(a: EssentialAction) =>
-        val result = a.apply(request)
-
-        status(result) shouldBe NOT_ACCEPTABLE
-        contentAsJson(result) shouldBe Json.toJson(InvalidAcceptHeaderError)
+      "the path matches a handler in the documentation (default) router" must {
+        returnHandlerIgnoringTrailingSlash("/docs", DefaultHandler)
       }
-    }
-  }
 
-  "Routing requests with unsupported version" should {
-    implicit val acceptHeader: Some[String] = Some("application/vnd.hmrc.5.0+json")
-
-    "return 404" in new Test {
-
-      private val request = buildRequest("/v1")
-
-      inside(requestHandler.routeRequest(request)) { case Some(a: EssentialAction) =>
-        val result = a.apply(request)
-
-        status(result) shouldBe NOT_FOUND
-        contentAsJson(result) shouldBe Json.toJson(UnsupportedVersionError)
-      }
-    }
-  }
-
-  "Routing requests for supported version but not enabled" when {
-    implicit val acceptHeader: Some[String] = Some("application/vnd.hmrc.3.0+json")
-
-    "the version has a route for the resource" must {
-      "return 404 Not Found" in new Test {
-
-        private val request = buildRequest("/v1")
-        inside(requestHandler.routeRequest(request)) { case Some(a: EssentialAction) =>
-          val result = a.apply(request)
-
-          status(result) shouldBe NOT_FOUND
-          contentAsJson(result) shouldBe Json.toJson(UnsupportedVersionError)
-
+      "the path does not match a handler in the documentation (default) router" when {
+        "the path matches a handler for the versioned API router" must {
+          returnHandlerIgnoringTrailingSlash("/v1", V1Handler)
         }
+
+        "the path does not match a handler for the versioned API router" must {
+          returnHandler("/other", None)
+        }
+      }
+    }
+
+    "a well-formed but unknown version string is in the accept header" must {
+      implicit val acceptHeader: Option[String] = Some("application/vnd.hmrc.5.0+json")
+
+      "return a handler that responds with 404 (UnsupportedVersionError)" must {
+        returnHandlerThatRespondsWithError(mtdError = UnsupportedVersionError)
+      }
+    }
+
+    "a well-formed but disabled version string is in the accept header" must {
+      implicit val acceptHeader: Option[String] = Some("application/vnd.hmrc.2.0+json")
+
+      "return a handler that responds with 404 (UnsupportedVersionError)" must {
+        returnHandlerThatRespondsWithError(mtdError = UnsupportedVersionError)
+      }
+    }
+
+    "a malformed version string is in the accept header" must {
+      implicit val acceptHeader: Option[String] = Some("application/vnd.hmrc.XXXXX+json")
+
+      "return a handler that responds with 406 (InvalidAcceptHeaderError)" must {
+        returnHandlerThatRespondsWithError(mtdError = InvalidAcceptHeaderError)
       }
     }
   }

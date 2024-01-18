@@ -18,63 +18,31 @@ package routing
 
 import play.api.http.HeaderNames.ACCEPT
 import play.api.libs.json._
-import play.api.mvc.RequestHeader
+import play.api.mvc.{Headers, RequestHeader}
 
 object Version {
 
-  implicit object VersionWrites extends Writes[Version] {
+  implicit val versionWrites: Writes[Version] = implicitly[Writes[String]].contramap[Version](_.name)
 
-    def writes(version: Version): JsValue = version match {
-      case Version1 => Json.toJson(Version1.name)
-    }
-
-  }
-
-  implicit object VersionReads extends Reads[Version] {
-
-    override def reads(version: JsValue): JsResult[Version] =
-      version.validate[String].flatMap {
-        case Version1.name => JsSuccess(Version1)
-        case _             => JsError("Unrecognised version")
-      }
-
-  }
-
-  implicit val versionFormat: Format[Version] = Format(VersionReads, VersionWrites)
+  implicit val versionReads: Reads[Version] = implicitly[Reads[String]].map(Version(_))
 }
 
-sealed trait Version {
-  val name: String
-
+final case class Version(name: String) {
   override def toString: String = name
 }
 
-case object Version1 extends Version {
-  val name       = "1.0"
-}
-
 object Versions {
-
-  private val versionsByName: Map[String, Version] = Map(
-    Version1.name -> Version1
-  )
+  val Version1: Version = Version("1.0")
 
   private val versionRegex = """application/vnd.hmrc.(\d.\d)\+json""".r
 
   def getFromRequest(request: RequestHeader): Either[GetFromRequestError, Version] =
-    for {
-      str <- getFrom(request.headers.headers)
-      ver <- getFrom(str)
-    } yield ver
+    getFrom(request.headers).map(Version(_))
 
-  private def getFrom(headers: Seq[(String, String)]): Either[GetFromRequestError, String] =
-    headers.collectFirst { case (ACCEPT, versionRegex(ver)) => ver }.toRight(left = InvalidHeader)
-
-  private def getFrom(name: String): Either[GetFromRequestError, Version] =
-    versionsByName.get(name).toRight(left = VersionNotFound)
+  private def getFrom(headers: Headers): Either[GetFromRequestError, String] =
+    headers.get(ACCEPT).collect { case versionRegex(value) => value }.toRight(left = InvalidHeader)
 
 }
 
 sealed trait GetFromRequestError
-case object InvalidHeader   extends GetFromRequestError
-case object VersionNotFound extends GetFromRequestError
+case object InvalidHeader extends GetFromRequestError
