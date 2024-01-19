@@ -16,45 +16,66 @@
 
 package v1.services
 
-import api.models.domain.Nino
-import api.models.errors.{DownstreamErrorCode, DownstreamErrors, ErrorWrapper, InternalError, MtdError, NinoFormatError, NotFoundError, RuleIncorrectGovTestScenarioError}
+import api.models.domain.{Nino, TypeOfBusiness}
+import api.models.errors._
 import api.models.outcomes.ResponseWrapper
-import api.services.{ServiceOutcome, ServiceSpec}
-import config.MockAppConfig
-import play.api.Configuration
-import v1.connectors.MockListAllBusinessesConnector
+import api.services.ServiceSpec
+import v1.connectors.MockRetrieveBusinessDetailsConnector
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
+import v1.models.response.downstream.retrieveBusinessDetails.{BusinessData, RetrieveBusinessDetailsDownstreamResponse}
 import v1.models.response.listAllBusinesses.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.Future
 
-class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
+class ListAllBusinessesServiceSpec extends ServiceSpec {
 
-  private val validNino    = Nino("AA123456A")
-  private val requestData  = ListAllBusinessesRequestData(validNino)
-  private val responseBody = ListAllBusinessesResponse(List[Business]())
+  private val nino        = Nino("AA123456A")
+  private val requestData = ListAllBusinessesRequestData(nino)
 
   "service" when {
     "a connector call is successful" should {
-      "return a mapped result" in new Test {
-        MockedListAllBusinessesConnector
-          .listAllBusinesses(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseBody))))
+      "return a converted result" in new Test {
+        private val downstreamResponse = RetrieveBusinessDetailsDownstreamResponse(
+          yearOfMigration = None,
+          businessData = Some(
+            Seq(BusinessData(
+              incomeSourceId = "someBusinessId",
+              accountingPeriodStartDate = "ignoredStartDate",
+              accountingPeriodEndDate = "ignoredEndDate",
+              tradingName = None,
+              businessAddressDetails = None,
+              firstAccountingPeriodStartDate = None,
+              firstAccountingPeriodEndDate = None,
+              latencyDetails = None,
+              cashOrAccruals = None,
+              tradingStartDate = None,
+              cessationDate = None,
+              quarterTypeElection = None
+            ))),
+          propertyData = None
+        )
 
-        val result: ServiceOutcome[ListAllBusinessesResponse[Business]] = await(service.listAllBusinessesService(requestData))
-        result shouldBe Right(ResponseWrapper(correlationId, responseBody))
+        MockedRetrieveBusinessDetailsConnector.retrieveBusinessDetails(nino) returns
+          Future.successful(Right(ResponseWrapper(correlationId, downstreamResponse)))
+
+        await(service.listAllBusinessesService(requestData)) shouldBe
+          Right(
+            ResponseWrapper(
+              correlationId,
+              ListAllBusinessesResponse(List(Business(TypeOfBusiness.`self-employment`, "someBusinessId", None)))
+            ))
       }
     }
+
     "a connector call is unsuccessful" should {
       def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
         s"return ${error.code} when $downstreamErrorCode error is returned from the service" in new Test {
 
-          MockedListAllBusinessesConnector
-            .listAllBusinesses(requestData)
-            .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
+          MockedRetrieveBusinessDetailsConnector.retrieveBusinessDetails(nino) returns
+            Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode)))))
 
-          val result: ServiceOutcome[ListAllBusinessesResponse[Business]] = await(service.listAllBusinessesService(requestData))
-          result shouldBe Left(ErrorWrapper(correlationId, error))
+          await(service.listAllBusinessesService(requestData)) shouldBe
+            Left(ErrorWrapper(correlationId, error))
         }
 
       val errors = List(
@@ -78,14 +99,8 @@ class ListAllBusinessesServiceSpec extends ServiceSpec with MockAppConfig {
     }
   }
 
-  private trait Test extends MockListAllBusinessesConnector {
-
-    MockedAppConfig.featureSwitches
-      .returns(Configuration.empty)
-      .anyNumberOfTimes()
-
-    protected val service = new ListAllBusinessesService(mockListAllBusinessesConnector, mockAppConfig)
-
+  private trait Test extends MockRetrieveBusinessDetailsConnector {
+    protected val service = new ListAllBusinessesService(mockRetrieveBusinessDetailsConnector)
   }
 
 }

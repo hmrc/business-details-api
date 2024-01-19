@@ -16,32 +16,22 @@
 
 package v1.models.response.listAllBusinesses
 
-import api.hateoas.{HateoasData, HateoasLinks, HateoasListLinksFactory, Link}
 import api.hateoas.RelType.RETRIEVE_BUSINESS_DETAILS
+import api.hateoas.{HateoasData, HateoasLinks, HateoasListLinksFactory, Link}
 import cats.Functor
 import config.AppConfig
 import play.api.libs.json._
+import v1.models.response.downstream.retrieveBusinessDetails.RetrieveBusinessDetailsDownstreamResponse
 
 case class ListAllBusinessesResponse[I](listOfBusinesses: Seq[I])
 
 object ListAllBusinessesResponse extends HateoasLinks {
 
-  private def getDownstreamPath(data: String)(implicit isIfsEnabled: Boolean): JsPath =
-    if (isIfsEnabled) JsPath \ "taxPayerDisplayResponse" \ data else JsPath \ data
-
-  val getReads: Boolean => Reads[ListAllBusinessesResponse[Business]] = { implicit isIfsEnabled: Boolean =>
-    val businessDataReads: Reads[Seq[Business]] =
-      getDownstreamPath("businessData").readNullable[Seq[Business]](Business.readsSeqBusinessData).map(_.getOrElse(Nil))
-    val propertyDataReads: Reads[Seq[Business]] =
-      getDownstreamPath("propertyData").readNullable[Seq[Business]](Business.readsSeqPropertyData).map(_.getOrElse(Nil))
-
-    for {
-      businessData <- businessDataReads
-      propertyData <- propertyDataReads
-    } yield {
-      ListAllBusinessesResponse(businessData ++ propertyData)
-    }
-  }
+  def fromDownstream(downstreamResponse: RetrieveBusinessDetailsDownstreamResponse): ListAllBusinessesResponse[Business] =
+    ListAllBusinessesResponse(
+      downstreamResponse.businessData.getOrElse(Nil).map(Business.fromDownstreamBusiness) :++
+        downstreamResponse.propertyData.getOrElse(Nil).map(Business.fromDownstreamProperty)
+    )
 
   implicit def writes[I: Writes]: OWrites[ListAllBusinessesResponse[I]] = Json.writes[ListAllBusinessesResponse[I]]
 

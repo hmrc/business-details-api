@@ -33,8 +33,8 @@ import cats.data.EitherT
 import config.FeatureSwitches
 import v1.connectors.RetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
+import v1.models.response.downstream.retrieveBusinessDetails.RetrieveBusinessDetailsDownstreamResponse
 import v1.models.response.retrieveBusinessDetails.RetrieveBusinessDetailsResponse
-import v1.models.response.retrieveBusinessDetails.downstream.RetrieveBusinessDetailsDownstreamResponse
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,7 +48,7 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
       ec: ExecutionContext): Future[ServiceOutcome[RetrieveBusinessDetailsResponse]] = {
 
     val result = for {
-      downstreamResponseWrapper    <- EitherT(connector.retrieveBusinessDetails(request)).leftMap(mapDownstreamErrors(downstreamErrorMap))
+      downstreamResponseWrapper    <- EitherT(connector.retrieveBusinessDetails(request.nino)).leftMap(mapDownstreamErrors(downstreamErrorMap))
       mtdResponseWrapper           <- EitherT.fromEither[Future](filterIdAndConvert(downstreamResponseWrapper, request.businessId))
       maybeWithQuarterlyTypeChoice <- EitherT.fromEither[Future](featureSwitchQuarterlyTypeChoice(mtdResponseWrapper))
     } yield maybeWithQuarterlyTypeChoice

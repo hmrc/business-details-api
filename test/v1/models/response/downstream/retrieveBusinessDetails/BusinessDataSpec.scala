@@ -14,27 +14,24 @@
  * limitations under the License.
  */
 
-package v1.models.response.retrieveBusinessDetails.downstream
+package v1.models.response.downstream.retrieveBusinessDetails
 
-import api.models.domain.{AccountingType, TaxYear, TypeOfBusiness}
+import api.models.domain.{AccountingType, TaxYear}
 import play.api.libs.json.Json
 import support.UnitSpec
 
-class PropertyDataSpec extends UnitSpec {
+class BusinessDataSpec extends UnitSpec {
 
-  "PropertyData" when {
+  "BusinessData" when {
     "read from JSON" must {
       "work" in {
-
         Json
           .parse(
             """
             |{
-            |  "incomeSourceType": "foreign-property",
-            |  "incomeSourceId": "X0IS123456789012",
-            |  "accountingPeriodStartDate": "2019-04-06",
-            |  "accountingPeriodEndDate": "2020-04-05",
-            |  "tradingStartDate": "2017-07-24",
+            |  "incomeSourceId": "XAIS12345678910",
+            |  "accountingPeriodStartDate": "2001-01-01",
+            |  "accountingPeriodEndDate": "2001-01-02",
             |  "firstAccountingPeriodStartDate": "2018-04-06",
             |  "firstAccountingPeriodEndDate":   "2018-12-12",
             |  "latencyDetails":  {
@@ -44,16 +41,23 @@ class PropertyDataSpec extends UnitSpec {
             |    "latencyIndicator2": "Q",
             |    "latencyEndDate": "2018-12-12"
             |  },
-            |  "cashOrAccruals": true,
-            |  "numPropRented": 0,
-            |  "numPropRentedUK": 0,
-            |  "numPropRentedEEA": 5,
-            |  "numPropRentedNONEEA": 1,
-            |  "emailAddress": "stephen@manncorpone.co.uk",
-            |  "cessationDate": "2020-01-01",
+            |  "tradingName": "RCDTS",
+            |  "businessAddressDetails": {
+            |    "addressLine1": "100 SuttonStreet",
+            |    "countryCode": "GB"
+            |  },
+            |  "businessContactDetails": {
+            |    "phoneNumber": "01332752856",
+            |    "mobileNumber": "07782565326",
+            |    "faxNumber": "01332754256",
+            |    "emailAddress": "stephen@manncorpone.co.uk"
+            |  },
+            |  "tradingStartDate": "2001-01-01",
+            |  "cashOrAccruals": false,
+            |  "seasonal": true,
+            |  "cessationDate": "2001-01-01",
             |  "cessationReason": "002",
             |  "paperLess": true,
-            |  "incomeSourceStartDate": "2019-07-14",
             |  "quarterTypeElection": {
             |   "quarterReportingType": "STANDARD",
             |   "taxYearofElection": "2023"
@@ -61,12 +65,12 @@ class PropertyDataSpec extends UnitSpec {
             |}
             |""".stripMargin
           )
-          .as[PropertyData] shouldBe
-          PropertyData(
-            incomeSourceType = Some(TypeOfBusiness.`foreign-property`),
-            incomeSourceId = "X0IS123456789012",
-            accountingPeriodStartDate = "2019-04-06",
-            accountingPeriodEndDate = "2020-04-05",
+          .as[BusinessData] shouldBe
+          BusinessData(
+            incomeSourceId = "XAIS12345678910",
+            tradingName = Some("RCDTS"),
+            accountingPeriodStartDate = "2001-01-01",
+            accountingPeriodEndDate = "2001-01-02",
             firstAccountingPeriodStartDate = Some("2018-04-06"),
             firstAccountingPeriodEndDate = Some("2018-12-12"),
             latencyDetails = Some(
@@ -76,18 +80,27 @@ class PropertyDataSpec extends UnitSpec {
                 LatencyIndicator.Annual,
                 TaxYear.fromDownstream("2019"),
                 LatencyIndicator.Quarterly)),
-            cashOrAccruals = Some(AccountingType.ACCRUALS),
-            tradingStartDate = Some("2017-07-24"),
-            cessationDate = Some("2020-01-01"),
+            cashOrAccruals = Some(AccountingType.CASH),
+            tradingStartDate = Some("2001-01-01"),
+            cessationDate = Some("2001-01-01"),
+            businessAddressDetails = Some(
+              BusinessAddressDetails(
+                addressLine1 = "100 SuttonStreet",
+                None,
+                None,
+                None,
+                None,
+                countryCode = "GB"
+              )),
             quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2023")))
           )
       }
 
       "work for accountingType" when {
         def data(accountingType: Option[AccountingType]) =
-          PropertyData(
-            incomeSourceType = None,
+          BusinessData(
             incomeSourceId = "XAIS12345678910",
+            tradingName = None,
             accountingPeriodStartDate = "2001-01-01",
             accountingPeriodEndDate = "2001-01-02",
             firstAccountingPeriodStartDate = None,
@@ -96,6 +109,7 @@ class PropertyDataSpec extends UnitSpec {
             cashOrAccruals = accountingType,
             tradingStartDate = None,
             cessationDate = None,
+            businessAddressDetails = None,
             quarterTypeElection = None
           )
 
@@ -113,11 +127,11 @@ class PropertyDataSpec extends UnitSpec {
             )
 
           "field is true (accruals)" in {
-            json(true).as[PropertyData] shouldBe data(Some(AccountingType.ACCRUALS))
+            json(true).as[BusinessData] shouldBe data(Some(AccountingType.ACCRUALS))
           }
 
           "field is false (cash)" in {
-            json(false).as[PropertyData] shouldBe data(Some(AccountingType.CASH))
+            json(false).as[BusinessData] shouldBe data(Some(AccountingType.CASH))
           }
 
           "field is missing" in {
@@ -131,29 +145,29 @@ class PropertyDataSpec extends UnitSpec {
                  |}
                  |""".stripMargin
               )
-              .as[PropertyData] shouldBe data(None)
+              .as[BusinessData] shouldBe data(None)
           }
         }
 
-        "using DES (which has boolean cashOrAccrualsFlag)" when {
-          def json(cashOrAccrualsFlag: Boolean) =
+        "using DES (which has string cashOrAccruals)" when {
+          def json(cashOrAccruals: String) =
             Json.parse(
               s"""
                  |{
                  |  "incomeSourceId": "XAIS12345678910",
                  |  "accountingPeriodStartDate": "2001-01-01",
                  |  "accountingPeriodEndDate": "2001-01-02",
-                 |  "cashOrAccrualsFlag": $cashOrAccrualsFlag
+                 |  "cashOrAccruals": "$cashOrAccruals"
                  |}
                  |""".stripMargin
             )
 
-          "field is true (accruals)" in {
-            json(true).as[PropertyData] shouldBe data(Some(AccountingType.ACCRUALS))
+          "field is accruals" in {
+            json("accruals").as[BusinessData] shouldBe data(Some(AccountingType.ACCRUALS))
           }
 
-          "field is false (cash)" in {
-            json(false).as[PropertyData] shouldBe data(Some(AccountingType.CASH))
+          "field is cash" in {
+            json("cash").as[BusinessData] shouldBe data(Some(AccountingType.CASH))
           }
         }
 
@@ -168,11 +182,10 @@ class PropertyDataSpec extends UnitSpec {
                |}
                |""".stripMargin
             )
-            .as[PropertyData] shouldBe data(None)
+            .as[BusinessData] shouldBe data(None)
         }
       }
     }
-
   }
 
 }

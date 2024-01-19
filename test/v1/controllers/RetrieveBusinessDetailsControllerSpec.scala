@@ -29,7 +29,7 @@ import play.api.mvc.Result
 import utils.MockIdGenerator
 import v1.controllers.validators.MockRetrieveBusinessDetailsValidatorFactory
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
-import v1.models.response.retrieveBusinessDetails.downstream.{LatencyDetails, LatencyIndicator, QuarterReportingType, QuarterTypeElection}
+import v1.models.response.downstream.retrieveBusinessDetails.{LatencyDetails, LatencyIndicator, QuarterReportingType, QuarterTypeElection}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
 import v1.services.MockRetrieveBusinessDetailsService
 

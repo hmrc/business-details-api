@@ -58,8 +58,7 @@ class VersionRoutingRequestHandler @Inject() (versionRoutingMap: VersionRoutingM
         case Right(version) =>
           versionRoutingMap.versionRouter(version) match {
             case Some(versionRouter) if config.endpointsEnabled(version) => routeWith(versionRouter)(request)
-            case Some(_)                                                 => Some(unsupportedVersionAction)
-            case None                                                    => Some(unsupportedVersionAction)
+            case _                                                       => Some(unsupportedVersionAction)
           }
       }
 
