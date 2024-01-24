@@ -49,7 +49,7 @@ class VersionRoutingRequestHandler @Inject() (versionRoutingMap: VersionRoutingM
     def documentHandler: Option[Handler] = routeWith(versionRoutingMap.defaultRouter)(request)
 
     def apiHandler: Option[Handler] =
-      Versions.getFromRequest(request) match {
+      Version.getFromRequest(request) match {
         case Left(InvalidHeader) => Some(errorAction(InvalidAcceptHeaderError))
 
         case Right(version) =>

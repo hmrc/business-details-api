@@ -30,19 +30,19 @@ class VersionSpec extends UnitSpec {
     }
   }
 
-  "Versions" when {
+  "Version" when {
     "retrieved from a request header" must {
       "return the specified version" in {
-        Versions.getFromRequest(FakeRequest().withHeaders((ACCEPT, "application/vnd.hmrc.1.2+json"))) shouldBe Right(Version("1.2"))
+        Version.getFromRequest(FakeRequest().withHeaders((ACCEPT, "application/vnd.hmrc.1.2+json"))) shouldBe Right(Version("1.2"))
       }
     }
 
     "return InvalidHeader when the version header is missing" in {
-      Versions.getFromRequest(FakeRequest().withHeaders()) shouldBe Left(InvalidHeader)
+      Version.getFromRequest(FakeRequest().withHeaders()) shouldBe Left(InvalidHeader)
     }
 
     "return an error if the Accept header value is invalid" in {
-      Versions.getFromRequest(FakeRequest().withHeaders((ACCEPT, "application/XYZ.2.0+json"))) shouldBe Left(InvalidHeader)
+      Version.getFromRequest(FakeRequest().withHeaders((ACCEPT, "application/XYZ.2.0+json"))) shouldBe Left(InvalidHeader)
     }
   }
 
