@@ -16,23 +16,23 @@
 
 package api.models.audit
 
-import api.fixtures.AuditResponseFixture._
+import api.fixtures.GenericAuditDetailFixture._
 import play.api.libs.json.Json
 import support.UnitSpec
 
-class AuditResponseSpec extends UnitSpec {
+class GenericAuditDetailSpec extends UnitSpec {
 
-  "AuditResponse" when {
-    "written to JSON with a body" should {
+  "GenericAuditDetail" when {
+    "written to JSON (success)" should {
       "produce the expected JsObject" in {
-        Json.toJson(auditResponseModelWithBody) shouldBe auditResponseJsonWithBody
+        Json.toJson(genericAuditDetailModelSuccess) shouldBe genericAuditDetailJsonSuccess
       }
     }
-  }
 
-  "written to JSON with Audit Errors" should {
-    "produce the expected JsObject" in {
-      Json.toJson(auditResponseModelWithErrors) shouldBe auditResponseJsonWithErrors
+    "written to JSON (error)" should {
+      "produce the expected JsObject" in {
+        Json.toJson(genericAuditDetailModelError) shouldBe genericAuditDetailJsonError
+      }
     }
   }
 
