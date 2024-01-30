@@ -18,12 +18,14 @@ package v1.controllers
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
 import api.hateoas.MockHateoasFactory
+import api.models.audit.{AuditEvent, AuditResponse, FlattenedGenericAuditDetail}
+import api.models.auth.UserDetails
 import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
 import config.MockAppConfig
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import utils.MockIdGenerator
 import v1.controllers.validators.MockCreateAmendQuarterlyPeriodTypeValidatorFactory
@@ -44,8 +46,11 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
     with MockIdGenerator
     with MockAppConfig {
 
+  private val versionNumber = "1.0"
   private val validBusinessId = "XAIS12345678910"
   private val validTaxYear    = "2023-24"
+  val userType: String = "Individual"
+  val userDetails: UserDetails = UserDetails("mtdId", userType, None)
 
   private val validBody = Json.parse("""
       |{
@@ -70,7 +75,7 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
           .create(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
-        runOkTest(NO_CONTENT)
+        runOkTestWithAudit(NO_CONTENT)
       }
     }
 
@@ -78,7 +83,7 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
       "the parser validation fails" in new Test {
         willUseValidator(returning(NinoFormatError))
 
-        runErrorTest(NinoFormatError)
+        runErrorTestWithAudit(NinoFormatError)
       }
 
       "the service returns an error" in new Test {
@@ -88,23 +93,38 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
           .create(requestData)
           .returns(Future.successful(Left(ErrorWrapper(correlationId, TaxYearFormatError))))
 
-        runErrorTest(TaxYearFormatError)
+        runErrorTestWithAudit(TaxYearFormatError)
       }
     }
   }
 
-  private trait Test extends ControllerTest {
+  private trait Test extends ControllerTest with AuditEventChecking[FlattenedGenericAuditDetail] {
 
     private val controller = new CreateAmendQuarterlyPeriodTypeController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockCreateAmendQuarterlyPeriodTypeValidatorFactory,
       service = mockCreateAmendQuarterlyPeriodTypeService,
+      auditService = mockAuditService,
       cc = cc,
       idGenerator = mockIdGenerator
     )
 
     protected def callController(): Future[Result] = controller.handleRequest(nino, validBusinessId, validTaxYear)(fakePutRequest(validBody))
+
+
+    def event(auditResponse: AuditResponse, maybeRequestBody: Option[JsValue]): AuditEvent[FlattenedGenericAuditDetail] =
+      AuditEvent(
+        auditType = "CreateAndAmendQuarterlyPeriodTypeForABusiness",
+        transactionName = "create-and-amend-quarterly-period",
+        detail = FlattenedGenericAuditDetail(
+          versionNumber = Some(versionNumber),
+          userDetails = userDetails,
+          params = Map("nino" -> nino.toString, "businessId" -> validBusinessId, "taxYear" -> parsedTaxYear.asMtd,  "quarterlyPeriodType" -> "standard"),
+          `X-CorrelationId` = correlationId,
+          auditResponse = auditResponse
+        )
+      )
   }
 
 }

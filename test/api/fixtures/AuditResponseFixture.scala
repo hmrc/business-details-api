@@ -20,7 +20,7 @@ import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.json.{JsValue, Json}
 import api.models.audit.{AuditError, AuditResponse}
 
-object auditFixture {
+object AuditResponseFixture {
 
   val body: JsValue                = Json.parse("""{ "aField" : "aValue" }""")
   val auditErrors: Seq[AuditError] = Seq(AuditError(errorCode = "FORMAT_NINO"))
