@@ -35,7 +35,7 @@ class CreateAmendQuarterlyPeriodTypeConnectorSpec extends ConnectorSpec {
 
   "retrieveBusinessDetailsConnector" must {
     "return a successful response" when {
-      "the downstream request is successful" in new api2089Test with Test {
+      "the downstream request is successful" in new Api2089Test with Test {
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
         willPut(s"$baseUrl/income-tax/23-24/income-sources/reporting-type/$nino/$businessId", body).returns(Future.successful(outcome))
@@ -46,7 +46,7 @@ class CreateAmendQuarterlyPeriodTypeConnectorSpec extends ConnectorSpec {
     }
 
     "return an unsuccessful response" when {
-      "the downstream request is unsuccessful" in new api2089Test with Test {
+      "the downstream request is unsuccessful" in new Api2089Test with Test {
         val downstreamErrorResponse: DownstreamErrors                 = DownstreamErrors.single(DownstreamErrorCode("SOME_ERROR"))
         val outcome: Left[ResponseWrapper[DownstreamErrors], Nothing] = Left(ResponseWrapper(correlationId, downstreamErrorResponse))
 

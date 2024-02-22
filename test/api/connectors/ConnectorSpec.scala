@@ -191,7 +191,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockedAppConfig.ifsEnvironmentHeaders returns Some(allowedIfsHeaders)
 
   }
-  protected trait api2089Test extends ConnectorTest {
+  protected trait Api2089Test extends ConnectorTest {
 
     protected lazy val requiredHeaders: Seq[(String, String)] = requiredApi2089Headers
 
