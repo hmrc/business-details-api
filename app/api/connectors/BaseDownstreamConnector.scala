@@ -16,7 +16,7 @@
 
 package api.connectors
 
-import api.connectors.DownstreamUri.{DesUri, IfsUri}
+import api.connectors.DownstreamUri.{DesUri, IfsUri, Api2089Uri}
 import config.{AppConfig, FeatureSwitches}
 import play.api.Logger
 import play.api.http.{HeaderNames, MimeTypes}
@@ -116,6 +116,7 @@ trait BaseDownstreamConnector {
     uri match {
       case DesUri(_) => appConfig.desDownstreamConfig
       case IfsUri(_) => appConfig.ifsDownstreamConfig
+      case Api2089Uri(_) => appConfig.api2089DownstreamConfig
     }
 
 }
