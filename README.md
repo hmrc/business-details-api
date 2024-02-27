@@ -41,8 +41,7 @@ You can create a GitHub issue [here](https://github.com/hmrc/income-tax-mtd-chan
 
 ## API Reference / Documentation
 
-Available
-at [HMRC Developer Hub](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api)
+Available at [HMRC Developer Hub](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api)
 
 ## License
 
