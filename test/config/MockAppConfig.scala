@@ -41,6 +41,12 @@ trait MockAppConfig extends MockFactory {
     def ifsEnvironment: CallHandler[String]                     = (() => mockAppConfig.ifsEnv).expects()
     def ifsEnvironmentHeaders: CallHandler[Option[Seq[String]]] = (() => mockAppConfig.ifsEnvironmentHeaders).expects()
 
+    // api2089 config
+    def api2089BaseUrl: CallHandler[String]                         = (() => mockAppConfig.api2089BaseUrl).expects()
+    def api2089Token: CallHandler[String]                           = (() => mockAppConfig.api2089Token).expects()
+    def api2089Environment: CallHandler[String]                     = (() => mockAppConfig.api2089Env).expects()
+    def api2089EnvironmentHeaders: CallHandler[Option[Seq[String]]] = (() => mockAppConfig.api2089EnvironmentHeaders).expects()
+
     // API Config
     def featureSwitches: CallHandler[Configuration]              = (() => mockAppConfig.featureSwitches: Configuration).expects()
     def apiGatewayContext: CallHandler[String]                   = (() => mockAppConfig.apiGatewayContext).expects()

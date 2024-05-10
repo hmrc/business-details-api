@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-package api.models.audit
+package v1.models.response.downstream.retrieveBusinessDetails
 
-import api.fixtures.AuditResponseFixture._
-import play.api.libs.json.Json
-import support.UnitSpec
+import play.api.libs.json.{Reads, Writes}
+import utils.enums.Enums
 
-class AuditResponseSpec extends UnitSpec {
+sealed trait QuarterReportingType {
+  val asMtd: String
+}
 
-  "AuditResponse" when {
-    "written to JSON with a body" should {
-      "produce the expected JsObject" in {
-        Json.toJson(auditResponseModelWithBody) shouldBe auditResponseJsonWithBody
-      }
-    }
+object QuarterReportingType {
+
+  implicit val reads: Reads[QuarterReportingType] = Enums.reads[QuarterReportingType]
+
+  implicit val writes: Writes[QuarterReportingType] = implicitly[Writes[String]].contramap(_.asMtd)
+
+  case object STANDARD extends QuarterReportingType {
+    val asMtd: String = "standard"
   }
 
-  "written to JSON with Audit Errors" should {
-    "produce the expected JsObject" in {
-      Json.toJson(auditResponseModelWithErrors) shouldBe auditResponseJsonWithErrors
-    }
+  case object CALENDAR extends QuarterReportingType {
+    val asMtd: String = "calendar"
   }
 
 }

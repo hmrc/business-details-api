@@ -30,6 +30,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
 
   lazy val ifsBaseUrl                = "http://test-ifs-BaseUrl"
   lazy val desBaseUrl                = "http://test-des-BaseUrl"
+  lazy val api2089BaseUrl            = "http://test-api2089-BaseUrl"
   implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
   val otherHeaders: Seq[(String, String)] = Seq(
@@ -88,12 +89,29 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
   )
 
   val requiredTysIfsHeaders: Seq[(String, String)] = Seq(
-    "Environment"   -> "TYS-IFS-environment",
-    "Authorization" -> s"Bearer TYS-IFS-token",
-    "CorrelationId" -> s"$correlationId"
+  "Environment"   -> "TYS-IFS-environment",
+  "Authorization" -> s"Bearer TYS-IFS-token",
+  "CorrelationId" -> s"$correlationId"
   )
 
   val allowedIfsHeaders: Seq[String] = Seq(
+  "Accept",
+  "Gov-Test-Scenario",
+  "Content-Type",
+  "Location",
+  "X-Request-Timestamp",
+  "X-Session-Id"
+  )
+
+  val requiredApi2089Headers: Seq[(String, String)] = Seq(
+  "Authorization"     -> "Bearer api2089-token",
+  "Environment"       -> "api2089-environment",
+  "User-Agent"        -> "business-details-api",
+  "CorrelationId"     -> correlationId,
+  "Gov-Test-Scenario" -> "DEFAULT"
+  )
+
+  val allowedApi2089Headers: Seq[String] = Seq(
     "Accept",
     "Gov-Test-Scenario",
     "Content-Type",
@@ -101,7 +119,6 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     "X-Request-Timestamp",
     "X-Session-Id"
   )
-
   protected trait ConnectorTest extends MockHttpClient with MockAppConfig {
     protected val baseUrl: String = "http://test-BaseUrl"
 
@@ -172,6 +189,16 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockedAppConfig.ifsToken returns "ifs-token"
     MockedAppConfig.ifsEnvironment returns "ifs-environment"
     MockedAppConfig.ifsEnvironmentHeaders returns Some(allowedIfsHeaders)
+
+  }
+  protected trait Api2089Test extends ConnectorTest {
+
+    protected lazy val requiredHeaders: Seq[(String, String)] = requiredApi2089Headers
+
+    MockedAppConfig.api2089BaseUrl returns this.baseUrl
+    MockedAppConfig.api2089Token returns "api2089-token"
+    MockedAppConfig.api2089Environment returns "api2089-environment"
+    MockedAppConfig.api2089EnvironmentHeaders returns Some(allowedApi2089Headers)
 
   }
 

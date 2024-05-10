@@ -22,7 +22,7 @@ import api.models.domain.{AccountingType, TaxYear, TypeOfBusiness}
 import config.{MockAppConfig, MockFeatureSwitches}
 import play.api.libs.json.Json
 import support.UnitSpec
-import v1.models.response.retrieveBusinessDetails.downstream._
+import v1.models.response.downstream.retrieveBusinessDetails._
 
 class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig with MockFeatureSwitches {
 

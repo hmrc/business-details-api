@@ -16,101 +16,124 @@
 
 package v1.models.response.listAllBusinesses
 
+import api.hateoas.Method.GET
 import api.hateoas.{HateoasFactory, HateoasWrapper, Link}
 import api.models.domain.TypeOfBusiness
-import api.hateoas.Method.GET
+import api.models.domain.TypeOfBusiness._
 import config.MockAppConfig
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.Json
 import support.UnitSpec
-import v1.models.response.listAllBusinesses.ListAllBusinessesResponse.getReads
-import v1.models.response.listAllBusinesses.{Business, ListAllBusinessesHateoasData, ListAllBusinessesResponse}
-import v1.models.response.listAllBusinesses.ListAllBusinessJson._
+import v1.models.response.downstream.retrieveBusinessDetails.{BusinessData, PropertyData, RetrieveBusinessDetailsDownstreamResponse}
 
 class ListAllBusinessesResponseSpec extends UnitSpec {
 
-  "reads" should {
-    "output a DES model" when {
-      val isIfsEnabled                                                       = false
-      implicit val responseReads: Reads[ListAllBusinessesResponse[Business]] = getReads(isIfsEnabled)
+  "ListAllBusinessesResponse" must {
+    "correctly convert from the downstream data model" when {
 
-      "passed DES json with businessData" in {
+      val incomeSourceId  = "someIncomeSourceId"
+      val yearOfMigration = Some("ignoredYear")
 
-        val desJson = Json.parse(
-          desResponseWithBusinessData.stripMargin
+      def downstream(businessData: Option[Seq[BusinessData]] = None,
+                     propertyData: Option[Seq[PropertyData]] = None): RetrieveBusinessDetailsDownstreamResponse =
+        RetrieveBusinessDetailsDownstreamResponse(yearOfMigration, businessData, propertyData)
+
+      def downstreamBusiness(tradingName: Option[String]): BusinessData =
+        BusinessData(
+          incomeSourceId = incomeSourceId,
+          accountingPeriodStartDate = "ignoredStart",
+          accountingPeriodEndDate = "ignoredEnd",
+          tradingName = tradingName,
+          businessAddressDetails = None,
+          tradingStartDate = None,
+          cashOrAccruals = None,
+          cessationDate = None,
+          firstAccountingPeriodStartDate = None,
+          firstAccountingPeriodEndDate = None,
+          latencyDetails = None,
+          quarterTypeElection = None
         )
 
-        val model = ListAllBusinessesResponse(
-          Seq(
-            Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS")),
-            Business(TypeOfBusiness.`self-employment`, "098765432109876", Some("RCDTS 2"))
-          ))
-
-        desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
-      }
-
-      "passed DES json with propertyData" in {
-        val desJson = Json.parse(desResponseWithPropertyData.stripMargin)
-        val model = ListAllBusinessesResponse(
-          Seq(
-            Business(TypeOfBusiness.`uk-property`, "123456789012345", None),
-            Business(TypeOfBusiness.`foreign-property`, "098765432109876", None)
-          ))
-        desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
-      }
-
-      "passed DES json with businessData and propertyData" in {
-        val desJson = Json.parse(desResponseWithPropertyAndBusinessData.stripMargin)
-        val model = ListAllBusinessesResponse(
-          Seq(
-            Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS")),
-            Business(TypeOfBusiness.`self-employment`, "098765432109876", Some("RCDTS 2")),
-            Business(TypeOfBusiness.`uk-property`, "123456789012345", None),
-            Business(TypeOfBusiness.`foreign-property`, "098765432109876", None)
-          ))
-        desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
-      }
-    }
-
-    "output an IFS model" when {
-      val isIfsEnabled                                                       = true
-      implicit val responseReads: Reads[ListAllBusinessesResponse[Business]] = getReads(isIfsEnabled)
-
-      "passed IFS json with businessData" in {
-
-        val desJson = Json.parse(
-          ifsResponseWithBusinessData.stripMargin
+      def downstreamProperty(typeOfBusiness: Option[TypeOfBusiness]): PropertyData =
+        PropertyData(
+          incomeSourceType = typeOfBusiness,
+          incomeSourceId = incomeSourceId,
+          accountingPeriodStartDate = "ignoredStart",
+          accountingPeriodEndDate = "ignoredEnd",
+          tradingStartDate = None,
+          cashOrAccruals = None,
+          cessationDate = None,
+          firstAccountingPeriodStartDate = None,
+          firstAccountingPeriodEndDate = None,
+          latencyDetails = None,
+          quarterTypeElection = None
         )
 
-        val model = ListAllBusinessesResponse(
-          Seq(
-            Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS")),
-            Business(TypeOfBusiness.`self-employment`, "098765432109876", Some("RCDTS 2"))
-          ))
+      "given a single property business" must {
+        behave like singlePropertyTest(Some(`foreign-property`), `foreign-property`)
+        behave like singlePropertyTest(Some(`uk-property`), `uk-property`)
+        behave like singlePropertyTest(None, `property-unspecified`)
 
-        desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
+        def singlePropertyTest(downstreamTypeOfBusiness: Option[TypeOfBusiness], expectedTypeOfBusiness: TypeOfBusiness): Unit =
+          s"return single entry with that type of business $downstreamTypeOfBusiness" in {
+            ListAllBusinessesResponse.fromDownstream(downstream(propertyData = Some(Seq(downstreamProperty(downstreamTypeOfBusiness))))) shouldBe
+              ListAllBusinessesResponse(Seq(Business(expectedTypeOfBusiness, incomeSourceId, None)))
+          }
       }
 
-      "passed IFS json with propertyData" in {
-        val desJson = Json.parse(ifsResponseWithPropertyData.stripMargin)
-        val model = ListAllBusinessesResponse(
-          Seq(
-            Business(TypeOfBusiness.`uk-property`, "123456789012345", None),
-            Business(TypeOfBusiness.`foreign-property`, "098765432109876", None)
-          ))
-        desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
+      "given a self-employment business" must {
+        behave like singleBusinessTest(Some("tradingName"))
+        behave like singleBusinessTest(None)
       }
 
-      "passed IFS json with businessData and propertyData" in {
-        val desJson = Json.parse(ifsResponseWithPropertyAndBusinessData.stripMargin)
-        val model = ListAllBusinessesResponse(
-          Seq(
-            Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS")),
-            Business(TypeOfBusiness.`self-employment`, "098765432109876", Some("RCDTS 2")),
-            Business(TypeOfBusiness.`uk-property`, "123456789012345", None),
-            Business(TypeOfBusiness.`foreign-property`, "098765432109876", None)
-          ))
-        desJson.as[ListAllBusinessesResponse[Business]] shouldBe model
+      def singleBusinessTest(tradingName: Option[String]): Unit =
+        s"return a response with a single self-employment entry and trading name $tradingName" in {
+          ListAllBusinessesResponse.fromDownstream(downstream(businessData = Some(Seq(downstreamBusiness(tradingName))))) shouldBe
+            ListAllBusinessesResponse(Seq(Business(`self-employment`, incomeSourceId, tradingName)))
+        }
+
+      "given multiple properties and self-employment businesses" must {
+        "return multiple businesses" in {
+          ListAllBusinessesResponse.fromDownstream(downstream(
+            propertyData = Some(Seq(
+              downstreamProperty(Some(`foreign-property`))
+            )),
+            businessData = Some(
+              Seq(
+                downstreamBusiness(Some("businessA")),
+                downstreamBusiness(Some("businessB"))
+              ))
+          )) shouldBe
+            ListAllBusinessesResponse(
+              Seq(
+                Business(`self-employment`, incomeSourceId, Some("businessA")),
+                Business(`self-employment`, incomeSourceId, Some("businessB")),
+                Business(`foreign-property`, incomeSourceId, None)
+              ))
+        }
       }
+
+      "given an empty propertyData Seq" must {
+        "be treated as if it is absent (i.e. None)" in {
+          ListAllBusinessesResponse.fromDownstream(
+            downstream(
+              propertyData = Some(Nil),
+              businessData = Some(Seq(downstreamBusiness(None)))
+            )) shouldBe
+            ListAllBusinessesResponse(Seq(Business(`self-employment`, incomeSourceId, None)))
+        }
+      }
+
+      "given an empty businessData Seq" must {
+        "be treated as if it is absent (i.e. None)" in {
+          ListAllBusinessesResponse.fromDownstream(
+            downstream(
+              propertyData = Some(Seq(downstreamProperty(None))),
+              businessData = Some(Nil)
+            )) shouldBe
+            ListAllBusinessesResponse(Seq(Business(`property-unspecified`, incomeSourceId, None)))
+        }
+      }
+
     }
   }
 

@@ -18,33 +18,35 @@ package v1.services
 
 import api.controllers.RequestContext
 import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundError, RuleIncorrectGovTestScenarioError}
+import api.models.outcomes.ResponseWrapper
 import api.services.{BaseService, ServiceOutcome}
+import cats.data.EitherT
 import cats.implicits._
-import config.{AppConfig, FeatureSwitches}
-import play.api.libs.json.Reads
-import v1.connectors.ListAllBusinessesConnector
+import v1.connectors.RetrieveBusinessDetailsConnector
 import v1.models.request.listAllBusinesses.ListAllBusinessesRequestData
+import v1.models.response.downstream.retrieveBusinessDetails.RetrieveBusinessDetailsDownstreamResponse
 import v1.models.response.listAllBusinesses.{Business, ListAllBusinessesResponse}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ListAllBusinessesService @Inject() (connector: ListAllBusinessesConnector, appConfig: AppConfig) extends BaseService {
+class ListAllBusinessesService @Inject() (connector: RetrieveBusinessDetailsConnector) extends BaseService {
 
   def listAllBusinessesService(request: ListAllBusinessesRequestData)(implicit
-                                                                      ctx: RequestContext,
-                                                                      ec: ExecutionContext
+      ctx: RequestContext,
+      ec: ExecutionContext
   ): Future[ServiceOutcome[ListAllBusinessesResponse[Business]]] = {
 
-    val isIfsEnabled: Boolean                                              = FeatureSwitches(appConfig).isIfsEnabled
-    implicit val responseReads: Reads[ListAllBusinessesResponse[Business]] = ListAllBusinessesResponse.getReads(isIfsEnabled)
+    val result = for {
+      downstreamResult <- EitherT(connector.retrieveBusinessDetails(request.nino).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap))))
+    } yield toMtd(downstreamResult)
 
-    connector
-      .listAllBusinesses(request)
-      .map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
-
+    result.value
   }
+
+  private def toMtd(downstreamResult: ResponseWrapper[RetrieveBusinessDetailsDownstreamResponse]) =
+    downstreamResult.map(ListAllBusinessesResponse.fromDownstream)
 
   private val downstreamErrorMap: Map[String, MtdError] = {
     val errors = Map(

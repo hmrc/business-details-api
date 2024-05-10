@@ -32,6 +32,9 @@ object Version {
 
   private val versionRegex = """application/vnd.hmrc.(\d.\d)\+json""".r
 
+  def apply(request: RequestHeader): Version =
+    getFromRequest(request).getOrElse(throw new Exception("Missing or unsupported version found in request accept header"))
+
   def getFromRequest(request: RequestHeader): Either[GetFromRequestError, Version] =
     getFrom(request.headers).map(Version(_))
 
