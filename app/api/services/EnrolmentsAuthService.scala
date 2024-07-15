@@ -17,7 +17,7 @@
 package api.services
 
 import api.models.auth.UserDetails
-import api.models.errors.{ClientNotAuthorisedError, InternalError}
+import api.models.errors.{ClientOrAgentNotAuthorisedError, InternalError}
 import api.models.outcomes.AuthOutcome
 import config.AppConfig
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
@@ -71,10 +71,10 @@ class EnrolmentsAuthService @Inject() (val connector: AuthConnector, val appConf
         }
       case _ ~ _ =>
         logger.warn(s"[EnrolmentsAuthService][authorised] Invalid AffinityGroup.")
-        Future.successful(Left(ClientNotAuthorisedError))
+        Future.successful(Left(ClientOrAgentNotAuthorisedError))
     } recoverWith {
-      case _: MissingBearerToken     => Future.successful(Left(ClientNotAuthorisedError))
-      case _: AuthorisationException => Future.successful(Left(ClientNotAuthorisedError))
+      case _: MissingBearerToken     => Future.successful(Left(ClientOrAgentNotAuthorisedError))
+      case _: AuthorisationException => Future.successful(Left(ClientOrAgentNotAuthorisedError))
       case error =>
         logger.warn(s"[EnrolmentsAuthService][authorised] An unexpected error occurred: $error")
         Future.successful(Left(InternalError))

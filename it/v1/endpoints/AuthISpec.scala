@@ -19,7 +19,7 @@ package v1.endpoints
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
@@ -29,6 +29,11 @@ class AuthISpec extends IntegrationBaseSpec {
 
   private trait Test {
     val nino = "AA123456A"
+
+    val requestJson: JsObject = Json.obj(
+      "accountingPeriod" -> Json.obj("startDate" -> "2019-01-01", "endDate" -> "2019-10-31"),
+      "businessId"       -> "XAIS12345678901"
+    )
 
     def setupStubs(): StubMapping
 
@@ -85,22 +90,23 @@ class AuthISpec extends IntegrationBaseSpec {
 
   "Calling the list endpoint" when {
 
-    "the NINO cannot be converted to a MTD ID" should {
+    "MTD ID lookup fails with a 500" should {
 
       "return 500" in new Test {
         override val nino: String = "AA123456A"
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
-          MtdIdLookupStub.internalServerError(nino)
+          MtdIdLookupStub.error(nino, Status.INTERNAL_SERVER_ERROR)
         }
 
         val response: WSResponse = await(request().get())
         response.status shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
+  }
 
-    "an MTD ID is successfully retrieve from the NINO and the user is authorised" should {
+  "MTD ID lookup succeeds and the user is authorised" should {
 
       "return 200" in new Test {
         override def setupStubs(): StubMapping = {
@@ -115,7 +121,7 @@ class AuthISpec extends IntegrationBaseSpec {
       }
     }
 
-    "an MTD ID is successfully retrieve from the NINO and the user is NOT logged in" should {
+    "MTD ID lookup succeeds but the user is NOT logged in" should {
 
       "return 403" in new Test {
         override val nino: String = "AA123456A"
@@ -131,7 +137,7 @@ class AuthISpec extends IntegrationBaseSpec {
       }
     }
 
-    "an MTD ID is successfully retrieve from the NINO and the user is NOT authorised" should {
+    "MTD ID lookup succeeds but the user is NOT authorised" should {
 
       "return 403" in new Test {
         override val nino: String = "AA123456A"
@@ -146,5 +152,4 @@ class AuthISpec extends IntegrationBaseSpec {
         response.status shouldBe Status.FORBIDDEN
       }
     }
-  }
 }

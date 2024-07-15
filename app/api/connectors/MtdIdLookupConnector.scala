@@ -23,12 +23,19 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+object MtdIdLookupConnector {
+  case class Error(statusCode: Int) extends AnyVal
+
+  type Outcome = Either[MtdIdLookupConnector.Error, String]
+
+}
+
 @Singleton
 class MtdIdLookupConnector @Inject() (http: HttpClient, appConfig: AppConfig) {
 
-  def getMtdId(nino: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MtdIdLookupOutcome] = {
+  def getMtdId(nino: String)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[MtdIdLookupConnector.Outcome] = {
 
-    http.GET[MtdIdLookupOutcome](s"${appConfig.mtdIdBaseUrl}/mtd-identifier-lookup/nino/$nino")
+    http.GET[MtdIdLookupConnector.Outcome](s"${appConfig.mtdIdBaseUrl}/mtd-identifier-lookup/nino/$nino")
   }
 
 }
