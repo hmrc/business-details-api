@@ -25,6 +25,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents, Result}
 import play.api.test.Helpers.stubControllerComponents
 import play.api.test.{FakeRequest, ResultExtractors}
+import routing.Version
 import support.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.MockIdGenerator
@@ -33,13 +34,16 @@ import scala.concurrent.Future
 
 class ControllerBaseSpec extends UnitSpec with Status with MimeTypes with HeaderNames with ResultExtractors with MockAuditService {
 
-  implicit lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  val version: Version = Version("5.0")
+
+   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(
+    HeaderNames.AUTHORIZATION -> "Bearer Token",
+     HeaderNames.ACCEPT -> s"application/vnd.hmrc.${version.name}+json"
+  )
 
   lazy val cc: ControllerComponents = stubControllerComponents()
 
-  lazy val fakeGetRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest.withHeaders(
-    HeaderNames.AUTHORIZATION -> "Bearer Token"
-  )
+  val  fakeGetRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest
 
   def fakePostRequest[T](body: T): FakeRequest[T] = fakeRequest.withBody(body)
 

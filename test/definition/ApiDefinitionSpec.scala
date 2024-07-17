@@ -17,12 +17,12 @@
 package definition
 
 import definition.APIStatus.ALPHA
-import routing.Version1
+import routing.Version
 import support.UnitSpec
 
 class ApiDefinitionSpec extends UnitSpec {
 
-  val apiVersion: APIVersion       = APIVersion(Version1, ALPHA, endpointsEnabled = false)
+  val apiVersion: APIVersion       = APIVersion(Version("12.3"), ALPHA, endpointsEnabled = false)
   val apiDefinition: APIDefinition = APIDefinition("b", "c", "d", Seq("e"), Seq(apiVersion), Some(false))
 
   "APIDefinition" when {
@@ -59,7 +59,7 @@ class ApiDefinitionSpec extends UnitSpec {
     }
   }
 
-  "the 'versions' parameter is empty" should {
+  "the 'versions' parameter is not unique" should {
     "throw an 'IllegalArgumentException'" in {
       assertThrows[IllegalArgumentException](
         apiDefinition.copy(versions = Seq(apiVersion, apiVersion))
@@ -67,7 +67,7 @@ class ApiDefinitionSpec extends UnitSpec {
     }
   }
 
-  "the 'versions' parameter is not unique" should {
+  "the 'versions' parameter is empty" should {
     "throw an 'IllegalArgumentException'" in {
       assertThrows[IllegalArgumentException](
         apiDefinition.copy(versions = Seq())

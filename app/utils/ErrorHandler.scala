@@ -21,7 +21,7 @@ import play.api.Configuration
 import play.api.http.Status._
 import play.api.mvc.Results._
 import play.api.mvc.{RequestHeader, Result}
-import routing.Versions
+import routing.Version
 import uk.gov.hmrc.auth.core.AuthorisationException
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -113,7 +113,7 @@ class ErrorHandler @Inject() (config: Configuration, auditConnector: AuditConnec
     Future.successful(Status(errorCode.httpStatus)(errorCode.asJson))
   }
 
-  private def versionIfSpecified(request: RequestHeader): String = Versions.getFromRequest(request) match {
+  private def versionIfSpecified(request: RequestHeader): String = Version.getFromRequest(request) match {
     case Right(version) => version.name
     case _              => "<unspecified>"
   }

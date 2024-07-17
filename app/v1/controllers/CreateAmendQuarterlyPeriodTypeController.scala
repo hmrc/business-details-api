@@ -23,7 +23,7 @@ import api.models.errors.ErrorWrapper
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
-import routing.{Version, Version1}
+import routing.Version
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.IdGenerator
@@ -70,7 +70,7 @@ class CreateAmendQuarterlyPeriodTypeController @Inject() (val authService: Enrol
       override def performAudit(userDetails: UserDetails, httpStatus: Int, response: Either[ErrorWrapper, Option[JsValue]])(implicit
                                                                                                                             ctx: RequestContext,
                                                                                                                             ec: ExecutionContext): Unit = {
-        val versionNumber = Version.from(request, orElse = Version1)
+        val version = Version(request)
         val quarterlyPeriodType = (request.request.body \ "quarterlyPeriodType").asOpt[String] match {
           case Some(x) => Map("quarterlyPeriodType" -> x)
           case None => Map.empty[String, String]
@@ -81,7 +81,7 @@ class CreateAmendQuarterlyPeriodTypeController @Inject() (val authService: Enrol
           case Left(err: ErrorWrapper) =>
             auditSubmission(
               FlattenedGenericAuditDetail(
-                Some(versionNumber.name),
+                Some(version.name),
                 request.userDetails,
                 params,
                 ctx.correlationId,
@@ -90,7 +90,7 @@ class CreateAmendQuarterlyPeriodTypeController @Inject() (val authService: Enrol
           case Right(_) =>
             auditSubmission(
               FlattenedGenericAuditDetail(
-                Some(versionNumber.name),
+                Some(version.name),
                 request.userDetails,
                 params,
                 ctx.correlationId,

@@ -46,7 +46,6 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
     with MockIdGenerator
     with MockAppConfig {
 
-  private val versionNumber = "1.0"
   private val validBusinessId = "XAIS12345678910"
   private val validTaxYear    = "2023-24"
   val userType: String = "Individual"
@@ -118,7 +117,7 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
         auditType = "CreateAndAmendQuarterlyPeriodTypeForABusiness",
         transactionName = "create-and-amend-quarterly-period",
         detail = FlattenedGenericAuditDetail(
-          versionNumber = Some(versionNumber),
+          versionNumber = Some(version.name),
           userDetails = userDetails,
           params = Map("nino" -> nino.toString, "businessId" -> validBusinessId, "taxYear" -> parsedTaxYear.asMtd,  "quarterlyPeriodType" -> "standard"),
           `X-CorrelationId` = correlationId,
