@@ -19,6 +19,7 @@ package api.controllers
 import api.models.auth.UserDetails
 import api.models.errors.MtdError
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
+import config.{AppConfig, FeatureSwitches}
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.auth.core.authorise.Predicate
@@ -29,10 +30,23 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class UserRequest[A](userDetails: UserDetails, request: Request[A]) extends WrappedRequest[A](request)
 
-abstract class AuthorisedController(cc: ControllerComponents)(implicit ec: ExecutionContext) extends BackendController(cc) {
+abstract class AuthorisedController(
+    cc: ControllerComponents
+)(implicit appConfig: AppConfig, ec: ExecutionContext)
+    extends BackendController(cc) {
 
   val authService: EnrolmentsAuthService
   val lookupService: MtdIdLookupService
+
+  val endpointName: String
+
+  lazy private val secondaryAgentsAccessControlEnabled: Boolean =
+    FeatureSwitches(appConfig).secondaryAgentsAccessControlEnabled
+
+  lazy private val endpointAllowsSecondaryAgents: Boolean = {
+    secondaryAgentsAccessControlEnabled &&
+    appConfig.endpointAllowsSecondaryAgents(endpointName)
+  }
 
   def authorisedAction(nino: String): ActionBuilder[UserRequest, AnyContent] = new ActionBuilder[UserRequest, AnyContent] {
 
@@ -40,14 +54,22 @@ abstract class AuthorisedController(cc: ControllerComponents)(implicit ec: Execu
 
     override protected def executionContext: ExecutionContext = cc.executionContext
 
-    def predicate(mtdId: String): Predicate =
-      Enrolment("HMRC-MTD-IT")
+    private def predicate(mtdId: String): Predicate = {
+      val primary = Enrolment("HMRC-MTD-IT")
         .withIdentifier("MTDITID", mtdId)
         .withDelegatedAuthRule("mtd-it-auth")
 
+      def secondary = Enrolment("HMRC-MTD-IT-SECONDARY")
+        .withIdentifier("MTDITID", mtdId)
+        .withDelegatedAuthRule("mtd-it-auth-secondary")
+
+      if (endpointAllowsSecondaryAgents) primary or secondary else primary
+    }
+
     def invokeBlockWithAuthCheck[A](mtdId: String, request: Request[A], block: UserRequest[A] => Future[Result])(implicit
         headerCarrier: HeaderCarrier): Future[Result] = {
-      authService.authorised(predicate(mtdId)).flatMap[Result] {
+
+      authService.authorised(predicate(mtdId), endpointAllowsSecondaryAgents).flatMap[Result] {
         case Right(userDetails) => block(UserRequest(userDetails.copy(mtdId = mtdId), request))
         case Left(mtdError)     => errorResponse(mtdError)
       }

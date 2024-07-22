@@ -39,9 +39,98 @@ import scala.util.control.NoStackTrace
 
 class ErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite {
 
+  "onClientError" should {
+    "return 404 with error body" when {
+      s"URI not found" in new Test {
+
+        private val result = handler.onClientError(requestHeader, Status.NOT_FOUND, "test")
+        status(result) shouldBe Status.NOT_FOUND
+
+        contentAsJson(result) shouldBe NotFoundError.asJson
+      }
+    }
+
+    "return 400 with error body" when {
+      "JsValidationException thrown and header is supplied" in new Test {
+        private val result = handler.onClientError(requestHeader, BAD_REQUEST, "test")
+        status(result) shouldBe BAD_REQUEST
+
+        contentAsJson(result) shouldBe BadRequestError.asJson
+      }
+    }
+
+    "return 401 with error body" when {
+      "unauthorised and header is supplied" in new Test {
+        private val result = handler.onClientError(requestHeader, UNAUTHORIZED, "test")
+        status(result) shouldBe UNAUTHORIZED
+
+        contentAsJson(result) shouldBe ClientOrAgentNotAuthorisedError.asJson
+      }
+    }
+
+    "return 415 with error body" when {
+      "unsupported body and header is supplied" in new Test {
+        private val result = handler.onClientError(requestHeader, UNSUPPORTED_MEDIA_TYPE, "test")
+        status(result) shouldBe UNSUPPORTED_MEDIA_TYPE
+
+        contentAsJson(result) shouldBe InvalidBodyTypeError.asJson
+      }
+    }
+
+    "return 405 with error body" when {
+      "invalid method type" in new Test {
+        private val result = handler.onClientError(requestHeader, METHOD_NOT_ALLOWED, "test")
+        status(result) shouldBe METHOD_NOT_ALLOWED
+
+        contentAsJson(result) shouldBe InvalidHttpMethodError.asJson
+      }
+    }
+  }
+
+  "onServerError" should {
+
+    "return 404 with error body" when {
+      "NotFoundException thrown" in new Test {
+        private val result = handler.onServerError(requestHeader, new NotFoundException("test") with NoStackTrace)
+        status(result) shouldBe NOT_FOUND
+
+        contentAsJson(result) shouldBe NotFoundError.asJson
+      }
+    }
+
+    "return 401 with error body" when {
+      "AuthorisationException thrown" in new Test {
+        private val result = handler.onServerError(requestHeader, new InsufficientEnrolments("test") with NoStackTrace)
+        // TODO This really should be FORBIDDEN (403), but would need to be changed across all the APIs at once (if at all).
+        status(result) shouldBe UNAUTHORIZED
+
+        contentAsJson(result) shouldBe ClientOrAgentNotAuthorisedError.asJson
+      }
+    }
+
+    "return 400 with error body" when {
+      "JsValidationException thrown" in new Test {
+        private val result =
+          handler.onServerError(requestHeader, new JsValidationException("test", "test", classOf[String], "errs") with NoStackTrace)
+        status(result) shouldBe BAD_REQUEST
+
+        contentAsJson(result) shouldBe BadRequestError.asJson
+      }
+    }
+
+    "return 500 with error body" when {
+      "other exception thrown" in new Test {
+        private val result = handler.onServerError(requestHeader, new Exception with NoStackTrace)
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+
+        contentAsJson(result) shouldBe InternalError.asJson
+      }
+    }
+  }
+
   def versionHeader: (String, String) = ACCEPT -> s"application/vnd.hmrc.1.0+json"
 
-  class Test() {
+  class Test {
     val method = "some-method"
 
     val requestHeader: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(versionHeader)
@@ -78,95 +167,6 @@ class ErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite {
     )
 
     val handler = new ErrorHandler(configuration, auditConnector, httpAuditEvent)
-  }
-
-  "onClientError" should {
-    "return 404 with error body" when {
-      s"URI not found" in new Test() {
-
-        private val result = handler.onClientError(requestHeader, Status.NOT_FOUND, "test")
-        status(result) shouldBe Status.NOT_FOUND
-
-        contentAsJson(result) shouldBe NotFoundError.asJson
-      }
-    }
-
-    "return 400 with error body" when {
-      "JsValidationException thrown and header is supplied" in new Test() {
-        private val result = handler.onClientError(requestHeader, BAD_REQUEST, "test")
-        status(result) shouldBe BAD_REQUEST
-
-        contentAsJson(result) shouldBe BadRequestError.asJson
-      }
-    }
-
-    "return 401 with error body" when {
-      "unauthorised and header is supplied" in new Test() {
-        private val result = handler.onClientError(requestHeader, UNAUTHORIZED, "test")
-        status(result) shouldBe UNAUTHORIZED
-
-        contentAsJson(result) shouldBe ClientNotAuthorisedError.asJson
-      }
-    }
-
-    "return 415 with error body" when {
-      "unsupported body and header is supplied" in new Test() {
-        private val result = handler.onClientError(requestHeader, UNSUPPORTED_MEDIA_TYPE, "test")
-        status(result) shouldBe UNSUPPORTED_MEDIA_TYPE
-
-        contentAsJson(result) shouldBe InvalidBodyTypeError.asJson
-      }
-    }
-
-    "return 405 with error body" when {
-      "invalid method type" in new Test() {
-        private val result = handler.onClientError(requestHeader, METHOD_NOT_ALLOWED, "test")
-        status(result) shouldBe METHOD_NOT_ALLOWED
-
-        contentAsJson(result) shouldBe InvalidHttpMethodError.asJson
-      }
-    }
-  }
-
-  "onServerError" should {
-
-    "return 404 with error body" when {
-      "NotFoundException thrown" in new Test() {
-        private val result = handler.onServerError(requestHeader, new NotFoundException("test") with NoStackTrace)
-        status(result) shouldBe NOT_FOUND
-
-        contentAsJson(result) shouldBe NotFoundError.asJson
-      }
-    }
-
-    "return 401 with error body" when {
-      "AuthorisationException thrown" in new Test() {
-        private val result = handler.onServerError(requestHeader, new InsufficientEnrolments("test") with NoStackTrace)
-        // TODO This really should be FORBIDDEN (403), but would need to be changed across all the APIs at once (if at all).
-        status(result) shouldBe UNAUTHORIZED
-
-        contentAsJson(result) shouldBe ClientNotAuthorisedError.asJson
-      }
-    }
-
-    "return 400 with error body" when {
-      "JsValidationException thrown" in new Test() {
-        private val result =
-          handler.onServerError(requestHeader, new JsValidationException("test", "test", classOf[String], "errs") with NoStackTrace)
-        status(result) shouldBe BAD_REQUEST
-
-        contentAsJson(result) shouldBe BadRequestError.asJson
-      }
-    }
-
-    "return 500 with error body" when {
-      "other exception thrown" in new Test() {
-        private val result = handler.onServerError(requestHeader, new Exception with NoStackTrace)
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-
-        contentAsJson(result) shouldBe InternalError.asJson
-      }
-    }
   }
 
 }

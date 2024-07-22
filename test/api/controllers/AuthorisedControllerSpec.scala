@@ -16,10 +16,13 @@
 
 package api.controllers
 
-import api.models.errors.{ClientNotAuthorisedError, InternalError, InvalidBearerTokenError, NinoFormatError}
+import api.models.auth.UserDetails
+import api.models.errors.{BadRequestError, ClientOrAgentNotAuthorisedError, InternalError, InvalidBearerTokenError, NinoFormatError}
 import api.services.{EnrolmentsAuthService, MockEnrolmentsAuthService, MockMtdIdLookupService, MtdIdLookupService}
-import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent}
+import config.MockAppConfig
+import play.api.Configuration
+import play.api.libs.json.JsObject
+import play.api.mvc.{Action, AnyContent, Result}
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.http.HeaderCarrier
@@ -27,127 +30,174 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class AuthorisedControllerSpec extends ControllerBaseSpec {
-
-  trait Test extends MockEnrolmentsAuthService with MockMtdIdLookupService {
-    val hc: HeaderCarrier = HeaderCarrier()
-
-    class TestController extends AuthorisedController(cc) {
-      override val authService: EnrolmentsAuthService = mockEnrolmentsAuthService
-      override val lookupService: MtdIdLookupService  = mockMtdIdLookupService
-
-      def action(nino: String): Action[AnyContent] = authorisedAction(nino).async {
-        Future.successful(Ok(Json.obj()))
-      }
-
-    }
-
-    lazy val target = new TestController()
-  }
+class AuthorisedControllerSpec extends ControllerBaseSpec with MockAppConfig {
 
   val nino: String  = "AA123456A"
   val mtdId: String = "X123567890"
-
-  val predicate: Predicate = Enrolment("HMRC-MTD-IT")
-    .withIdentifier("MTDITID", mtdId)
-    .withDelegatedAuthRule("mtd-it-auth")
 
   "calling an action" when {
 
     "the user is authorised" should {
       "return a 200" in new Test {
-
         MockedMtdIdLookupService
           .lookup(nino)
           .returns(Future.successful(Right(mtdId)))
 
         MockedEnrolmentsAuthService.authoriseUser()
 
-        private val result = target.action(nino)(fakeGetRequest)
+        val result: Future[Result] = controller.action(nino)(fakeGetRequest)
         status(result) shouldBe OK
       }
     }
 
-    "auth returns an unexpected error" should {
-      "return a 500" in new Test {
+    "the Primary Agent is authorised and secondary agents aren't allowed for this endpoint" should {
+      "return a 200" in new Test {
+        override def endpointAllowsSecondaryAgents: Boolean = false
 
-        MockedMtdIdLookupService
-          .lookup(nino)
-          .returns(Future.successful(Right(mtdId)))
+        MockedMtdIdLookupService.lookup(nino) returns Future.successful(Right(mtdId))
 
         MockedEnrolmentsAuthService
-          .authorised(predicate)
-          .returns(Future.successful(Left(InternalError)))
+          .authoriseAgent(primaryAgentPredicate)
+          .returns(Future.successful(Right(UserDetails("", "Agent", Some("arn")))))
 
-        private val result = target.action(nino)(fakeGetRequest)
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        val result: Future[Result] = controller.action(nino)(fakeGetRequest)
+        status(result) shouldBe OK
+      }
+    }
+
+    "the Secondary Agent is authorised" should {
+      "return a 200" in new Test {
+        MockedMtdIdLookupService.lookup(nino) returns Future.successful(Right(mtdId))
+
+        MockedEnrolmentsAuthService
+          .authoriseAgent(primaryAgentPredicate or secondaryAgentPredicate)
+          .returns(Future.successful(Right(UserDetails("", "Agent", Some("arn")))))
+
+        val result: Future[Result] = controller.action(nino)(fakeGetRequest)
+        status(result) shouldBe OK
+      }
+    }
+
+    "the Secondary Agent is not authorised" should {
+      "return a 403" in new Test {
+        MockedMtdIdLookupService.lookup(nino) returns Future.successful(Right(mtdId))
+
+        MockedEnrolmentsAuthService
+          .authoriseAgent(primaryAgentPredicate or secondaryAgentPredicate)
+          .returns(Future.successful(Left(ClientOrAgentNotAuthorisedError)))
+
+        val result: Future[Result] = controller.action(nino)(fakeGetRequest)
+        status(result) shouldBe FORBIDDEN
+      }
+    }
+
+    "the EnrolmentsAuthService returns an error" should {
+      "return that error with its status code" in new Test {
+        MockedMtdIdLookupService.lookup(nino) returns Future.successful(Right(mtdId))
+
+        MockedEnrolmentsAuthService
+          .authoriseAgent(primaryAgentPredicate or secondaryAgentPredicate)
+          .returns(Future.successful(Left(BadRequestError)))
+
+        val result: Future[Result] = controller.action(nino)(fakeGetRequest)
+        status(result) shouldBe BadRequestError.httpStatus
+        contentAsJson(result) shouldBe BadRequestError.asJson
+      }
+    }
+
+    "the MtdIdLookupService returns an error" should {
+      "return that error with its status code" in new Test {
+        MockedMtdIdLookupService.lookup(nino) returns Future.successful(Left(BadRequestError))
+
+        val result: Future[Result] = controller.action(nino)(fakeGetRequest)
+        status(result) shouldBe BadRequestError.httpStatus
+        contentAsJson(result) shouldBe BadRequestError.asJson
       }
     }
 
     "the nino is invalid" should {
       "return a 400" in new Test {
-
         MockedMtdIdLookupService
           .lookup(nino)
           .returns(Future.successful(Left(NinoFormatError)))
 
-        private val result = target.action(nino)(fakeGetRequest)
+        val result: Future[Result] = controller.action(nino)(fakeGetRequest)
         status(result) shouldBe BAD_REQUEST
       }
     }
 
     "the nino is valid but invalid bearer token" should {
       "return a 401" in new Test {
-
         MockedMtdIdLookupService
           .lookup(nino)
           .returns(Future.successful(Left(InvalidBearerTokenError)))
 
-        private val result = target.action(nino)(fakeGetRequest)
+        val result: Future[Result] = controller.action(nino)(fakeGetRequest)
         status(result) shouldBe UNAUTHORIZED
       }
     }
 
   }
 
-  "authorisation checks fail when retrieving the MDT ID" should {
+  "authorisation checks fail when retrieving the MTD ID" should {
     "return a 403" in new Test {
-
       MockedMtdIdLookupService
         .lookup(nino)
-        .returns(Future.successful(Left(ClientNotAuthorisedError)))
+        .returns(Future.successful(Left(ClientOrAgentNotAuthorisedError)))
 
-      private val result = target.action(nino)(fakeGetRequest)
+      val result: Future[Result] = controller.action(nino)(fakeGetRequest)
       status(result) shouldBe FORBIDDEN
     }
   }
 
-  "the an error occurs retrieving the MDT ID" should {
+  "an error occurs retrieving the MTD ID" should {
     "return a 500" in new Test {
-
       MockedMtdIdLookupService
         .lookup(nino)
         .returns(Future.successful(Left(InternalError)))
 
-      private val result = target.action(nino)(fakeGetRequest)
+      val result: Future[Result] = controller.action(nino)(fakeGetRequest)
       status(result) shouldBe INTERNAL_SERVER_ERROR
     }
   }
 
-  "the MTD user is not authorised" should {
-    "return a 403" in new Test {
+  trait Test extends MockEnrolmentsAuthService with MockMtdIdLookupService {
+    val hc: HeaderCarrier = HeaderCarrier()
 
-      MockedMtdIdLookupService
-        .lookup(nino)
-        .returns(Future.successful(Right(mtdId)))
+    class TestController extends AuthorisedController(cc) {
+      val endpointName = "test-endpoint"
 
-      MockedEnrolmentsAuthService
-        .authorised(predicate)
-        .returns(Future.successful(Left(ClientNotAuthorisedError)))
+      override val authService: EnrolmentsAuthService = mockEnrolmentsAuthService
+      override val lookupService: MtdIdLookupService  = mockMtdIdLookupService
 
-      private val result = target.action(nino)(fakeGetRequest)
-      status(result) shouldBe FORBIDDEN
+      def action(nino: String): Action[AnyContent] = authorisedAction(nino).async {
+        Future.successful(Ok(JsObject.empty))
+      }
+
     }
+
+    lazy val controller = new TestController()
+
+    protected def secondaryAgentsfeatureEnabled: Boolean = true
+
+    protected def endpointAllowsSecondaryAgents: Boolean = true
+
+    MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+      "secondary-agents-access-control.enabled" -> secondaryAgentsfeatureEnabled
+    )
+
+    MockedAppConfig
+      .endpointAllowsSecondaryAgents(controller.endpointName)
+      .anyNumberOfTimes() returns endpointAllowsSecondaryAgents
+
+    protected final val primaryAgentPredicate: Predicate = Enrolment("HMRC-MTD-IT")
+      .withIdentifier("MTDITID", mtdId)
+      .withDelegatedAuthRule("mtd-it-auth")
+
+    protected final val secondaryAgentPredicate: Predicate = Enrolment("HMRC-MTD-IT-SECONDARY")
+      .withIdentifier("MTDITID", mtdId)
+      .withDelegatedAuthRule("mtd-it-auth-secondary")
+
   }
 
 }

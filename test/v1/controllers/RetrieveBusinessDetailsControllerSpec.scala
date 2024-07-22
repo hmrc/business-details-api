@@ -24,6 +24,7 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
 import config.MockAppConfig
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import utils.MockIdGenerator
@@ -174,8 +175,13 @@ class RetrieveBusinessDetailsControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    protected def callController(): Future[Result] = controller.handleRequest(nino, businessId)(fakeGetRequest)
+    MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+      "secondary-agents-access-control.enabled" -> true
+    )
 
+    MockedAppConfig.endpointAllowsSecondaryAgents(controller.endpointName).anyNumberOfTimes() returns false
+
+    protected def callController(): Future[Result] = controller.handleRequest(nino, businessId)(fakeGetRequest)
   }
 
 }

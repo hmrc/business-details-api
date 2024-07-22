@@ -27,68 +27,73 @@ import support.IntegrationBaseSpec
 
 class AuthISpec extends IntegrationBaseSpec {
 
-  private trait Test {
-    val nino = "AA123456A"
+  private val secondaryAgentAllowedEndpoint    = "list-all-businesses"
+  private val secondaryAgentNotAllowedEndpoint = "create-amend-quarterly-period-type"
 
-    def setupStubs(): StubMapping
+  /** One endpoint where secondary agents are allowed, and one where they're not allowed.
+    */
+  override def servicesConfig: Map[String, String] =
+    Map(
+      s"api.secondary-agent-endpoints.$secondaryAgentAllowedEndpoint"    -> "true",
+      s"api.secondary-agent-endpoints.$secondaryAgentNotAllowedEndpoint" -> "false"
+    ) ++ super.servicesConfig
 
-    def request(): WSRequest = {
-      setupStubs()
-      buildRequest(s"/$nino/list")
-        .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.1.0+json"),
-          (AUTHORIZATION, "Bearer 123") // some bearer token
-      )
+
+  "Calling an endpoint that allows secondary agents" when {
+    "the client is the primary agent" should {
+      "return a success response" in new Test {
+        override def setupStubs(): StubMapping = {
+          AuditStub.audit()
+          AuthStub.authorised()
+          MtdIdLookupStub.ninoFound(nino)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Status.OK, downstreamResponse)
+        }
+
+        override lazy val mtdUrl = s"/$nino/list"
+
+        val response: WSResponse = await(request().get())
+        response.status shouldBe Status.OK
+      }
     }
 
-    def desUri: String = s"/registration/business-details/nino/$nino"
+    "the client is a secondary agent" should {
+      "return a success response" in {
 
-    val desResponse: JsValue = Json.parse("""
-        |{
-        |   "safeId": "XE00001234567890",
-        |   "nino": "AA123456A",
-        |   "mtdbsa": "123456789012345",
-        |   "propertyIncome": false,
-        |   "businessData": [
-        |      {
-        |         "incomeSourceType": "1",
-        |         "incomeSourceId": "123456789012345",
-        |         "accountingPeriodStartDate": "2001-01-01",
-        |         "accountingPeriodEndDate": "2001-01-01",
-        |         "tradingName": "RCDTS",
-        |         "businessAddressDetails": {
-        |            "addressLine1": "100 SuttonStreet",
-        |            "addressLine2": "Wokingham",
-        |            "addressLine3": "Surrey",
-        |            "addressLine4": "London",
-        |            "postalCode": "DH14EJ",
-        |            "countryCode": "GB"
-        |         },
-        |         "businessContactDetails": {
-        |            "phoneNumber": "01332752856",
-        |            "mobileNumber": "07782565326",
-        |            "faxNumber": "01332754256",
-        |            "emailAddress": "stephen@manncorpone.co.uk"
-        |         },
-        |         "tradingStartDate": "2001-01-01",
-        |         "cashOrAccruals": false,
-        |         "seasonal": true,
-        |         "cessationDate": "2001-01-01",
-        |         "cessationReason": "002",
-        |         "paperLess": true
-        |      }
-        |   ]
-        |}
-        |""".stripMargin)
-
+      }
+    }
   }
+
+  "Calling an endpoint that doesn't allow secondary agents" when {
+    "the client is the primary agent" should {
+      "return a success response" in {
+
+      }
+    }
+
+    "the client is a secondary agent" should {
+      "return a 403 response" in new Test {
+        override def setupStubs(): StubMapping = {
+          AuditStub.audit()
+          AuthStub.authorisedAsSecondaryAgent()
+          MtdIdLookupStub.unauthorisedSecondaryAgent(nino)
+        }
+
+        override lazy val mtdUrl = s"/$nino/list"
+
+        val response: WSResponse = await(request().get())
+        response.body shouldBe ""
+        response.status shouldBe Status.FORBIDDEN
+      }
+    }
+  }
+
 
   "Calling the list endpoint" when {
 
     "the NINO cannot be converted to a MTD ID" should {
 
       "return 500" in new Test {
-        override val nino: String = "AA123456A"
+        override lazy val nino: String = "AA123456A"
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
@@ -107,7 +112,7 @@ class AuthISpec extends IntegrationBaseSpec {
           AuditStub.audit()
           AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, Status.OK, desResponse)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Status.OK, downstreamResponse)
         }
 
         val response: WSResponse = await(request().get())
@@ -118,7 +123,7 @@ class AuthISpec extends IntegrationBaseSpec {
     "an MTD ID is successfully retrieve from the NINO and the user is NOT logged in" should {
 
       "return 403" in new Test {
-        override val nino: String = "AA123456A"
+        override lazy val nino: String = "AA123456A"
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
@@ -131,10 +136,10 @@ class AuthISpec extends IntegrationBaseSpec {
       }
     }
 
-    "an MTD ID is successfully retrieve from the NINO and the user is NOT authorised" should {
+    "an MTD ID is retrieved from the NINO but the user is not authorised to access it" should {
 
       "return 403" in new Test {
-        override val nino: String = "AA123456A"
+        override lazy val nino: String = "AA123456A"
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
@@ -146,5 +151,79 @@ class AuthISpec extends IntegrationBaseSpec {
         response.status shouldBe Status.FORBIDDEN
       }
     }
+
+    "an MTD ID is retrieved from the NINO but the user as a secondary agent is not authorised to access it" should {
+
+      "return 403" in new Test {
+        override lazy val nino: String = "AA123456A"
+
+        override def setupStubs(): StubMapping = {
+          AuditStub.audit()
+          MtdIdLookupStub.ninoFound(nino)
+          AuthStub.unauthorisedAsSecondaryAgent()
+        }
+
+        val response: WSResponse = await(request().get())
+        response.status shouldBe Status.FORBIDDEN
+      }
+    }
   }
+
+  private trait Test {
+    lazy protected val nino = "AA123456A"
+    lazy protected val mtdUrl = s"/$nino/list"
+
+    def setupStubs(): StubMapping
+
+    def request(): WSRequest = {
+      setupStubs()
+      buildRequest(mtdUrl)
+        .withHttpHeaders(
+          (ACCEPT, "application/vnd.hmrc.1.0+json"),
+          (AUTHORIZATION, "Bearer 123")
+        )
+    }
+
+    def downstreamUri: String = s"/registration/business-details/nino/$nino"
+
+    val downstreamResponse: JsValue = Json.parse("""
+      |{
+      |   "safeId": "XE00001234567890",
+      |   "nino": "AA123456A",
+      |   "mtdbsa": "123456789012345",
+      |   "propertyIncome": false,
+      |   "businessData": [
+      |      {
+      |         "incomeSourceType": "1",
+      |         "incomeSourceId": "123456789012345",
+      |         "accountingPeriodStartDate": "2001-01-01",
+      |         "accountingPeriodEndDate": "2001-01-01",
+      |         "tradingName": "RCDTS",
+      |         "businessAddressDetails": {
+      |            "addressLine1": "100 SuttonStreet",
+      |            "addressLine2": "Wokingham",
+      |            "addressLine3": "Surrey",
+      |            "addressLine4": "London",
+      |            "postalCode": "DH14EJ",
+      |            "countryCode": "GB"
+      |         },
+      |         "businessContactDetails": {
+      |            "phoneNumber": "01332752856",
+      |            "mobileNumber": "07782565326",
+      |            "faxNumber": "01332754256",
+      |            "emailAddress": "stephen@manncorpone.co.uk"
+      |         },
+      |         "tradingStartDate": "2001-01-01",
+      |         "cashOrAccruals": false,
+      |         "seasonal": true,
+      |         "cessationDate": "2001-01-01",
+      |         "cessationReason": "002",
+      |         "paperLess": true
+      |      }
+      |   ]
+      |}
+      |""".stripMargin)
+
+  }
+
 }

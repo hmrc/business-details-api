@@ -18,7 +18,7 @@ package api.services
 
 import api.connectors.MockMtdIdLookupConnector
 import api.models.domain.Nino
-import api.models.errors.{ClientNotAuthorisedError, InternalError, NinoFormatError}
+import api.models.errors.{ClientOrAgentNotAuthorisedError, InternalError, NinoFormatError}
 
 import scala.concurrent.Future
 
@@ -51,7 +51,7 @@ class MtdIdLookupServiceSpec extends ServiceSpec {
 
     "a not authorised error occurs the service" should {
       "proxy the error to the caller" in new Test {
-        val connectorResponse = Left(ClientNotAuthorisedError)
+        val connectorResponse = Left(ClientOrAgentNotAuthorisedError)
 
         MockedMtdIdLookupConnector
           .lookup(nino.nino)

@@ -25,6 +25,7 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
 import config.MockAppConfig
+import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import utils.MockIdGenerator
@@ -46,10 +47,10 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
     with MockIdGenerator
     with MockAppConfig {
 
-  private val versionNumber = "1.0"
-  private val validBusinessId = "XAIS12345678910"
-  private val validTaxYear    = "2023-24"
-  val userType: String = "Individual"
+  private val versionNumber    = "1.0"
+  private val validBusinessId  = "XAIS12345678910"
+  private val validTaxYear     = "2023-24"
+  val userType: String         = "Individual"
   val userDetails: UserDetails = UserDetails("mtdId", userType, None)
 
   private val validBody = Json.parse("""
@@ -82,7 +83,6 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
         willUseValidator(returning(NinoFormatError))
-
         runErrorTestWithAudit(NinoFormatError)
       }
 
@@ -110,8 +110,13 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    protected def callController(): Future[Result] = controller.handleRequest(nino, validBusinessId, validTaxYear)(fakePutRequest(validBody))
+    MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+      "secondary-agents-access-control.enabled" -> true
+    )
 
+    MockedAppConfig.endpointAllowsSecondaryAgents(controller.endpointName).anyNumberOfTimes() returns false
+
+    protected def callController(): Future[Result] = controller.handleRequest(nino, validBusinessId, validTaxYear)(fakePutRequest(validBody))
 
     def event(auditResponse: AuditResponse, maybeRequestBody: Option[JsValue]): AuditEvent[FlattenedGenericAuditDetail] =
       AuditEvent(
@@ -120,11 +125,13 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
         detail = FlattenedGenericAuditDetail(
           versionNumber = Some(versionNumber),
           userDetails = userDetails,
-          params = Map("nino" -> nino.toString, "businessId" -> validBusinessId, "taxYear" -> parsedTaxYear.asMtd,  "quarterlyPeriodType" -> "standard"),
+          params =
+            Map("nino" -> nino, "businessId" -> validBusinessId, "taxYear" -> parsedTaxYear.asMtd, "quarterlyPeriodType" -> "standard"),
           `X-CorrelationId` = correlationId,
           auditResponse = auditResponse
         )
       )
+
   }
 
 }

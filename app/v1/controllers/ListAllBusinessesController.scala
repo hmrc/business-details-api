@@ -19,6 +19,7 @@ package v1.controllers
 import api.controllers._
 import api.hateoas.HateoasFactory
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
+import config.AppConfig
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
 import v1.controllers.validators.ListAllBusinessDetailsValidatorFactory
@@ -35,8 +36,10 @@ class ListAllBusinessesController @Inject() (val authService: EnrolmentsAuthServ
                                              validatorFactory: ListAllBusinessDetailsValidatorFactory,
                                              hateoasFactory: HateoasFactory,
                                              cc: ControllerComponents,
-                                             idGenerator: IdGenerator)(implicit ec: ExecutionContext)
+                                             idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
+
+  val endpointName = "list-all-businesses"
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "ListAllBusinessesController", endpointName = "List All Businesses")

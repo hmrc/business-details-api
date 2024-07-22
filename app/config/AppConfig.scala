@@ -53,6 +53,7 @@ trait AppConfig {
 
   lazy val ifsDownstreamConfig: DownstreamConfig =
     DownstreamConfig(baseUrl = ifsBaseUrl, env = ifsEnv, token = ifsToken, environmentHeaders = ifsEnvironmentHeaders)
+
   lazy val api2089DownstreamConfig: DownstreamConfig =
     DownstreamConfig(baseUrl = api2089BaseUrl, env = api2089Env, token = api2089Token, environmentHeaders = api2089EnvironmentHeaders)
 
@@ -73,6 +74,9 @@ trait AppConfig {
     */
   def endpointReleasedInProduction(version: String, name: String): Boolean
 
+  /** Defaults to false
+    */
+  def endpointAllowsSecondaryAgents(endpointName: String): Boolean
 }
 
 @Singleton
@@ -123,6 +127,13 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
     */
   private def confBoolean(path: String, defaultValue: Boolean): Boolean =
     if (configuration.underlying.hasPath(path)) config.getBoolean(path) else defaultValue
+
+  def endpointAllowsSecondaryAgents(endpointName: String): Boolean = secondaryAgentEndpoints.getOrElse(endpointName, false)
+
+  private val secondaryAgentEndpoints: Map[String, Boolean] =
+    configuration
+      .getOptional[Map[String, Boolean]]("api.secondary-agent-endpoints")
+      .getOrElse(Map.empty)
 
 }
 
