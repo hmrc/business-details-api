@@ -21,7 +21,11 @@ import api.models.errors._
 import api.utils.JsonErrorValidators
 import play.api.libs.json.{JsBoolean, JsObject, JsString, JsValue, Json}
 import support.UnitSpec
-import v1.models.request.createAmendQuarterlyPeriodType.{CreateAmendQuarterlyPeriodTypeRequestBody, CreateAmendQuarterlyPeriodTypeRequestData, QuarterlyPeriodType}
+import v1.models.request.createAmendQuarterlyPeriodType.{
+  CreateAmendQuarterlyPeriodTypeRequestBody,
+  CreateAmendQuarterlyPeriodTypeRequestData,
+  QuarterlyPeriodType
+}
 
 class CreateAmendQuarterlyPeriodTypeValidatorFactorySpec extends UnitSpec with JsonErrorValidators {
 

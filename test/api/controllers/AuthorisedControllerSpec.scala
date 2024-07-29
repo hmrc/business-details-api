@@ -32,8 +32,8 @@ import scala.concurrent.Future
 
 class AuthorisedControllerSpec extends ControllerBaseSpec with MockAppConfig {
 
-  val nino: String  = "AA123456A"
-  val mtdId: String = "X123567890"
+  private val nino  = "AA123456A"
+  private val mtdId = "X123567890"
 
   "calling an action" when {
 

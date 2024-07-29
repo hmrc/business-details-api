@@ -42,7 +42,7 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
   val errorCodeMap: PartialFunction[String, MtdError] = {
     case "ERR1" => Error1
     case "ERR2" => Error2
-    case "DS" => InternalError
+    case "DS"   => InternalError
   }
 
   "mapping Des errors" when {
@@ -110,4 +110,5 @@ class DownstreamResponseMappingSupportSpec extends UnitSpec {
       }
     }
   }
+
 }

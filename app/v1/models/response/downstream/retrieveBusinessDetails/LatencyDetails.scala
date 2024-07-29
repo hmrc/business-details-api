@@ -30,12 +30,13 @@ object LatencyDetails {
   implicit val writes: OWrites[LatencyDetails] = Json.writes[LatencyDetails]
 
   implicit val taxYearReads: Reads[TaxYear] = implicitly[Reads[String]].map(TaxYear.fromDownstream)
+
   implicit val reads: Reads[LatencyDetails] = (
     (JsPath \ "latencyEndDate").read[String] and
       (JsPath \ "taxYear1").read[TaxYear] and
       (JsPath \ "latencyIndicator1").read[LatencyIndicator] and
       (JsPath \ "taxYear2").read[TaxYear] and
       (JsPath \ "latencyIndicator2").read[LatencyIndicator]
-    )(LatencyDetails.apply _)
+  )(LatencyDetails.apply _)
 
 }

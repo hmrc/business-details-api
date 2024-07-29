@@ -30,7 +30,11 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import utils.MockIdGenerator
 import v1.controllers.validators.MockCreateAmendQuarterlyPeriodTypeValidatorFactory
-import v1.models.request.createAmendQuarterlyPeriodType.{CreateAmendQuarterlyPeriodTypeRequestBody, CreateAmendQuarterlyPeriodTypeRequestData, QuarterlyPeriodType}
+import v1.models.request.createAmendQuarterlyPeriodType.{
+  CreateAmendQuarterlyPeriodTypeRequestBody,
+  CreateAmendQuarterlyPeriodTypeRequestData,
+  QuarterlyPeriodType
+}
 import v1.services.MockCreateAmendQuarterlyPeriodTypeService
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -125,8 +129,7 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
         detail = FlattenedGenericAuditDetail(
           versionNumber = Some(versionNumber),
           userDetails = userDetails,
-          params =
-            Map("nino" -> nino, "businessId" -> validBusinessId, "taxYear" -> parsedTaxYear.asMtd, "quarterlyPeriodType" -> "standard"),
+          params = Map("nino" -> nino, "businessId" -> validBusinessId, "taxYear" -> parsedTaxYear.asMtd, "quarterlyPeriodType" -> "standard"),
           `X-CorrelationId` = correlationId,
           auditResponse = auditResponse
         )

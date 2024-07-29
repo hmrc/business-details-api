@@ -27,12 +27,12 @@ import v1.models.response.downstream.retrieveBusinessDetails.RetrieveBusinessDet
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RetrieveBusinessDetailsConnector @Inject()(val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
+class RetrieveBusinessDetailsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
   def retrieveBusinessDetails(nino: Nino)(implicit
-                                             hc: HeaderCarrier,
-                                             ec: ExecutionContext,
-                                             correlationId: String): Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]] = {
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      correlationId: String): Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]] = {
 
     val downstreamUri = s"registration/business-details/nino/$nino"
 

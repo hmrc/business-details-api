@@ -19,13 +19,13 @@ package v1.models.response.downstream.retrieveBusinessDetails
 import play.api.libs.json.{Json, Reads}
 
 case class BusinessAddressDetails(
-                                   addressLine1: String,
-                                   addressLine2: Option[String],
-                                   addressLine3: Option[String],
-                                   addressLine4: Option[String],
-                                   postalCode: Option[String],
-                                   countryCode: String
-                                 )
+    addressLine1: String,
+    addressLine2: Option[String],
+    addressLine3: Option[String],
+    addressLine4: Option[String],
+    postalCode: Option[String],
+    countryCode: String
+)
 
 object BusinessAddressDetails {
   implicit val reads: Reads[BusinessAddressDetails] = Json.reads

@@ -73,6 +73,7 @@ object AuthStub extends WireMockMethods {
   }
 
   def unauthorisedNotLoggedIn(): StubMapping = {
+    // Note that MissingBearerToken extends NoActiveSession
     when(method = POST, uri = authoriseUri)
       .thenReturn(status = UNAUTHORIZED, headers = Map("WWW-Authenticate" -> """MDTP detail="MissingBearerToken""""))
   }
@@ -86,6 +87,5 @@ object AuthStub extends WireMockMethods {
     when(method = POST, uri = authoriseUri)
       .thenReturn(status = UNAUTHORIZED, headers = Map("WWW-Authenticate" -> """MDTP detail="FailedRelationship""""))
   }
-
 
 }

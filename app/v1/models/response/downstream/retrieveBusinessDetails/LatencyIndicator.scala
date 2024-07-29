@@ -38,7 +38,7 @@ object LatencyIndicator {
     json.as[String] match {
       case "A" | "a" => JsSuccess(Annual)
       case "Q" | "q" => JsSuccess(Quarterly)
-      case other => JsError(s"Unknown latency indicator: $other")
+      case other     => JsError(s"Unknown latency indicator: $other")
     }
   }
 

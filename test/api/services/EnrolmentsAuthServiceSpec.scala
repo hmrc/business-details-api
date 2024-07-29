@@ -18,6 +18,7 @@ package api.services
 
 import api.models.auth.UserDetails
 import api.models.errors.{ClientOrAgentNotAuthorisedError, InternalError}
+import api.models.outcomes.AuthOutcome
 import config.{ConfidenceLevelConfig, MockAppConfig}
 import org.scalamock.handlers.CallHandler
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
@@ -30,9 +31,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
-
-  private def extraPredicatesAnd(predicate: Predicate) = predicate and
-    ((Individual and ConfidenceLevel.L200) or Organisation or (Agent and Enrolment("HMRC-AS-AGENT")))
 
   "calling .authorised" when {
     val inputPredicate = EmptyPredicate
@@ -73,7 +71,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
           .authorised(expectedPredicate, affinityGroup and authorisedEnrolments)
           .returns(Future.successful(retrievalsResult))
 
-        await(target.authorised(inputPredicate)) shouldBe Right(UserDetails("", "Individual", None))
+        await(enrolmentsAuthService.authorised(inputPredicate)) shouldBe Right(UserDetails("", "Individual", None))
       }
 
     def authorisedOrganisation(inputPredicate: Predicate, authValidationEnabled: Boolean, expectedPredicate: Predicate): Unit =
@@ -85,7 +83,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
           .authorised(expectedPredicate, affinityGroup and authorisedEnrolments)
           .returns(Future.successful(retrievalsResult))
 
-        await(target.authorised(inputPredicate)) shouldBe Right(UserDetails("", "Organisation", None))
+        await(enrolmentsAuthService.authorised(inputPredicate)) shouldBe Right(UserDetails("", "Organisation", None))
       }
 
     def authorisedAgentsMissingArn(inputPredicate: Predicate, authValidationEnabled: Boolean, expectedPredicate: Predicate): Unit = {
@@ -111,7 +109,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
         //          .authorised(Agent and Enrolment("HMRC-AS-AGENT"), authorisedEnrolments)
         //          .returns(Future.successful(enrolmentsWithoutArn))
 
-        await(target.authorised(inputPredicate)) shouldBe Left(InternalError)
+        await(enrolmentsAuthService.authorised(inputPredicate)) shouldBe Left(InternalError)
       }
     }
 
@@ -142,7 +140,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
           .authorised(expectedPredicate, affinityGroup and authorisedEnrolments)
           .returns(Future.successful(retrievalsResult))
 
-        await(target.authorised(inputPredicate)) shouldBe Right(UserDetails("", "Agent", Some(arn)))
+        await(enrolmentsAuthService.authorised(inputPredicate)) shouldBe Right(UserDetails("", "Agent", Some(arn)))
 
       }
 
@@ -177,13 +175,14 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
             .authorised(expectedPredicate, affinityGroup and authorisedEnrolments)
             .returns(Future.successful(retrievalsResult))
 
-          await(target.authorised(inputPredicate, secondaryAgentAccessAllowed)) shouldBe Right(UserDetails("", "Agent", Some(arn)))
+          await(enrolmentsAuthService.authorised(inputPredicate, secondaryAgentAccessAllowed)) shouldBe Right(UserDetails("", "Agent", Some(arn)))
         } else {
           MockedAuthConnector
             .authorised(expectedPredicate, affinityGroup and authorisedEnrolments)
             .returns(Future.failed(FailedRelationship()))
 
-          await(target.authorised(inputPredicate, secondaryAgentAccessAllowed)) shouldBe Left(ClientOrAgentNotAuthorisedError)
+          val result: AuthOutcome = await(enrolmentsAuthService.authorised(inputPredicate, secondaryAgentAccessAllowed))
+          result shouldBe Left(ClientOrAgentNotAuthorisedError)
         }
       }
 
@@ -195,7 +194,8 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
           .authorised(expectedPredicate, affinityGroup and authorisedEnrolments)
           .returns(Future.failed(MissingBearerToken()))
 
-        await(target.authorised(inputPredicate)) shouldBe Left(ClientOrAgentNotAuthorisedError)
+        val result: AuthOutcome = await(enrolmentsAuthService.authorised(inputPredicate))
+        result shouldBe Left(ClientOrAgentNotAuthorisedError)
       }
 
     def disallowUsersWithoutEnrolments(inputPredicate: Predicate, authValidationEnabled: Boolean, expectedPredicate: Predicate): Unit =
@@ -206,13 +206,16 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
           .authorised(expectedPredicate, affinityGroup and authorisedEnrolments)
           .returns(Future.failed(InsufficientEnrolments()))
 
-        await(target.authorised(inputPredicate)) shouldBe Left(ClientOrAgentNotAuthorisedError)
+        await(enrolmentsAuthService.authorised(inputPredicate)) shouldBe Left(ClientOrAgentNotAuthorisedError)
       }
   }
 
+  private def extraPredicatesAnd(predicate: Predicate): Predicate = predicate and
+    ((Individual and ConfidenceLevel.L200) or Organisation or (Agent and Enrolment("HMRC-AS-AGENT")))
+
   trait Test {
     val mockAuthConnector: AuthConnector = mock[AuthConnector]
-    lazy val target                      = new EnrolmentsAuthService(mockAuthConnector, mockAppConfig)
+    lazy val enrolmentsAuthService       = new EnrolmentsAuthService(mockAuthConnector, mockAppConfig)
 
     object MockedAuthConnector {
 

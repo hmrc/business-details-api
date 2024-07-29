@@ -30,7 +30,7 @@ object MtdIdLookupStub extends WireMockMethods {
       .thenReturn(status = OK, body = Json.obj("mtdbsa" -> "12345678"))
   }
 
-  def unauthorised(nino: String): StubMapping = {
+  def error(nino: String, status: Int): StubMapping = {
     when(method = GET, uri = lookupUrl(nino))
       .thenReturn(status = FORBIDDEN, body = JsObject.empty)
   }

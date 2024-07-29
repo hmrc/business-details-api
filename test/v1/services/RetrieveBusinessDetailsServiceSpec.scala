@@ -23,7 +23,13 @@ import api.services.{ServiceOutcome, ServiceSpec}
 import config.MockFeatureSwitches
 import v1.connectors.MockRetrieveBusinessDetailsConnector
 import v1.models.request.retrieveBusinessDetails.RetrieveBusinessDetailsRequestData
-import v1.models.response.downstream.retrieveBusinessDetails.{BusinessData, PropertyData, QuarterReportingType, QuarterTypeElection, RetrieveBusinessDetailsDownstreamResponse}
+import v1.models.response.downstream.retrieveBusinessDetails.{
+  BusinessData,
+  PropertyData,
+  QuarterReportingType,
+  QuarterTypeElection,
+  RetrieveBusinessDetailsDownstreamResponse
+}
 import v1.models.response.retrieveBusinessDetails.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future

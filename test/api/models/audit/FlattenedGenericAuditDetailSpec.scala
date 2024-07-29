@@ -25,15 +25,15 @@ import support.UnitSpec
 
 class FlattenedGenericAuditDetailSpec extends UnitSpec with MockAppConfig {
 
-  val versionNumber: String = "1.0"
-  val nino: String = "XX751130C"
-  val businessId: String = "XBIS12345678901"
-  val taxYear: String = "2021-22"
-  val quarterlyPeriodType: String = "standard"
+  val versionNumber: String                = "1.0"
+  val nino: String                         = "XX751130C"
+  val businessId: String                   = "XBIS12345678901"
+  val taxYear: String                      = "2021-22"
+  val quarterlyPeriodType: String          = "standard"
   val agentReferenceNumber: Option[String] = Some("012345678")
-  val userType: String = "Agent"
-  val userDetails: UserDetails = UserDetails("mtdId", userType, agentReferenceNumber)
-  val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
+  val userType: String                     = "Agent"
+  val userDetails: UserDetails             = UserDetails("mtdId", userType, agentReferenceNumber)
+  val correlationId: String                = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
   val auditDetailJsonSuccess: JsValue = Json.parse(
     s"""
@@ -51,7 +51,6 @@ class FlattenedGenericAuditDetailSpec extends UnitSpec with MockAppConfig {
        |}
     """.stripMargin
   )
-
 
   val auditDetailModelSuccess: FlattenedGenericAuditDetail = FlattenedGenericAuditDetail(
     versionNumber = Some(versionNumber),

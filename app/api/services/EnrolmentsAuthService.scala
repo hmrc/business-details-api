@@ -53,8 +53,12 @@ class EnrolmentsAuthService @Inject() (val connector: AuthConnector, val appConf
     authFunction
       .authorised(buildPredicate(predicate))
       .retrieve(affinityGroup and authorisedEnrolments) {
-        case Some(Individual) ~ _   => Future.successful(Right(UserDetails("", "Individual", None)))
-        case Some(Organisation) ~ _ => Future.successful(Right(UserDetails("", "Organisation", None)))
+        case Some(Individual) ~ _ =>
+          Future.successful(Right(UserDetails("", "Individual", None)))
+
+        case Some(Organisation) ~ _ =>
+          Future.successful(Right(UserDetails("", "Organisation", None)))
+
         case Some(Agent) ~ authorisedEnrolments =>
           if (isSecondaryAgent(authorisedEnrolments) && !endpointAllowsSecondaryAgents) {
             Future.successful(Left(ClientOrAgentNotAuthorisedError))
@@ -66,6 +70,7 @@ class EnrolmentsAuthService @Inject() (val connector: AuthConnector, val appConf
                 Future.successful(Left(InternalError))
             }
           }
+
         case _ =>
           logger.warn(s"[EnrolmentsAuthService][authorised] Invalid AffinityGroup.")
           Future.successful(Left(ClientOrAgentNotAuthorisedError))

@@ -19,7 +19,7 @@ package v1.endpoints
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
@@ -38,6 +38,10 @@ class AuthISpec extends IntegrationBaseSpec {
       s"api.secondary-agent-endpoints.$secondaryAgentNotAllowedEndpoint" -> "false"
     ) ++ super.servicesConfig
 
+  val requestJson: JsObject = Json.obj(
+    "accountingPeriod" -> Json.obj("startDate" -> "2019-01-01", "endDate" -> "2019-10-31"),
+    "businessId"       -> "XAIS12345678901"
+  )
 
   "Calling an endpoint that allows secondary agents" when {
     "the client is the primary agent" should {
@@ -57,17 +61,13 @@ class AuthISpec extends IntegrationBaseSpec {
     }
 
     "the client is a secondary agent" should {
-      "return a success response" in {
-
-      }
+      "return a success response" in {}
     }
   }
 
   "Calling an endpoint that doesn't allow secondary agents" when {
     "the client is the primary agent" should {
-      "return a success response" in {
-
-      }
+      "return a success response" in {}
     }
 
     "the client is a secondary agent" should {
@@ -81,96 +81,96 @@ class AuthISpec extends IntegrationBaseSpec {
         override lazy val mtdUrl = s"/$nino/list"
 
         val response: WSResponse = await(request().get())
-        response.body shouldBe ""
+
         response.status shouldBe Status.FORBIDDEN
+        response.body should include("CLIENT_OR_AGENT_NOT_AUTHORISED")
       }
     }
   }
 
-
   "Calling the list endpoint" when {
 
-    "the NINO cannot be converted to a MTD ID" should {
+    "MTD ID lookup fails with a 500" should {
 
       "return 500" in new Test {
         override lazy val nino: String = "AA123456A"
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
-          MtdIdLookupStub.internalServerError(nino)
+          MtdIdLookupStub.error(nino, Status.INTERNAL_SERVER_ERROR)
         }
 
         val response: WSResponse = await(request().get())
         response.status shouldBe Status.INTERNAL_SERVER_ERROR
       }
     }
+  }
 
-    "an MTD ID is successfully retrieve from the NINO and the user is authorised" should {
+  "MTD ID lookup succeeds and the user is authorised" should {
 
-      "return 200" in new Test {
-        override def setupStubs(): StubMapping = {
-          AuditStub.audit()
-          AuthStub.authorised()
-          MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Status.OK, downstreamResponse)
-        }
-
-        val response: WSResponse = await(request().get())
-        response.status shouldBe Status.OK
+    "return 200" in new Test {
+      override def setupStubs(): StubMapping = {
+        AuditStub.audit()
+        AuthStub.authorised()
+        MtdIdLookupStub.ninoFound(nino)
+        DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, Status.OK, downstreamResponse)
       }
+
+      val response: WSResponse = await(request().get())
+      response.status shouldBe Status.OK
     }
+  }
 
-    "an MTD ID is successfully retrieve from the NINO and the user is NOT logged in" should {
+  "MTD ID lookup succeeds but the user is NOT logged in" should {
 
-      "return 403" in new Test {
-        override lazy val nino: String = "AA123456A"
+    "return 403" in new Test {
+      override lazy val nino: String = "AA123456A"
 
-        override def setupStubs(): StubMapping = {
-          AuditStub.audit()
-          MtdIdLookupStub.ninoFound(nino)
-          AuthStub.unauthorisedNotLoggedIn()
-        }
-
-        val response: WSResponse = await(request().get())
-        response.status shouldBe Status.FORBIDDEN
+      override def setupStubs(): StubMapping = {
+        AuditStub.audit()
+        MtdIdLookupStub.ninoFound(nino)
+        AuthStub.unauthorisedNotLoggedIn()
       }
+
+      val response: WSResponse = await(request().get())
+      response.status shouldBe Status.FORBIDDEN
     }
+  }
 
-    "an MTD ID is retrieved from the NINO but the user is not authorised to access it" should {
+  "an MTD ID is retrieved from the NINO but the user is not authorised to access it" should {
 
-      "return 403" in new Test {
-        override lazy val nino: String = "AA123456A"
+    "return 403" in new Test {
+      override lazy val nino: String = "AA123456A"
 
-        override def setupStubs(): StubMapping = {
-          AuditStub.audit()
-          MtdIdLookupStub.ninoFound(nino)
-          AuthStub.unauthorisedOther()
-        }
-
-        val response: WSResponse = await(request().get())
-        response.status shouldBe Status.FORBIDDEN
+      override def setupStubs(): StubMapping = {
+        AuditStub.audit()
+        MtdIdLookupStub.ninoFound(nino)
+        AuthStub.unauthorisedOther()
       }
+
+      val response: WSResponse = await(request().get())
+      response.status shouldBe Status.FORBIDDEN
     }
+  }
 
-    "an MTD ID is retrieved from the NINO but the user as a secondary agent is not authorised to access it" should {
+  "an MTD ID is retrieved from the NINO but the user as a secondary agent is not authorised to access it" should {
 
-      "return 403" in new Test {
-        override lazy val nino: String = "AA123456A"
+    "return 403" in new Test {
+      override lazy val nino: String = "AA123456A"
 
-        override def setupStubs(): StubMapping = {
-          AuditStub.audit()
-          MtdIdLookupStub.ninoFound(nino)
-          AuthStub.unauthorisedAsSecondaryAgent()
-        }
-
-        val response: WSResponse = await(request().get())
-        response.status shouldBe Status.FORBIDDEN
+      override def setupStubs(): StubMapping = {
+        AuditStub.audit()
+        MtdIdLookupStub.ninoFound(nino)
+        AuthStub.unauthorisedAsSecondaryAgent()
       }
+
+      val response: WSResponse = await(request().get())
+      response.status shouldBe Status.FORBIDDEN
     }
   }
 
   private trait Test {
-    lazy protected val nino = "AA123456A"
+    lazy protected val nino   = "AA123456A"
     lazy protected val mtdUrl = s"/$nino/list"
 
     def setupStubs(): StubMapping
