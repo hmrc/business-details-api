@@ -104,7 +104,7 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
 
   private trait Test extends ControllerTest with AuditEventChecking[FlattenedGenericAuditDetail] {
 
-    private val controller = new CreateAmendQuarterlyPeriodTypeController(
+    val controller = new CreateAmendQuarterlyPeriodTypeController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockCreateAmendQuarterlyPeriodTypeValidatorFactory,

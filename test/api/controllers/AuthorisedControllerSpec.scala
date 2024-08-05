@@ -35,7 +35,7 @@ class AuthorisedControllerSpec extends ControllerBaseSpec with MockAppConfig {
   private val nino  = "AA123456A"
   private val mtdId = "X123567890"
 
-  "calling an action" when {
+  "Calling an action" when {
 
     "the user is authorised" should {
       "return a 200" in new Test {
@@ -57,7 +57,7 @@ class AuthorisedControllerSpec extends ControllerBaseSpec with MockAppConfig {
         MockedMtdIdLookupService.lookup(nino) returns Future.successful(Right(mtdId))
 
         MockedEnrolmentsAuthService
-          .authoriseAgent(primaryAgentPredicate)
+          .authoriseAgent(mtdId)
           .returns(Future.successful(Right(UserDetails("", "Agent", Some("arn")))))
 
         val result: Future[Result] = controller.action(nino)(fakeGetRequest)
@@ -70,7 +70,7 @@ class AuthorisedControllerSpec extends ControllerBaseSpec with MockAppConfig {
         MockedMtdIdLookupService.lookup(nino) returns Future.successful(Right(mtdId))
 
         MockedEnrolmentsAuthService
-          .authoriseAgent(primaryAgentPredicate or secondaryAgentPredicate)
+          .authoriseAgent(mtdId, secondaryAgentAccessAllowed = true)
           .returns(Future.successful(Right(UserDetails("", "Agent", Some("arn")))))
 
         val result: Future[Result] = controller.action(nino)(fakeGetRequest)
@@ -83,7 +83,7 @@ class AuthorisedControllerSpec extends ControllerBaseSpec with MockAppConfig {
         MockedMtdIdLookupService.lookup(nino) returns Future.successful(Right(mtdId))
 
         MockedEnrolmentsAuthService
-          .authoriseAgent(primaryAgentPredicate or secondaryAgentPredicate)
+          .authoriseAgent(mtdId, secondaryAgentAccessAllowed = true)
           .returns(Future.successful(Left(ClientOrAgentNotAuthorisedError)))
 
         val result: Future[Result] = controller.action(nino)(fakeGetRequest)
@@ -96,7 +96,7 @@ class AuthorisedControllerSpec extends ControllerBaseSpec with MockAppConfig {
         MockedMtdIdLookupService.lookup(nino) returns Future.successful(Right(mtdId))
 
         MockedEnrolmentsAuthService
-          .authoriseAgent(primaryAgentPredicate or secondaryAgentPredicate)
+          .authoriseAgent(mtdId, secondaryAgentAccessAllowed = true)
           .returns(Future.successful(Left(BadRequestError)))
 
         val result: Future[Result] = controller.action(nino)(fakeGetRequest)

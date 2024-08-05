@@ -21,8 +21,6 @@ import api.models.errors.MtdError
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
 import config.{AppConfig, FeatureSwitches}
 import play.api.mvc._
-import uk.gov.hmrc.auth.core.Enrolment
-import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -54,24 +52,14 @@ abstract class AuthorisedController(
 
     override protected def executionContext: ExecutionContext = cc.executionContext
 
-    private def predicate(mtdId: String): Predicate = {
-      val primary = Enrolment("HMRC-MTD-IT")
-        .withIdentifier("MTDITID", mtdId)
-        .withDelegatedAuthRule("mtd-it-auth")
-
-      def secondary = Enrolment("HMRC-MTD-IT-SECONDARY")
-        .withIdentifier("MTDITID", mtdId)
-        .withDelegatedAuthRule("mtd-it-auth-secondary")
-
-      if (endpointAllowsSecondaryAgents) primary or secondary else primary
-    }
-
     def invokeBlockWithAuthCheck[A](mtdId: String, request: Request[A], block: UserRequest[A] => Future[Result])(implicit
         headerCarrier: HeaderCarrier): Future[Result] = {
 
-      authService.authorised(predicate(mtdId), endpointAllowsSecondaryAgents).flatMap[Result] {
-        case Right(userDetails) => block(UserRequest(userDetails.copy(mtdId = mtdId), request))
-        case Left(mtdError)     => errorResponse(mtdError)
+      authService.authorised(mtdId, endpointAllowsSecondaryAgents).flatMap[Result] {
+        case Right(userDetails) =>
+          block(UserRequest(userDetails.copy(mtdId = mtdId), request))
+        case Left(mtdError) =>
+          errorResponse(mtdError)
       }
     }
 
@@ -80,8 +68,10 @@ abstract class AuthorisedController(
       implicit val headerCarrier: HeaderCarrier = hc(request)
 
       lookupService.lookup(nino).flatMap[Result] {
-        case Right(mtdId)   => invokeBlockWithAuthCheck(mtdId, request, block)
-        case Left(mtdError) => errorResponse(mtdError)
+        case Right(mtdId) =>
+          invokeBlockWithAuthCheck(mtdId, request, block)
+        case Left(mtdError) =>
+          errorResponse(mtdError)
       }
     }
 

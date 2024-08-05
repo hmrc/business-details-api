@@ -17,16 +17,132 @@
 package v1.endpoints
 
 import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundError, RuleIncorrectGovTestScenarioError}
+import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
-import stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import support.IntegrationBaseSpec
 
 class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
+
+  "Calling the list all businesses endpoint" should {
+
+    trait ListAllBusinessesControllerTest extends Test {
+      def uri: String    = s"/$nino/list"
+      def desUri: String = s"/registration/business-details/nino/$nino"
+    }
+
+    "return a 200 status code" when {
+      "any valid request is made and DES only returns businessData" in new ListAllBusinessesControllerTest {
+
+        override def setupStubs(): StubMapping = {
+          AuditStub.audit()
+          MtdIdLookupStub.ninoFound(nino)
+          AuthStub.authorised()
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, OK, downstreamResponseBodyBusinessData)
+        }
+
+        val response: WSResponse = await(request().get())
+        response.status shouldBe OK
+        response.json shouldBe responseBodyBusinessData
+        response.header("Content-Type") shouldBe Some("application/json")
+      }
+
+      "any valid request is made and DES only returns propertyData" in new ListAllBusinessesControllerTest {
+
+        override def setupStubs(): StubMapping = {
+          AuditStub.audit()
+          MtdIdLookupStub.ninoFound(nino)
+          AuthStub.authorised()
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, OK, downstreamResponseBodyPropertyData)
+        }
+
+        val response: WSResponse = await(request().get())
+        response.status shouldBe OK
+        response.json shouldBe responseBodyPropertyData
+        response.header("Content-Type") shouldBe Some("application/json")
+      }
+
+      "any valid request is made and DES returns both businessData and propertyData" in new ListAllBusinessesControllerTest {
+
+        override def setupStubs(): StubMapping = {
+          AuditStub.audit()
+          MtdIdLookupStub.ninoFound(nino)
+          AuthStub.authorised()
+          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, OK, downstreamResponseBodyBothData)
+        }
+
+        val response: WSResponse = await(request().get())
+        response.status shouldBe OK
+        response.json shouldBe responseBodyBothData
+        response.header("Content-Type") shouldBe Some("application/json")
+      }
+    }
+
+    "return error according to spec" when {
+      "validation error" when {
+        def validationErrorTest(requestNino: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"validation fails with ${expectedBody.code} error" in new ListAllBusinessesControllerTest {
+
+            override val nino: String = requestNino
+
+            override def setupStubs(): StubMapping = {
+              AuditStub.audit()
+              MtdIdLookupStub.ninoFound(nino)
+              AuthStub.authorised()
+            }
+
+            val response: WSResponse = await(request().get())
+            response.status shouldBe expectedStatus
+            response.json shouldBe Json.toJson(expectedBody)
+          }
+        }
+        val input = List(
+          ("AA1123A", BAD_REQUEST, NinoFormatError),
+          ("", NOT_FOUND, NotFoundError)
+        )
+        input.foreach(args => (validationErrorTest _).tupled(args))
+      }
+      "downstream service error" when {
+        def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"downstream returns an $downstreamCode error and status $downstreamStatus" in new ListAllBusinessesControllerTest {
+
+            override def setupStubs(): StubMapping = {
+              AuditStub.audit()
+              MtdIdLookupStub.ninoFound(nino)
+              AuthStub.authorised()
+              DownstreamStub.onError(DownstreamStub.GET, desUri, downstreamStatus, errorBody(downstreamCode))
+            }
+
+            val response: WSResponse = await(request().get())
+            response.status shouldBe expectedStatus
+            response.json shouldBe Json.toJson(expectedBody)
+          }
+        }
+
+        val errors = List(
+          (BAD_REQUEST, "INVALID_NINO", BAD_REQUEST, NinoFormatError),
+          (BAD_REQUEST, "INVALID_MTDBSA", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
+          (NOT_FOUND, "NOT_FOUND_NINO", NOT_FOUND, NotFoundError),
+          (NOT_FOUND, "NOT_FOUND_MTDBSA", INTERNAL_SERVER_ERROR, InternalError),
+          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, InternalError),
+          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError)
+        )
+
+        val extraIfsErrors = List(
+          (BAD_REQUEST, "INVALID_MTD_ID", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "INVALID_IDTYPE", INTERNAL_SERVER_ERROR, InternalError),
+          (NOT_FOUND, "NOT_FOUND", NOT_FOUND, NotFoundError)
+        )
+        (errors ++ extraIfsErrors).foreach(args => (serviceErrorTest _).tupled(args))
+      }
+    }
+  }
 
   private trait Test {
 
@@ -267,7 +383,9 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
     def uri: String
 
     def request(): WSRequest = {
+      AuthStub.resetAll()
       setupStubs()
+
       buildRequest(uri)
         .withHttpHeaders(
           (ACCEPT, "application/vnd.hmrc.1.0+json"),
@@ -283,122 +401,6 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
          |      }
     """.stripMargin
 
-  }
-
-  "Calling the list all businesses endpoint" should {
-
-    trait ListAllBusinessesControllerTest extends Test {
-      def uri: String    = s"/$nino/list"
-      def desUri: String = s"/registration/business-details/nino/$nino"
-    }
-
-    "return a 200 status code" when {
-      "any valid request is made and DES only returns businessData" in new ListAllBusinessesControllerTest {
-
-        override def setupStubs(): StubMapping = {
-          AuditStub.audit()
-          AuthStub.authorised()
-          MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, OK, downstreamResponseBodyBusinessData)
-        }
-
-        val response: WSResponse = await(request().get())
-        response.status shouldBe OK
-        response.json shouldBe responseBodyBusinessData
-        response.header("Content-Type") shouldBe Some("application/json")
-      }
-
-      "any valid request is made and DES only returns propertyData" in new ListAllBusinessesControllerTest {
-
-        override def setupStubs(): StubMapping = {
-          AuditStub.audit()
-          AuthStub.authorised()
-          MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, OK, downstreamResponseBodyPropertyData)
-        }
-
-        val response: WSResponse = await(request().get())
-        response.status shouldBe OK
-        response.json shouldBe responseBodyPropertyData
-        response.header("Content-Type") shouldBe Some("application/json")
-      }
-
-      "any valid request is made and DES returns both businessData and propertyData" in new ListAllBusinessesControllerTest {
-
-        override def setupStubs(): StubMapping = {
-          AuditStub.audit()
-          AuthStub.authorised()
-          MtdIdLookupStub.ninoFound(nino)
-          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, OK, downstreamResponseBodyBothData)
-        }
-
-        val response: WSResponse = await(request().get())
-        response.status shouldBe OK
-        response.json shouldBe responseBodyBothData
-        response.header("Content-Type") shouldBe Some("application/json")
-      }
-    }
-
-    "return error according to spec" when {
-      "validation error" when {
-        def validationErrorTest(requestNino: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"validation fails with ${expectedBody.code} error" in new ListAllBusinessesControllerTest {
-
-            override val nino: String = requestNino
-
-            override def setupStubs(): StubMapping = {
-              AuditStub.audit()
-              AuthStub.authorised()
-              MtdIdLookupStub.ninoFound(nino)
-            }
-
-            val response: WSResponse = await(request().get())
-            response.status shouldBe expectedStatus
-            response.json shouldBe Json.toJson(expectedBody)
-          }
-        }
-        val input = Seq(
-          ("AA1123A", BAD_REQUEST, NinoFormatError),
-          ("", NOT_FOUND, NotFoundError)
-        )
-        input.foreach(args => (validationErrorTest _).tupled(args))
-      }
-      "downstream service error" when {
-        def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"downstream returns an $downstreamCode error and status $downstreamStatus" in new ListAllBusinessesControllerTest {
-
-            override def setupStubs(): StubMapping = {
-              AuditStub.audit()
-              AuthStub.authorised()
-              MtdIdLookupStub.ninoFound(nino)
-              DownstreamStub.onError(DownstreamStub.GET, desUri, downstreamStatus, errorBody(downstreamCode))
-            }
-
-            val response: WSResponse = await(request().get())
-            response.status shouldBe expectedStatus
-            response.json shouldBe Json.toJson(expectedBody)
-          }
-        }
-
-        val errors = Seq(
-          (BAD_REQUEST, "INVALID_NINO", BAD_REQUEST, NinoFormatError),
-          (BAD_REQUEST, "INVALID_MTDBSA", INTERNAL_SERVER_ERROR, InternalError),
-          (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
-          (NOT_FOUND, "NOT_FOUND_NINO", NOT_FOUND, NotFoundError),
-          (NOT_FOUND, "NOT_FOUND_MTDBSA", INTERNAL_SERVER_ERROR, InternalError),
-          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, InternalError),
-          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError)
-        )
-
-        val extraIfsErrors = Seq(
-          (BAD_REQUEST, "INVALID_MTD_ID", INTERNAL_SERVER_ERROR, InternalError),
-          (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, InternalError),
-          (BAD_REQUEST, "INVALID_IDTYPE", INTERNAL_SERVER_ERROR, InternalError),
-          (NOT_FOUND, "NOT_FOUND", NOT_FOUND, NotFoundError)
-        )
-        (errors ++ extraIfsErrors).foreach(args => (serviceErrorTest _).tupled(args))
-      }
-    }
   }
 
 }

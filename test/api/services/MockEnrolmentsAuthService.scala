@@ -20,7 +20,6 @@ import api.models.auth.UserDetails
 import api.models.outcomes.AuthOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,15 +32,15 @@ trait MockEnrolmentsAuthService extends MockFactory {
 
     def authoriseUser(): Unit = {
       (mockEnrolmentsAuthService
-        .authorised(_: Predicate, _: Boolean)(_: HeaderCarrier, _: ExecutionContext))
+        .authorised(_: String, _: Boolean)(_: HeaderCarrier, _: ExecutionContext))
         .expects(*, *, *, *)
         .returns(Future.successful(Right(UserDetails("mtd-id", "Individual", None))))
     }
 
-    def authoriseAgent(predicate: Predicate, secondaryAgentAccessAllowed: Boolean = false): CallHandler[Future[AuthOutcome]] = {
+    def authoriseAgent(mtdId: String, secondaryAgentAccessAllowed: Boolean = false): CallHandler[Future[AuthOutcome]] = {
       (mockEnrolmentsAuthService
-        .authorised(_: Predicate, _: Boolean)(_: HeaderCarrier, _: ExecutionContext))
-        .expects(predicate, secondaryAgentAccessAllowed, *, *)
+        .authorised(_: String, _: Boolean)(_: HeaderCarrier, _: ExecutionContext))
+        .expects(mtdId, secondaryAgentAccessAllowed, *, *)
     }
 
   }

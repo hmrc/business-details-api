@@ -17,13 +17,13 @@
 package v1.endpoints
 
 import api.models.errors._
+import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
-import stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import support.IntegrationBaseSpec
 
 class CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBaseSpec {
@@ -53,8 +53,9 @@ class CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBaseSpec 
       "any valid request is made" in new Test {
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
-          AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
+          AuthStub.authorised()
+
           DownstreamStub
             .when(DownstreamStub.PUT, downstreamUri)
             .withRequestBody(downstreamRequestBodyJson)
@@ -82,8 +83,8 @@ class CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBaseSpec 
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
-              AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
+              AuthStub.authorised()
             }
 
             val response: WSResponse = await(request().put(requestBody))
@@ -107,8 +108,8 @@ class CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBaseSpec 
           s"downstream returns an $downstreamCode error and status $downstreamStatus" in new Test {
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
-              AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
+              AuthStub.authorised()
               DownstreamStub.onError(DownstreamStub.PUT, downstreamUri, downstreamStatus, errorBody(downstreamCode))
             }
 
@@ -152,7 +153,9 @@ class CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBaseSpec 
     private def mtdUri: String = s"/$nino/$businessId/$taxYear"
 
     def request(): WSRequest = {
+      AuthStub.resetAll()
       setupStubs()
+
       buildRequest(mtdUri)
         .withHttpHeaders(
           (ACCEPT, "application/vnd.hmrc.1.0+json"),

@@ -17,7 +17,7 @@
 package api.connectors.httpparsers
 
 import api.connectors.MtdIdLookupConnector
-import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED}
+import play.api.http.Status.OK
 import play.api.libs.json.{Reads, __}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
@@ -27,12 +27,8 @@ object MtdIdLookupHttpParser extends HttpParser {
 
   implicit val mtdIdLookupHttpReads: HttpReads[MtdIdLookupConnector.Outcome] = (_: String, _: String, response: HttpResponse) => {
     response.status match {
-      case OK           => Right(response.json.as[String](mtdIdJsonReads))
-      case FORBIDDEN    => Left(MtdIdLookupConnector.Error(FORBIDDEN))
-      case UNAUTHORIZED => Left(MtdIdLookupConnector.Error(UNAUTHORIZED))
-      case _            => Left(MtdIdLookupConnector.Error(INTERNAL_SERVER_ERROR))
-
-      // case status => Left(MtdIdLookupConnector.Error(status))
+      case OK     => Right(response.json.as[String](mtdIdJsonReads))
+      case status => Left(MtdIdLookupConnector.Error(status))
     }
   }
 

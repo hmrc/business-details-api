@@ -17,101 +17,21 @@
 package v1.endpoints
 
 import api.models.errors.{BusinessIdFormatError, InternalError, MtdError, NinoFormatError, NotFoundError, RuleIncorrectGovTestScenarioError}
+import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
-import stubs.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import support.IntegrationBaseSpec
 
 class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
 
-  private trait Test {
-
-    val nino       = "AA123456A"
-    val businessId = "XAIS12345678901"
-
-    val responseBody: JsValue = Json.parse(
-      s"""
-        |{
-        |   "businessId": "XAIS12345678901",
-        |   "typeOfBusiness": "self-employment",
-        |   "tradingName": "RCDTS",
-        |   "accountingPeriods": [
-        |     {
-        |       "start": "2001-01-01",
-        |       "end": "2001-01-01"
-        |     }
-        |   ],
-        |   "accountingType": "CASH",
-        |   "commencementDate": "2001-01-01",
-        |   "cessationDate": "2001-01-01",
-        |   "businessAddressLineOne": "100 SuttonStreet",
-        |   "businessAddressLineTwo": "Wokingham",
-        |   "businessAddressLineThree": "Surrey",
-        |   "businessAddressLineFour": "London",
-        |   "businessAddressPostcode": "DH14EJ",
-        |   "businessAddressCountryCode": "GB",
-        |   "firstAccountingPeriodStartDate": "2018-04-06",
-        |   "firstAccountingPeriodEndDate": "2018-12-12",
-        |   "latencyDetails": {
-        |     "latencyEndDate": "2018-12-12",
-        |     "taxYear1": "2017-18",
-        |     "latencyIndicator1": "A",
-        |     "taxYear2": "2018-19",
-        |     "latencyIndicator2": "Q"
-        |   },
-        |   "yearOfMigration": "2023",
-        |   "quarterlyTypeChoice": {
-        |     "quarterlyPeriodType": "standard",
-        |     "taxYearOfChoice": "2022-23"
-        |   },
-        |   "links": [
-        |     {
-        |       "href": "/individuals/business/details/$nino/$businessId",
-        |       "method": "GET",
-        |       "rel": "self"
-        |     }
-        |   ]
-        |}
-        |""".stripMargin
-    )
-
-    def setupStubs(): StubMapping
-
-    def uri: String
-
-    def request(): WSRequest = {
-      setupStubs()
-      buildRequest(uri)
-        .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.1.0+json"),
-          (AUTHORIZATION, "Bearer 123")
-        )
-    }
-
-    def errorBody(code: String): String =
-      s"""
-         |      {
-         |        "code": "$code",
-         |        "reason": "message"
-         |      }
-    """.stripMargin
-
-  }
-
   "Calling the retrieve business details endpoint" should {
 
-    trait RetrieveBusinessDetailsControllerTest extends Test {
-      def uri: String = s"/$nino/$businessId"
-
-      def downstreamUri: String = s"/registration/business-details/nino/$nino"
-    }
-
     "return a 200 status code" when {
-      "any valid request is made and single business returned" in new RetrieveBusinessDetailsControllerTest {
+      "any valid request is made and single business returned" in new Test {
 
         val downstreamJson: JsValue = Json.parse(
           """
@@ -169,8 +89,8 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
-          AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
+          AuthStub.authorised()
           DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, downstreamJson)
         }
 
@@ -180,7 +100,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         response.header("Content-Type") shouldBe Some("application/json")
       }
 
-      "any valid request is made multiple business are returned" in new RetrieveBusinessDetailsControllerTest {
+      "any valid request is made multiple business are returned" in new Test {
 
         val downstreamJson: JsValue = Json.parse(
           """
@@ -282,8 +202,8 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
-          AuthStub.authorised()
           MtdIdLookupStub.ninoFound(nino)
+          AuthStub.authorised()
           DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, downstreamJson)
         }
 
@@ -293,18 +213,19 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         response.header("Content-Type") shouldBe Some("application/json")
       }
     }
+
     "return error according to spec" when {
       "validation error" when {
         def validationErrorTest(requestNino: String, requestBusinessId: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"validation fails with ${expectedBody.code} error" in new RetrieveBusinessDetailsControllerTest {
+          s"validation fails with ${expectedBody.code} error" in new Test {
 
             override val nino: String       = requestNino
             override val businessId: String = requestBusinessId
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
-              AuthStub.authorised()
               MtdIdLookupStub.ninoFound(nino)
+              AuthStub.authorised()
             }
 
             val response: WSResponse = await(request().get())
@@ -312,16 +233,18 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             response.json shouldBe Json.toJson(expectedBody)
           }
         }
-        val input = Seq(
+
+        val input = List(
           ("AA1123A", "X0IS123456789012", BAD_REQUEST, NinoFormatError),
           ("", "X0IS123456789012", NOT_FOUND, NotFoundError),
           ("AA123456A", "X2", BAD_REQUEST, BusinessIdFormatError)
         )
         input.foreach(args => (validationErrorTest _).tupled(args))
       }
+
       "downstream service error" when {
         def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"des returns an $downstreamCode error and status $downstreamStatus" in new RetrieveBusinessDetailsControllerTest {
+          s"des returns an $downstreamCode error and status $downstreamStatus" in new Test {
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
@@ -336,7 +259,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           }
         }
 
-        val errors = Seq(
+        val errors = List(
           (BAD_REQUEST, "INVALID_NINO", BAD_REQUEST, NinoFormatError),
           (BAD_REQUEST, "INVALID_MTDBSA", INTERNAL_SERVER_ERROR, InternalError),
           (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
@@ -346,7 +269,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError)
         )
 
-        val extraIfsErrors = Seq(
+        val extraIfsErrors = List(
           (BAD_REQUEST, "INVALID_MTD_ID", INTERNAL_SERVER_ERROR, InternalError),
           (BAD_REQUEST, "INVALID_IDTYPE", INTERNAL_SERVER_ERROR, InternalError),
           (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, InternalError),
@@ -356,6 +279,81 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         (errors ++ extraIfsErrors).foreach((serviceErrorTest _).tupled)
       }
     }
+  }
+
+  private trait Test {
+
+    val nino       = "AA123456A"
+    val businessId = "XAIS12345678901"
+
+    def uri           = s"/$nino/$businessId"
+    def downstreamUri = s"/registration/business-details/nino/$nino"
+
+    val responseBody: JsValue = Json.parse(
+      s"""
+         |{
+         |   "businessId": "XAIS12345678901",
+         |   "typeOfBusiness": "self-employment",
+         |   "tradingName": "RCDTS",
+         |   "accountingPeriods": [
+         |     {
+         |       "start": "2001-01-01",
+         |       "end": "2001-01-01"
+         |     }
+         |   ],
+         |   "accountingType": "CASH",
+         |   "commencementDate": "2001-01-01",
+         |   "cessationDate": "2001-01-01",
+         |   "businessAddressLineOne": "100 SuttonStreet",
+         |   "businessAddressLineTwo": "Wokingham",
+         |   "businessAddressLineThree": "Surrey",
+         |   "businessAddressLineFour": "London",
+         |   "businessAddressPostcode": "DH14EJ",
+         |   "businessAddressCountryCode": "GB",
+         |   "firstAccountingPeriodStartDate": "2018-04-06",
+         |   "firstAccountingPeriodEndDate": "2018-12-12",
+         |   "latencyDetails": {
+         |     "latencyEndDate": "2018-12-12",
+         |     "taxYear1": "2017-18",
+         |     "latencyIndicator1": "A",
+         |     "taxYear2": "2018-19",
+         |     "latencyIndicator2": "Q"
+         |   },
+         |   "yearOfMigration": "2023",
+         |   "quarterlyTypeChoice": {
+         |     "quarterlyPeriodType": "standard",
+         |     "taxYearOfChoice": "2022-23"
+         |   },
+         |   "links": [
+         |     {
+         |       "href": "/individuals/business/details/$nino/$businessId",
+         |       "method": "GET",
+         |       "rel": "self"
+         |     }
+         |   ]
+         |}
+         |""".stripMargin
+    )
+
+    def setupStubs(): StubMapping
+
+    def request(): WSRequest = {
+      setupStubs()
+      buildRequest(uri)
+        .withHttpHeaders(
+          (ACCEPT, "application/vnd.hmrc.1.0+json"),
+          (AUTHORIZATION, "Bearer 123")
+        )
+    }
+
+    def errorBody(code: String): String =
+      s"""
+         |      {
+         |        "code": "$code",
+         |        "reason": "message"
+         |      }
+    """.stripMargin
+
   }
 
 }

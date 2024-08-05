@@ -35,13 +35,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CreateAmendQuarterlyPeriodTypeController @Inject() (val authService: EnrolmentsAuthService,
-                                                          val lookupService: MtdIdLookupService,
-                                                          service: CreateAmendQuarterlyPeriodTypeService,
-                                                          auditService: AuditService,
-                                                          validatorFactory: CreateAmendQuarterlyPeriodTypeValidatorFactory,
-                                                          cc: ControllerComponents,
-                                                          val idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
+class CreateAmendQuarterlyPeriodTypeController @Inject() (
+    val authService: EnrolmentsAuthService,
+    val lookupService: MtdIdLookupService,
+    service: CreateAmendQuarterlyPeriodTypeService,
+    auditService: AuditService,
+    validatorFactory: CreateAmendQuarterlyPeriodTypeValidatorFactory,
+    cc: ControllerComponents,
+    val idGenerator: IdGenerator
+)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
 
   val endpointName = "create-amend-quarterly-period-type"

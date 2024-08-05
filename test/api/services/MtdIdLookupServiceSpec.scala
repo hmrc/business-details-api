@@ -67,7 +67,7 @@ class MtdIdLookupServiceSpec extends ServiceSpec {
           .returns(Future.successful(connectorResponse))
 
         val result: MtdIdLookupService.Outcome = await(mtdIdLookupService.lookup(nino))
-        result shouldBe connectorResponse
+        result shouldBe Left(ClientOrAgentNotAuthorisedError)
       }
     }
 
@@ -80,7 +80,7 @@ class MtdIdLookupServiceSpec extends ServiceSpec {
           .returns(Future.successful(connectorResponse))
 
         val result: MtdIdLookupService.Outcome = await(mtdIdLookupService.lookup(nino))
-        result shouldBe connectorResponse
+        result shouldBe Left(InternalError)
       }
     }
 
