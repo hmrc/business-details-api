@@ -86,16 +86,16 @@ object AuthStub extends WireMockMethods {
       ))
   )
 
-  private val secondaryAgentEnrolmentResponse = List(
+  private val supportingAgentEnrolmentResponse = List(
     Json.obj(
-      "key" -> "HMRC-MTD-IT-SECONDARY",
+      "key" -> "HMRC-MTD-IT-SUPP",
       "identifiers" -> Json.arr(
         Json.obj(
           "key"   -> "MTDITID",
           "value" -> "1234567890"
         )
       ),
-      "delegatedAuthRule" -> "mtd-it-auth-secondary"
+      "delegatedAuthRule" -> "mtd-it-auth-supp"
     )
   )
 
@@ -121,17 +121,17 @@ object AuthStub extends WireMockMethods {
       )
       .thenReturn(status = UNAUTHORIZED, headers = Map("WWW-Authenticate" -> """MDTP detail="FailedRelationship""""))
 
-  def authorisedWithSecondaryAgentEnrolment(): StubMapping =
+  def authorisedWithSupportingAgentEnrolment(): StubMapping =
     when(method = POST, uri = authoriseUri)
       .withRequestBody(
-        followUpAgentEnrolmentsRequest(EnrolmentsAuthService.secondaryAgentAuthPredicate(mtdId = "1234567890"))
+        followUpAgentEnrolmentsRequest(EnrolmentsAuthService.supportingAgentAuthPredicate(mtdId = "1234567890"))
       )
-      .thenReturn(status = OK, body = successfulAuthResponse("Agent", secondaryAgentEnrolmentResponse))
+      .thenReturn(status = OK, body = successfulAuthResponse("Agent", supportingAgentEnrolmentResponse))
 
-  def unauthorisedForSecondaryAgentEnrolment(): StubMapping =
+  def unauthorisedForSupportingAgentEnrolment(): StubMapping =
     when(method = POST, uri = authoriseUri)
       .withRequestBody(
-        followUpAgentEnrolmentsRequest(EnrolmentsAuthService.secondaryAgentAuthPredicate(mtdId = "1234567890"))
+        followUpAgentEnrolmentsRequest(EnrolmentsAuthService.supportingAgentAuthPredicate(mtdId = "1234567890"))
       )
       .thenReturn(status = UNAUTHORIZED, headers = Map("WWW-Authenticate" -> """MDTP detail="FailedRelationship""""))
 

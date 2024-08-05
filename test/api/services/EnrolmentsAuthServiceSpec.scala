@@ -19,7 +19,7 @@ package api.services
 import api.models.auth.UserDetails
 import api.models.errors.{ClientOrAgentNotAuthorisedError, InternalError}
 import api.models.outcomes.AuthOutcome
-import api.services.EnrolmentsAuthService.{initialAuthPredicate, primaryAgentAuthPredicate, secondaryAgentAuthPredicate}
+import api.services.EnrolmentsAuthService.{initialAuthPredicate, primaryAgentAuthPredicate, supportingAgentAuthPredicate}
 import config.{ConfidenceLevelConfig, MockAppConfig}
 import org.scalamock.handlers.CallHandler
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
@@ -42,7 +42,7 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
         authValidationEnabled = true,
         initialAuthPredicate,
         primaryAgentAuthPredicate(mtdId),
-        secondaryAgentAuthPredicate(mtdId)
+        supportingAgentAuthPredicate(mtdId)
       )
     }
 
@@ -59,16 +59,16 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
         authValidationEnabled: Boolean,
         initialPredicate: Predicate,
         primaryAgentPredicate: Predicate,
-        secondaryAgentPredicate: Predicate
+        supportingAgentPredicate: Predicate
     ): Unit = {
       behave like authorisedIndividual(authValidationEnabled, initialPredicate)
       behave like authorisedOrganisation(authValidationEnabled, initialPredicate)
 
       behave like authorisedAgentsMissingArn(authValidationEnabled, initialPredicate)
       behave like authorisedPrimaryAgent(authValidationEnabled, initialPredicate, primaryAgentPredicate)
-      behave like authorisedSecondaryAgent(authValidationEnabled, initialPredicate, primaryAgentPredicate, secondaryAgentPredicate)
+      behave like authorisedSupportingAgent(authValidationEnabled, initialPredicate, primaryAgentPredicate, supportingAgentPredicate)
 
-      behave like disallowSecondaryAgentForPrimaryOnlyEndpoint(authValidationEnabled, initialPredicate, primaryAgentPredicate)
+      behave like disallowSupportingAgentForPrimaryOnlyEndpoint(authValidationEnabled, initialPredicate, primaryAgentPredicate)
 
       behave like disallowUsersWithoutEnrolments(authValidationEnabled, initialPredicate)
       behave like disallowWhenNotLoggedIn(authValidationEnabled, initialPredicate)
@@ -158,13 +158,13 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
         result shouldBe Right(UserDetails("", "Agent", Some(arn)))
       }
 
-    def authorisedSecondaryAgent(
+    def authorisedSupportingAgent(
         authValidationEnabled: Boolean,
         initialPredicate: Predicate,
         primaryAgentPredicate: Predicate,
-        secondaryAgentPredicate: Predicate
+        supportingAgentPredicate: Predicate
     ): Unit =
-      "allow authorised Secondary agents with ARN" in new Test {
+      "allow authorised Supporting agents with ARN" in new Test {
         val arn = "123567890"
         val enrolments: Enrolments = Enrolments(
           Set(
@@ -188,22 +188,22 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
           .returns(Future.failed(InsufficientEnrolments()))
 
         MockedAuthConnector
-          .authorised(secondaryAgentPredicate, EmptyRetrieval)
+          .authorised(supportingAgentPredicate, EmptyRetrieval)
           .once()
           .returns(Future.successful(EmptyRetrieval))
 
         mockConfidenceLevelCheckConfig(authValidationEnabled = authValidationEnabled)
 
-        val result: AuthOutcome = await(enrolmentsAuthService.authorised(mtdId, endpointAllowsSecondaryAgents = true))
+        val result: AuthOutcome = await(enrolmentsAuthService.authorised(mtdId, endpointAllowsSupportingAgents = true))
         result shouldBe Right(UserDetails("", "Agent", Some(arn)))
       }
 
-    def disallowSecondaryAgentForPrimaryOnlyEndpoint(
+    def disallowSupportingAgentForPrimaryOnlyEndpoint(
         authValidationEnabled: Boolean,
         initialPredicate: Predicate,
         primaryAgentPredicate: Predicate
     ): Unit =
-      "disallow Secondary agents for a primary-only endpoint" in new Test {
+      "disallow Supporting agents for a primary-only endpoint" in new Test {
         val arn = "123567890"
         val enrolments: Enrolments = Enrolments(
           Set(

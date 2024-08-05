@@ -33,7 +33,7 @@ trait RealAppConfig {
     realAppConfig match {
       case impl: AppConfigImpl =>
         impl.configuration
-          .getOptional[Map[String, Boolean]]("api.secondary-agent-endpoints")
+          .getOptional[Map[String, Boolean]]("api.supporting-agent-endpoints")
           .getOrElse(Map.empty)
 
       case _ =>

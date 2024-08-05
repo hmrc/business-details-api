@@ -115,10 +115,10 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
     )
 
     MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
-      "secondary-agents-access-control.enabled" -> true
+      "supporting-agents-access-control.enabled" -> true
     )
 
-    MockedAppConfig.endpointAllowsSecondaryAgents(controller.endpointName).anyNumberOfTimes() returns false
+    MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
     protected def callController(): Future[Result] = controller.handleRequest(nino, validBusinessId, validTaxYear)(fakePutRequest(validBody))
 

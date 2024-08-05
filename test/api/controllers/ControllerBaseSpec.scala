@@ -90,14 +90,14 @@ trait ControllerTestRunner extends MockEnrolmentsAuthService with MockMtdIdLooku
     private def checkEmaConfig(): Unit = {
       val endpoints: Map[String, Boolean] = emaEndpoints
 
-      val endpointSecondaryAllowed: Boolean =
+      val endpointSupportingAgentsAllowed: Boolean =
         endpoints
           .getOrElse(
             controller.endpointName,
             fail(s"Controller endpoint name \"${controller.endpointName}\" not found in application.conf.")
           )
 
-      realAppConfig.endpointAllowsSecondaryAgents(controller.endpointName) shouldBe endpointSecondaryAllowed
+      realAppConfig.endpointAllowsSupportingAgents(controller.endpointName) shouldBe endpointSupportingAgentsAllowed
     }
 
   }

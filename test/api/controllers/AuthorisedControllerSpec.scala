@@ -50,9 +50,9 @@ class AuthorisedControllerSpec extends ControllerBaseSpec with MockAppConfig {
       }
     }
 
-    "the Primary Agent is authorised and secondary agents aren't allowed for this endpoint" should {
+    "the Primary Agent is authorised and supporting agents aren't allowed for this endpoint" should {
       "return a 200" in new Test {
-        override def endpointAllowsSecondaryAgents: Boolean = false
+        override def endpointAllowsSupportingAgents: Boolean = false
 
         MockedMtdIdLookupService.lookup(nino) returns Future.successful(Right(mtdId))
 
@@ -65,12 +65,12 @@ class AuthorisedControllerSpec extends ControllerBaseSpec with MockAppConfig {
       }
     }
 
-    "the Secondary Agent is authorised" should {
+    "the supporting agent is authorised" should {
       "return a 200" in new Test {
         MockedMtdIdLookupService.lookup(nino) returns Future.successful(Right(mtdId))
 
         MockedEnrolmentsAuthService
-          .authoriseAgent(mtdId, secondaryAgentAccessAllowed = true)
+          .authoriseAgent(mtdId, supportingAgentAccessAllowed = true)
           .returns(Future.successful(Right(UserDetails("", "Agent", Some("arn")))))
 
         val result: Future[Result] = controller.action(nino)(fakeGetRequest)
@@ -78,12 +78,12 @@ class AuthorisedControllerSpec extends ControllerBaseSpec with MockAppConfig {
       }
     }
 
-    "the Secondary Agent is not authorised" should {
+    "the supporting agent is not authorised" should {
       "return a 403" in new Test {
         MockedMtdIdLookupService.lookup(nino) returns Future.successful(Right(mtdId))
 
         MockedEnrolmentsAuthService
-          .authoriseAgent(mtdId, secondaryAgentAccessAllowed = true)
+          .authoriseAgent(mtdId, supportingAgentAccessAllowed = true)
           .returns(Future.successful(Left(ClientOrAgentNotAuthorisedError)))
 
         val result: Future[Result] = controller.action(nino)(fakeGetRequest)
@@ -96,7 +96,7 @@ class AuthorisedControllerSpec extends ControllerBaseSpec with MockAppConfig {
         MockedMtdIdLookupService.lookup(nino) returns Future.successful(Right(mtdId))
 
         MockedEnrolmentsAuthService
-          .authoriseAgent(mtdId, secondaryAgentAccessAllowed = true)
+          .authoriseAgent(mtdId, supportingAgentAccessAllowed = true)
           .returns(Future.successful(Left(BadRequestError)))
 
         val result: Future[Result] = controller.action(nino)(fakeGetRequest)
@@ -178,25 +178,25 @@ class AuthorisedControllerSpec extends ControllerBaseSpec with MockAppConfig {
 
     lazy val controller = new TestController()
 
-    protected def secondaryAgentsfeatureEnabled: Boolean = true
+    protected def supportingAgentsfeatureEnabled: Boolean = true
 
-    protected def endpointAllowsSecondaryAgents: Boolean = true
+    protected def endpointAllowsSupportingAgents: Boolean = true
 
     MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
-      "secondary-agents-access-control.enabled" -> secondaryAgentsfeatureEnabled
+      "supporting-agents-access-control.enabled" -> supportingAgentsfeatureEnabled
     )
 
     MockedAppConfig
-      .endpointAllowsSecondaryAgents(controller.endpointName)
-      .anyNumberOfTimes() returns endpointAllowsSecondaryAgents
+      .endpointAllowsSupportingAgents(controller.endpointName)
+      .anyNumberOfTimes() returns endpointAllowsSupportingAgents
 
     protected final val primaryAgentPredicate: Predicate = Enrolment("HMRC-MTD-IT")
       .withIdentifier("MTDITID", mtdId)
       .withDelegatedAuthRule("mtd-it-auth")
 
-    protected final val secondaryAgentPredicate: Predicate = Enrolment("HMRC-MTD-IT-SECONDARY")
+    protected final val supportingAgentPredicate: Predicate = Enrolment("HMRC-MTD-IT-SUPP")
       .withIdentifier("MTDITID", mtdId)
-      .withDelegatedAuthRule("mtd-it-auth-secondary")
+      .withDelegatedAuthRule("mtd-it-auth-supp")
 
   }
 

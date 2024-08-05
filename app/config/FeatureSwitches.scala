@@ -27,7 +27,7 @@ trait FeatureSwitches {
   def isIfsEnabled: Boolean
   def isEndpoint2089Enabled: Boolean
   def isScp005aQuarterlyTypeChoiceEnabled: Boolean
-  def secondaryAgentsAccessControlEnabled: Boolean
+  def supportingAgentsAccessControlEnabled: Boolean
 
   def isEnabled(key: String): Boolean
   def isReleasedInProduction(feature: String): Boolean
@@ -39,10 +39,10 @@ class FeatureSwitchesImpl(featureSwitchConfig: Configuration) extends FeatureSwi
   @Inject
   def this(appConfig: AppConfig) = this(appConfig.featureSwitches)
 
-  val isIfsEnabled: Boolean                        = isEnabled("ifs")
-  val isEndpoint2089Enabled: Boolean               = isEnabled("endpoint-2089")
-  val isScp005aQuarterlyTypeChoiceEnabled: Boolean = isEnabled("scp005a_QuarterlyTypeChoice")
-  val secondaryAgentsAccessControlEnabled: Boolean = isEnabled("secondary-agents-access-control")
+  val isIfsEnabled: Boolean                         = isEnabled("ifs")
+  val isEndpoint2089Enabled: Boolean                = isEnabled("endpoint-2089")
+  val isScp005aQuarterlyTypeChoiceEnabled: Boolean  = isEnabled("scp005a_QuarterlyTypeChoice")
+  val supportingAgentsAccessControlEnabled: Boolean = isEnabled("supporting-agents-access-control")
 
   def isEnabled(key: String): Boolean = isConfigTrue(key + ".enabled")
 

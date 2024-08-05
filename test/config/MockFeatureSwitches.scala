@@ -22,10 +22,10 @@ import org.scalamock.scalatest.MockFactory
 trait MockFeatureSwitches extends MockFactory {
   implicit val mockFeatureSwitches: FeatureSwitches = mock[FeatureSwitches]
 
-  object MockFeatureSwitches {
+  object MockedFeatureSwitches {
     def isIfsEnabled: CallHandler[Boolean]                        = (() => mockFeatureSwitches.isIfsEnabled).expects()
     def isScp005aQuarterlyTypeChoiceEnabled: CallHandler[Boolean] = (() => mockFeatureSwitches.isScp005aQuarterlyTypeChoiceEnabled).expects()
-    def secondaryAgentsEnabled: CallHandler[Boolean]              = (() => mockFeatureSwitches.secondaryAgentsAccessControlEnabled).expects()
+    def supportingAgentsEnabled: CallHandler[Boolean]             = (() => mockFeatureSwitches.supportingAgentsAccessControlEnabled).expects()
   }
 
 }

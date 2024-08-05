@@ -241,7 +241,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
   }
 
   private trait Test extends MockRetrieveBusinessDetailsConnector with MockFeatureSwitches {
-    MockFeatureSwitches.isIfsEnabled.returns(true).anyNumberOfTimes()
+    MockedFeatureSwitches.isIfsEnabled.returns(true).anyNumberOfTimes()
 
     protected val service = new RetrieveBusinessDetailsService(mockRetrieveBusinessDetailsConnector)
 
@@ -256,11 +256,11 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
   }
 
   private trait scp005aEnabled extends MockFeatureSwitches {
-    MockFeatureSwitches.isScp005aQuarterlyTypeChoiceEnabled.returns(true).anyNumberOfTimes()
+    MockedFeatureSwitches.isScp005aQuarterlyTypeChoiceEnabled.returns(true).anyNumberOfTimes()
   }
 
   private trait scp005aDisabled extends MockFeatureSwitches {
-    MockFeatureSwitches.isScp005aQuarterlyTypeChoiceEnabled.returns(false).anyNumberOfTimes()
+    MockedFeatureSwitches.isScp005aQuarterlyTypeChoiceEnabled.returns(false).anyNumberOfTimes()
   }
 
 }

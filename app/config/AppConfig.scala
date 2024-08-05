@@ -77,7 +77,7 @@ trait AppConfig {
 
   /** Defaults to false
     */
-  def endpointAllowsSecondaryAgents(endpointName: String): Boolean
+  def endpointAllowsSupportingAgents(endpointName: String): Boolean
 }
 
 @Singleton
@@ -137,11 +137,11 @@ class AppConfigImpl @Inject() (config: ServicesConfig, protected[config] val con
   private def confBoolean(path: String, defaultValue: Boolean): Boolean =
     if (configuration.underlying.hasPath(path)) config.getBoolean(path) else defaultValue
 
-  def endpointAllowsSecondaryAgents(endpointName: String): Boolean = secondaryAgentEndpoints.getOrElse(endpointName, false)
+  def endpointAllowsSupportingAgents(endpointName: String): Boolean = supportingAgentEndpoints.getOrElse(endpointName, false)
 
-  private val secondaryAgentEndpoints: Map[String, Boolean] =
+  private val supportingAgentEndpoints: Map[String, Boolean] =
     configuration
-      .getOptional[Map[String, Boolean]]("api.secondary-agent-endpoints")
+      .getOptional[Map[String, Boolean]]("api.supporting-agent-endpoints")
       .getOrElse(Map.empty)
 
 }

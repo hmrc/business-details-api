@@ -31,11 +31,11 @@ class AuthPrimaryAgentISpec extends IntegrationBaseSpec {
 
   private val primaryAgentOnlyEndpoint = "create-amend-quarterly-period-type"
 
-  /** One endpoint where secondary agents are allowed, and one where they're not allowed.
+  /** One endpoint where supporting agents are allowed, and one where they're not allowed.
     */
   override def servicesConfig: Map[String, String] =
     Map(
-      s"api.secondary-agent-endpoints.$primaryAgentOnlyEndpoint" -> "false"
+      s"api.supporting-agent-endpoints.$primaryAgentOnlyEndpoint" -> "false"
     ) ++ super.servicesConfig
 
   private val nino       = "AA123456A"
@@ -77,7 +77,7 @@ class AuthPrimaryAgentISpec extends IntegrationBaseSpec {
       }
     }
 
-    "the client is a secondary agent" should {
+    "the client is a supporting agent" should {
       "return a 403 response" in new Test {
 
         override def setupStubs(): StubMapping = {

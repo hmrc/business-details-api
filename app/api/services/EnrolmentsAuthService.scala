@@ -53,50 +53,48 @@ class EnrolmentsAuthService @Inject() (val connector: AuthConnector, val appConf
     else
       EmptyPredicate
 
-  private def secondaryAgentPredicate(mtdId: String): Predicate =
+  private def supportingAgentPredicate(mtdId: String): Predicate =
     if (authorisationEnabled)
-      secondaryAgentAuthPredicate(mtdId)
+      supportingAgentAuthPredicate(mtdId)
     else
       EmptyPredicate
 
   def authorised(
       mtdId: String,
-      endpointAllowsSecondaryAgents: Boolean = false
+      endpointAllowsSupportingAgents: Boolean = false
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AuthOutcome] = {
 
     authFunction
       .authorised(initialPredicate)
-      .retrieve(affinityGroup and authorisedEnrolments) { result =>
-        result match {
-          case Some(Individual) ~ _ =>
-            Future.successful(Right(UserDetails("", "Individual", None)))
+      .retrieve(affinityGroup and authorisedEnrolments) {
+        case Some(Individual) ~ _ =>
+          Future.successful(Right(UserDetails("", "Individual", None)))
 
-          case Some(Organisation) ~ _ =>
-            Future.successful(Right(UserDetails("", "Organisation", None)))
+        case Some(Organisation) ~ _ =>
+          Future.successful(Right(UserDetails("", "Organisation", None)))
 
-          case Some(Agent) ~ authorisedEnrolments =>
-            authFunction
-              .authorised(primaryAgentPredicate(mtdId)) {
-                Future.successful(agentDetails(authorisedEnrolments))
+        case Some(Agent) ~ authorisedEnrolments =>
+          authFunction
+            .authorised(primaryAgentPredicate(mtdId)) {
+              Future.successful(agentDetails(authorisedEnrolments))
+            }
+            .recoverWith { case _: AuthorisationException =>
+              if (endpointAllowsSupportingAgents) {
+                authFunction
+                  .authorised(supportingAgentPredicate(mtdId)) {
+                    Future.successful(agentDetails(authorisedEnrolments))
+                  }
+              } else {
+                Future.successful(Left(ClientOrAgentNotAuthorisedError))
               }
-              .recoverWith { case _: AuthorisationException =>
-                if (endpointAllowsSecondaryAgents) {
-                  authFunction
-                    .authorised(secondaryAgentPredicate(mtdId)) {
-                      Future.successful(agentDetails(authorisedEnrolments))
-                    }
-                } else {
+                .recoverWith { case _: AuthorisationException =>
                   Future.successful(Left(ClientOrAgentNotAuthorisedError))
                 }
-                  .recoverWith { case _: AuthorisationException =>
-                    Future.successful(Left(ClientOrAgentNotAuthorisedError))
-                  }
-              }
+            }
 
-          case _ =>
-            logger.warn(s"[EnrolmentsAuthService][authorised] Invalid AffinityGroup.")
-            Future.successful(Left(ClientOrAgentNotAuthorisedError))
-        }
+        case _ =>
+          logger.warn(s"[EnrolmentsAuthService][authorised] Invalid AffinityGroup.")
+          Future.successful(Left(ClientOrAgentNotAuthorisedError))
       }
       .recoverWith {
         case _: MissingBearerToken =>
@@ -134,10 +132,10 @@ object EnrolmentsAuthService {
       .withDelegatedAuthRule("mtd-it-auth")
   }
 
-  private[services] def secondaryAgentAuthPredicate(mtdId: String): Enrolment = {
-    Enrolment("HMRC-MTD-IT-SECONDARY")
+  private[services] def supportingAgentAuthPredicate(mtdId: String): Enrolment = {
+    Enrolment("HMRC-MTD-IT-SUPP")
       .withIdentifier("MTDITID", mtdId)
-      .withDelegatedAuthRule("mtd-it-auth-secondary")
+      .withDelegatedAuthRule("mtd-it-auth-supp")
   }
 
 }

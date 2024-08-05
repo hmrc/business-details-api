@@ -25,13 +25,13 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
-class AuthSecondaryAgentISpec extends IntegrationBaseSpec {
+class AuthSupportingAgentISpec extends IntegrationBaseSpec {
 
   private val nino = "AA123456A"
 
   private def downstreamUri = s"/registration/business-details/nino/$nino"
 
-  "Calling an endpoint that allows secondary agents" when {
+  "Calling an endpoint that allows supporting agents" when {
     "the client is the primary agent" should {
       "return a success response" in new Test {
         def setupStubs(): StubMapping = {
@@ -49,7 +49,7 @@ class AuthSecondaryAgentISpec extends IntegrationBaseSpec {
       }
     }
 
-    "the client is a secondary agent" should {
+    "the client is a supporting agent" should {
       "return a success response" in new Test {
         def setupStubs(): StubMapping = {
           AuditStub.audit()
@@ -57,7 +57,7 @@ class AuthSecondaryAgentISpec extends IntegrationBaseSpec {
 
           AuthStub.authorisedWithAgentAffinityGroup()
           AuthStub.unauthorisedForPrimaryAgentEnrolment()
-          AuthStub.authorisedWithSecondaryAgentEnrolment()
+          AuthStub.authorisedWithSupportingAgentEnrolment()
 
           DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, downstreamResponse)
         }

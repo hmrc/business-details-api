@@ -37,10 +37,10 @@ trait MockEnrolmentsAuthService extends MockFactory {
         .returns(Future.successful(Right(UserDetails("mtd-id", "Individual", None))))
     }
 
-    def authoriseAgent(mtdId: String, secondaryAgentAccessAllowed: Boolean = false): CallHandler[Future[AuthOutcome]] = {
+    def authoriseAgent(mtdId: String, supportingAgentAccessAllowed: Boolean = false): CallHandler[Future[AuthOutcome]] = {
       (mockEnrolmentsAuthService
         .authorised(_: String, _: Boolean)(_: HeaderCarrier, _: ExecutionContext))
-        .expects(mtdId, secondaryAgentAccessAllowed, *, *)
+        .expects(mtdId, supportingAgentAccessAllowed, *, *)
     }
 
   }

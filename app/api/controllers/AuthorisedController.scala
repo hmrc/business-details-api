@@ -38,12 +38,12 @@ abstract class AuthorisedController(
 
   val endpointName: String
 
-  lazy private val secondaryAgentsAccessControlEnabled: Boolean =
-    FeatureSwitches(appConfig).secondaryAgentsAccessControlEnabled
+  lazy private val supportingAgentsAccessControlEnabled: Boolean =
+    FeatureSwitches(appConfig).supportingAgentsAccessControlEnabled
 
-  lazy private val endpointAllowsSecondaryAgents: Boolean = {
-    secondaryAgentsAccessControlEnabled &&
-    appConfig.endpointAllowsSecondaryAgents(endpointName)
+  lazy private val endpointAllowsSupportingAgents: Boolean = {
+    supportingAgentsAccessControlEnabled &&
+    appConfig.endpointAllowsSupportingAgents(endpointName)
   }
 
   def authorisedAction(nino: String): ActionBuilder[UserRequest, AnyContent] = new ActionBuilder[UserRequest, AnyContent] {
@@ -55,7 +55,7 @@ abstract class AuthorisedController(
     def invokeBlockWithAuthCheck[A](mtdId: String, request: Request[A], block: UserRequest[A] => Future[Result])(implicit
         headerCarrier: HeaderCarrier): Future[Result] = {
 
-      authService.authorised(mtdId, endpointAllowsSecondaryAgents).flatMap[Result] {
+      authService.authorised(mtdId, endpointAllowsSupportingAgents).flatMap[Result] {
         case Right(userDetails) =>
           block(UserRequest(userDetails.copy(mtdId = mtdId), request))
         case Left(mtdError) =>
