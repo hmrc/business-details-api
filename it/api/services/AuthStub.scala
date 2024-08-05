@@ -24,81 +24,6 @@ import uk.gov.hmrc.auth.core.Enrolment
 
 object AuthStub extends WireMockMethods {
 
-  private val authoriseUri: String = "/auth/authorise"
-
-  private val initialRetrievalsRequestBody =
-    Json.parse("""
-      | {
-      |    "authorise": [
-      |        {
-      |            "$or": [
-      |                [
-      |                    { "affinityGroup": "Individual" },
-      |                    { "confidenceLevel": 200 }
-      |                ],
-      |                {    "affinityGroup": "Organisation" },
-      |                [
-      |                    { "affinityGroup": "Agent" },
-      |                    {
-      |                        "identifiers": [],
-      |                        "state": "Activated",
-      |                        "enrolment": "HMRC-AS-AGENT"
-      |                    }
-      |                ]
-      |            ]
-      |        }
-      |    ],
-      |    "retrieve": [
-      |        "affinityGroup",
-      |        "authorisedEnrolments"
-      |    ]
-      | }
-      |""".stripMargin)
-
-  private def followUpAgentEnrolmentsRequest(enrolment: Enrolment): JsValue = {
-    JsObject(
-      Map(
-        "authorise" -> JsArray(List(enrolment.toJson)),
-        "retrieve"  -> JsArray.empty
-      ))
-  }
-
-  private val initialAgentEnrolmentResponse = List(
-    Json.obj(
-      "key" -> "HMRC-AS-AGENT",
-      "identifiers" -> Json.arr(
-        Json.obj(
-          "key"   -> "AgentReferenceNumber",
-          "value" -> "1234567890"
-        )
-      )
-    )
-  )
-
-  private val primaryAgentEnrolmentResponse = List(
-    Json.obj(
-      "key" -> "HMRC-MTD-IT",
-      "identifiers" -> Json.arr(
-        Json.obj(
-          "key"   -> "MTDITID",
-          "value" -> "123567890"
-        )
-      ))
-  )
-
-  private val supportingAgentEnrolmentResponse = List(
-    Json.obj(
-      "key" -> "HMRC-MTD-IT-SUPP",
-      "identifiers" -> Json.arr(
-        Json.obj(
-          "key"   -> "MTDITID",
-          "value" -> "1234567890"
-        )
-      ),
-      "delegatedAuthRule" -> "mtd-it-auth-supp"
-    )
-  )
-
   def authorised(): StubMapping = authorisedWithIndividualAffinityGroup()
 
   def authorisedWithIndividualAffinityGroup(): StubMapping =
@@ -159,5 +84,80 @@ object AuthStub extends WireMockMethods {
       "affinityGroup"        -> affinityGroup,
       "authorisedEnrolments" -> enrolments
     )
+
+  private def followUpAgentEnrolmentsRequest(enrolment: Enrolment): JsValue = {
+    JsObject(
+      Map(
+        "authorise" -> JsArray(List(enrolment.toJson)),
+        "retrieve"  -> JsArray.empty
+      ))
+  }
+
+  private val initialAgentEnrolmentResponse = List(
+    Json.obj(
+      "key" -> "HMRC-AS-AGENT",
+      "identifiers" -> Json.arr(
+        Json.obj(
+          "key"   -> "AgentReferenceNumber",
+          "value" -> "1234567890"
+        )
+      )
+    )
+  )
+
+  private val primaryAgentEnrolmentResponse = List(
+    Json.obj(
+      "key" -> "HMRC-MTD-IT",
+      "identifiers" -> Json.arr(
+        Json.obj(
+          "key"   -> "MTDITID",
+          "value" -> "123567890"
+        )
+      ))
+  )
+
+  private val supportingAgentEnrolmentResponse = List(
+    Json.obj(
+      "key" -> "HMRC-MTD-IT-SUPP",
+      "identifiers" -> Json.arr(
+        Json.obj(
+          "key"   -> "MTDITID",
+          "value" -> "1234567890"
+        )
+      ),
+      "delegatedAuthRule" -> "mtd-it-auth-supp"
+    )
+  )
+
+  private val authoriseUri: String = "/auth/authorise"
+
+  private val initialRetrievalsRequestBody =
+    Json.parse("""
+      | {
+      |    "authorise": [
+      |        {
+      |            "$or": [
+      |                [
+      |                    { "affinityGroup": "Individual" },
+      |                    { "confidenceLevel": 200 }
+      |                ],
+      |                {    "affinityGroup": "Organisation" },
+      |                [
+      |                    { "affinityGroup": "Agent" },
+      |                    {
+      |                        "identifiers": [],
+      |                        "state": "Activated",
+      |                        "enrolment": "HMRC-AS-AGENT"
+      |                    }
+      |                ]
+      |            ]
+      |        }
+      |    ],
+      |    "retrieve": [
+      |        "affinityGroup",
+      |        "authorisedEnrolments"
+      |    ]
+      | }
+      |""".stripMargin)
 
 }
