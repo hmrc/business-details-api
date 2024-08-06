@@ -21,6 +21,7 @@ import api.models.audit.{AuditEvent, AuditResponse, FlattenedGenericAuditDetail}
 import api.models.auth.UserDetails
 import api.models.errors.ErrorWrapper
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
+import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
 import routing.{Version, Version1}
@@ -34,17 +35,24 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CreateAmendQuarterlyPeriodTypeController @Inject() (val authService: EnrolmentsAuthService,
-                                                          val lookupService: MtdIdLookupService,
-                                                          service: CreateAmendQuarterlyPeriodTypeService,
-                                                          auditService: AuditService,
-                                                          validatorFactory: CreateAmendQuarterlyPeriodTypeValidatorFactory,
-                                                          cc: ControllerComponents,
-                                                          val idGenerator: IdGenerator)(implicit ec: ExecutionContext)
+class CreateAmendQuarterlyPeriodTypeController @Inject() (
+    val authService: EnrolmentsAuthService,
+    val lookupService: MtdIdLookupService,
+    service: CreateAmendQuarterlyPeriodTypeService,
+    auditService: AuditService,
+    validatorFactory: CreateAmendQuarterlyPeriodTypeValidatorFactory,
+    cc: ControllerComponents,
+    val idGenerator: IdGenerator
+)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
 
+  val endpointName = "create-amend-quarterly-period-type"
+
+  lazy protected val supportingAgentsAccessControlEnabled: Boolean =
+    FeatureSwitches(appConfig).supportingAgentsAccessControlEnabled
+
   implicit val endpointLogContext: EndpointLogContext =
-    EndpointLogContext(controllerName = "CreateAmendQuarterlyPeriodTypeController", endpointName = "create-amend-quarterly-period-type")
+    EndpointLogContext(controllerName = "CreateAmendQuarterlyPeriodTypeController", endpointName)
 
   def handleRequest(nino: String, businessId: String, taxYear: String): Action[JsValue] =
     authorisedAction(nino).async(parse.json) { implicit request =>
@@ -61,19 +69,17 @@ class CreateAmendQuarterlyPeriodTypeController @Inject() (val authService: Enrol
       requestHandler.handleRequest()
     }
 
-
-  private def auditHandler(nino: String,
-                           businessId: String,
-                           taxYear: String,
-                           request: UserRequest[JsValue]): AuditHandler = {
+  private def auditHandler(nino: String, businessId: String, taxYear: String, request: UserRequest[JsValue]): AuditHandler = {
     new AuditHandler() {
-      override def performAudit(userDetails: UserDetails, httpStatus: Int, response: Either[ErrorWrapper, Option[JsValue]])(implicit
-                                                                                                                            ctx: RequestContext,
-                                                                                                                            ec: ExecutionContext): Unit = {
+      override def performAudit(
+          userDetails: UserDetails,
+          httpStatus: Int,
+          response: Either[ErrorWrapper, Option[JsValue]]
+      )(implicit ctx: RequestContext, ec: ExecutionContext): Unit = {
         val versionNumber = Version.from(request, orElse = Version1)
         val quarterlyPeriodType = (request.request.body \ "quarterlyPeriodType").asOpt[String] match {
           case Some(x) => Map("quarterlyPeriodType" -> x)
-          case None => Map.empty[String, String]
+          case None    => Map.empty[String, String]
         }
         val params = Map("nino" -> nino, "businessId" -> businessId, "taxYear" -> taxYear) ++ quarterlyPeriodType
 

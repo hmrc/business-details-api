@@ -18,4 +18,7 @@ package v1.models.request.createAmendQuarterlyPeriodType
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
 
-case class CreateAmendQuarterlyPeriodTypeRequestData(nino: Nino, businessId: BusinessId, taxYear: TaxYear, body: CreateAmendQuarterlyPeriodTypeRequestBody)
+case class CreateAmendQuarterlyPeriodTypeRequestData(nino: Nino,
+                                                     businessId: BusinessId,
+                                                     taxYear: TaxYear,
+                                                     body: CreateAmendQuarterlyPeriodTypeRequestBody)

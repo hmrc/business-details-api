@@ -43,4 +43,5 @@ object Business {
       tradingName = None
     )
   }
+
 }

@@ -20,7 +20,11 @@ import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
-import v1.models.request.createAmendQuarterlyPeriodType.{CreateAmendQuarterlyPeriodTypeRequestBody, CreateAmendQuarterlyPeriodTypeRequestData, QuarterlyPeriodType}
+import v1.models.request.createAmendQuarterlyPeriodType.{
+  CreateAmendQuarterlyPeriodTypeRequestBody,
+  CreateAmendQuarterlyPeriodTypeRequestData,
+  QuarterlyPeriodType
+}
 
 import scala.concurrent.Future
 

@@ -24,8 +24,9 @@ class BusinessAddressDetailsSpec extends UnitSpec {
   "BusinessAddressDetails" when {
     "read from JSON" must {
       "work" in {
-        Json.parse(
-          """
+        Json
+          .parse(
+            """
             |{
             |    "addressLine1": "100 SuttonStreet",
             |    "addressLine2": "Wokingham",
@@ -35,7 +36,8 @@ class BusinessAddressDetailsSpec extends UnitSpec {
             |    "countryCode": "GB"
             |}
             |""".stripMargin
-        ).as[BusinessAddressDetails] shouldBe
+          )
+          .as[BusinessAddressDetails] shouldBe
           BusinessAddressDetails(
             addressLine1 = "100 SuttonStreet",
             addressLine2 = Some("Wokingham"),
@@ -48,4 +50,5 @@ class BusinessAddressDetailsSpec extends UnitSpec {
       }
     }
   }
+
 }

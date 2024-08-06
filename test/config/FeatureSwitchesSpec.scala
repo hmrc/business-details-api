@@ -25,9 +25,10 @@ class FeatureSwitchesSpec extends UnitSpec {
     "return true" when {
       "the feature switch is set to true" in {
         val config = Configuration(
-          "ifs.enabled"                         -> true,
-          "endpoint-2089.enabled"               -> true,
-          "scp005a_QuarterlyTypeChoice.enabled" -> true
+          "ifs.enabled"                              -> true,
+          "endpoint-2089.enabled"                    -> true,
+          "scp005a_QuarterlyTypeChoice.enabled"      -> true,
+          "supporting-agents-access-control.enabled" -> true
         )
 
         val featureSwitches = FeatureSwitches(config)
@@ -35,6 +36,7 @@ class FeatureSwitchesSpec extends UnitSpec {
         featureSwitches.isIfsEnabled shouldBe true
         featureSwitches.isEndpoint2089Enabled shouldBe true
         featureSwitches.isScp005aQuarterlyTypeChoiceEnabled shouldBe true
+        featureSwitches.supportingAgentsAccessControlEnabled shouldBe true
       }
 
       "the feature switch is not present in the config" in {

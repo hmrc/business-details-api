@@ -16,13 +16,14 @@
 
 package api.connectors.parsers
 
+import api.connectors.MtdIdLookupConnector
+import api.connectors.MtdIdLookupConnector.Outcome
+import api.connectors.httpparsers.MtdIdLookupHttpParser.mtdIdLookupHttpReads
 import play.api.http.Status.IM_A_TEAPOT
-import play.api.libs.json.{JsResultException, Json}
 import play.api.libs.json.Writes.StringWrites
+import play.api.libs.json.{JsResultException, Json}
 import play.api.test.Helpers.OK
 import support.UnitSpec
-import api.connectors.MtdIdLookupConnector
-import api.connectors.httpparsers.MtdIdLookupHttpParser.mtdIdLookupHttpReads
 import uk.gov.hmrc.http.HttpResponse
 
 class MtdIdLookupHttpParserSpec extends UnitSpec {
@@ -37,7 +38,8 @@ class MtdIdLookupHttpParserSpec extends UnitSpec {
           val mtdId    = "test-mtd-id"
           val response = HttpResponse(OK, Json.obj("mtdbsa" -> mtdId), Map.empty[String, Seq[String]])
 
-          mtdIdLookupHttpReads.read(method, url, response) shouldBe Right(mtdId)
+          val result: Outcome = mtdIdLookupHttpReads.read(method, url, response)
+          result shouldBe Right(mtdId)
         }
       }
 
@@ -54,7 +56,8 @@ class MtdIdLookupHttpParserSpec extends UnitSpec {
         val status   = IM_A_TEAPOT
         val response = HttpResponse(status, "ignored")
 
-        mtdIdLookupHttpReads.read(method, url, response) shouldBe Left(MtdIdLookupConnector.Error(status))
+        val result: Outcome = mtdIdLookupHttpReads.read(method, url, response)
+        result shouldBe Left(MtdIdLookupConnector.Error(status))
       }
     }
   }

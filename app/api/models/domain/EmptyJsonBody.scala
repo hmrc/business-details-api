@@ -23,4 +23,5 @@ object EmptyJsonBody {
   implicit val writes: Writes[EmptyJsonBody.type] = new Writes[EmptyJsonBody.type] {
     override def writes(o: EmptyJsonBody.type): JsValue = JsObject.empty
   }
+
 }

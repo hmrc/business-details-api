@@ -16,17 +16,16 @@
 
 package api.connectors.httpparsers
 
+import api.connectors.MtdIdLookupConnector
 import play.api.http.Status.OK
 import play.api.libs.json.{Reads, __}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import api.connectors
-import api.connectors.MtdIdLookupConnector
 
 object MtdIdLookupHttpParser extends HttpParser {
 
   private val mtdIdJsonReads: Reads[String] = (__ \ "mtdbsa").read[String]
 
-  implicit val mtdIdLookupHttpReads: HttpReads[connectors.MtdIdLookupConnector.Outcome] = (_: String, _: String, response: HttpResponse) => {
+  implicit val mtdIdLookupHttpReads: HttpReads[MtdIdLookupConnector.Outcome] = (_: String, _: String, response: HttpResponse) => {
     response.status match {
       case OK     => Right(response.json.as[String](mtdIdJsonReads))
       case status => Left(MtdIdLookupConnector.Error(status))

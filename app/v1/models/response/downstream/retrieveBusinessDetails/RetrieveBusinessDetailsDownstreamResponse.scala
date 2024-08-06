@@ -18,11 +18,9 @@ package v1.models.response.downstream.retrieveBusinessDetails
 
 import play.api.libs.json.{JsPath, Json, Reads}
 
-
-case class RetrieveBusinessDetailsDownstreamResponse(
-                yearOfMigration: Option[String],
-                businessData: Option[Seq[BusinessData]],
-                propertyData: Option[Seq[PropertyData]])
+case class RetrieveBusinessDetailsDownstreamResponse(yearOfMigration: Option[String],
+                                                     businessData: Option[Seq[BusinessData]],
+                                                     propertyData: Option[Seq[PropertyData]])
 
 object RetrieveBusinessDetailsDownstreamResponse {
 
@@ -31,5 +29,5 @@ object RetrieveBusinessDetailsDownstreamResponse {
 
     (JsPath \ "taxPayerDisplayResponse").read[RetrieveBusinessDetailsDownstreamResponse](defaultReads) orElse defaultReads
   }
-}
 
+}

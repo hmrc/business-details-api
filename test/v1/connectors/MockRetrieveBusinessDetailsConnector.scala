@@ -31,14 +31,14 @@ trait MockRetrieveBusinessDetailsConnector extends MockFactory {
 
   object MockedRetrieveBusinessDetailsConnector {
 
-    def retrieveBusinessDetails(
-                                 nino: Nino): CallHandler[Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]]] =
+    def retrieveBusinessDetails(nino: Nino): CallHandler[Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]]] =
       (mockRetrieveBusinessDetailsConnector
         .retrieveBusinessDetails(_: Nino)(
           _: HeaderCarrier,
           _: ExecutionContext,
           _: String
-        )).expects(nino, *, *, *)
+        ))
+        .expects(nino, *, *, *)
 
   }
 

@@ -89,26 +89,26 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
   )
 
   val requiredTysIfsHeaders: Seq[(String, String)] = Seq(
-  "Environment"   -> "TYS-IFS-environment",
-  "Authorization" -> s"Bearer TYS-IFS-token",
-  "CorrelationId" -> s"$correlationId"
+    "Environment"   -> "TYS-IFS-environment",
+    "Authorization" -> s"Bearer TYS-IFS-token",
+    "CorrelationId" -> s"$correlationId"
   )
 
   val allowedIfsHeaders: Seq[String] = Seq(
-  "Accept",
-  "Gov-Test-Scenario",
-  "Content-Type",
-  "Location",
-  "X-Request-Timestamp",
-  "X-Session-Id"
+    "Accept",
+    "Gov-Test-Scenario",
+    "Content-Type",
+    "Location",
+    "X-Request-Timestamp",
+    "X-Session-Id"
   )
 
   val requiredApi2089Headers: Seq[(String, String)] = Seq(
-  "Authorization"     -> "Bearer api2089-token",
-  "Environment"       -> "api2089-environment",
-  "User-Agent"        -> "business-details-api",
-  "CorrelationId"     -> correlationId,
-  "Gov-Test-Scenario" -> "DEFAULT"
+    "Authorization"     -> "Bearer api2089-token",
+    "Environment"       -> "api2089-environment",
+    "User-Agent"        -> "business-details-api",
+    "CorrelationId"     -> correlationId,
+    "Gov-Test-Scenario" -> "DEFAULT"
   )
 
   val allowedApi2089Headers: Seq[String] = Seq(
@@ -119,6 +119,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     "X-Request-Timestamp",
     "X-Session-Id"
   )
+
   protected trait ConnectorTest extends MockHttpClient with MockAppConfig {
     protected val baseUrl: String = "http://test-BaseUrl"
 
@@ -191,6 +192,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockedAppConfig.ifsEnvironmentHeaders returns Some(allowedIfsHeaders)
 
   }
+
   protected trait Api2089Test extends ConnectorTest {
 
     protected lazy val requiredHeaders: Seq[(String, String)] = requiredApi2089Headers

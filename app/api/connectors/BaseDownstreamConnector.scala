@@ -114,8 +114,8 @@ trait BaseDownstreamConnector {
 
   private def configFor[Resp](uri: DownstreamUri[Resp]) =
     uri match {
-      case DesUri(_) => appConfig.desDownstreamConfig
-      case IfsUri(_) => appConfig.ifsDownstreamConfig
+      case DesUri(_)     => appConfig.desDownstreamConfig
+      case IfsUri(_)     => appConfig.ifsDownstreamConfig
       case Api2089Uri(_) => appConfig.api2089DownstreamConfig
     }
 

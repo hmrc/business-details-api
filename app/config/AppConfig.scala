@@ -53,6 +53,7 @@ trait AppConfig {
 
   lazy val ifsDownstreamConfig: DownstreamConfig =
     DownstreamConfig(baseUrl = ifsBaseUrl, env = ifsEnv, token = ifsToken, environmentHeaders = ifsEnvironmentHeaders)
+
   lazy val api2089DownstreamConfig: DownstreamConfig =
     DownstreamConfig(baseUrl = api2089BaseUrl, env = api2089Env, token = api2089Token, environmentHeaders = api2089EnvironmentHeaders)
 
@@ -64,6 +65,7 @@ trait AppConfig {
   def featureSwitches: Configuration
   def endpointsEnabled(version: String): Boolean
   def endpointsEnabled(version: Version): Boolean
+  def safeEndpointsEnabled(version: String): Boolean
 
   /** Currently only for OAS documentation.
     */
@@ -73,10 +75,14 @@ trait AppConfig {
     */
   def endpointReleasedInProduction(version: String, name: String): Boolean
 
+  /** Defaults to false
+    */
+  def endpointAllowsSupportingAgents(endpointName: String): Boolean
 }
 
 @Singleton
-class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configuration) extends AppConfig {
+class AppConfigImpl @Inject() (config: ServicesConfig, protected[config] val configuration: Configuration) extends AppConfig {
+
   // MTD ID Lookup Config
   val mtdIdBaseUrl: String                      = config.baseUrl(serviceName = "mtd-id-lookup")
   val keyValuesJ: util.Map[String, ConfigValue] = configuration.entrySet.toMap.asJava
@@ -106,6 +112,13 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
   def endpointsEnabled(version: String): Boolean   = config.getBoolean(s"api.$version.endpoints.enabled")
   def endpointsEnabled(version: Version): Boolean  = config.getBoolean(s"api.${version.name}.endpoints.enabled")
 
+  /** Like endpointsEnabled, but will return false if version doesn't exist.
+    */
+  def safeEndpointsEnabled(version: String): Boolean =
+    configuration
+      .getOptional[Boolean](s"api.$version.endpoints.enabled")
+      .getOrElse(false)
+
   def apiVersionReleasedInProduction(version: String): Boolean =
     confBoolean(
       path = s"api.$version.endpoints.api-released-in-production",
@@ -123,6 +136,14 @@ class AppConfigImpl @Inject() (config: ServicesConfig, configuration: Configurat
     */
   private def confBoolean(path: String, defaultValue: Boolean): Boolean =
     if (configuration.underlying.hasPath(path)) config.getBoolean(path) else defaultValue
+
+  def endpointAllowsSupportingAgents(endpointName: String): Boolean =
+    supportingAgentEndpoints.getOrElse(endpointName, false)
+
+  private val supportingAgentEndpoints: Map[String, Boolean] =
+    configuration
+      .getOptional[Map[String, Boolean]]("api.supporting-agent-endpoints")
+      .getOrElse(Map.empty)
 
 }
 

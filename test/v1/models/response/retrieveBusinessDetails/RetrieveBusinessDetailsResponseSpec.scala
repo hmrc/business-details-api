@@ -160,13 +160,13 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
         }
 
       "default accountingType to cash for IFS" in {
-        MockFeatureSwitches.isIfsEnabled returns true
+        MockedFeatureSwitches.isIfsEnabled returns true
         RetrieveBusinessDetailsResponse.fromPropertyData(propertyData(cashOrAccruals = None), yearOfMigration) shouldBe
           propertyResponse(cashOrAccruals = Some(AccountingType.CASH))
       }
 
       "not default accountingType for DES" in {
-        MockFeatureSwitches.isIfsEnabled returns false
+        MockedFeatureSwitches.isIfsEnabled returns false
         RetrieveBusinessDetailsResponse.fromPropertyData(propertyData(cashOrAccruals = None), yearOfMigration) shouldBe
           propertyResponse(cashOrAccruals = None)
       }
@@ -272,14 +272,14 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
       }
 
       "default accountingType to cash for IFS" in {
-        MockFeatureSwitches.isIfsEnabled returns true
+        MockedFeatureSwitches.isIfsEnabled returns true
 
         RetrieveBusinessDetailsResponse.fromBusinessData(businessData(cashOrAccruals = None), yearOfMigration) shouldBe
           businessResponse(cashOrAccruals = Some(AccountingType.CASH))
       }
 
       "not default accountingType for DES" in {
-        MockFeatureSwitches.isIfsEnabled returns false
+        MockedFeatureSwitches.isIfsEnabled returns false
 
         RetrieveBusinessDetailsResponse.fromBusinessData(businessData(cashOrAccruals = None), yearOfMigration) shouldBe
           businessResponse(cashOrAccruals = None)

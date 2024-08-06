@@ -17,19 +17,21 @@
 package api.services
 
 import api.connectors.{MockMtdIdLookupConnector, MtdIdLookupConnector}
-import api.models.errors._
+import api.models.errors.{ClientOrAgentNotAuthorisedError, InternalError, NinoFormatError, _}
+import api.services.MtdIdLookupService.Outcome
 
 import scala.concurrent.Future
 
 class MtdIdLookupServiceSpec extends ServiceSpec {
 
   trait Test extends MockMtdIdLookupConnector {
-    lazy val target = new MtdIdLookupService(mockMtdIdLookupConnector)
+    lazy val mtdIdLookupService = new MtdIdLookupService(mockMtdIdLookupConnector)
   }
 
-  val nino = "AA123456A"
+  val nino                = "AA123456A"
+  val invalidNino: String = "not-a-nino"
 
-  "calling .getMtdId" when {
+  "calling getMtdId" when {
 
     "an mtdId is found for the NINO" should {
       "return the mtdId" in new Test {
@@ -37,15 +39,48 @@ class MtdIdLookupServiceSpec extends ServiceSpec {
 
         MockedMtdIdLookupConnector.lookup(nino) returns Future.successful(Right(mtdId))
 
-        await(target.lookup(nino)) shouldBe Right(mtdId)
+        await(mtdIdLookupService.lookup(nino)) shouldBe Right(mtdId)
       }
     }
 
     "an invalid NINO is passed in" should {
-      "return NinoFormatError" in new Test {
-        val invalidNino = "INVALID_NINO"
+      "return a valid mtdId" in new Test {
+        val expected: Outcome = Left(NinoFormatError)
 
-        await(target.lookup(invalidNino)) shouldBe Left(NinoFormatError)
+        // should not call the connector
+        MockedMtdIdLookupConnector
+          .lookup(invalidNino)
+          .never()
+
+        private val result = await(mtdIdLookupService.lookup(invalidNino))
+
+        result shouldBe expected
+      }
+    }
+
+    "a not authorised error occurs the service" should {
+      "proxy the error to the caller" in new Test {
+        val connectorResponse: MtdIdLookupConnector.Outcome = Left(MtdIdLookupConnector.Error(FORBIDDEN))
+
+        MockedMtdIdLookupConnector
+          .lookup(nino)
+          .returns(Future.successful(connectorResponse))
+
+        val result: MtdIdLookupService.Outcome = await(mtdIdLookupService.lookup(nino))
+        result shouldBe Left(ClientOrAgentNotAuthorisedError)
+      }
+    }
+
+    "a downstream error occurs the service" should {
+      "proxy the error to the caller" in new Test {
+        val connectorResponse: MtdIdLookupConnector.Outcome = Left(MtdIdLookupConnector.Error(INTERNAL_SERVER_ERROR))
+
+        MockedMtdIdLookupConnector
+          .lookup(nino)
+          .returns(Future.successful(connectorResponse))
+
+        val result: MtdIdLookupService.Outcome = await(mtdIdLookupService.lookup(nino))
+        result shouldBe Left(InternalError)
       }
     }
 
@@ -53,7 +88,7 @@ class MtdIdLookupServiceSpec extends ServiceSpec {
       "return ClientOrAgentNotAuthorisedError" in new Test {
         MockedMtdIdLookupConnector.lookup(nino) returns Future.successful(Left(MtdIdLookupConnector.Error(FORBIDDEN)))
 
-        await(target.lookup(nino)) shouldBe Left(ClientOrAgentNotAuthorisedError)
+        await(mtdIdLookupService.lookup(nino)) shouldBe Left(ClientOrAgentNotAuthorisedError)
       }
     }
 
@@ -61,7 +96,7 @@ class MtdIdLookupServiceSpec extends ServiceSpec {
       "return InvalidBearerTokenError" in new Test {
         MockedMtdIdLookupConnector.lookup(nino) returns Future.successful(Left(MtdIdLookupConnector.Error(UNAUTHORIZED)))
 
-        await(target.lookup(nino)) shouldBe Left(InvalidBearerTokenError)
+        await(mtdIdLookupService.lookup(nino)) shouldBe Left(InvalidBearerTokenError)
       }
     }
 
@@ -69,7 +104,7 @@ class MtdIdLookupServiceSpec extends ServiceSpec {
       "return InternalError" in new Test {
         MockedMtdIdLookupConnector.lookup(nino) returns Future.successful(Left(MtdIdLookupConnector.Error(IM_A_TEAPOT)))
 
-        await(target.lookup(nino)) shouldBe Left(InternalError)
+        await(mtdIdLookupService.lookup(nino)) shouldBe Left(InternalError)
       }
     }
 

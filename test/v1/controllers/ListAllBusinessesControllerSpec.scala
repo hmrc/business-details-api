@@ -23,6 +23,8 @@ import api.models.domain.{Nino, TypeOfBusiness}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
+import config.MockAppConfig
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import utils.MockIdGenerator
@@ -42,7 +44,8 @@ class ListAllBusinessesControllerSpec
     with MockListAllBusinessesService
     with MockHateoasFactory
     with MockListAllBusinessDetailsValidatorFactory
-    with MockIdGenerator {
+    with MockIdGenerator
+    with MockAppConfig {
 
   private val validNino            = "AA123456A"
   private val testHateoasLink      = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
@@ -98,15 +101,13 @@ class ListAllBusinessesControllerSpec
           .returns(HateoasWrapper(hateoasResponse, Seq(testHateoasLink)))
 
         runOkTest(expectedStatus = OK, maybeExpectedResponseBody = Some(responseBody))
-
       }
     }
+
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
         willUseValidator(returning(NinoFormatError))
-
         runErrorTest(NinoFormatError)
-
       }
 
       "the service returns an error" in new Test {
@@ -133,8 +134,13 @@ class ListAllBusinessesControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    protected def callController(): Future[Result] = controller.handleRequest(nino)(fakeGetRequest)
+    MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+      "supporting-agents-access-control.enabled" -> true
+    )
 
+    MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+
+    protected def callController(): Future[Result] = controller.handleRequest(nino)(fakeGetRequest)
   }
 
 }

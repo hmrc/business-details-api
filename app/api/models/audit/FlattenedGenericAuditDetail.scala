@@ -40,7 +40,7 @@ object FlattenedGenericAuditDetail {
       (JsPath \ "outcome").write[String] and
       (JsPath \ "httpStatusCode").write[Int] and
       (JsPath \ "errorCodes").writeNullable[Seq[String]]
-    )(unlift(FlattenedGenericAuditDetail.unapply))
+  )(unlift(FlattenedGenericAuditDetail.unapply))
 
   def apply(versionNumber: Option[String] = None,
             userDetails: UserDetails,
@@ -58,7 +58,5 @@ object FlattenedGenericAuditDetail {
       errorCodes = auditResponse.errors.map(_.map(_.errorCode))
     )
   }
-
-
 
 }
