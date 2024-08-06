@@ -19,7 +19,7 @@ package v1.controllers
 import api.controllers._
 import api.hateoas.HateoasFactory
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
-import config.AppConfig
+import config.{AppConfig, FeatureSwitches}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
 import v1.controllers.validators.ListAllBusinessDetailsValidatorFactory
@@ -30,16 +30,21 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ListAllBusinessesController @Inject() (val authService: EnrolmentsAuthService,
-                                             val lookupService: MtdIdLookupService,
-                                             service: ListAllBusinessesService,
-                                             validatorFactory: ListAllBusinessDetailsValidatorFactory,
-                                             hateoasFactory: HateoasFactory,
-                                             cc: ControllerComponents,
-                                             idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
+class ListAllBusinessesController @Inject() (
+    val authService: EnrolmentsAuthService,
+    val lookupService: MtdIdLookupService,
+    service: ListAllBusinessesService,
+    validatorFactory: ListAllBusinessDetailsValidatorFactory,
+    hateoasFactory: HateoasFactory,
+    cc: ControllerComponents,
+    idGenerator: IdGenerator
+)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
 
   val endpointName = "list-all-businesses"
+
+  lazy protected val supportingAgentsAccessControlEnabled: Boolean =
+    FeatureSwitches(appConfig).supportingAgentsAccessControlEnabled
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "ListAllBusinessesController", endpointName = "List All Businesses")

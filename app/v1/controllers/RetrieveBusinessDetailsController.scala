@@ -19,7 +19,7 @@ package v1.controllers
 import api.controllers.{AuthorisedController, EndpointLogContext, RequestContext, RequestHandler}
 import api.hateoas.HateoasFactory
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
-import config.AppConfig
+import config.{AppConfig, FeatureSwitches}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
 import v1.controllers.validators.RetrieveBusinessDetailsValidatorFactory
@@ -30,16 +30,21 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class RetrieveBusinessDetailsController @Inject() (val authService: EnrolmentsAuthService,
-                                                   val lookupService: MtdIdLookupService,
-                                                   service: RetrieveBusinessDetailsService,
-                                                   validatorFactory: RetrieveBusinessDetailsValidatorFactory,
-                                                   hateoasFactory: HateoasFactory,
-                                                   cc: ControllerComponents,
-                                                   val idGenerator: IdGenerator)(implicit appConfig: AppConfig, ec: ExecutionContext)
+class RetrieveBusinessDetailsController @Inject() (
+    val authService: EnrolmentsAuthService,
+    val lookupService: MtdIdLookupService,
+    service: RetrieveBusinessDetailsService,
+    validatorFactory: RetrieveBusinessDetailsValidatorFactory,
+    hateoasFactory: HateoasFactory,
+    cc: ControllerComponents,
+    val idGenerator: IdGenerator
+)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends AuthorisedController(cc) {
 
   val endpointName = "retrieve-business-details"
+
+  lazy protected val supportingAgentsAccessControlEnabled: Boolean =
+    FeatureSwitches(appConfig).supportingAgentsAccessControlEnabled
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "RetrieveBusinessDetailsController", endpointName = "Retrieve Business Details")

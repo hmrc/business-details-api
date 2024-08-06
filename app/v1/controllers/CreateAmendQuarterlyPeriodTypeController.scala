@@ -21,7 +21,7 @@ import api.models.audit.{AuditEvent, AuditResponse, FlattenedGenericAuditDetail}
 import api.models.auth.UserDetails
 import api.models.errors.ErrorWrapper
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
-import config.AppConfig
+import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
 import routing.{Version, Version1}
@@ -47,6 +47,9 @@ class CreateAmendQuarterlyPeriodTypeController @Inject() (
     extends AuthorisedController(cc) {
 
   val endpointName = "create-amend-quarterly-period-type"
+
+  lazy protected val supportingAgentsAccessControlEnabled: Boolean =
+    FeatureSwitches(appConfig).supportingAgentsAccessControlEnabled
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "CreateAmendQuarterlyPeriodTypeController", endpointName)

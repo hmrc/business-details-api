@@ -19,7 +19,7 @@ package api.controllers
 import api.models.auth.UserDetails
 import api.models.errors.MtdError
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
-import config.{AppConfig, FeatureSwitches}
+import config.AppConfig
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -38,8 +38,7 @@ abstract class AuthorisedController(
 
   val endpointName: String
 
-  lazy private val supportingAgentsAccessControlEnabled: Boolean =
-    FeatureSwitches(appConfig).supportingAgentsAccessControlEnabled
+  protected def supportingAgentsAccessControlEnabled: Boolean
 
   lazy private val endpointAllowsSupportingAgents: Boolean = {
     supportingAgentsAccessControlEnabled &&
@@ -52,8 +51,11 @@ abstract class AuthorisedController(
 
     override protected def executionContext: ExecutionContext = cc.executionContext
 
-    def invokeBlockWithAuthCheck[A](mtdId: String, request: Request[A], block: UserRequest[A] => Future[Result])(implicit
-        headerCarrier: HeaderCarrier): Future[Result] = {
+    def invokeBlockWithAuthCheck[A](
+        mtdId: String,
+        request: Request[A],
+        block: UserRequest[A] => Future[Result]
+    )(implicit headerCarrier: HeaderCarrier): Future[Result] = {
 
       authService.authorised(mtdId, endpointAllowsSupportingAgents).flatMap[Result] {
         case Right(userDetails) =>

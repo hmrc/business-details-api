@@ -174,6 +174,7 @@ class AuthorisedControllerSpec extends ControllerBaseSpec with MockAppConfig {
         Future.successful(Ok(JsObject.empty))
       }
 
+      protected def supportingAgentsAccessControlEnabled: Boolean = true
     }
 
     lazy val controller = new TestController()

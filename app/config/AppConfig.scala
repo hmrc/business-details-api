@@ -137,7 +137,8 @@ class AppConfigImpl @Inject() (config: ServicesConfig, protected[config] val con
   private def confBoolean(path: String, defaultValue: Boolean): Boolean =
     if (configuration.underlying.hasPath(path)) config.getBoolean(path) else defaultValue
 
-  def endpointAllowsSupportingAgents(endpointName: String): Boolean = supportingAgentEndpoints.getOrElse(endpointName, false)
+  def endpointAllowsSupportingAgents(endpointName: String): Boolean =
+    supportingAgentEndpoints.getOrElse(endpointName, false)
 
   private val supportingAgentEndpoints: Map[String, Boolean] =
     configuration
