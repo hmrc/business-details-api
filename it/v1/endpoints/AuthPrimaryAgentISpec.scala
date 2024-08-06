@@ -31,7 +31,7 @@ class AuthPrimaryAgentISpec extends IntegrationBaseSpec {
 
   private val primaryAgentOnlyEndpoint = "create-amend-quarterly-period-type"
 
-  /** One endpoint where supporting agents are allowed, and one where they're not allowed.
+  /** One endpoint where supporting agents are allowed.
     */
   override def servicesConfig: Map[String, String] =
     Map(

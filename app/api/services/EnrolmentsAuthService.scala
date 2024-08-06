@@ -41,11 +41,17 @@ class EnrolmentsAuthService @Inject() (val connector: AuthConnector, val appConf
     override def authConnector: AuthConnector = connector
   }
 
-  lazy private val initialPredicate: Predicate =
-    if (authorisationEnabled)
-      initialAuthPredicate
-    else
+  private def initialPredicate(mtdId: String): Predicate =
+    if (authorisationEnabled) {
+      val enrolment =
+        Enrolment("HMRC-MTD-IT")
+          .withIdentifier("MTDITID", mtdId)
+          .withDelegatedAuthRule("mtd-it-auth")
+
+      enrolment and initialAuthPredicate
+    } else {
       EmptyPredicate
+    }
 
   private def primaryAgentPredicate(mtdId: String): Predicate =
     if (authorisationEnabled)
@@ -65,7 +71,7 @@ class EnrolmentsAuthService @Inject() (val connector: AuthConnector, val appConf
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AuthOutcome] = {
 
     authFunction
-      .authorised(initialPredicate)
+      .authorised(initialPredicate(mtdId))
       .retrieve(affinityGroup and authorisedEnrolments) {
         case Some(Individual) ~ _ =>
           Future.successful(Right(UserDetails("", "Individual", None)))

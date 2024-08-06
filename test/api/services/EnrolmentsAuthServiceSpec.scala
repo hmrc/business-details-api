@@ -35,12 +35,17 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
 
   private val mtdId = "123567890"
 
+  private val initialEnrolment =
+    Enrolment("HMRC-MTD-IT")
+      .withIdentifier("MTDITID", mtdId)
+      .withDelegatedAuthRule("mtd-it-auth")
+
   "calling .authorised" when {
 
     "confidence level checks are on" should {
       behave like authService(
         authValidationEnabled = true,
-        initialAuthPredicate,
+        initialEnrolment and initialAuthPredicate,
         primaryAgentAuthPredicate(mtdId),
         supportingAgentAuthPredicate(mtdId)
       )

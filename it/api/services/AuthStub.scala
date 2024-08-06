@@ -112,6 +112,17 @@ object AuthStub extends WireMockMethods {
       | {
       |    "authorise": [
       |        {
+      |            "identifiers": [
+      |                {
+      |                    "key": "MTDITID",
+      |                    "value": "1234567890"
+      |                }
+      |            ],
+      |            "state": "Activated",
+      |            "delegatedAuthRule": "mtd-it-auth",
+      |            "enrolment": "HMRC-MTD-IT"
+      |        },
+      |        {
       |            "$or": [
       |                [
       |                    { "affinityGroup": "Individual" },
