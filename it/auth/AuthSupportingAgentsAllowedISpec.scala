@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.endpoints
+package auth
 
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
@@ -25,11 +25,22 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
-class AuthSupportingAgentISpec extends IntegrationBaseSpec {
+class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
+
+  private val callingApiVersion = "1.0"
+
+  private val secondaryAgentsAllowedEndpoint = "list-all-businesses"
+
+  /** One endpoint where supporting agents are allowed.
+    */
+  override def servicesConfig: Map[String, Any] =
+    Map(
+      s"api.supporting-agent-endpoints.$secondaryAgentsAllowedEndpoint" -> "true"
+    ) ++ super.servicesConfig
 
   private val nino = "AA123456A"
 
-  private def downstreamUri = s"/registration/business-details/nino/$nino"
+  private val downstreamUri = s"/registration/business-details/nino/$nino"
 
   "Calling an endpoint that allows supporting agents" when {
     "the client is the primary agent" should {
@@ -78,7 +89,7 @@ class AuthSupportingAgentISpec extends IntegrationBaseSpec {
 
       buildRequest(s"/$nino/list")
         .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.1.0+json"),
+          (ACCEPT, s"application/vnd.hmrc.$callingApiVersion+json"),
           (AUTHORIZATION, "Bearer 123")
         )
     }

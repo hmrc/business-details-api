@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v1.endpoints
+package auth
 
 import api.models.domain.TaxYear
 import api.models.errors.{ClientOrAgentNotAuthorisedError, InternalError}
@@ -22,20 +22,22 @@ import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR, NO_CONTENT, OK}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
-class AuthPrimaryAgentISpec extends IntegrationBaseSpec {
+class AuthMainAgentsOnlyISpec extends IntegrationBaseSpec {
 
-  private val primaryAgentOnlyEndpoint = "create-amend-quarterly-period-type"
+  private val callingApiVersion = "1.0"
+
+  private val supportingAgentsNotAllowedEndpoint = "create-amend-quarterly-period-type"
 
   /** One endpoint where supporting agents are allowed.
     */
-  override def servicesConfig: Map[String, String] =
+  override def servicesConfig: Map[String, Any] =
     Map(
-      s"api.supporting-agent-endpoints.$primaryAgentOnlyEndpoint" -> "false"
+      s"api.supporting-agent-endpoints.$supportingAgentsNotAllowedEndpoint" -> "false"
     ) ++ super.servicesConfig
 
   private val nino       = "AA123456A"
@@ -56,6 +58,8 @@ class AuthPrimaryAgentISpec extends IntegrationBaseSpec {
     |}
     |""".stripMargin)
 
+  private val downstreamResponse: JsValue = JsObject.empty
+
   "Calling an endpoint that only allows primary agents" when {
     "the client is the primary agent" should {
       "return a success response" in new Test {
@@ -69,7 +73,7 @@ class AuthPrimaryAgentISpec extends IntegrationBaseSpec {
           DownstreamStub
             .when(DownstreamStub.PUT, downstreamUri)
             .withRequestBody(downstreamRequestJson)
-            .thenReturn(OK, JsObject.empty)
+            .thenReturn(OK, downstreamResponse)
         }
 
         val response: WSResponse = sendMtdRequest()
@@ -127,6 +131,20 @@ class AuthPrimaryAgentISpec extends IntegrationBaseSpec {
       }
     }
 
+    "MTD ID lookup fails with a 403" should {
+
+      "return a 403 response" in new Test {
+        override def setupStubs(): StubMapping = {
+          AuditStub.audit()
+          MtdIdLookupStub.error(nino, FORBIDDEN)
+        }
+
+        val response: WSResponse = sendMtdRequest()
+        response.status shouldBe FORBIDDEN
+        response.body should include(ClientOrAgentNotAuthorisedError.message)
+      }
+    }
+
     "MTD ID lookup fails with a 500" should {
 
       "return a 500 response" in new Test {
@@ -155,7 +173,7 @@ class AuthPrimaryAgentISpec extends IntegrationBaseSpec {
 
       buildRequest(mtdUrl)
         .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.1.0+json"),
+          (ACCEPT, s"application/vnd.hmrc.$callingApiVersion+json"),
           (AUTHORIZATION, "Bearer 123")
         )
     }
