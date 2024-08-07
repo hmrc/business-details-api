@@ -35,14 +35,14 @@ object AuthStub extends WireMockMethods {
   def authorisedWithPrimaryAgentEnrolment(): StubMapping =
     when(method = POST, uri = authoriseUri)
       .withRequestBody(
-        followUpAgentEnrolmentsRequest(EnrolmentsAuthService.primaryAgentAuthPredicate(mtdId = "1234567890"))
+        followUpAgentEnrolmentsRequest(EnrolmentsAuthService.mtdEnrolmentPredicate(mtdId = "1234567890"))
       )
       .thenReturn(status = OK, body = JsObject.empty)
 
   def unauthorisedForPrimaryAgentEnrolment(): StubMapping =
     when(method = POST, uri = authoriseUri)
       .withRequestBody(
-        followUpAgentEnrolmentsRequest(EnrolmentsAuthService.primaryAgentAuthPredicate(mtdId = "1234567890"))
+        followUpAgentEnrolmentsRequest(EnrolmentsAuthService.mtdEnrolmentPredicate(mtdId = "1234567890"))
       )
       .thenReturn(status = UNAUTHORIZED, headers = Map("WWW-Authenticate" -> """MDTP detail="FailedRelationship""""))
 
@@ -109,42 +109,67 @@ object AuthStub extends WireMockMethods {
 
   private val initialRetrievalsRequestBody =
     Json.parse("""
-      | {
-      |    "authorise": [
-      |        {
-      |            "identifiers": [
-      |                {
-      |                    "key": "MTDITID",
-      |                    "value": "1234567890"
-      |                }
-      |            ],
-      |            "state": "Activated",
-      |            "delegatedAuthRule": "mtd-it-auth",
-      |            "enrolment": "HMRC-MTD-IT"
-      |        },
-      |        {
-      |            "$or": [
-      |                [
-      |                    { "affinityGroup": "Individual" },
-      |                    { "confidenceLevel": 200 }
-      |                ],
-      |                {    "affinityGroup": "Organisation" },
-      |                [
-      |                    { "affinityGroup": "Agent" },
-      |                    {
-      |                        "identifiers": [],
-      |                        "state": "Activated",
-      |                        "enrolment": "HMRC-AS-AGENT"
-      |                    }
-      |                ]
-      |            ]
-      |        }
-      |    ],
-      |    "retrieve": [
-      |        "affinityGroup",
-      |        "authorisedEnrolments"
-      |    ]
-      | }
+      |{
+      |	"authorise": [
+      |		{
+      |		    "$or":
+      |		    [
+      |		        [
+      |		            {
+      |		                "affinityGroup": "Individual"
+      |		            },
+      |		            {
+      |		                "confidenceLevel": 200
+      |		            },
+      |		            {
+      |		                "identifiers":
+      |		                [
+      |		                    {
+      |		                        "key": "MTDITID",
+      |		                        "value": "1234567890"
+      |		                    }
+      |		                ],
+      |		                "state": "Activated",
+      |		                "delegatedAuthRule": "mtd-it-auth",
+      |		                "enrolment": "HMRC-MTD-IT"
+      |		            }
+      |		        ],
+      |		        [
+      |		            {
+      |		                "affinityGroup": "Organisation"
+      |		            },
+      |		            {
+      |		                "identifiers":
+      |		                [
+      |		                    {
+      |		                        "key": "MTDITID",
+      |		                        "value": "1234567890"
+      |		                    }
+      |		                ],
+      |		                "state": "Activated",
+      |		                "delegatedAuthRule": "mtd-it-auth",
+      |		                "enrolment": "HMRC-MTD-IT"
+      |		            }
+      |		        ],
+      |		        [
+      |		            {
+      |		                "affinityGroup": "Agent"
+      |		            },
+      |		            {
+      |		                "identifiers":
+      |		                [],
+      |		                "state": "Activated",
+      |		                "enrolment": "HMRC-AS-AGENT"
+      |		            }
+      |		        ]
+      |		    ]
+      |		}
+      |	],
+      |	"retrieve": [
+      |		"affinityGroup",
+      |		"authorisedEnrolments"
+      |	]
+      |}
       |""".stripMargin)
 
 }

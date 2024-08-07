@@ -23,7 +23,7 @@ import api.services.EnrolmentsAuthService._
 import config.AppConfig
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
+import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
@@ -42,28 +42,10 @@ class EnrolmentsAuthService @Inject() (val connector: AuthConnector, val appConf
   }
 
   private def initialPredicate(mtdId: String): Predicate =
-    if (authorisationEnabled) {
-      val enrolment =
-        Enrolment("HMRC-MTD-IT")
-          .withIdentifier("MTDITID", mtdId)
-          .withDelegatedAuthRule("mtd-it-auth")
-
-      enrolment and initialAuthPredicate
-    } else {
-      EmptyPredicate
-    }
-
-  private def primaryAgentPredicate(mtdId: String): Predicate =
     if (authorisationEnabled)
-      primaryAgentAuthPredicate(mtdId)
+      authorisationEnabledPredicate(mtdId)
     else
-      EmptyPredicate
-
-  private def supportingAgentPredicate(mtdId: String): Predicate =
-    if (authorisationEnabled)
-      supportingAgentAuthPredicate(mtdId)
-    else
-      EmptyPredicate
+      authorisationDisabledPredicate(mtdId)
 
   def authorised(
       mtdId: String,
@@ -81,13 +63,13 @@ class EnrolmentsAuthService @Inject() (val connector: AuthConnector, val appConf
 
         case Some(Agent) ~ authorisedEnrolments =>
           authFunction
-            .authorised(primaryAgentPredicate(mtdId)) {
+            .authorised(mtdEnrolmentPredicate(mtdId)) {
               Future.successful(agentDetails(authorisedEnrolments))
             }
             .recoverWith { case _: AuthorisationException =>
               if (endpointAllowsSupportingAgents) {
                 authFunction
-                  .authorised(supportingAgentPredicate(mtdId)) {
+                  .authorised(supportingAgentAuthPredicate(mtdId)) {
                     Future.successful(agentDetails(authorisedEnrolments))
                   }
               } else {
@@ -129,10 +111,15 @@ class EnrolmentsAuthService @Inject() (val connector: AuthConnector, val appConf
 
 object EnrolmentsAuthService {
 
-  private[services] val initialAuthPredicate: Predicate =
-    (Individual and ConfidenceLevel.L200) or Organisation or (Agent and Enrolment("HMRC-AS-AGENT"))
+  private[services] def authorisationEnabledPredicate(mtdId: String): Predicate =
+    (Individual and ConfidenceLevel.L200 and mtdEnrolmentPredicate(mtdId)) or
+      (Organisation and mtdEnrolmentPredicate(mtdId)) or
+      (Agent and Enrolment("HMRC-AS-AGENT"))
 
-  private[services] def primaryAgentAuthPredicate(mtdId: String): Enrolment = {
+  private[services] def authorisationDisabledPredicate(mtdId: String): Predicate =
+    mtdEnrolmentPredicate(mtdId) or (Agent and Enrolment("HMRC-AS-AGENT"))
+
+  private[services] def mtdEnrolmentPredicate(mtdId: String): Enrolment = {
     Enrolment("HMRC-MTD-IT")
       .withIdentifier("MTDITID", mtdId)
       .withDelegatedAuthRule("mtd-it-auth")
