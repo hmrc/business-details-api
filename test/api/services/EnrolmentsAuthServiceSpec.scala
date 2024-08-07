@@ -19,14 +19,19 @@ package api.services
 import api.models.auth.UserDetails
 import api.models.errors.{ClientOrAgentNotAuthorisedError, InternalError}
 import api.models.outcomes.AuthOutcome
-import api.services.EnrolmentsAuthService.{initialAuthPredicate, primaryAgentAuthPredicate, supportingAgentAuthPredicate}
+import api.services.EnrolmentsAuthService.{
+  authorisationDisabledPredicate,
+  authorisationEnabledPredicate,
+  mtdEnrolmentPredicate,
+  supportingAgentAuthPredicate
+}
 import config.{ConfidenceLevelConfig, MockAppConfig}
 import org.scalamock.handlers.CallHandler
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
+import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.{EmptyRetrieval, Retrieval, ~}
+import uk.gov.hmrc.auth.core.{AuthConnector, ConfidenceLevel, Enrolment, EnrolmentIdentifier, Enrolments, InsufficientEnrolments, MissingBearerToken}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,8 +45,8 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
     "confidence level checks are on" should {
       behave like authService(
         authValidationEnabled = true,
-        initialAuthPredicate,
-        primaryAgentAuthPredicate(mtdId),
+        authorisationEnabledPredicate(mtdId),
+        mtdEnrolmentPredicate(mtdId),
         supportingAgentAuthPredicate(mtdId)
       )
     }
@@ -49,9 +54,9 @@ class EnrolmentsAuthServiceSpec extends ServiceSpec with MockAppConfig {
     "confidence level checks are off" should {
       behave like authService(
         authValidationEnabled = false,
-        EmptyPredicate,
-        EmptyPredicate,
-        EmptyPredicate
+        authorisationDisabledPredicate(mtdId),
+        mtdEnrolmentPredicate(mtdId),
+        supportingAgentAuthPredicate(mtdId)
       )
     }
 
