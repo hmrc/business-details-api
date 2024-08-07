@@ -30,7 +30,7 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
   val config: AppConfig                = app.injector.instanceOf[AppConfig]
   val confidenceLevel: ConfidenceLevel = config.confidenceLevelConfig.confidenceLevel
 
-  override def servicesConfig: Map[String, String] =
+  override def servicesConfig: Map[String, Any] =
     Map(
       "api.1.0.status"                               -> "BETA",
       "api.1.0.endpoints.enabled"                    -> "true",
