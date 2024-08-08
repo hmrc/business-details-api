@@ -19,7 +19,7 @@ package v1.controllers
 import api.controllers._
 import api.hateoas.HateoasFactory
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
-import config.{AppConfig, FeatureSwitches}
+import config.AppConfig
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
 import v1.controllers.validators.ListAllBusinessDetailsValidatorFactory
@@ -42,9 +42,6 @@ class ListAllBusinessesController @Inject() (
     extends AuthorisedController(cc) {
 
   val endpointName = "list-all-businesses"
-
-  lazy protected val supportingAgentsAccessControlEnabled: Boolean =
-    FeatureSwitches(appConfig).supportingAgentsAccessControlEnabled
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "ListAllBusinessesController", endpointName = "List All Businesses")
