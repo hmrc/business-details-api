@@ -19,7 +19,7 @@ package v1.controllers
 import api.controllers.{AuthorisedController, EndpointLogContext, RequestContext, RequestHandler}
 import api.hateoas.HateoasFactory
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
-import config.{AppConfig, FeatureSwitches}
+import config.AppConfig
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
 import v1.controllers.validators.RetrieveBusinessDetailsValidatorFactory
@@ -42,9 +42,6 @@ class RetrieveBusinessDetailsController @Inject() (
     extends AuthorisedController(cc) {
 
   val endpointName = "retrieve-business-details"
-
-  lazy protected val supportingAgentsAccessControlEnabled: Boolean =
-    FeatureSwitches(appConfig).supportingAgentsAccessControlEnabled
 
   implicit val endpointLogContext: EndpointLogContext =
     EndpointLogContext(controllerName = "RetrieveBusinessDetailsController", endpointName = "Retrieve Business Details")
