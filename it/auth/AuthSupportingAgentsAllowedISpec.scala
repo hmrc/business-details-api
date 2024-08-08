@@ -1,46 +1,46 @@
-/*
- * Copyright 2023 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package auth
 
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
 import play.api.http.Status.OK
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsValue
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
-class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
+abstract class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
 
-  private val callingApiVersion = "1.0"
+  /** The API's latest version, e.g. "1.0".
+    */
+  protected val callingApiVersion: String
 
-  private val secondaryAgentsAllowedEndpoint = "list-all-businesses"
+  /** As the IT supplies the "supported" config below, this can be any endpoint IF there's no actual "supporting agents allowed" endpoint in the API.
+    */
+  protected val supportingAgentsAllowedEndpoint: String
+
+  protected def sendMtdRequest(request: WSRequest): WSResponse
+
+  protected val mtdUrl: String
+
+  protected val downstreamUri: String
+
+  protected val maybeDownstreamResponseJson: Option[JsValue]
+
+  protected val downstreamHttpMethod: DownstreamStub.HTTPMethod = DownstreamStub.POST
+
+  protected val downstreamSuccessStatus: Int = OK
+
+  protected val expectedMtdSuccessStatus: Int = OK
 
   /** One endpoint where supporting agents are allowed.
     */
   override def servicesConfig: Map[String, Any] =
     Map(
-      s"api.supporting-agent-endpoints.$secondaryAgentsAllowedEndpoint" -> "true"
+      s"api.supporting-agent-endpoints.$supportingAgentsAllowedEndpoint" -> "true"
     ) ++ super.servicesConfig
 
-  private val nino = "AA123456A"
-
-  private val downstreamUri = s"/registration/business-details/nino/$nino"
+  protected val nino = "AA123456A"
 
   "Calling an endpoint that allows supporting agents" when {
     "the client is the primary agent" should {
@@ -52,11 +52,13 @@ class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
           AuthStub.authorisedWithAgentAffinityGroup()
           AuthStub.authorisedWithPrimaryAgentEnrolment()
 
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, downstreamResponse)
+          DownstreamStub
+            .when(downstreamHttpMethod, downstreamUri)
+            .thenReturn(downstreamSuccessStatus, maybeDownstreamResponseJson)
         }
 
-        val response: WSResponse = await(request().get())
-        response.status shouldBe OK
+        val response: WSResponse = sendMtdRequest(request)
+        response.status shouldBe expectedMtdSuccessStatus
       }
     }
 
@@ -70,24 +72,25 @@ class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
           AuthStub.unauthorisedForPrimaryAgentEnrolment()
           AuthStub.authorisedWithSupportingAgentEnrolment()
 
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, downstreamResponse)
+          DownstreamStub
+            .when(downstreamHttpMethod, downstreamUri)
+            .thenReturn(downstreamSuccessStatus, maybeDownstreamResponseJson)
         }
 
-        val response: WSResponse = await(request().get())
-        response.status shouldBe OK
+        val response: WSResponse = sendMtdRequest(request)
+        response.status shouldBe expectedMtdSuccessStatus
       }
     }
   }
 
-  private trait Test {
+  protected trait Test {
 
     def setupStubs(): StubMapping
 
-    def request(): WSRequest = {
+    protected def request: WSRequest = {
       AuthStub.resetAll()
       setupStubs()
-
-      buildRequest(s"/$nino/list")
+      buildRequest(mtdUrl)
         .withHttpHeaders(
           (ACCEPT, s"application/vnd.hmrc.$callingApiVersion+json"),
           (AUTHORIZATION, "Bearer 123")
@@ -95,43 +98,5 @@ class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
     }
 
   }
-
-  val downstreamResponse: JsValue = Json.parse(s"""
-      |{
-      |   "safeId": "XE00001234567890",
-      |   "nino": "$nino",
-      |   "mtdbsa": "123456789012345",
-      |   "propertyIncome": false,
-      |   "businessData": [
-      |      {
-      |         "incomeSourceType": "1",
-      |         "incomeSourceId": "123456789012345",
-      |         "accountingPeriodStartDate": "2001-01-01",
-      |         "accountingPeriodEndDate": "2001-01-01",
-      |         "tradingName": "RCDTS",
-      |         "businessAddressDetails": {
-      |            "addressLine1": "100 SuttonStreet",
-      |            "addressLine2": "Wokingham",
-      |            "addressLine3": "Surrey",
-      |            "addressLine4": "London",
-      |            "postalCode": "DH14EJ",
-      |            "countryCode": "GB"
-      |         },
-      |         "businessContactDetails": {
-      |            "phoneNumber": "01332752856",
-      |            "mobileNumber": "07782565326",
-      |            "faxNumber": "01332754256",
-      |            "emailAddress": "stephen@manncorpone.co.uk"
-      |         },
-      |         "tradingStartDate": "2001-01-01",
-      |         "cashOrAccruals": false,
-      |         "seasonal": true,
-      |         "cessationDate": "2001-01-01",
-      |         "cessationReason": "002",
-      |         "paperLess": true
-      |      }
-      |   ]
-      |}
-      |""".stripMargin)
 
 }
