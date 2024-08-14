@@ -35,12 +35,12 @@ put:
     content:
       application/json:
         schema:
-          $ref: './schemas/createAmendQuarterlyPeriodType/request.json'
+          $ref: './schemas/createAmendQuarterlyPeriodType/def1/request.json'
         examples:
           example-request:
-            description: Example request
+            description: Example request given any tax year
             value:
-              $ref: './examples/createAmendQuarterlyPeriodType/request.json'
+              $ref: './examples/createAmendQuarterlyPeriodType/def1/request.json'
 
   responses:
     "204":
