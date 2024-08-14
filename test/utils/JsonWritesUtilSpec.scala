@@ -16,7 +16,7 @@
 
 package utils
 
-import play.api.libs.json.{Json, OWrites}
+import play.api.libs.json._
 import support.UnitSpec
 
 object JsonWritesUtilSpec {
@@ -46,6 +46,48 @@ class JsonWritesUtilSpec extends UnitSpec with JsonWritesUtil {
       "throw an exception" in {
         assertThrows[IllegalArgumentException](Json.toJson[D](D3(false)))
       }
+    }
+  }
+
+  "filterNull" should {
+    "filter out fields with JsNull values in a JsObject" in {
+      val json = Json.obj(
+        "field1" -> JsString("value1"),
+        "field2" -> JsNull,
+        "field3" -> JsNumber(42)
+      )
+
+      val expectedJson = Json.obj(
+        "field1" -> JsString("value1"),
+        "field3" -> JsNumber(42)
+      )
+
+      val result = filterNull(json)
+      result shouldEqual expectedJson
+    }
+
+    "return an empty JsObject if all fields are JsNull" in {
+      val json = Json.obj(
+        "field1" -> JsNull,
+        "field2" -> JsNull
+      )
+
+      val expectedJson = Json.obj()
+
+      val result = filterNull(json)
+      result shouldEqual expectedJson
+    }
+
+    "return the same JsObject if there are no JsNull values" in {
+      val json = Json.obj(
+        "field1" -> JsString("value1"),
+        "field2" -> Json.obj(
+          "nestedField1" -> JsNumber(42)
+        )
+      )
+
+      val result = filterNull(json)
+      result shouldEqual json
     }
   }
 
