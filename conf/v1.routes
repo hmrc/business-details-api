@@ -1,5 +1,5 @@
-GET        /:nino/list                                     v1.controllers.ListAllBusinessesController.handleRequest(nino: String)
+GET        /:nino/list                                     v1.listAllBusinesses.ListAllBusinessesController.handleRequest(nino: String)
 
-GET        /:nino/:businessId                              v1.controllers.RetrieveBusinessDetailsController.handleRequest(nino: String, businessId: String)
+GET        /:nino/:businessId                              v1.retrieveBusinessDetails.RetrieveBusinessDetailsController.handleRequest(nino: String, businessId: String)
 
-PUT        /:nino/:businessId/:taxYear                     v1.controllers.CreateAmendQuarterlyPeriodTypeController.handleRequest(nino: String, businessId: String, taxYear: String)
+PUT        /:nino/:businessId/:taxYear                     v1.createAmendQuarterlyPeriodType.CreateAmendQuarterlyPeriodTypeController.handleRequest(nino: String, businessId: String, taxYear: String)
