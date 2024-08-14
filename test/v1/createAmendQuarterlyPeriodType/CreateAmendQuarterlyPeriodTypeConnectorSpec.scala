@@ -20,11 +20,7 @@ import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
-import v1.createAmendQuarterlyPeriodType.model.request.{
-  CreateAmendQuarterlyPeriodTypeRequestBody,
-  CreateAmendQuarterlyPeriodTypeRequestData,
-  QuarterlyPeriodType
-}
+import v1.createAmendQuarterlyPeriodType.def1.model.request._
 
 import scala.concurrent.Future
 
@@ -33,9 +29,9 @@ class CreateAmendQuarterlyPeriodTypeConnectorSpec extends ConnectorSpec {
   private val nino       = Nino("AA123456A")
   private val businessId = BusinessId("XAIS12345678910")
   private val taxYear    = TaxYear.fromMtd("2023-24")
-  private val body       = CreateAmendQuarterlyPeriodTypeRequestBody(QuarterlyPeriodType.`standard`)
+  private val body       = Def1_CreateAmendQuarterlyPeriodTypeRequestBody(QuarterlyPeriodType.`standard`)
 
-  private val request = CreateAmendQuarterlyPeriodTypeRequestData(nino, businessId, taxYear, body)
+  private val request = Def1_CreateAmendQuarterlyPeriodTypeRequestData(nino, businessId, taxYear, body)
 
   "retrieveBusinessDetailsConnector" must {
     "return a successful response" when {

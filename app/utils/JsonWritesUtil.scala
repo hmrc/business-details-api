@@ -14,18 +14,27 @@
  * limitations under the License.
  */
 
-package v1.createAmendQuarterlyPeriodType.model.request
+package utils
 
-import play.api.libs.json.{JsObject, Json, OWrites}
-import utils.JsonWritesUtil
-import v1.createAmendQuarterlyPeriodType.def1.model.request.Def1_CreateAmendQuarterlyPeriodTypeRequestBody
+import play.api.libs.json._
 
-trait CreateAmendQuarterlyPeriodTypeRequestBody
+trait JsonWritesUtil {
 
-object CreateAmendQuarterlyPeriodTypeRequestBody extends JsonWritesUtil {
+  def filterNull(json: JsValue): JsObject = json match {
+    case JsObject(fields) =>
+      JsObject(fields.flatMap {
+        case (_, JsNull) => None
+        case other       => Some(other)
+      })
+    case other => other.as[JsObject]
+  }
 
-  implicit val writes: OWrites[CreateAmendQuarterlyPeriodTypeRequestBody] = writesFrom { case a: Def1_CreateAmendQuarterlyPeriodTypeRequestBody =>
-    Json.toJson(a).as[JsObject]
+  def writesFrom[A](pf: PartialFunction[A, JsObject]): OWrites[A] = {
+    val f: A => JsObject = pf.orElse(a => throw new IllegalArgumentException(s"No writes defined for type ${a.getClass.getName}"))
+
+    OWrites.apply(f)
   }
 
 }
+
+object JsonWritesUtil extends JsonWritesUtil

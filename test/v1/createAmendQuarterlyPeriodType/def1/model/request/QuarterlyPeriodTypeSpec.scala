@@ -18,8 +18,7 @@ package v1.createAmendQuarterlyPeriodType.def1.model.request
 
 import play.api.libs.json._
 import support.UnitSpec
-import v1.createAmendQuarterlyPeriodType.model.request.QuarterlyPeriodType
-import v1.createAmendQuarterlyPeriodType.model.request.QuarterlyPeriodType._
+import v1.createAmendQuarterlyPeriodType.def1.model.request.QuarterlyPeriodType._
 
 class QuarterlyPeriodTypeSpec extends UnitSpec {
 

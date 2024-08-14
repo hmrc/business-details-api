@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package v1.createAmendQuarterlyPeriodType.model.request
+package api.controllers.validators
 
-import api.models.domain.{BusinessId, Nino, TaxYear}
-import v1.createAmendQuarterlyPeriodType.CreateAmendQuarterlyPeriodTypeSchema
+import api.models.errors.MtdError
+import cats.data.Validated
+import cats.data.Validated.Invalid
 
-trait CreateAmendQuarterlyPeriodTypeRequestData {
-  def nino: Nino
-  def businessId: BusinessId
-  def taxYear: TaxYear
-  def body: CreateAmendQuarterlyPeriodTypeRequestBody
-
-  val schema: CreateAmendQuarterlyPeriodTypeSchema
+case class AlwaysErrorsValidator(errors: Seq[MtdError]) extends Validator[Nothing] {
+  override def validate: Validated[Seq[MtdError], Nothing] = Invalid(errors)
 }

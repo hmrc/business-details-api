@@ -29,11 +29,7 @@ import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import utils.MockIdGenerator
-import v1.createAmendQuarterlyPeriodType.model.request.{
-  CreateAmendQuarterlyPeriodTypeRequestBody,
-  CreateAmendQuarterlyPeriodTypeRequestData,
-  QuarterlyPeriodType
-}
+import v1.createAmendQuarterlyPeriodType.def1.model.request._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -64,10 +60,10 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
   private val parsedNino       = Nino(nino)
   private val parsedBusinessId = BusinessId(validBusinessId)
   private val parsedTaxYear    = TaxYear.fromMtd(validTaxYear)
-  private val parsedBody       = CreateAmendQuarterlyPeriodTypeRequestBody(QuarterlyPeriodType.`standard`)
+  private val parsedBody       = Def1_CreateAmendQuarterlyPeriodTypeRequestBody(QuarterlyPeriodType.`standard`)
 
   private val requestData =
-    CreateAmendQuarterlyPeriodTypeRequestData(parsedNino, parsedBusinessId, parsedTaxYear, parsedBody)
+    Def1_CreateAmendQuarterlyPeriodTypeRequestData(parsedNino, parsedBusinessId, parsedTaxYear, parsedBody)
 
   "handleRequest" should {
     "return successful response with status OK" when {

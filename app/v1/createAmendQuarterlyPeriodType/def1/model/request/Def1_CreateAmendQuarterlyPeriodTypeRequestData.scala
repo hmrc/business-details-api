@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package v1.createAmendQuarterlyPeriodType.model.request
+package v1.createAmendQuarterlyPeriodType.def1.model.request
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
 import v1.createAmendQuarterlyPeriodType.CreateAmendQuarterlyPeriodTypeSchema
+import v1.createAmendQuarterlyPeriodType.CreateAmendQuarterlyPeriodTypeSchema.Def1
+import v1.createAmendQuarterlyPeriodType.model.request.CreateAmendQuarterlyPeriodTypeRequestData
 
-trait CreateAmendQuarterlyPeriodTypeRequestData {
-  def nino: Nino
-  def businessId: BusinessId
-  def taxYear: TaxYear
-  def body: CreateAmendQuarterlyPeriodTypeRequestBody
+case class Def1_CreateAmendQuarterlyPeriodTypeRequestData(nino: Nino,
+                                                          businessId: BusinessId,
+                                                          taxYear: TaxYear,
+                                                          body: Def1_CreateAmendQuarterlyPeriodTypeRequestBody)
+    extends CreateAmendQuarterlyPeriodTypeRequestData {
 
-  val schema: CreateAmendQuarterlyPeriodTypeSchema
+  override val schema: CreateAmendQuarterlyPeriodTypeSchema = Def1
+
 }

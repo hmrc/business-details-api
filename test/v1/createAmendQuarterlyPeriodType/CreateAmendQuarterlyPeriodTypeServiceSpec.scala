@@ -20,11 +20,7 @@ import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
-import v1.createAmendQuarterlyPeriodType.model.request.{
-  CreateAmendQuarterlyPeriodTypeRequestBody,
-  CreateAmendQuarterlyPeriodTypeRequestData,
-  QuarterlyPeriodType
-}
+import v1.createAmendQuarterlyPeriodType.def1.model.request._
 
 import scala.concurrent.Future
 
@@ -33,8 +29,8 @@ class CreateAmendQuarterlyPeriodTypeServiceSpec extends ServiceSpec {
   private val nino        = Nino("AA123456A")
   private val businessId  = BusinessId("XAIS12345678910")
   private val taxYear     = TaxYear.fromMtd("2023-24")
-  private val body        = CreateAmendQuarterlyPeriodTypeRequestBody(QuarterlyPeriodType.`standard`)
-  private val requestData = CreateAmendQuarterlyPeriodTypeRequestData(nino, businessId, taxYear, body)
+  private val body        = Def1_CreateAmendQuarterlyPeriodTypeRequestBody(QuarterlyPeriodType.`standard`)
+  private val requestData = Def1_CreateAmendQuarterlyPeriodTypeRequestData(nino, businessId, taxYear, body)
 
   "service" when {
     "a connector call is successful" should {

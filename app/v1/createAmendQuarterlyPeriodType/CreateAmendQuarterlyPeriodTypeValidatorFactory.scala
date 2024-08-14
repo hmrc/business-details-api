@@ -17,31 +17,16 @@
 package v1.createAmendQuarterlyPeriodType
 
 import api.controllers.validators.Validator
-import api.controllers.validators.resolvers._
-import api.models.errors.MtdError
-import cats.data.Validated
-import cats.implicits._
 import play.api.libs.json.JsValue
-import v1.createAmendQuarterlyPeriodType.model.request.{CreateAmendQuarterlyPeriodTypeRequestBody, CreateAmendQuarterlyPeriodTypeRequestData}
+import v1.createAmendQuarterlyPeriodType.def1.Def1_CreateAmendQuarterlyPeriodTypeValidator
+import v1.createAmendQuarterlyPeriodType.model.request.CreateAmendQuarterlyPeriodTypeRequestData
 
 import javax.inject.Singleton
 
 @Singleton
 class CreateAmendQuarterlyPeriodTypeValidatorFactory {
 
-  private val resolveJson = new ResolveNonEmptyJsonObject[CreateAmendQuarterlyPeriodTypeRequestBody]()
-
   def validator(nino: String, businessId: String, taxYear: String, body: JsValue): Validator[CreateAmendQuarterlyPeriodTypeRequestData] =
-    new Validator[CreateAmendQuarterlyPeriodTypeRequestData] {
-
-      def validate: Validated[Seq[MtdError], CreateAmendQuarterlyPeriodTypeRequestData] =
-        (
-          ResolveNino(nino),
-          ResolveBusinessId(businessId),
-          ResolveTaxYear(taxYear),
-          resolveJson(body)
-        ) mapN CreateAmendQuarterlyPeriodTypeRequestData
-
-    }
+    new Def1_CreateAmendQuarterlyPeriodTypeValidator(nino, businessId, taxYear, body)
 
 }

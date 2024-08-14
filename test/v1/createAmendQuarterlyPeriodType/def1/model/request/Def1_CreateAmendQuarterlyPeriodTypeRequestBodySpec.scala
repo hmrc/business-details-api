@@ -18,10 +18,8 @@ package v1.createAmendQuarterlyPeriodType.def1.model.request
 
 import play.api.libs.json.Json
 import support.UnitSpec
-import v1.createAmendQuarterlyPeriodType.model.request
-import v1.createAmendQuarterlyPeriodType.model.request.{CreateAmendQuarterlyPeriodTypeRequestBody, QuarterlyPeriodType}
 
-class CreateAmendQuarterlyPeriodTypeRequestBodySpec extends UnitSpec {
+class Def1_CreateAmendQuarterlyPeriodTypeRequestBodySpec extends UnitSpec {
 
   private val validRequestBody = Json.parse("""
       |{
@@ -35,11 +33,11 @@ class CreateAmendQuarterlyPeriodTypeRequestBodySpec extends UnitSpec {
       |}
       |""".stripMargin)
 
-  private val parsedRequestBody = request.CreateAmendQuarterlyPeriodTypeRequestBody(QuarterlyPeriodType.`standard`)
+  private val parsedRequestBody = Def1_CreateAmendQuarterlyPeriodTypeRequestBody(QuarterlyPeriodType.`standard`)
 
   "CreateAmendQuarterlyPeriodType" should {
     "read from vendor JSON" in {
-      validRequestBody.as[CreateAmendQuarterlyPeriodTypeRequestBody] shouldBe parsedRequestBody
+      validRequestBody.as[Def1_CreateAmendQuarterlyPeriodTypeRequestBody] shouldBe parsedRequestBody
     }
 
     "write to downstream Json" in {

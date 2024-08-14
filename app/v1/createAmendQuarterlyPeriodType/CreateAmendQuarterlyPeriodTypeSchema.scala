@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package v1.createAmendQuarterlyPeriodType.model.request
+package v1.createAmendQuarterlyPeriodType
 
-import play.api.libs.json.{JsObject, Json, OWrites}
-import utils.JsonWritesUtil
-import v1.createAmendQuarterlyPeriodType.def1.model.request.Def1_CreateAmendQuarterlyPeriodTypeRequestBody
+sealed trait CreateAmendQuarterlyPeriodTypeSchema
 
-trait CreateAmendQuarterlyPeriodTypeRequestBody
+object CreateAmendQuarterlyPeriodTypeSchema {
 
-object CreateAmendQuarterlyPeriodTypeRequestBody extends JsonWritesUtil {
-
-  implicit val writes: OWrites[CreateAmendQuarterlyPeriodTypeRequestBody] = writesFrom { case a: Def1_CreateAmendQuarterlyPeriodTypeRequestBody =>
-    Json.toJson(a).as[JsObject]
-  }
+  case object Def1 extends CreateAmendQuarterlyPeriodTypeSchema
 
 }
