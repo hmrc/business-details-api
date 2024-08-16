@@ -21,6 +21,7 @@ import play.api.http.Status._
 // Format Errors
 object NinoFormatError          extends MtdError("FORMAT_NINO", "The provided NINO is invalid", BAD_REQUEST)
 object TaxYearFormatError       extends MtdError("FORMAT_TAX_YEAR", "The provided tax year is invalid", BAD_REQUEST)
+object DateFormatError          extends MtdError(code = "FORMAT_DATE", message = "The supplied date format is not valid", BAD_REQUEST)
 object ToDateFormatError        extends MtdError(code = "FORMAT_TO_DATE", message = "The provided toDate is invalid", BAD_REQUEST)
 object FromDateFormatError      extends MtdError(code = "FORMAT_FROM_DATE", message = "The provided fromDate is invalid", BAD_REQUEST)
 object BusinessIdFormatError    extends MtdError("FORMAT_BUSINESS_ID", "The provided Business ID is invalid", BAD_REQUEST)
