@@ -49,46 +49,57 @@ class JsonWritesUtilSpec extends UnitSpec with JsonWritesUtil {
     }
   }
 
-  "filterNull" should {
-    "filter out fields with JsNull values in a JsObject" in {
-      val json = Json.obj(
-        "field1" -> JsString("value1"),
-        "field2" -> JsNull,
-        "field3" -> JsNumber(42)
-      )
-
-      val expectedJson = Json.obj(
-        "field1" -> JsString("value1"),
-        "field3" -> JsNumber(42)
-      )
-
-      val result = filterNull(json)
-      result shouldEqual expectedJson
-    }
-
-    "return an empty JsObject if all fields are JsNull" in {
-      val json = Json.obj(
-        "field1" -> JsNull,
-        "field2" -> JsNull
-      )
-
-      val expectedJson = Json.obj()
-
-      val result = filterNull(json)
-      result shouldEqual expectedJson
-    }
-
-    "return the same JsObject if there are no JsNull values" in {
-      val json = Json.obj(
-        "field1" -> JsString("value1"),
-        "field2" -> Json.obj(
-          "nestedField1" -> JsNumber(42)
+  "filterNull()" when {
+    "given a JsObject with no nulls" should {
+      "return the JsObject unchanged" in {
+        val json = Json.parse(
+          """
+            | {
+            |   "A": "ay",
+            |   "B": "bee"
+            | }
+            |""".stripMargin
         )
-      )
 
-      val result = filterNull(json)
-      result shouldEqual json
+        val result = filterNull(json)
+        result shouldBe json
+      }
     }
+
+    "given a JsObject including nulls" should {
+      "filter out the nulls" in {
+        val json = Json.parse(
+          """
+            | {
+            |   "A": null,
+            |   "B": "bee"
+            | }
+            |""".stripMargin
+        )
+
+        val result = filterNull(json)
+        result shouldBe Json.parse(
+          """
+            | {
+            |   "B": "bee"
+            | }
+            |""".stripMargin
+        )
+      }
+    }
+
+    "given some json that isn't a JsObject" should {
+      "try to turn it into a JsObject (which may fail)" in {
+        val json = Json.parse(
+          """
+            | "just a string"
+            |""".stripMargin
+        )
+
+        a[JsResultException] should be thrownBy filterNull(json)
+      }
+    }
+
   }
 
 }
