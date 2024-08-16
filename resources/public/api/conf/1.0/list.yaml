@@ -36,12 +36,12 @@ get:
       content:
         application/json:
           schema:
-            $ref: './schemas/listAllbusinesses/list_all_businesses_response.json'
+            $ref: './schemas/listAllbusinesses/response.json'
           examples:
             example-response:
               description: Example Response
               value:
-                $ref: './examples/listAllBusinesses/list_all_businesses_response.json'
+                $ref: './examples/listAllBusinesses/response.json'
 
     "400":
       description: Bad request
