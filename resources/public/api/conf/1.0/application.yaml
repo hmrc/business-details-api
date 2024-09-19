@@ -4,6 +4,10 @@ info:
   version: "1.0"
   title: Business Details (MTD)
   description: |
+    The following endpoints are stateful in the sandbox:
+    * Retrieve Business Details
+    * List All Businesses
+    
     # Send fraud prevention data
     HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters. 
 
