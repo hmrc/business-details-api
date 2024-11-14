@@ -35,13 +35,13 @@
     },
     "firstAccountingPeriodStartDate": {
       "type": "string",
-      "description": "{{#unless (releasedInProduction 'retrieveAdditionalFields')}}[Test only] {{/unless}}The first accounting period start date.",
+      "description": "{{#unless (releasedInProduction 'retrieveAdditionalFields')}}[Test only] {{/unless}}The first accounting period start date.\n\nNote: <b>Accounting period start and end dates should not be displayed to users of your software.</b>",
       "format": "yyyy-MM-DD",
       "example": "2019-09-30"
     },
     "firstAccountingPeriodEndDate": {
       "type": "string",
-      "description": "{{#unless (releasedInProduction 'retrieveAdditionalFields')}}[Test only] {{/unless}}The first accounting period end date.",
+      "description": "{{#unless (releasedInProduction 'retrieveAdditionalFields')}}[Test only] {{/unless}}The first accounting period end date.\n\nNote: <b>Accounting period start and end dates should not be displayed to users of your software.</b>",
       "format": "yyyy-MM-DD",
       "example": "2020-02-29"
     },
@@ -129,7 +129,7 @@
     {{/if}}
     "accountingPeriods": {
       "type": "array",
-      "description": "The start and end dates of the latest accounting period for the business. This array contains dates for the latest accounting period only.",
+      "description": "The start and end dates of the latest accounting period for the business. This array contains dates for the latest accounting period only.\n\nNote: <b>Accounting period start and end dates should not be displayed to users of your software.</b>",
       "items": {
         "type": "object",
         "properties": {
