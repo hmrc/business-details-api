@@ -195,9 +195,9 @@
       "example": "M1 1AG"
     },
     "businessAddressCountryCode": {
-      "description": "The two letter code for a country must adhere to ISO 3166.",
+      "description": "ISO country code for the business if it is in a non-GB country. The two-letter code for a country must adhere to ISO 3166.",
       "type": "string",
-      "example": "GB"
+      "example": "FR"
     },
     "links": {
       "type": "array",
