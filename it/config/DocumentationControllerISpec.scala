@@ -34,7 +34,10 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
     Map(
       "api.1.0.status"                               -> "BETA",
       "api.1.0.endpoints.enabled"                    -> "true",
-      "api.1.0.endpoints.api-released-in-production" -> "true"
+      "api.1.0.endpoints.api-released-in-production" -> "true",
+      "api.2.0.status"                               -> "BETA",
+      "api.2.0.endpoints.enabled"                    -> "true",
+      "api.2.0.endpoints.api-released-in-production" -> "true"
     ) ++ super.servicesConfig
 
   val apiDefinitionJson: JsValue = Json.parse(
@@ -50,6 +53,11 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
       |      "versions":[
       |         {
       |            "version":"1.0",
+      |            "status":"BETA",
+      |            "endpointsEnabled":true
+      |         },
+      |         {
+      |            "version":"2.0",
       |            "status":"BETA",
       |            "endpointsEnabled":true
       |         }

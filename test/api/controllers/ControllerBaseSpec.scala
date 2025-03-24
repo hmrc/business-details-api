@@ -36,7 +36,7 @@ import utils.MockIdGenerator
 
 import scala.concurrent.Future
 
-abstract class ControllerBaseSpec
+abstract class ControllerBaseSpec(version: Version = Version1)
     extends UnitSpec
     with Status
     with MimeTypes
@@ -45,7 +45,7 @@ abstract class ControllerBaseSpec
     with MockAuditService
     with MockAppConfig {
 
-  implicit val apiVersion: Version = Version1
+  implicit val apiVersion: Version = version
 
   implicit lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest().withHeaders(HeaderNames.ACCEPT -> s"application/vnd.hmrc.${apiVersion.name}+json")
