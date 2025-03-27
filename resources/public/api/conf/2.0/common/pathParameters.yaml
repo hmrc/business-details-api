@@ -1,0 +1,31 @@
+components:
+  parameters:
+    nino:
+      name: nino
+      in: path
+      description: |
+        National Insurance number, in the format `AA999999A`
+      schema:
+        type: string
+        example: TC663795B
+      required: true
+    businessId:
+      name: businessId
+      in: path
+      description: |
+        An identifier for the business, unique to the customer.<p>Must conform to the regular expression `^X[A-Z0-9]{1}IS[0-9]{11}$`
+      schema:
+        type: string
+        pattern: ^X[A-Z0-9]{1}IS[0-9]{11}$
+        example: XAIS12345678910
+      required: true
+    taxYear:
+      name: taxYear
+      in: path
+      description: |
+        The tax year for which a quarterly period type is being set.
+      schema:
+        type: string
+        pattern: ^2[0-9]{3}-[0-9]{2}$
+        example: "2023-24"
+      required: true

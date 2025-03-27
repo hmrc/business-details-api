@@ -1,0 +1,126 @@
+put:
+  summary: Create and Amend Quarterly Period Type for a Business
+  description: |
+    This endpoint enables you to create and amend the type of quarterly reporting period used for a business for a specific tax year.
+    You can choose standard quarterly periods (where the first period is 6 April to 5 July) or calendar quarterly periods (first period 1 April to 30 June) for each tax year.
+    Note that the quarterly period type cannot be changed after a submission is made for that year.
+    
+    **Warning:** If an invalid tax year or invalid business ID is submitted, the service will return an HTTP 500 INTERNAL_SERVER_ERROR response. Only the current tax year is allowed and business IDs must relate to a self-employment or property income source. This is a known issue and will be fixed to return an appropriate error in a future release.
+    
+    
+    ### Test data
+    Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.    
+    
+    | Header Value (Gov-Test-Scenario) | Scenario                                                                                                                                                         |
+    |----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    | N/A - DEFAULT                    | Simulate a successful response.                                                                                                                                  |
+    | BUSINESS_ID_NOT_FOUND	           | Simulates the scenario in which the business ID is not found.                                                                                                    |
+    | BUSINESS_ID_STATE_CONFLICT       | Simulates the scenario in which the request conflicts with the current state of the business ID.                                                                 |
+    | QUARTERLY_PERIOD_UPDATING        | Simulates the scenario in which the quarterly period type cannot be changed for the current year as the business is treated as commencing in the following year. |
+    | STATEFUL                         | Performs a stateful create and update.                                                                                                                           |
+
+  parameters:
+    - $ref: './common/pathParameters.yaml#/components/parameters/nino'
+    - $ref: './common/pathParameters.yaml#/components/parameters/businessId'
+    - $ref: './common/pathParameters.yaml#/components/parameters/taxYear'
+    - $ref: './common/headers.yaml#/components/parameters/acceptJson'
+    - $ref: './common/headers.yaml#/components/parameters/authorization'
+    - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
+
+  security:
+    - User-Restricted:
+        - write:self-assessment
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: './schemas/createAmendQuarterlyPeriodType/def1/request.json'
+        examples:
+          example-request:
+            description: Example request given any tax year
+            value:
+              $ref: './examples/createAmendQuarterlyPeriodType/def1/request.json'
+
+  responses:
+    "204":
+      description: Success(No Content)
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        Sunset:
+          $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        Link:
+          $ref: ./common/headers.yaml#/components/parameters/linkHeader
+      content: { }
+
+    "400":
+      description: Bad request
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        Sunset:
+          $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        Link:
+          $ref: ./common/headers.yaml#/components/parameters/linkHeader
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error-response.yaml'
+          examples:
+            FORMAT_NINO:
+              $ref: './common/errors.yaml#/components/examples/formatNino'
+            FORMAT_BUSINESS_ID:
+              $ref: './common/errors.yaml#/components/examples/formatBusinessId'
+            FORMAT_TAX_YEAR:
+              $ref: './common/errors.yaml#/components/examples/formatTaxYear'
+            RULE_BUSINESS_ID_STATE_CONFLICT:
+              $ref: './common/errors.yaml#/components/examples/ruleBusinessIdStateConflict'
+            RULE_QUARTERLY_PERIOD_UPDATING:
+              $ref: './common/errors.yaml#/components/examples/ruleQuarterlyPeriodUpdating'
+            RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
+              $ref: './common/errors.yaml#/components/examples/ruleIncorrectOrEmptyBodySubmitted'
+            RULE_INCORRECT_GOV_TEST_SCENARIO:
+              $ref: './common/errors.yaml#/components/examples/ruleIncorrectGovTestScenario'
+
+    "403":
+      description: Forbidden
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        Sunset:
+          $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        Link:
+          $ref: ./common/headers.yaml#/components/parameters/linkHeader
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error-response.yaml'
+          examples:
+            CLIENT_OR_AGENT_NOT_AUTHORISED:
+              $ref: './common/errors.yaml#/components/examples/clientOrAgentNotAuthorised'
+
+    "404":
+      description: Not Found
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        Sunset:
+          $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        Link:
+          $ref: ./common/headers.yaml#/components/parameters/linkHeader
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error-response.yaml'
+          examples:
+            RULE_BUSINESS_ID_NOT_FOUND:
+              $ref: './common/errors.yaml#/components/examples/ruleBusinessIdNotFound'
