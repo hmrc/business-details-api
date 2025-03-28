@@ -18,7 +18,7 @@ package api.controllers
 
 import api.controllers.validators.Validator
 import api.hateoas.{HateoasData, HateoasFactory, HateoasLinksFactory, HateoasWrapper}
-import api.models.errors.{ErrorWrapper, InternalError}
+import api.models.errors.{ErrorWrapper, InternalError, RuleRequestCannotBeFulfilledError}
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceOutcome
 import cats.data.EitherT
@@ -154,13 +154,18 @@ object RequestHandler {
           message = s"[${ctx.endpointLogContext.controllerName}][${ctx.endpointLogContext.endpointName}] " +
             s"with correlationId : ${ctx.correlationId}")
 
-        val result =
-          for {
-            parsedRequest   <- EitherT.fromEither[Future](validator.validateAndWrapResult())
-            serviceResponse <- EitherT(service(parsedRequest))
-          } yield doWithContext(ctx.withCorrelationId(serviceResponse.correlationId)) { implicit ctx: RequestContext =>
-            handleSuccess(parsedRequest, serviceResponse)
+        val result = {
+          if (simulateRequestCannotBeFulfilled) {
+            EitherT[Future, ErrorWrapper, Result](Future.successful(Left(ErrorWrapper(ctx.correlationId, RuleRequestCannotBeFulfilledError))))
+          } else {
+            for {
+              parsedRequest   <- EitherT.fromEither[Future](validator.validateAndWrapResult())
+              serviceResponse <- EitherT(service(parsedRequest))
+            } yield doWithContext(ctx.withCorrelationId(serviceResponse.correlationId)) { implicit ctx: RequestContext =>
+              handleSuccess(parsedRequest, serviceResponse)
+            }
           }
+        }
 
         result.leftMap { errorWrapper =>
           doWithContext(ctx.withCorrelationId(errorWrapper.correlationId)) { implicit ctx: RequestContext =>
@@ -168,6 +173,10 @@ object RequestHandler {
           }
         }.merge
       }
+
+      private def simulateRequestCannotBeFulfilled(implicit request: UserRequest[_], appConfig: AppConfig): Boolean =
+        request.headers.get("Gov-Test-Scenario").contains("REQUEST_CANNOT_BE_FULFILLED") &&
+          appConfig.allowRequestCannotBeFulfilledHeader(Version(request))
 
       private def doWithContext[A](ctx: RequestContext)(f: RequestContext => A): A = f(ctx)
 
