@@ -72,6 +72,9 @@ trait MockAppConfig extends MockFactory {
     def endpointAllowsSupportingAgents(endpointName: String): CallHandler[Boolean] =
       (mockAppConfig.endpointAllowsSupportingAgents(_: String)).expects(endpointName)
 
+    def allowRequestCannotBeFulfilledHeader(version: Version): CallHandler[Boolean] =
+      (mockAppConfig.allowRequestCannotBeFulfilledHeader(_: Version)).expects(version)
+
   }
 
 }

@@ -90,6 +90,8 @@ trait AppConfig {
   def apiDocumentationUrl: String
 
   def deprecationFor(version: Version): Validated[String, Deprecation]
+
+  def allowRequestCannotBeFulfilledHeader(version: Version): Boolean
 }
 
 @Singleton
@@ -125,6 +127,9 @@ class AppConfigImpl @Inject() (config: ServicesConfig, protected[config] val con
   def featureSwitches: Configuration               = configuration.getOptional[Configuration](s"feature-switch").getOrElse(Configuration.empty)
   def endpointsEnabled(version: String): Boolean   = config.getBoolean(s"api.$version.endpoints.enabled")
   def endpointsEnabled(version: Version): Boolean  = config.getBoolean(s"api.${version.name}.endpoints.enabled")
+
+  def allowRequestCannotBeFulfilledHeader(version: Version): Boolean =
+    config.getBoolean(s"api.$version.endpoints.allow-request-cannot-be-fulfilled-header")
 
   /** Like endpointsEnabled, but will return false if version doesn't exist.
     */
