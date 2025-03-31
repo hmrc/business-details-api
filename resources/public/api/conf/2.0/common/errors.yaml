@@ -84,3 +84,12 @@ components:
       value:
         code: RULE_BUSINESS_ID_NOT_FOUND
         message: The business ID provided is not found
+
+    #422
+
+    ruleRequestCannotBeFulfilled:
+      description: |
+        The request cannot be fulfilled. More specific information is provided in the error message.
+      value:
+        code: RULE_REQUEST_CANNOT_BE_FULFILLED
+        message: Custom (will vary in production depending on the actual error)

@@ -124,3 +124,22 @@ put:
           examples:
             RULE_BUSINESS_ID_NOT_FOUND:
               $ref: './common/errors.yaml#/components/examples/ruleBusinessIdNotFound'
+
+    "422":
+      description: Unprocessable Entity
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        Sunset:
+          $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        Link:
+          $ref: ./common/headers.yaml#/components/parameters/linkHeader
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error-response.yaml'
+          examples:
+            RULE_REQUEST_CANNOT_BE_FULFILLED:
+              $ref: './common/errors.yaml#/components/examples/ruleRequestCannotBeFulfilled'
