@@ -15,7 +15,7 @@ The business details API allows a developer to:
 ## Running the micro-service
 
 Run from the console using: `sbt run` (starts on port 7792 by default)
-Start the service manager profile: `sm --start MTDFB_BUSINESS_DETAILS`
+Start the service manager profile: `sm2 -start MTDFB_BUSINESS_DETAILS`
 
 ## Running tests
 
