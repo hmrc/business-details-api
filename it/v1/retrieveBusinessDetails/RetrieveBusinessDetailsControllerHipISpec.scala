@@ -16,7 +16,15 @@
 
 package v1.retrieveBusinessDetails
 
-import api.models.errors.{BusinessIdFormatError, InternalError, MtdError, NinoFormatError, NotFoundError, RuleIncorrectGovTestScenarioError}
+import api.models.errors.{
+  BusinessIdFormatError,
+  InternalError,
+  MtdError,
+  NinoFormatError,
+  NoBusinessFoundError,
+  NotFoundError,
+  RuleIncorrectGovTestScenarioError
+}
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
@@ -26,7 +34,10 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
-class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
+class RetrieveBusinessDetailsControllerHipISpec extends IntegrationBaseSpec {
+
+  override def servicesConfig: Map[String, Any] =
+    Map("feature-switch.ifs_hip_migration_1171.enabled" -> "true") ++ super.servicesConfig
 
   "Calling the retrieve business details endpoint" should {
 
@@ -36,17 +47,17 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         val downstreamJson: JsValue = Json.parse(
           """
             |{
+            |  "success": {
             |"processingDate": "2023-07-05T09:16:58.655Z",
             |"taxPayerDisplayResponse": {
             |  "safeId": "XAIS123456789012",
             |  "nino": "AA123456A",
             |  "mtdbsa": "123456789012345",
-            |  "yearOfMigration": "2023",
             |  "propertyIncome": false,
             |  "businessData": [{
             |    "incomeSourceId": "XAIS12345678901",
-            |    "accountingPeriodStartDate": "2001-01-01",
-            |    "accountingPeriodEndDate": "2001-01-01",
+            |    "accPeriodSDate": "2001-01-01",
+            |    "accPeriodEDate": "2001-01-01",
             |    "tradingName": "RCDTS",
             |    "businessAddressDetails": {
             |      "addressLine1": "100 SuttonStreet",
@@ -62,7 +73,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |      "faxNumber": "01332754256",
             |      "emailAddress": "stephen@manncorpone.co.uk"
             |    },
-            |    "tradingStartDate": "2001-01-01",
+            |    "tradingSDate": "2001-01-01",
             |    "cashOrAccruals": false,
             |    "seasonal": true,
             |    "cessationDate": "2001-01-01",
@@ -83,6 +94,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |   }
             |  }]
             |  }
+            |}
             |}
             |""".stripMargin
         )
@@ -105,17 +117,17 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         val downstreamJson: JsValue = Json.parse(
           """
             |{
+            | "success": {
             |"processingDate": "2023-07-05T09:16:58.655Z",
             |"taxPayerDisplayResponse": {
             |  "safeId": "XE00001234567890",
             |  "nino": "AA123456A",
             |  "mtdbsa": "123456789012345",
-            |  "yearOfMigration": "2023",
             |  "propertyIncome": false,
             |  "businessData": [{
             |    "incomeSourceId": "XAIS12345678901",
-            |    "accountingPeriodStartDate": "2001-01-01",
-            |    "accountingPeriodEndDate": "2001-01-01",
+            |    "accPeriodSDate": "2001-01-01",
+            |    "accPeriodEDate": "2001-01-01",
             |    "tradingName": "RCDTS",
             |    "businessAddressDetails": {
             |      "addressLine1": "100 SuttonStreet",
@@ -131,7 +143,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |      "faxNumber": "01332754256",
             |      "emailAddress": "stephen@manncorpone.co.uk"
             |    },
-            |    "tradingStartDate": "2001-01-01",
+            |    "tradingSDate": "2001-01-01",
             |    "cashOrAccruals": false,
             |    "seasonal": true,
             |    "cessationDate": "2001-01-01",
@@ -154,8 +166,8 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |  },
             |  {
             |    "incomeSourceId": "XAIS12345671111",
-            |    "accountingPeriodStartDate": "2001-01-01",
-            |    "accountingPeriodEndDate": "2001-01-01",
+            |    "accPeriodSDate": "2001-01-01",
+            |    "accPeriodEDate": "2001-01-01",
             |    "tradingName": "RCDTS",
             |    "businessAddressDetails": {
             |      "addressLine1": "100 SuttonStreet",
@@ -171,7 +183,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |      "faxNumber": "01332754256",
             |      "emailAddress": "stephen@manncorpone.co.uk"
             |    },
-            |    "tradingStartDate": "2001-01-01",
+            |    "tradingSDate": "2001-01-01",
             |    "cashOrAccruals": false,
             |    "seasonal": true,
             |    "cessationDate": "2001-01-01",
@@ -179,11 +191,11 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |    "paperLess": true
             |  }],
             |    "propertyData": [{
-            |    "incomeSourceType": "foreign-property",
+            |    "incomeSourceType": "03",
             |    "incomeSourceId": "XAIS17654678901",
-            |    "accountingPeriodStartDate": "2019-04-06",
-            |    "accountingPeriodEndDate": "2020-04-05",
-            |    "tradingStartDate": "2017-07-24",
+            |    "accPeriodSDate": "2019-04-06",
+            |    "accPeriodEDate": "2020-04-05",
+            |    "tradingSDate": "2017-07-24",
             |    "cashOrAccruals": true,
             |    "numPropRented": 0,
             |    "numPropRentedUK": 0,
@@ -196,6 +208,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
             |    "incomeSourceStartDate": "2019-07-14"
             |  }]
             |  }
+            |}
             |}
             |""".stripMargin
         )
@@ -244,7 +257,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
 
       "downstream service error" when {
         def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"des returns an $downstreamCode error and status $downstreamStatus" in new Test {
+          s"hip returns an $downstreamCode error and status $downstreamStatus" in new Test {
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
@@ -276,7 +289,14 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
           (NOT_FOUND, "NOT_FOUND", NOT_FOUND, NotFoundError)
         )
 
-        (errors ++ extraIfsErrors).foreach((serviceErrorTest _).tupled)
+        val extraHipErrors = List(
+          (UNPROCESSABLE_ENTITY, "001", INTERNAL_SERVER_ERROR, InternalError),
+          (UNPROCESSABLE_ENTITY, "006", NOT_FOUND, NotFoundError),
+          (UNPROCESSABLE_ENTITY, "007", INTERNAL_SERVER_ERROR, InternalError),
+          (UNPROCESSABLE_ENTITY, "008", NOT_FOUND, NoBusinessFoundError)
+        )
+
+        (errors ++ extraIfsErrors ++ extraHipErrors).foreach((serviceErrorTest _).tupled)
       }
     }
   }
@@ -287,7 +307,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
     val businessId = "XAIS12345678901"
 
     def uri           = s"/$nino/$businessId"
-    def downstreamUri = s"/registration/business-details/nino/$nino"
+    def downstreamUri = s"/itsa/taxpayer/business-details?nino=$nino"
 
     val responseBody: JsValue = Json.parse(
       s"""
@@ -319,7 +339,6 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
          |     "taxYear2": "2018-19",
          |     "latencyIndicator2": "Q"
          |   },
-         |   "yearOfMigration": "2023",
          |   "quarterlyTypeChoice": {
          |     "quarterlyPeriodType": "standard",
          |     "taxYearOfChoice": "2022-23"
@@ -348,10 +367,12 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
 
     def errorBody(code: String): String =
       s"""
-         |      {
-         |        "code": "$code",
-         |        "reason": "message"
-         |      }
+         |{
+         | "errors": {
+         |   "code": "$code",
+         |   "reason": "message"
+         | }
+         |}
     """.stripMargin
 
   }

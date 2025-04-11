@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v2.retrieveBusinessDetails
+package v1.retrieveBusinessDetails
 
 import api.models.errors.{BusinessIdFormatError, InternalError, MtdError, NinoFormatError, NotFoundError, RuleIncorrectGovTestScenarioError}
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
@@ -26,7 +26,10 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
-class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
+class RetrieveBusinessDetailsControllerIfsISpec extends IntegrationBaseSpec {
+
+  override def servicesConfig: Map[String, Any] =
+    Map("feature-switch.ifs_hip_migration_1171.enabled" -> "false") ++ super.servicesConfig
 
   "Calling the retrieve business details endpoint" should {
 
@@ -341,7 +344,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
       setupStubs()
       buildRequest(uri)
         .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.2.0+json"),
+          (ACCEPT, "application/vnd.hmrc.1.0+json"),
           (AUTHORIZATION, "Bearer 123")
         )
     }

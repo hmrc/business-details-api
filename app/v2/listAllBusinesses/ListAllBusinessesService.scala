@@ -17,7 +17,7 @@
 package v2.listAllBusinesses
 
 import api.controllers.RequestContext
-import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundError, RuleIncorrectGovTestScenarioError}
+import api.models.errors.{InternalError, MtdError, NinoFormatError, NoBusinessFoundError, NotFoundError, RuleIncorrectGovTestScenarioError}
 import api.models.outcomes.ResponseWrapper
 import api.services.{BaseService, ServiceOutcome}
 import cats.data.EitherT
@@ -66,7 +66,14 @@ class ListAllBusinessesService @Inject() (connector: RetrieveBusinessDetailsConn
       "NOT_FOUND"             -> NotFoundError
     )
 
-    errors ++ extraIfsErrors
+    val extraHipErrors = Map(
+      "001" -> InternalError,
+      "006" -> NotFoundError,
+      "007" -> InternalError,
+      "008" -> NoBusinessFoundError
+    )
+
+    errors ++ extraIfsErrors ++ extraHipErrors
   }
 
 }

@@ -102,7 +102,15 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
       "INVALID_IDTYPE"        -> InternalError,
       "NOT_FOUND"             -> NotFoundError
     )
-    errors ++ extraIfsErrors
+
+    val extraHipErrors = Map(
+      "001" -> InternalError,
+      "006" -> NotFoundError,
+      "007" -> InternalError,
+      "008" -> NoBusinessFoundError
+    )
+
+    errors ++ extraIfsErrors ++ extraHipErrors
   }
 
 }

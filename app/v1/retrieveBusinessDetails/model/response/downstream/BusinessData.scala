@@ -50,5 +50,18 @@ object BusinessData {
     readBoolean orElse readString
   }
 
+  private val ifsToHipAccountingPeriodStartDateTransformer =
+    JsPath.json.update((JsPath \ "accountingPeriodStartDate").json.copyFrom((JsPath \ "accPeriodSDate").json.pick))
+
+  private val ifsToHipAccountingPeriodEndDateTransformer =
+    JsPath.json.update((JsPath \ "accountingPeriodEndDate").json.copyFrom((JsPath \ "accPeriodEDate").json.pick))
+
+  private val ifsToHipTradingStartDateTransformer =
+    JsPath.json.update((JsPath \ "tradingStartDate").json.copyFrom((JsPath \ "tradingSDate").json.pick))
+
   implicit val reads: Reads[BusinessData] = Json.reads
+    .preprocess(jsValue => jsValue.transform(ifsToHipAccountingPeriodStartDateTransformer).getOrElse(jsValue))
+    .preprocess(jsValue => jsValue.transform(ifsToHipAccountingPeriodEndDateTransformer).getOrElse(jsValue))
+    .preprocess(jsValue => jsValue.transform(ifsToHipTradingStartDateTransformer).getOrElse(jsValue))
+
 }

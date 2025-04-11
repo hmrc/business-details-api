@@ -30,6 +30,7 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
 
   lazy val ifsBaseUrl                = "http://test-ifs-BaseUrl"
   lazy val desBaseUrl                = "http://test-des-BaseUrl"
+  lazy val hipBaseUrl                = "http://test-hip-BaseUrl"
   lazy val api2089BaseUrl            = "http://test-api2089-BaseUrl"
   implicit val correlationId: String = "a1e8057e-fbbc-47a8-a8b4-78d9f015c253"
 
@@ -88,6 +89,18 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     "Gov-Test-Scenario" -> "DEFAULT"
   )
 
+  val requiredHipHeaders: Seq[(String, String)] = Seq(
+    "Authorization"         -> "Bearer hip-token",
+    "Environment"           -> "hip-environment",
+    "User-Agent"            -> "business-details-api",
+    "CorrelationId"         -> correlationId,
+    "Gov-Test-Scenario"     -> "DEFAULT",
+    "X-Message-Type"        -> "TaxpayerDisplay",
+    "X-Originating-System"  -> "MDTP",
+    "X-Regime-Type"         -> "ITSA",
+    "X-Transmitting-System" -> "HIP"
+  )
+
   val requiredTysIfsHeaders: Seq[(String, String)] = Seq(
     "Environment"   -> "TYS-IFS-environment",
     "Authorization" -> s"Bearer TYS-IFS-token",
@@ -101,6 +114,20 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     "Location",
     "X-Request-Timestamp",
     "X-Session-Id"
+  )
+
+  val allowedHipHeaders: Seq[String] = Seq(
+    "Accept",
+    "Gov-Test-Scenario",
+    "Content-Type",
+    "Location",
+    "X-Request-Timestamp",
+    "X-Session-Id",
+    "X-Message-Type",
+    "X-Originating-System",
+    "X-Receipt-Date",
+    "X-Regime-Type",
+    "X-Transmitting-System"
   )
 
   val requiredApi2089Headers: Seq[(String, String)] = Seq(
@@ -190,6 +217,17 @@ trait ConnectorSpec extends UnitSpec with Status with MimeTypes with HeaderNames
     MockedAppConfig.ifsToken returns "ifs-token"
     MockedAppConfig.ifsEnvironment returns "ifs-environment"
     MockedAppConfig.ifsEnvironmentHeaders returns Some(allowedIfsHeaders)
+
+  }
+
+  protected trait HipTest extends ConnectorTest {
+
+    protected lazy val requiredHeaders: Seq[(String, String)] = requiredHipHeaders
+
+    MockedAppConfig.hipBaseUrl returns this.baseUrl
+    MockedAppConfig.hipToken returns "hip-token"
+    MockedAppConfig.hipEnvironment returns "hip-environment"
+    MockedAppConfig.hipEnvironmentHeaders returns Some(allowedHipHeaders)
 
   }
 

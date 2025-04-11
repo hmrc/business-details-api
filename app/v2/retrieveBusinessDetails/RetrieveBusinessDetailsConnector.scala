@@ -16,7 +16,7 @@
 
 package v2.retrieveBusinessDetails
 
-import api.connectors.DownstreamUri.{DesUri, IfsUri}
+import api.connectors.DownstreamUri.{DesUri, HipUri, IfsUri}
 import api.connectors.httpparsers.StandardDownstreamHttpParser.reads
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import api.models.domain.Nino
@@ -24,6 +24,7 @@ import config.AppConfig
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import v2.retrieveBusinessDetails.model.response.downstream.RetrieveBusinessDetailsDownstreamResponse
 
+import java.time.Instant
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,12 +35,27 @@ class RetrieveBusinessDetailsConnector @Inject() (val http: HttpClient, val appC
       ec: ExecutionContext,
       correlationId: String): Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]] = {
 
-    val downstreamUri = s"registration/business-details/nino/$nino"
+    val hipHeaders = Seq(
+      "X-Message-Type"        -> "TaxpayerDisplay",
+      "X-Originating-System"  -> "MDTP",
+      "X-Receipt-Date"        -> Instant.now().toString,
+      "X-Regime-Type"         -> "ITSA",
+      "X-Transmitting-System" -> "HIP"
+    )
 
-    if (featureSwitches.isIfsEnabled) {
-      get(IfsUri[RetrieveBusinessDetailsDownstreamResponse](downstreamUri))
+    if (featureSwitches.ifs_hip_migration_1171) {
+      get(
+        HipUri[RetrieveBusinessDetailsDownstreamResponse](s"itsa/taxpayer/business-details?nino=$nino")
+      )(implicitly, hc = hc.withExtraHeaders(hipHeaders: _*), implicitly, implicitly)
+
     } else {
-      get(DesUri[RetrieveBusinessDetailsDownstreamResponse](downstreamUri))
+      val downstreamUri = s"registration/business-details/nino/$nino"
+
+      if (featureSwitches.isIfsEnabled) {
+        get(IfsUri[RetrieveBusinessDetailsDownstreamResponse](downstreamUri))
+      } else {
+        get(DesUri[RetrieveBusinessDetailsDownstreamResponse](downstreamUri))
+      }
     }
   }
 

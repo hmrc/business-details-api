@@ -50,6 +50,12 @@ trait AppConfig {
   def ifsToken: String
   def ifsEnvironmentHeaders: Option[Seq[String]]
 
+  // HIP Config
+  def hipBaseUrl: String
+  def hipEnv: String
+  def hipToken: String
+  def hipEnvironmentHeaders: Option[Seq[String]]
+
   // api2089
   def api2089BaseUrl: String
   def api2089Env: String
@@ -61,6 +67,9 @@ trait AppConfig {
 
   lazy val ifsDownstreamConfig: DownstreamConfig =
     DownstreamConfig(baseUrl = ifsBaseUrl, env = ifsEnv, token = ifsToken, environmentHeaders = ifsEnvironmentHeaders)
+
+  lazy val hipDownstreamConfig: DownstreamConfig =
+    DownstreamConfig(baseUrl = hipBaseUrl, env = hipEnv, token = hipToken, environmentHeaders = hipEnvironmentHeaders)
 
   lazy val api2089DownstreamConfig: DownstreamConfig =
     DownstreamConfig(baseUrl = api2089BaseUrl, env = api2089Env, token = api2089Token, environmentHeaders = api2089EnvironmentHeaders)
@@ -113,6 +122,12 @@ class AppConfigImpl @Inject() (config: ServicesConfig, protected[config] val con
   val ifsEnv: String                             = config.getString("microservice.services.ifs.env")
   val ifsToken: String                           = config.getString("microservice.services.ifs.token")
   val ifsEnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.ifs.environmentHeaders")
+
+  // HIP Config
+  val hipBaseUrl: String                         = config.baseUrl("hip")
+  val hipEnv: String                             = config.getString("microservice.services.hip.env")
+  val hipToken: String                           = config.getString("microservice.services.hip.token")
+  val hipEnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.hip.environmentHeaders")
 
   // Api2089 Config
   val api2089BaseUrl: String                         = config.baseUrl("api2089")

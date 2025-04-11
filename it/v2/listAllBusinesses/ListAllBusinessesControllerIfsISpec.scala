@@ -26,7 +26,10 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
-class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
+class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
+
+  override def servicesConfig: Map[String, Any] =
+    Map("feature-switch.ifs_hip_migration_1171.enabled" -> "false") ++ super.servicesConfig
 
   "Calling the list all businesses endpoint" should {
 

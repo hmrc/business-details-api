@@ -24,6 +24,7 @@ trait MockFeatureSwitches extends MockFactory {
 
   object MockedFeatureSwitches {
     def isIfsEnabled: CallHandler[Boolean]                         = (() => mockFeatureSwitches.isIfsEnabled).expects()
+    def isIfs_hip_migration_1171Enabled: CallHandler[Boolean]      = (() => mockFeatureSwitches.ifs_hip_migration_1171).expects()
     def isScp005aQuarterlyTypeChoiceEnabled: CallHandler[Boolean]  = (() => mockFeatureSwitches.isScp005aQuarterlyTypeChoiceEnabled).expects()
     def supportingAgentsAccessControlEnabled: CallHandler[Boolean] = (() => mockFeatureSwitches.supportingAgentsAccessControlEnabled).expects()
   }

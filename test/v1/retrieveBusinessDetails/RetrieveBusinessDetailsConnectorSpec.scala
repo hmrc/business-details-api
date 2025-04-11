@@ -32,7 +32,7 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
 
   "retrieveBusinessDetailsConnector" must {
     "send a request and return the expected response" in new DesTest with Test {
-      MockedAppConfig.featureSwitches returns Configuration("ifs.enabled" -> false)
+      MockedAppConfig.featureSwitches returns Configuration("ifs.enabled" -> false, "ifs_hip_migration_1171.enabled" -> false)
 
       private val outcome = Right(ResponseWrapper(correlationId, response))
 
@@ -43,11 +43,22 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
     }
 
     "send a request and return the expected response when ifs feature switch is enabled" in new IfsTest with Test {
-      MockedAppConfig.featureSwitches returns Configuration("ifs.enabled" -> true)
+      MockedAppConfig.featureSwitches returns Configuration("ifs.enabled" -> true, "ifs_hip_migration_1171.enabled" -> false)
 
       private val outcome = Right(ResponseWrapper(correlationId, response))
 
       willGet(url = s"$baseUrl/registration/business-details/nino/${nino.nino}") returns
+        Future.successful(outcome)
+
+      await(connector.retrieveBusinessDetails(nino)) shouldBe outcome
+    }
+
+    "send a request and return the expected response when hip feature switch is enabled" in new HipTest with Test {
+      MockedAppConfig.featureSwitches returns Configuration("ifs.enabled" -> true, "ifs_hip_migration_1171.enabled" -> true)
+
+      private val outcome = Right(ResponseWrapper(correlationId, response))
+
+      willGet(url = s"$baseUrl/itsa/taxpayer/business-details?nino=${nino.nino}") returns
         Future.successful(outcome)
 
       await(connector.retrieveBusinessDetails(nino)) shouldBe outcome
