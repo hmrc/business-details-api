@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ class FeatureSwitchesSpec extends UnitSpec {
       "the feature switch is set to true" in {
         val config = Configuration(
           "ifs.enabled"                              -> true,
-          "endpoint-2089.enabled"                    -> true,
           "scp005a_QuarterlyTypeChoice.enabled"      -> true,
           "supporting-agents-access-control.enabled" -> true
         )
@@ -34,7 +33,6 @@ class FeatureSwitchesSpec extends UnitSpec {
         val featureSwitches = FeatureSwitches(config)
 
         featureSwitches.isIfsEnabled shouldBe true
-        featureSwitches.isEndpoint2089Enabled shouldBe true
         featureSwitches.isScp005aQuarterlyTypeChoiceEnabled shouldBe true
         featureSwitches.supportingAgentsAccessControlEnabled shouldBe true
       }
@@ -45,7 +43,6 @@ class FeatureSwitchesSpec extends UnitSpec {
         val featureSwitches = FeatureSwitches(config)
 
         featureSwitches.isIfsEnabled shouldBe true
-        featureSwitches.isEndpoint2089Enabled shouldBe true
         featureSwitches.isScp005aQuarterlyTypeChoiceEnabled shouldBe true
       }
     }
@@ -54,14 +51,12 @@ class FeatureSwitchesSpec extends UnitSpec {
       "the feature switch is set to false" in {
         val config = Configuration(
           "ifs.enabled"                         -> false,
-          "endpoint-2089.enabled"               -> false,
           "scp005a_QuarterlyTypeChoice.enabled" -> false
         )
 
         val featureSwitches = FeatureSwitches(config)
 
         featureSwitches.isIfsEnabled shouldBe false
-        featureSwitches.isEndpoint2089Enabled shouldBe false
         featureSwitches.isScp005aQuarterlyTypeChoiceEnabled shouldBe false
       }
     }

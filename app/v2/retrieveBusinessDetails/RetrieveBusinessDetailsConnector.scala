@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import api.models.domain.Nino
 import config.AppConfig
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import utils.DateUtils.nowAsUtc
 import v2.retrieveBusinessDetails.model.response.downstream.RetrieveBusinessDetailsDownstreamResponse
 
-import java.time.Instant
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -35,27 +35,23 @@ class RetrieveBusinessDetailsConnector @Inject() (val http: HttpClient, val appC
       ec: ExecutionContext,
       correlationId: String): Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]] = {
 
-    val hipHeaders = Seq(
+    val desIfsDownstreamUri: String = s"registration/business-details/nino/$nino"
+    val hipDownstreamUri: String    = s"etmp/RESTAdapter/itsa/taxpayer/business-details?nino=$nino"
+
+    val additionalContractHeaders: Seq[(String, String)] = List(
       "X-Message-Type"        -> "TaxpayerDisplay",
       "X-Originating-System"  -> "MDTP",
-      "X-Receipt-Date"        -> Instant.now().toString,
+      "X-Receipt-Date"        -> nowAsUtc,
       "X-Regime-Type"         -> "ITSA",
       "X-Transmitting-System" -> "HIP"
     )
 
-    if (featureSwitches.ifs_hip_migration_1171) {
-      get(
-        HipUri[RetrieveBusinessDetailsDownstreamResponse](s"itsa/taxpayer/business-details?nino=$nino")
-      )(implicitly, hc = hc.withExtraHeaders(hipHeaders: _*), implicitly, implicitly)
-
+    if (featureSwitches.isEnabled("ifs_hip_migration_1171")) {
+      get(HipUri[RetrieveBusinessDetailsDownstreamResponse](hipDownstreamUri, additionalContractHeaders))
+    } else if (featureSwitches.isIfsEnabled) {
+      get(IfsUri[RetrieveBusinessDetailsDownstreamResponse](desIfsDownstreamUri))
     } else {
-      val downstreamUri = s"registration/business-details/nino/$nino"
-
-      if (featureSwitches.isIfsEnabled) {
-        get(IfsUri[RetrieveBusinessDetailsDownstreamResponse](downstreamUri))
-      } else {
-        get(DesUri[RetrieveBusinessDetailsDownstreamResponse](downstreamUri))
-      }
+      get(DesUri[RetrieveBusinessDetailsDownstreamResponse](desIfsDownstreamUri))
     }
   }
 

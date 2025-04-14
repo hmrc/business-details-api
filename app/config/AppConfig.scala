@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package config
 
 import cats.data.Validated
 import cats.implicits.catsSyntaxValidatedId
-import com.typesafe.config.{Config, ConfigValue}
+import com.typesafe.config.Config
 import config.Deprecation.{Deprecated, NotDeprecated}
 import play.api.{ConfigLoader, Configuration}
 import routing.Version
@@ -28,116 +28,25 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import java.time.LocalDateTime
 import java.time.format.{DateTimeFormatter, DateTimeFormatterBuilder}
 import java.time.temporal.ChronoField
-import java.util
 import javax.inject.{Inject, Singleton}
-import scala.jdk.CollectionConverters._
 
-trait AppConfig {
-
-  def appName: String
-  // MTD ID Lookup Config
-  def mtdIdBaseUrl: String
-
-  // DES Config
-  def desBaseUrl: String
-  def desEnv: String
-  def desToken: String
-  def desEnvironmentHeaders: Option[Seq[String]]
-
-  // IFS Config
-  def ifsBaseUrl: String
-  def ifsEnv: String
-  def ifsToken: String
-  def ifsEnvironmentHeaders: Option[Seq[String]]
-
-  // HIP Config
-  def hipBaseUrl: String
-  def hipEnv: String
-  def hipToken: String
-  def hipEnvironmentHeaders: Option[Seq[String]]
-
-  // api2089
-  def api2089BaseUrl: String
-  def api2089Env: String
-  def api2089Token: String
-  def api2089EnvironmentHeaders: Option[Seq[String]]
-
-  lazy val desDownstreamConfig: DownstreamConfig =
-    DownstreamConfig(baseUrl = desBaseUrl, env = desEnv, token = desToken, environmentHeaders = desEnvironmentHeaders)
-
-  lazy val ifsDownstreamConfig: DownstreamConfig =
-    DownstreamConfig(baseUrl = ifsBaseUrl, env = ifsEnv, token = ifsToken, environmentHeaders = ifsEnvironmentHeaders)
-
-  lazy val hipDownstreamConfig: DownstreamConfig =
-    DownstreamConfig(baseUrl = hipBaseUrl, env = hipEnv, token = hipToken, environmentHeaders = hipEnvironmentHeaders)
-
-  lazy val api2089DownstreamConfig: DownstreamConfig =
-    DownstreamConfig(baseUrl = api2089BaseUrl, env = api2089Env, token = api2089Token, environmentHeaders = api2089EnvironmentHeaders)
-
-  // API Config
-  def apiGatewayContext: String
-  def confidenceLevelConfig: ConfidenceLevelConfig
-  def apiStatus(version: Version): String
-
-  def featureSwitches: Configuration
-  def endpointsEnabled(version: String): Boolean
-  def endpointsEnabled(version: Version): Boolean
-  def safeEndpointsEnabled(version: String): Boolean
-
-  /** Currently only for OAS documentation.
-    */
-  def apiVersionReleasedInProduction(version: String): Boolean
-
-  /** Currently only for OAS documentation.
-    */
-  def endpointReleasedInProduction(version: String, name: String): Boolean
-
-  /** Defaults to false
-    */
-  def endpointAllowsSupportingAgents(endpointName: String): Boolean
-
-  def apiDocumentationUrl: String
-
-  def deprecationFor(version: Version): Validated[String, Deprecation]
-
-  def allowRequestCannotBeFulfilledHeader(version: Version): Boolean
-}
-
+/** Do not extend/sub-class this class, instead make your own api-specific config file and pass in separately. */
 @Singleton
-class AppConfigImpl @Inject() (config: ServicesConfig, protected[config] val configuration: Configuration) extends AppConfig {
+class AppConfig @Inject() (val config: ServicesConfig, protected[config] val configuration: Configuration) extends AppConfigBase {
 
   def appName: String = config.getString("appName")
 
   // MTD ID Lookup Config
-  val mtdIdBaseUrl: String                      = config.baseUrl(serviceName = "mtd-id-lookup")
-  val keyValuesJ: util.Map[String, ConfigValue] = configuration.entrySet.toMap.asJava
-  // DES Config
-  val desBaseUrl: String                         = config.baseUrl("des")
-  val desEnv: String                             = config.getString("microservice.services.des.env")
-  val desToken: String                           = config.getString("microservice.services.des.token")
-  val desEnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.des.environmentHeaders")
+  def mtdIdBaseUrl: String = config.baseUrl(serviceName = "mtd-id-lookup")
 
-  // IFS Config
-  val ifsBaseUrl: String                         = config.baseUrl("ifs")
-  val ifsEnv: String                             = config.getString("microservice.services.ifs.env")
-  val ifsToken: String                           = config.getString("microservice.services.ifs.token")
-  val ifsEnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.ifs.environmentHeaders")
-
-  // HIP Config
-  val hipBaseUrl: String                         = config.baseUrl("hip")
-  val hipEnv: String                             = config.getString("microservice.services.hip.env")
-  val hipToken: String                           = config.getString("microservice.services.hip.token")
-  val hipEnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.hip.environmentHeaders")
-
-  // Api2089 Config
-  val api2089BaseUrl: String                         = config.baseUrl("api2089")
-  val api2089Env: String                             = config.getString("microservice.services.api2089.env")
-  val api2089Token: String                           = config.getString("microservice.services.api2089.token")
-  val api2089EnvironmentHeaders: Option[Seq[String]] = configuration.getOptional[Seq[String]]("microservice.services.api2089.environmentHeaders")
+  // Downstream Config
+  def desDownstreamConfig: DownstreamConfig          = downstreamConfig("des")
+  def ifsDownstreamConfig: DownstreamConfig          = downstreamConfig("ifs")
+  def hipDownstreamConfig: BasicAuthDownstreamConfig = basicAuthDownstreamConfig("hip")
 
   // API Config
-  val apiGatewayContext: String                    = config.getString("api.gateway.context")
-  val confidenceLevelConfig: ConfidenceLevelConfig = configuration.get[ConfidenceLevelConfig](s"api.confidence-level-check")
+  def apiGatewayContext: String                    = config.getString("api.gateway.context")
+  def confidenceLevelConfig: ConfidenceLevelConfig = configuration.get[ConfidenceLevelConfig](s"api.confidence-level-check")
   def apiStatus(version: Version): String          = config.getString(s"api.${version.name}.status")
   def featureSwitches: Configuration               = configuration.getOptional[Configuration](s"feature-switch").getOrElse(Configuration.empty)
   def endpointsEnabled(version: String): Boolean   = config.getBoolean(s"api.$version.endpoints.enabled")
@@ -174,7 +83,7 @@ class AppConfigImpl @Inject() (config: ServicesConfig, protected[config] val con
   def endpointAllowsSupportingAgents(endpointName: String): Boolean =
     supportingAgentEndpoints.getOrElse(endpointName, false)
 
-  private val supportingAgentEndpoints: Map[String, Boolean] =
+  private lazy val supportingAgentEndpoints: Map[String, Boolean] =
     configuration
       .getOptional[Map[String, Boolean]]("api.supporting-agent-endpoints")
       .getOrElse(Map.empty)

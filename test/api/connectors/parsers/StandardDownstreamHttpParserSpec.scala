@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,11 +65,6 @@ class StandardDownstreamHttpParserSpec extends UnitSpec {
 
         httpReads.read(method, url, httpResponse) shouldBe Left(expected)
       }
-
-      handleErrorsCorrectly(httpReads)
-      handleInternalErrorsCorrectly(httpReads)
-      handleUnexpectedResponse(httpReads)
-      handleBvrsCorrectly(httpReads)
     }
 
     "a success code is specified" must {
@@ -82,6 +77,12 @@ class StandardDownstreamHttpParserSpec extends UnitSpec {
         httpReads.read(method, url, httpResponse) shouldBe Right(downstreamResponse)
       }
     }
+
+    handleErrorsCorrectly(httpReads)
+    handleInternalErrorsCorrectly(httpReads)
+    handleUnexpectedResponse(httpReads)
+    handleBvrsCorrectly(httpReads)
+    handleHipErrorsCorrectly(httpReads)
   }
 
   "The generic HTTP parser for empty response" when {
@@ -95,11 +96,6 @@ class StandardDownstreamHttpParserSpec extends UnitSpec {
           httpReads.read(method, url, httpResponse) shouldBe Right(ResponseWrapper(correlationId, ()))
         }
       }
-
-      handleErrorsCorrectly(httpReads)
-      handleInternalErrorsCorrectly(httpReads)
-      handleUnexpectedResponse(httpReads)
-      handleBvrsCorrectly(httpReads)
     }
 
     "a success code is specified" must {
@@ -112,6 +108,12 @@ class StandardDownstreamHttpParserSpec extends UnitSpec {
         httpReads.read(method, url, httpResponse) shouldBe Right(ResponseWrapper(correlationId, ()))
       }
     }
+
+    handleErrorsCorrectly(httpReads)
+    handleInternalErrorsCorrectly(httpReads)
+    handleUnexpectedResponse(httpReads)
+    handleBvrsCorrectly(httpReads)
+    handleHipErrorsCorrectly(httpReads)
   }
 
   val singleErrorJson: JsValue = Json.parse(
@@ -208,28 +210,58 @@ class StandardDownstreamHttpParserSpec extends UnitSpec {
 
   private def handleBvrsCorrectly[A](httpReads: HttpReads[DownstreamOutcome[A]]): Unit = {
 
-    val singleBvrJson = Json.parse("""
-                                     |{
-                                     |   "bvrfailureResponseElement": {
-                                     |     "validationRuleFailures": [
-                                     |       {
-                                     |         "id": "BVR1"
-                                     |       },
-                                     |       {
-                                     |         "id": "BVR2"
-                                     |       }
-                                     |     ]
-                                     |   }
-                                     |}
-      """.stripMargin)
+    val singleBvrJson = Json.parse(
+      """
+        |{
+        |  "bvrfailureResponseElement": {
+        |    "validationRuleFailures": [
+        |      {
+        |        "id": "BVR1"
+        |      },
+        |      {
+        |        "id": "BVR2"
+        |      }
+        |    ]
+        |  }
+        |}
+      """.stripMargin
+    )
 
-    s"receiving a response with a bvr errors" should {
+    "receiving a response with a bvr errors" should {
       "return an outbound BUSINESS_ERROR error containing the BVR ids" in {
         val httpResponse = HttpResponse(BAD_REQUEST, singleBvrJson, Map("CorrelationId" -> Seq(correlationId)))
 
         httpReads.read(method, url, httpResponse) shouldBe
           Left(
             ResponseWrapper(correlationId, OutboundError(BVRError, Some(Seq(MtdError("BVR1", "", BAD_REQUEST), MtdError("BVR2", "", BAD_REQUEST))))))
+      }
+    }
+  }
+
+  val singleHipErrorJson: JsValue = Json.parse(
+    """
+      |{
+      |  "errors": {
+      |    "processingDate": "2024-07-15T09:45:17Z",
+      |    "code": "001",
+      |    "text": "REGIME missing or invalid"
+      |  }
+      |}
+    """.stripMargin
+  )
+
+  private def handleHipErrorsCorrectly[A](httpReads: HttpReads[DownstreamOutcome[A]]): Unit = {
+    "receiving a response with an errors object containing a code" should {
+      "return a Left ResponseWrapper containing the extracted code" in {
+        val httpResponse = HttpResponse(
+          UNPROCESSABLE_ENTITY,
+          singleHipErrorJson,
+          Map("CorrelationId" -> List(correlationId))
+        )
+
+        httpReads.read(method, url, httpResponse) shouldBe Left(
+          ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode("001")))
+        )
       }
     }
   }

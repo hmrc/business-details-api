@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,25 @@
 
 package api.connectors
 
-import api.connectors.DownstreamUri.{Api2089Uri, DesUri, IfsUri, HipUri}
 import config.{AppConfig, FeatureSwitches}
-import play.api.Logger
 import play.api.http.{HeaderNames, MimeTypes}
 import play.api.libs.json.Writes
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
+import utils.Logging
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait BaseDownstreamConnector {
+trait BaseDownstreamConnector extends Logging {
   val http: HttpClient
   val appConfig: AppConfig
 
-  protected val logger: Logger = Logger(this.getClass)
+  // This is to provide an implicit AppConfig in existing connector implementations (which
+  // typically declare the abstract `appConfig` field non-implicitly) without having to change them.
+  implicit protected lazy val _appConfig: AppConfig = appConfig
 
   implicit protected lazy val featureSwitches: FeatureSwitches = FeatureSwitches(appConfig)
 
-  private val jsonContentTypeHeader = HeaderNames.CONTENT_TYPE -> MimeTypes.JSON
+  private val jsonContentTypeHeader = Seq(HeaderNames.CONTENT_TYPE -> MimeTypes.JSON)
 
   def post[Body: Writes, Resp](body: Body, uri: DownstreamUri[Resp])(implicit
       ec: ExecutionContext,
@@ -41,11 +42,16 @@ trait BaseDownstreamConnector {
       httpReads: HttpReads[DownstreamOutcome[Resp]],
       correlationId: String): Future[DownstreamOutcome[Resp]] = {
 
+    val strategy = uri.strategy
+
     def doPost(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] = {
-      http.POST(getBackendUri(uri), body)
+      http.POST(getBackendUri(uri.path, strategy), body)
     }
 
-    doPost(getBackendHeaders(uri, hc, correlationId, jsonContentTypeHeader))
+    for {
+      headers <- getBackendHeaders(strategy, jsonContentTypeHeader)
+      result  <- doPost(headers)
+    } yield result
   }
 
   def get[Resp](uri: DownstreamUri[Resp], queryParams: Seq[(String, String)] = Seq.empty)(implicit
@@ -54,10 +60,15 @@ trait BaseDownstreamConnector {
       httpReads: HttpReads[DownstreamOutcome[Resp]],
       correlationId: String): Future[DownstreamOutcome[Resp]] = {
 
-    def doGet(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] =
-      http.GET(getBackendUri(uri), queryParams = queryParams)
+    val strategy = uri.strategy
 
-    doGet(getBackendHeaders(uri, hc, correlationId))
+    def doGet(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] =
+      http.GET(getBackendUri(uri.path, strategy), queryParams)
+
+    for {
+      headers <- getBackendHeaders(strategy)
+      result  <- doGet(headers)
+    } yield result
   }
 
   def delete[Resp](uri: DownstreamUri[Resp])(implicit
@@ -66,11 +77,16 @@ trait BaseDownstreamConnector {
       httpReads: HttpReads[DownstreamOutcome[Resp]],
       correlationId: String): Future[DownstreamOutcome[Resp]] = {
 
+    val strategy = uri.strategy
+
     def doDelete(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] = {
-      http.DELETE(getBackendUri(uri))
+      http.DELETE(getBackendUri(uri.path, strategy))
     }
 
-    doDelete(getBackendHeaders(uri, hc, correlationId))
+    for {
+      headers <- getBackendHeaders(strategy)
+      result  <- doDelete(headers)
+    } yield result
   }
 
   def put[Body: Writes, Resp](body: Body, uri: DownstreamUri[Resp])(implicit
@@ -79,45 +95,38 @@ trait BaseDownstreamConnector {
       httpReads: HttpReads[DownstreamOutcome[Resp]],
       correlationId: String): Future[DownstreamOutcome[Resp]] = {
 
+    val strategy = uri.strategy
+
     def doPut(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] = {
-      http.PUT(getBackendUri(uri), body)
+      http.PUT(getBackendUri(uri.path, strategy), body)
     }
 
-    doPut(getBackendHeaders(uri, hc, correlationId, jsonContentTypeHeader))
+    for {
+      headers <- getBackendHeaders(strategy, jsonContentTypeHeader)
+      result  <- doPut(headers)
+    } yield result
   }
 
-  private def getBackendUri[Resp](uri: DownstreamUri[Resp]): String =
-    s"${configFor(uri).baseUrl}/${uri.value}"
+  private def getBackendUri(path: String, strategy: DownstreamStrategy): String =
+    s"${strategy.baseUrl}/$path"
 
-  private def getBackendHeaders[Resp](uri: DownstreamUri[Resp],
-                                      hc: HeaderCarrier,
-                                      correlationId: String,
-                                      additionalHeaders: (String, String)*): HeaderCarrier = {
-    val downstreamConfig = configFor(uri)
+  private def getBackendHeaders(strategy: DownstreamStrategy, additionalHeaders: Seq[(String, String)] = Seq.empty)(implicit
+      ec: ExecutionContext,
+      hc: HeaderCarrier,
+      correlationId: String): Future[HeaderCarrier] = {
 
-    val passThroughHeaders = hc
-      .headers(downstreamConfig.environmentHeaders.getOrElse(Seq.empty))
-      .filterNot(hdr => additionalHeaders.exists(_._1.equalsIgnoreCase(hdr._1)))
+    for {
+      contractHeaders <- strategy.contractHeaders(correlationId)
+    } yield {
+      val apiHeaders = hc.extraHeaders ++ contractHeaders ++ additionalHeaders
 
-    HeaderCarrier(
-      extraHeaders = hc.extraHeaders ++
-        // Contract headers
-        Seq(
-          "Authorization" -> s"Bearer ${downstreamConfig.token}",
-          "Environment"   -> downstreamConfig.env,
-          "CorrelationId" -> correlationId
-        ) ++
-        additionalHeaders ++
-        passThroughHeaders
-    )
-  }
+      val passThroughHeaders = hc
+        .headers(strategy.environmentHeaders)
+        .filterNot(hdr => apiHeaders.exists(_._1.equalsIgnoreCase(hdr._1)))
 
-  private def configFor[Resp](uri: DownstreamUri[Resp]) =
-    uri match {
-      case DesUri(_)     => appConfig.desDownstreamConfig
-      case IfsUri(_)     => appConfig.ifsDownstreamConfig
-      case HipUri(_)     => appConfig.hipDownstreamConfig
-      case Api2089Uri(_) => appConfig.api2089DownstreamConfig
+      HeaderCarrier(extraHeaders = apiHeaders ++ passThroughHeaders)
     }
+
+  }
 
 }

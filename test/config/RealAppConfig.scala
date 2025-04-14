@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,21 +30,15 @@ trait RealAppConfig {
       .getOrElse(fail("Couldn't find an enabled API version in the config"))
 
   protected lazy val emaEndpoints: Map[String, Boolean] =
-    realAppConfig match {
-      case impl: AppConfigImpl =>
-        impl.configuration
-          .getOptional[Map[String, Boolean]]("api.supporting-agent-endpoints")
-          .getOrElse(Map.empty)
-
-      case _ =>
-        Map.empty
-    }
+    realAppConfig.configuration
+      .getOptional[Map[String, Boolean]]("api.supporting-agent-endpoints")
+      .getOrElse(Map.empty)
 
   protected lazy val realAppConfig: AppConfig = {
     val conf           = ConfigFactory.load()
     val configuration  = Configuration(conf)
     val servicesConfig = new ServicesConfig(configuration)
-    new AppConfigImpl(servicesConfig, configuration)
+    new AppConfig(servicesConfig, configuration)
   }
 
 }

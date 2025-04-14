@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,23 +29,23 @@ import support.IntegrationBaseSpec
 class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
 
   override def servicesConfig: Map[String, Any] =
-    Map("feature-switch.ifs_hip_migration_1171.enabled" -> "false") ++ super.servicesConfig
+    Map("feature-switch.ifs_hip_migration_1171.enabled" -> false) ++ super.servicesConfig
 
   "Calling the list all businesses endpoint" should {
 
     trait ListAllBusinessesControllerTest extends Test {
-      def uri: String    = s"/$nino/list"
-      def desUri: String = s"/registration/business-details/nino/$nino"
+      def uri: String           = s"/$nino/list"
+      def downstreamUri: String = s"/registration/business-details/nino/$nino"
     }
 
     "return a 200 status code" when {
-      "any valid request is made and DES only returns businessData" in new ListAllBusinessesControllerTest {
+      "any valid request is made and downstream only returns businessData" in new ListAllBusinessesControllerTest {
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           MtdIdLookupStub.ninoFound(nino)
           AuthStub.authorised()
-          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, OK, downstreamResponseBodyBusinessData)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, downstreamResponseBodyBusinessData)
         }
 
         val response: WSResponse = await(request().get())
@@ -54,13 +54,13 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
         response.header("Content-Type") shouldBe Some("application/json")
       }
 
-      "any valid request is made and DES only returns propertyData" in new ListAllBusinessesControllerTest {
+      "any valid request is made and downstream only returns propertyData" in new ListAllBusinessesControllerTest {
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           MtdIdLookupStub.ninoFound(nino)
           AuthStub.authorised()
-          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, OK, downstreamResponseBodyPropertyData)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, downstreamResponseBodyPropertyData)
         }
 
         val response: WSResponse = await(request().get())
@@ -69,13 +69,13 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
         response.header("Content-Type") shouldBe Some("application/json")
       }
 
-      "any valid request is made and DES returns both businessData and propertyData" in new ListAllBusinessesControllerTest {
+      "any valid request is made and downstream returns both businessData and propertyData" in new ListAllBusinessesControllerTest {
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           MtdIdLookupStub.ninoFound(nino)
           AuthStub.authorised()
-          DownstreamStub.onSuccess(DownstreamStub.GET, desUri, OK, downstreamResponseBodyBothData)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, OK, downstreamResponseBodyBothData)
         }
 
         val response: WSResponse = await(request().get())
@@ -117,7 +117,7 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
               AuditStub.audit()
               MtdIdLookupStub.ninoFound(nino)
               AuthStub.authorised()
-              DownstreamStub.onError(DownstreamStub.GET, desUri, downstreamStatus, errorBody(downstreamCode))
+              DownstreamStub.onError(DownstreamStub.GET, downstreamUri, downstreamStatus, errorBody(downstreamCode))
             }
 
             val response: WSResponse = await(request().get())
@@ -275,7 +275,7 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
         |         "emailAddress": "stephen@manncorpone.co.uk"
         |       },
         |       "tradingStartDate": "2001-01-01",
-        |       "cashOrAccruals": "cash",
+        |       "cashOrAccruals": false,
         |       "seasonal": true,
         |       "cessationDate": "2001-01-01",
         |       "cessationReason": "002",
@@ -303,7 +303,7 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
         |       "accountingPeriodStartDate": "2001-01-01",
         |       "accountingPeriodEndDate": "2001-01-01",
         |       "tradingStartDate": "2001-01-01",
-        |       "cashOrAccrualsFlag": true,
+        |       "cashOrAccruals": true,
         |       "numPropRented": 0,
         |       "numPropRentedUK": 0,
         |       "numPropRentedEEA": 5,
@@ -350,7 +350,7 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
         |         "emailAddress": "stephen@manncorpone.co.uk"
         |       },
         |       "tradingStartDate": "2001-01-01",
-        |       "cashOrAccruals": "cash",
+        |       "cashOrAccruals": false,
         |       "seasonal": true,
         |       "cessationDate": "2001-01-01",
         |       "cessationReason": "002",
@@ -364,7 +364,7 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
         |       "accountingPeriodStartDate": "2001-01-01",
         |       "accountingPeriodEndDate": "2001-01-01",
         |       "tradingStartDate": "2001-01-01",
-        |       "cashOrAccrualsFlag": true,
+        |       "cashOrAccruals": true,
         |       "numPropRented": 0,
         |       "numPropRentedUK": 0,
         |       "numPropRentedEEA": 5,
@@ -400,7 +400,7 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
       s"""
          |      {
          |        "code": "$code",
-         |        "reason": "des message"
+         |        "reason": "downstream message"
          |      }
     """.stripMargin
 

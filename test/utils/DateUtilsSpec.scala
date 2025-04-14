@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,28 @@ package utils
 
 import support.UnitSpec
 
-import java.time.LocalDateTime
+import java.time.{LocalDateTime, ZoneOffset, ZonedDateTime}
 
 class DateUtilsSpec extends UnitSpec {
 
   "longDateTimestampGmt" should {
     "return Date/time in format [EEE, dd MMM yyyy HH:mm:ss z]" when {
       "given a LocalDateTime" in {
-        val result = DateUtils.longDateTimestampGmt(
-          LocalDateTime.of(2023, 1, 17, 12, 0)
+        val result: String = DateUtils.longDateTimestampGmt(
+          LocalDateTime.parse("2023-01-17T12:00:00")
         )
         result shouldBe "Tue, 17 Jan 2023 12:00:00 GMT"
       }
+    }
+  }
+
+  "nowAsUtc" should {
+    "return Date/time in format [yyyy-MM-dd'T'HH:mm:ss'Z']" in {
+      val result: String = DateUtils.nowAsUtc
+
+      result should fullyMatch regex """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z""".r
+
+      ZonedDateTime.parse(result).getOffset shouldBe ZoneOffset.UTC
     }
   }
 

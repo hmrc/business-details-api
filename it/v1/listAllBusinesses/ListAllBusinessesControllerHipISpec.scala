@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,36 +16,33 @@
 
 package v1.listAllBusinesses
 
-import api.models.errors.{InternalError, MtdError, NinoFormatError, NoBusinessFoundError, NotFoundError, RuleIncorrectGovTestScenarioError}
+import api.models.errors._
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import play.api.test.Helpers.AUTHORIZATION
+import play.api.test.Helpers._
 import support.IntegrationBaseSpec
 
 class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
 
-  override def servicesConfig: Map[String, Any] =
-    Map("feature-switch.ifs_hip_migration_1171.enabled" -> "true") ++ super.servicesConfig
-
   "Calling the list all businesses endpoint" should {
 
     trait ListAllBusinessesControllerTest extends Test {
-      def uri: String    = s"/$nino/list"
-      def hipUri: String = s"/itsa/taxpayer/business-details?nino=$nino"
+      def uri: String                                = s"/$nino/list"
+      def downstreamUri: String                      = "/etmp/RESTAdapter/itsa/taxpayer/business-details"
+      val downstreamQueryParams: Map[String, String] = Map("nino" -> nino)
     }
 
     "return a 200 status code" when {
-      "any valid request is made and HIP only returns businessData" in new ListAllBusinessesControllerTest {
+      "any valid request is made and downstream only returns businessData" in new ListAllBusinessesControllerTest {
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           MtdIdLookupStub.ninoFound(nino)
           AuthStub.authorised()
-          DownstreamStub.onSuccess(DownstreamStub.GET, hipUri, OK, downstreamResponseBodyBusinessData)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, downstreamQueryParams, OK, downstreamResponseBodyBusinessData)
         }
 
         val response: WSResponse = await(request().get())
@@ -54,13 +51,13 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
         response.header("Content-Type") shouldBe Some("application/json")
       }
 
-      "any valid request is made and HIP only returns propertyData" in new ListAllBusinessesControllerTest {
+      "any valid request is made and downstream only returns propertyData" in new ListAllBusinessesControllerTest {
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           MtdIdLookupStub.ninoFound(nino)
           AuthStub.authorised()
-          DownstreamStub.onSuccess(DownstreamStub.GET, hipUri, OK, downstreamResponseBodyPropertyData)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, downstreamQueryParams, OK, downstreamResponseBodyPropertyData)
         }
 
         val response: WSResponse = await(request().get())
@@ -69,13 +66,13 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
         response.header("Content-Type") shouldBe Some("application/json")
       }
 
-      "any valid request is made and HIP returns both businessData and propertyData" in new ListAllBusinessesControllerTest {
+      "any valid request is made and downstream returns both businessData and propertyData" in new ListAllBusinessesControllerTest {
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           MtdIdLookupStub.ninoFound(nino)
           AuthStub.authorised()
-          DownstreamStub.onSuccess(DownstreamStub.GET, hipUri, OK, downstreamResponseBodyBothData)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, downstreamQueryParams, OK, downstreamResponseBodyBothData)
         }
 
         val response: WSResponse = await(request().get())
@@ -103,21 +100,24 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
             response.json shouldBe Json.toJson(expectedBody)
           }
         }
+
         val input = List(
           ("AA1123A", BAD_REQUEST, NinoFormatError),
           ("", NOT_FOUND, NotFoundError)
         )
+
         input.foreach(args => (validationErrorTest _).tupled(args))
       }
+
       "downstream service error" when {
         def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"downstream returns an $downstreamCode error and status $downstreamStatus" in new ListAllBusinessesControllerTest {
+          s"downstream returns a code $downstreamCode error and status $downstreamStatus" in new ListAllBusinessesControllerTest {
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
               MtdIdLookupStub.ninoFound(nino)
               AuthStub.authorised()
-              DownstreamStub.onError(DownstreamStub.GET, hipUri, downstreamStatus, errorBody(downstreamCode))
+              DownstreamStub.onError(DownstreamStub.GET, downstreamUri, downstreamQueryParams, downstreamStatus, errorBody(downstreamCode))
             }
 
             val response: WSResponse = await(request().get())
@@ -127,30 +127,14 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
         }
 
         val errors = List(
-          (BAD_REQUEST, "INVALID_NINO", BAD_REQUEST, NinoFormatError),
-          (BAD_REQUEST, "INVALID_MTDBSA", INTERNAL_SERVER_ERROR, InternalError),
-          (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
-          (NOT_FOUND, "NOT_FOUND_NINO", NOT_FOUND, NotFoundError),
-          (NOT_FOUND, "NOT_FOUND_MTDBSA", INTERNAL_SERVER_ERROR, InternalError),
-          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, InternalError),
-          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError)
-        )
-
-        val extraIfsErrors = List(
-          (BAD_REQUEST, "INVALID_MTD_ID", INTERNAL_SERVER_ERROR, InternalError),
-          (BAD_REQUEST, "INVALID_CORRELATIONID", INTERNAL_SERVER_ERROR, InternalError),
-          (BAD_REQUEST, "INVALID_IDTYPE", INTERNAL_SERVER_ERROR, InternalError),
-          (NOT_FOUND, "NOT_FOUND", NOT_FOUND, NotFoundError)
-        )
-
-        val extraHipErrors = List(
           (UNPROCESSABLE_ENTITY, "001", INTERNAL_SERVER_ERROR, InternalError),
           (UNPROCESSABLE_ENTITY, "006", NOT_FOUND, NotFoundError),
           (UNPROCESSABLE_ENTITY, "007", INTERNAL_SERVER_ERROR, InternalError),
-          (UNPROCESSABLE_ENTITY, "008", NOT_FOUND, NoBusinessFoundError)
+          (UNPROCESSABLE_ENTITY, "008", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError)
         )
 
-        (errors ++ extraIfsErrors ++ extraHipErrors).foreach((serviceErrorTest _).tupled)
+        errors.foreach((serviceErrorTest _).tupled)
       }
     }
   }
@@ -162,237 +146,296 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
     val responseBodyBusinessData: JsValue = Json.parse(
       """
         |{
-        |  "listOfBusinesses":[
+        |  "listOfBusinesses": [
         |    {
         |      "typeOfBusiness": "self-employment",
-        |      "businessId": "123456789012345",
+        |      "businessId": "XAIS12345678901",
         |      "tradingName": "RCDTS",
-        |      "links":[
+        |      "links": [
         |        {
-        |          "href":"/individuals/business/details/AA123456A/123456789012345",
-        |          "method":"GET",
-        |          "rel":"retrieve-business-details"
+        |          "href": "/individuals/business/details/AA123456A/XAIS12345678901",
+        |          "method": "GET",
+        |          "rel": "retrieve-business-details"
         |        }
         |      ]
         |    }
         |  ],
-        |  "links":[
+        |  "links": [
         |    {
-        |      "href":"/individuals/business/details/AA123456A/list",
-        |      "method":"GET",
-        |      "rel":"self"
+        |      "href": "/individuals/business/details/AA123456A/list",
+        |      "method": "GET",
+        |      "rel": "self"
         |    }
         |  ]
         |}
-        """.stripMargin
+      """.stripMargin
     )
 
     val responseBodyPropertyData: JsValue = Json.parse(
       """
         |{
-        |  "listOfBusinesses":[
+        |  "listOfBusinesses": [
         |    {
         |      "typeOfBusiness": "uk-property",
-        |      "businessId": "098765432109876",
-        |      "links":[
+        |      "businessId": "XPIS12345678901",
+        |      "links": [
         |        {
-        |          "href":"/individuals/business/details/AA123456A/098765432109876",
-        |          "method":"GET",
-        |          "rel":"retrieve-business-details"
+        |          "href": "/individuals/business/details/AA123456A/XPIS12345678901",
+        |          "method": "GET",
+        |          "rel": "retrieve-business-details"
         |        }
         |      ]
         |    }
         |  ],
-        |  "links":[
+        |  "links": [
         |    {
-        |      "href":"/individuals/business/details/AA123456A/list",
-        |      "method":"GET",
-        |      "rel":"self"
+        |      "href": "/individuals/business/details/AA123456A/list",
+        |      "method": "GET",
+        |      "rel": "self"
         |    }
         |  ]
         |}
-        """.stripMargin
+      """.stripMargin
     )
 
     val responseBodyBothData: JsValue = Json.parse(
       """
         |{
-        |  "listOfBusinesses":[
+        |  "listOfBusinesses": [
         |    {
         |      "typeOfBusiness": "self-employment",
-        |      "businessId": "123456789012345",
+        |      "businessId": "XAIS12345671111",
         |      "tradingName": "RCDTS",
-        |      "links":[
+        |      "links": [
         |        {
-        |          "href":"/individuals/business/details/AA123456A/123456789012345",
-        |          "method":"GET",
-        |          "rel":"retrieve-business-details"
+        |          "href": "/individuals/business/details/AA123456A/XAIS12345671111",
+        |          "method": "GET",
+        |          "rel": "retrieve-business-details"
         |        }
         |      ]
         |    },
         |    {
-        |      "typeOfBusiness": "uk-property",
-        |      "businessId": "098765432109876",
-        |      "links":[
+        |      "typeOfBusiness": "foreign-property",
+        |      "businessId": "XFIS12345678903",
+        |      "links": [
         |        {
-        |          "href":"/individuals/business/details/AA123456A/098765432109876",
-        |          "method":"GET",
-        |          "rel":"retrieve-business-details"
+        |          "href": "/individuals/business/details/AA123456A/XFIS12345678903",
+        |          "method": "GET",
+        |          "rel": "retrieve-business-details"
         |        }
         |      ]
         |    }
         |  ],
-        |  "links":[
+        |  "links": [
         |    {
-        |      "href":"/individuals/business/details/AA123456A/list",
-        |      "method":"GET",
-        |      "rel":"self"
+        |      "href": "/individuals/business/details/AA123456A/list",
+        |      "method": "GET",
+        |      "rel": "self"
         |    }
         |  ]
         |}
-        """.stripMargin
+      """.stripMargin
     )
 
     val downstreamResponseBodyBusinessData: JsValue = Json.parse(
       """
         |{
         |  "success": {
-        | "processingDate": "2023-07-05T09:16:58.655Z",
-        | "taxPayerDisplayResponse": {
-        |   "safeId": "XE00001234567890",
-        |   "nino": "AA123456A",
-        |   "mtdbsa": "123456789012345",
-        |   "propertyIncome": false,
-        |   "businessData": [
-        |     {
-        |       "incomeSourceId": "123456789012345",
-        |       "accPeriodSDate": "2001-01-01",
-        |       "accPeriodEDate": "2001-01-01",
-        |       "tradingName": "RCDTS",
-        |       "businessAddressDetails": {
-        |         "addressLine1": "100 SuttonStreet",
-        |         "addressLine2": "Wokingham",
-        |         "addressLine3": "Surrey",
-        |         "addressLine4": "London",
-        |         "postalCode": "DH14EJ",
-        |         "countryCode": "GB"
-        |       },
-        |       "businessContactDetails": {
-        |         "phoneNumber": "01332752856",
-        |         "mobileNumber": "07782565326",
-        |         "faxNumber": "01332754256",
-        |         "emailAddress": "stephen@manncorpone.co.uk"
-        |       },
-        |       "tradingSDate": "2001-01-01",
-        |       "cashOrAccruals": "cash",
-        |       "seasonal": true,
-        |       "cessationDate": "2001-01-01",
-        |       "cessationReason": "002",
-        |       "paperLess": true
-        |     }
-        |   ]
-        | }
+        |    "processingDate": "2023-07-05T09:16:58Z",
+        |    "taxPayerDisplayResponse": {
+        |      "safeId": "XAIS123456789012",
+        |      "nino": "AA123456A",
+        |      "mtdId": "XNIT00000068707",
+        |      "yearOfMigration": "2023",
+        |      "propertyIncomeFlag": false,
+        |      "businessData": [
+        |        {
+        |          "incomeSourceId": "XAIS12345678901",
+        |          "incomeSource": "ITSB",
+        |          "accPeriodSDate": "2001-01-01",
+        |          "accPeriodEDate": "2001-01-01",
+        |          "tradingName": "RCDTS",
+        |          "businessAddressDetails": {
+        |            "addressLine1": "100 SuttonStreet",
+        |            "addressLine2": "Wokingham",
+        |            "addressLine3": "Surrey",
+        |            "addressLine4": "London",
+        |            "postalCode": "DH14EJ",
+        |            "countryCode": "GB"
+        |          },
+        |          "businessContactDetails": {
+        |            "telephone": "01332752856",
+        |            "mobileNo": "07782565326",
+        |            "faxNo": "01332754256",
+        |            "email": "stephen@manncorpone.co.uk"
+        |          },
+        |          "tradingSDate": "2001-01-01",
+        |          "contextualTaxYear": "2024",
+        |          "cashOrAccrualsFlag": false,
+        |          "seasonalFlag": true,
+        |          "cessationDate": "2001-01-01",
+        |          "paperLessFlag": true,
+        |          "incomeSourceStartDate": "2010-03-14",
+        |          "firstAccountingPeriodStartDate": "2018-04-06",
+        |          "firstAccountingPeriodEndDate": "2018-12-12",
+        |          "latencyDetails": {
+        |            "latencyEndDate": "2018-12-12",
+        |            "taxYear1": "2018",
+        |            "latencyIndicator1": "A",
+        |            "taxYear2": "2019",
+        |            "latencyIndicator2": "Q"
+        |          },
+        |          "quarterTypeElection": {
+        |            "quarterReportingType": "STANDARD",
+        |            "taxYearofElection": "2023"
+        |          }
+        |        }
+        |      ]
+        |    }
+        |  }
         |}
-        |}
-        """.stripMargin
+      """.stripMargin
     )
 
     val downstreamResponseBodyPropertyData: JsValue = Json.parse(
       """
         |{
-        | "success": {
-        | "processingDate": "2023-07-05T09:16:58.655Z",
-        | "taxPayerDisplayResponse": {
-        |   "safeId": "XE00001234567890",
-        |   "nino": "AA123456A",
-        |   "mtdbsa": "123456789012345",
-        |   "propertyIncome": true,
-        |   "propertyData": [
-        |     {
-        |       "incomeSourceType": "02",
-        |       "incomeSourceId": "098765432109876",
-        |       "accPeriodSDate": "2001-01-01",
-        |       "accPeriodEDate": "2001-01-01",
-        |       "tradingSDate": "2001-01-01",
-        |       "cashOrAccrualsFlag": true,
-        |       "numPropRented": 0,
-        |       "numPropRentedUK": 0,
-        |       "numPropRentedEEA": 5,
-        |       "numPropRentedNONEEA": 1,
-        |       "emailAddress": "stephen@manncorpone.co.uk",
-        |       "cessationDate": "2001-01-01",
-        |       "cessationReason": "002",
-        |       "paperLess": true,
-        |       "incomeSourceStartDate": "2019-07-14"
-        |     }
-        |   ]
-        | }
+        |  "success": {
+        |    "processingDate": "2023-07-05T09:16:58Z",
+        |    "taxPayerDisplayResponse": {
+        |      "safeId": "XAIS123456789012",
+        |      "nino": "AA123456A",
+        |      "mtdId": "XNIT00000068707",
+        |      "yearOfMigration": "2023",
+        |      "propertyIncomeFlag": false,
+        |      "propertyData": [
+        |        {
+        |          "incomeSourceType": "02",
+        |          "incomeSourceId": "XPIS12345678901",
+        |          "accPeriodSDate": "2001-01-01",
+        |          "accPeriodEDate": "2001-01-01",
+        |          "tradingSDate": "2001-01-01",
+        |          "contextualTaxYear": "2024",
+        |          "cashOrAccrualsFlag": false,
+        |          "numPropRented": 0,
+        |          "numPropRentedUK": 0,
+        |          "numPropRentedEEA": 5,
+        |          "numPropRentedNONEEA": 1,
+        |          "email": "stephen@manncorpone.co.uk",
+        |          "cessationDate": "2001-01-01",
+        |          "paperLessFlag": true,
+        |          "incomeSourceStartDate": "2019-07-14",
+        |          "firstAccountingPeriodStartDate": "2018-04-06",
+        |          "firstAccountingPeriodEndDate": "2018-12-12",
+        |          "latencyDetails": {
+        |            "latencyEndDate": "2018-12-12",
+        |            "taxYear1": "2018",
+        |            "latencyIndicator1": "A",
+        |            "taxYear2": "2019",
+        |            "latencyIndicator2": "Q"
+        |          },
+        |          "quarterTypeElection": {
+        |            "quarterReportingType": "STANDARD",
+        |            "taxYearofElection": "2023"
+        |          }
+        |        }
+        |      ]
+        |    }
+        |  }
         |}
-        |}
-        """.stripMargin
+      """.stripMargin
     )
 
     val downstreamResponseBodyBothData: JsValue = Json.parse(
       """
         |{
         |  "success": {
-        |     "processingDate": "2023-07-05T09:16:58.655Z",
-        |     "taxPayerDisplayResponse": {
-        |       "safeId": "XE00001234567890",
-        |       "nino": "AA123456A",
-        |       "mtdbsa": "123456789012345",
-        |       "propertyIncome": true,
-        |       "businessData": [
-        |         {
-        |           "incomeSourceId": "123456789012345",
-        |           "accPeriodSDate": "2001-01-01",
-        |           "accPeriodEDate": "2001-01-01",
-        |           "tradingName": "RCDTS",
-        |           "businessAddressDetails": {
-        |             "addressLine1": "100 SuttonStreet",
-        |             "addressLine2": "Wokingham",
-        |             "addressLine3": "Surrey",
-        |             "addressLine4": "London",
-        |             "postalCode": "DH14EJ",
-        |             "countryCode": "GB"
-        |           },
-        |           "businessContactDetails": {
-        |             "phoneNumber": "01332752856",
-        |             "mobileNumber": "07782565326",
-        |             "faxNumber": "01332754256",
-        |             "emailAddress": "stephen@manncorpone.co.uk"
-        |           },
-        |           "tradingSDate": "2001-01-01",
-        |           "cashOrAccruals": "cash",
-        |           "seasonal": true,
-        |           "cessationDate": "2001-01-01",
-        |           "cessationReason": "002",
-        |           "paperLess": true
-        |         }
-        |       ],
-        |       "propertyData": [
-        |         {
-        |           "incomeSourceType": "02",
-        |           "incomeSourceId": "098765432109876",
-        |           "accPeriodSDate": "2001-01-01",
-        |           "accPeriodEDate": "2001-01-01",
-        |           "tradingSDate": "2001-01-01",
-        |           "cashOrAccrualsFlag": true,
-        |           "numPropRented": 0,
-        |           "numPropRentedUK": 0,
-        |           "numPropRentedEEA": 5,
-        |           "numPropRentedNONEEA": 1,
-        |           "emailAddress": "stephen@manncorpone.co.uk",
-        |           "cessationDate": "2001-01-01",
-        |           "cessationReason": "002",
-        |           "paperLess": true,
-        |           "incomeSourceStartDate": "2019-07-14"
-        |         }
-        |       ]
-        |     }
+        |    "processingDate": "2023-07-05T09:16:58Z",
+        |    "taxPayerDisplayResponse": {
+        |      "safeId": "XAIS123456789012",
+        |      "nino": "AA123456A",
+        |      "mtdId": "XNIT00000068707",
+        |      "yearOfMigration": "2023",
+        |      "propertyIncomeFlag": false,
+        |      "businessData": [
+        |        {
+        |          "incomeSourceId": "XAIS12345671111",
+        |          "incomeSource": "ITSB",
+        |          "accPeriodSDate": "2001-01-01",
+        |          "accPeriodEDate": "2001-01-01",
+        |          "tradingName": "RCDTS",
+        |          "businessAddressDetails": {
+        |            "addressLine1": "100 SuttonStreet",
+        |            "addressLine2": "Wokingham",
+        |            "addressLine3": "Surrey",
+        |            "addressLine4": "London",
+        |            "postalCode": "DH14EJ",
+        |            "countryCode": "GB"
+        |          },
+        |          "businessContactDetails": {
+        |            "telephone": "01332752856",
+        |            "mobileNo": "07782565326",
+        |            "faxNo": "01332754256",
+        |            "email": "stephen@manncorpone.co.uk"
+        |          },
+        |          "tradingSDate": "2001-01-01",
+        |          "contextualTaxYear": "2024",
+        |          "cashOrAccrualsFlag": false,
+        |          "seasonalFlag": true,
+        |          "cessationDate": "2001-01-01",
+        |          "paperLessFlag": true,
+        |          "incomeSourceStartDate": "2010-03-14",
+        |          "firstAccountingPeriodStartDate": "2018-04-06",
+        |          "firstAccountingPeriodEndDate": "2018-12-12",
+        |          "latencyDetails": {
+        |            "latencyEndDate": "2018-12-12",
+        |            "taxYear1": "2018",
+        |            "latencyIndicator1": "A",
+        |            "taxYear2": "2019",
+        |            "latencyIndicator2": "Q"
+        |          },
+        |          "quarterTypeElection": {
+        |            "quarterReportingType": "STANDARD",
+        |            "taxYearofElection": "2023"
+        |          }
+        |        }
+        |      ],
+        |      "propertyData": [
+        |        {
+        |          "incomeSourceType": "03",
+        |          "incomeSourceId": "XFIS12345678903",
+        |          "accPeriodSDate": "2001-01-01",
+        |          "accPeriodEDate": "2001-01-01",
+        |          "tradingSDate": "2001-01-01",
+        |          "contextualTaxYear": "2024",
+        |          "cashOrAccrualsFlag": false,
+        |          "numPropRented": 0,
+        |          "numPropRentedUK": 0,
+        |          "numPropRentedEEA": 5,
+        |          "numPropRentedNONEEA": 1,
+        |          "email": "stephen@manncorpone.co.uk",
+        |          "cessationDate": "2001-01-01",
+        |          "paperLessFlag": true,
+        |          "incomeSourceStartDate": "2019-07-14",
+        |          "firstAccountingPeriodStartDate": "2018-04-06",
+        |          "firstAccountingPeriodEndDate": "2018-12-12",
+        |          "latencyDetails": {
+        |            "latencyEndDate": "2018-12-12",
+        |            "taxYear1": "2018",
+        |            "latencyIndicator1": "A",
+        |            "taxYear2": "2019",
+        |            "latencyIndicator2": "Q"
+        |          },
+        |          "quarterTypeElection": {
+        |            "quarterReportingType": "STANDARD",
+        |            "taxYearofElection": "2023"
+        |          }
+        |        }
+        |      ]
+        |    }
         |  }
         |}
-        """.stripMargin
+      """.stripMargin
     )
 
     def setupStubs(): StubMapping
@@ -412,14 +455,14 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
 
     def errorBody(code: String): String =
       s"""
-         |{
-         |  "errors":
-              {
-         |      "code": "$code",
-         |      "reason": "hip message"
-         |    }
-         |}
-    """.stripMargin
+        |{
+        |  "errors": {
+        |    "processingDate": "2024-07-15T09:45:17Z",
+        |    "code": "$code",
+        |    "text": "error text"
+        |  }
+        |}
+      """.stripMargin
 
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package utils
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDateTime, ZoneId}
+import java.time.{LocalDateTime, ZoneId, ZonedDateTime}
 import java.util.Locale
 
 object DateUtils {
@@ -26,5 +26,9 @@ object DateUtils {
     .ofPattern("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH)
     .withZone(ZoneId.of("GMT"))
 
+  private val iso8601UtcDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+
   def longDateTimestampGmt(dateTime: LocalDateTime): String = longDateTimeFormatGmt.format(dateTime)
+
+  def nowAsUtc: String = ZonedDateTime.now(ZoneId.of("UTC")).format(iso8601UtcDateTimeFormatter)
 }

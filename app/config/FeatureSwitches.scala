@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,8 @@ import javax.inject.{Inject, Singleton}
 trait FeatureSwitches {
 
   def isIfsEnabled: Boolean
-  def isEndpoint2089Enabled: Boolean
   def isScp005aQuarterlyTypeChoiceEnabled: Boolean
   def supportingAgentsAccessControlEnabled: Boolean
-  def ifs_hip_migration_1171: Boolean
 
   def isEnabled(key: String): Boolean
   def isReleasedInProduction(feature: String): Boolean
@@ -41,10 +39,8 @@ class FeatureSwitchesImpl(featureSwitchConfig: Configuration) extends FeatureSwi
   def this(appConfig: AppConfig) = this(appConfig.featureSwitches)
 
   val isIfsEnabled: Boolean                         = isEnabled("ifs")
-  val isEndpoint2089Enabled: Boolean                = isEnabled("endpoint-2089")
   val isScp005aQuarterlyTypeChoiceEnabled: Boolean  = isEnabled("scp005a_QuarterlyTypeChoice")
   val supportingAgentsAccessControlEnabled: Boolean = isEnabled("supporting-agents-access-control")
-  val ifs_hip_migration_1171: Boolean               = isEnabled("ifs_hip_migration_1171")
 
   def isEnabled(key: String): Boolean = isConfigTrue(key + ".enabled")
 
