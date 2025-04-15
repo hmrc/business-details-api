@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,22 @@
 
 package api.connectors
 
-sealed trait DownstreamUri[Resp] {
-  val value: String
-}
+import config.{AppConfig, DownstreamConfig}
+
+case class DownstreamUri[+Resp](path: String, strategy: DownstreamStrategy)
 
 object DownstreamUri {
-  final case class DesUri[Resp](value: String)     extends DownstreamUri[Resp]
-  final case class IfsUri[Resp](value: String)     extends DownstreamUri[Resp]
-  final case class Api2089Uri[Resp](value: String) extends DownstreamUri[Resp]
+
+  private def withStandardStrategy[Resp](path: String, config: DownstreamConfig): DownstreamUri[Resp] =
+    DownstreamUri(path, DownstreamStrategy.standardStrategy(config))
+
+  def DesUri[Resp](value: String)(implicit appConfig: AppConfig): DownstreamUri[Resp] =
+    withStandardStrategy(value, appConfig.desDownstreamConfig)
+
+  def IfsUri[Resp](value: String)(implicit appConfig: AppConfig): DownstreamUri[Resp] =
+    withStandardStrategy(value, appConfig.ifsDownstreamConfig)
+
+  def HipUri[Resp](path: String, additionalContractHeaders: => Seq[(String, String)] = Nil)(implicit appConfig: AppConfig): DownstreamUri[Resp] =
+    DownstreamUri(path, DownstreamStrategy.basicAuthStrategy(appConfig.hipDownstreamConfig, additionalContractHeaders))
+
 }

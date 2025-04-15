@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,3 +17,4 @@
 package config
 
 case class DownstreamConfig(baseUrl: String, env: String, token: String, environmentHeaders: Option[Seq[String]])
+case class BasicAuthDownstreamConfig(baseUrl: String, env: String, clientId: String, clientSecret: String, environmentHeaders: Option[Seq[String]])

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 package v2.retrieveBusinessDetails.model.response.downstream
 
 import api.models.domain.AccountingType
-import play.api.libs.json.{JsPath, Json, Reads}
+import play.api.libs.json.{JsObject, JsPath, Json, Reads}
+import utils.JsonTransformers.conditionalCopy
 
 case class BusinessData(
     incomeSourceId: String,
@@ -50,5 +51,35 @@ object BusinessData {
     readBoolean orElse readString
   }
 
-  implicit val reads: Reads[BusinessData] = Json.reads
+  private val combinedTransformer: Reads[JsObject] = {
+
+    val accountingPeriodTransformer: Reads[JsObject] = conditionalCopy(
+      sourcePath = JsPath \ "accPeriodSDate",
+      targetPath = JsPath \ "accountingPeriodStartDate"
+    ).andThen(
+      conditionalCopy(
+        sourcePath = JsPath \ "accPeriodEDate",
+        targetPath = JsPath \ "accountingPeriodEndDate"
+      )
+    )
+
+    val tradingStartDateTransformer: Reads[JsObject] = conditionalCopy(
+      sourcePath = JsPath \ "tradingSDate",
+      targetPath = JsPath \ "tradingStartDate"
+    )
+
+    val cashOrAccrualsTransformer: Reads[JsObject] = conditionalCopy(
+      sourcePath = JsPath \ "cashOrAccrualsFlag",
+      targetPath = JsPath \ "cashOrAccruals"
+    )
+
+    accountingPeriodTransformer
+      .andThen(tradingStartDateTransformer)
+      .andThen(cashOrAccrualsTransformer)
+  }
+
+  implicit val reads: Reads[BusinessData] = Json.reads.preprocess { jsValue =>
+    jsValue.transform(combinedTransformer).getOrElse(jsValue)
+  }
+
 }

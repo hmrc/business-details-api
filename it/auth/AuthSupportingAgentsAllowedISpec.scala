@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,8 @@ abstract class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
 
   protected val maybeDownstreamResponseJson: Option[JsValue]
 
+  protected val downstreamQueryParams: Map[String, String] = Map.empty
+
   protected val downstreamHttpMethod: DownstreamStub.HTTPMethod = DownstreamStub.POST
 
   protected val downstreamSuccessStatus: Int = OK
@@ -69,7 +71,7 @@ abstract class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
           AuthStub.authorisedWithPrimaryAgentEnrolment()
 
           DownstreamStub
-            .when(downstreamHttpMethod, downstreamUri)
+            .when(downstreamHttpMethod, downstreamUri, downstreamQueryParams)
             .thenReturn(downstreamSuccessStatus, maybeDownstreamResponseJson)
         }
 
@@ -89,7 +91,7 @@ abstract class AuthSupportingAgentsAllowedISpec extends IntegrationBaseSpec {
           AuthStub.authorisedWithSupportingAgentEnrolment()
 
           DownstreamStub
-            .when(downstreamHttpMethod, downstreamUri)
+            .when(downstreamHttpMethod, downstreamUri, downstreamQueryParams)
             .thenReturn(downstreamSuccessStatus, maybeDownstreamResponseJson)
         }
 

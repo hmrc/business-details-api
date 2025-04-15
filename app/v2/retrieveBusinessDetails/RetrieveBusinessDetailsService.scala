@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,7 +102,15 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
       "INVALID_IDTYPE"        -> InternalError,
       "NOT_FOUND"             -> NotFoundError
     )
-    errors ++ extraIfsErrors
+
+    val hipErrors = Map(
+      "001" -> InternalError,
+      "006" -> NotFoundError,
+      "007" -> InternalError,
+      "008" -> NoBusinessFoundError
+    )
+
+    errors ++ extraIfsErrors ++ hipErrors
   }
 
 }

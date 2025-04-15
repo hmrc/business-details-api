@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -229,7 +229,14 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         ("NOT_FOUND", NotFoundError)
       )
 
-      (errors ++ extraIfsErrors).foreach((serviceError _).tupled)
+      val hipErrors = List(
+        ("001", InternalError),
+        ("006", NotFoundError),
+        ("007", InternalError),
+        ("008", NoBusinessFoundError)
+      )
+
+      (errors ++ extraIfsErrors ++ hipErrors).foreach((serviceError _).tupled)
     }
   }
 

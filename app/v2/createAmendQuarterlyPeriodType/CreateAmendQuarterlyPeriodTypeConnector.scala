@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package v2.createAmendQuarterlyPeriodType
 
-import api.connectors.DownstreamUri.Api2089Uri
+import api.connectors.DownstreamUri.IfsUri
 import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
@@ -40,7 +40,7 @@ class CreateAmendQuarterlyPeriodTypeConnector @Inject() (val http: HttpClient, v
 
     implicit val successCode: SuccessCode = SuccessCode(OK)
 
-    val downstreamUri = Api2089Uri[Unit](s"income-tax/${taxYear.asTysDownstream}/income-sources/reporting-type/$nino/$businessId")
+    val downstreamUri = IfsUri[Unit](s"income-tax/${taxYear.asTysDownstream}/income-sources/reporting-type/$nino/$businessId")
 
     put(body, downstreamUri)
 
