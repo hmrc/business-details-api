@@ -127,6 +127,12 @@ trait ConnectorSpec extends UnitSpec {
     MockedAppConfig.ifsDownstreamConfig.anyNumberOfTimes() returns config
   }
 
+  protected trait Api2089Test extends StandardConnectorTest {
+    override val name = "api2089"
+
+    MockedAppConfig.api2089DownstreamConfig.anyNumberOfTimes() returns config
+  }
+
   protected trait HipTest extends ConnectorTest {
     private val clientId     = "clientId"
     private val clientSecret = "clientSecret"
