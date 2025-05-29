@@ -17,7 +17,7 @@
 package v2.updateAccountingType.def1
 
 import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{ResolveBusinessId, ResolveNino, ResolveNonEmptyJsonObject, ResolveTaxYear}
+import api.controllers.validators.resolvers.{ResolveBusinessId, ResolveNino, ResolveNonEmptyJsonObject, ResolveTaxYear2026}
 import api.models.errors.MtdError
 import cats.data.Validated
 import cats.implicits.catsSyntaxTuple4Semigroupal
@@ -34,7 +34,7 @@ class Def1_UpdateAccountingTypeValidator(nino: String, businessId: String, taxYe
     (
       ResolveNino(nino),
       ResolveBusinessId(businessId),
-      ResolveTaxYear(taxYear),
+      ResolveTaxYear2026(taxYear),
       resolveJson(body)
     ) mapN Def1_UpdateAccountingTypeRequestData
 
