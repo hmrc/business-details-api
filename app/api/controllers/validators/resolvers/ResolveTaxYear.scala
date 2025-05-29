@@ -70,6 +70,19 @@ object ResolveTysTaxYear extends TaxYearResolving {
 
 }
 
+object ResolveTaxYear2026 extends TaxYearResolving {
+
+  def apply(value: String, maybeError: Option[MtdError], errorPath: Option[String]): Validated[Seq[MtdError], TaxYear] =
+    resolve(value, maybeError, errorPath)
+      .andThen { taxYear =>
+        if (taxYear.year < 2026)
+          Invalid(List(InvalidTaxYearParameterError) ++ maybeError)
+        else
+          Valid(taxYear)
+      }
+
+}
+
 case class DetailedResolveTaxYear(
     allowIncompleteTaxYear: Boolean = true,
     incompleteTaxYearError: MtdError = RuleTaxYearNotEndedError,

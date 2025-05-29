@@ -30,7 +30,7 @@ class Def1_UpdateAccountingTypeValidatorSpec extends UnitSpec with JsonErrorVali
 
   private val validNino       = "AA123456A"
   private val validBusinessId = "X0IS12345678901"
-  private val validTaxYear    = "2023-24"
+  private val validTaxYear    = "2025-26"
 
   private val validBody = Json.parse("""
                                        |{
@@ -75,6 +75,20 @@ class Def1_UpdateAccountingTypeValidatorSpec extends UnitSpec with JsonErrorVali
         val result = validator(validNino, validBusinessId, "invalid", validBody).validateAndWrapResult()
         result shouldBe Left(
           ErrorWrapper(correlationId, TaxYearFormatError)
+        )
+      }
+
+      "passed an too early tax year" in {
+        val result = validator(validNino, validBusinessId, "2024-25", validBody).validateAndWrapResult()
+        result shouldBe Left(
+          ErrorWrapper(correlationId, InvalidTaxYearParameterError)
+        )
+      }
+
+      "passed an invalid range tax year" in {
+        val result = validator(validNino, validBusinessId, "2025-27", validBody).validateAndWrapResult()
+        result shouldBe Left(
+          ErrorWrapper(correlationId, RuleTaxYearRangeInvalidError)
         )
       }
 
