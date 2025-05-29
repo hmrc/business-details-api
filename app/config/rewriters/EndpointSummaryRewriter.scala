@@ -22,10 +22,10 @@ import config.rewriters.DocumentationRewriters.CheckAndRewrite
 import java.util.regex.Pattern
 import javax.inject.{Inject, Singleton}
 
-@Singleton class EndpointSummaryRewriter @Inject()(appConfig: AppConfig) {
+@Singleton class EndpointSummaryRewriter @Inject() (appConfig: AppConfig) {
 
   private val rewriteSummaryRegex = "([\\s]*)(summary: [\"]?)(.*)".r
-  private val yamlLength = ".yaml".length
+  private val yamlLength          = ".yaml".length
 
   val rewriteEndpointSummary: CheckAndRewrite = CheckAndRewrite(
     check = (version, filename) => {
@@ -47,10 +47,10 @@ import javax.inject.{Inject, Singleton}
           .collect {
             case line if !line.toLowerCase.contains("[test only]") =>
               val components: Array[String] = line.split("summary: ")
-              val whitespace: String = components(0)
-              val summary: String = components(1).replace("\"", "")
+              val whitespace: String        = components(0)
+              val summary: String           = components(1).replace("\"", "")
 
-              val replacement: String = s"""${whitespace}summary: "$summary [test only]""""
+              val replacement: String   = s"""${whitespace}summary: "$summary [test only]""""
               val literalString: String = Pattern.quote(line)
 
               yaml.replaceFirst(literalString, replacement)
