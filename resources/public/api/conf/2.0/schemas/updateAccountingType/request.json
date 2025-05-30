@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Update Accounting Type",
+  "type": "object",
+  "properties": {
+    "accountingType": {
+      "type": "string",
+      "description": "The accounting type used.\n\nCASH for cash basis (money actually received and paid out to calculate income and expenses).\nACCRUAL records revenues and expenses when they are incurred, regardless of when cash is exchanged.\n\n\nValue: CASH",
+      "example": "CASH",
+      "enum": [
+        "CASH",
+        "ACCRUAL"
+      ]
+    }
+  },
+  "required": [
+    "accountingType"
+  ],
+  "additionalProperties": false
+}
