@@ -17,12 +17,21 @@
 package v2.updateAccountingType.def1.model.request
 
 import play.api.libs.json.{Json, OFormat}
+import shapeless.HNil
+import utils.EmptinessChecker
 import v2.common.models.AccountingType
 import v2.updateAccountingType.model.request.UpdateAccountingTypeRequestBody
+
+import scala.annotation.nowarn
 
 case class Def1_UpdateAccountingTypeRequestBody(accountingType: AccountingType) extends UpdateAccountingTypeRequestBody
 
 object Def1_UpdateAccountingTypeRequestBody {
+
+  @nowarn("cat=lint-byname-implicit")
+  implicit val emptinessChecker: EmptinessChecker[Def1_UpdateAccountingTypeRequestBody] = EmptinessChecker.use { o =>
+    "accountingType" -> o.accountingType.toString :: HNil
+  }
 
   implicit val format: OFormat[Def1_UpdateAccountingTypeRequestBody] = Json.format[Def1_UpdateAccountingTypeRequestBody]
 
