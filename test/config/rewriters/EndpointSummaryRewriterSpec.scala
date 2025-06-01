@@ -62,13 +62,13 @@ class EndpointSummaryRewriterSpec extends UnitSpec with MockAppConfig {
       }
 
       "return the rewritten summary when it contains parentheses" in {
-        val result = rewrite("", "", "summary: Create and Amend CGT Residential Property Disposals (non-PPD)")
-        result shouldBe """summary: "Create and Amend CGT Residential Property Disposals (non-PPD) [test only]""""
+        val result = rewrite("", "", "summary: Create and Amend Business Details (parentheses test)")
+        result shouldBe """summary: "Create and Amend Business Details (parentheses test) [test only]""""
       }
 
       "return the rewritten summary when it contains square brackets" in {
-        val result = rewrite("", "", "summary: Create and Amend CGT Residential Property Disposals [non-PPD]")
-        result shouldBe """summary: "Create and Amend CGT Residential Property Disposals [non-PPD] [test only]""""
+        val result = rewrite("", "", "summary: Create and Amend Business Details [square brackets test]")
+        result shouldBe """summary: "Create and Amend Business Details [square brackets test] [test only]""""
       }
     }
 
