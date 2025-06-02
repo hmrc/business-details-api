@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package v2.updateAccountingType.def1.model.request
+package v2.updateAccountingType
 
-import api.models.domain.{BusinessId, Nino, TaxYear}
-import v2.updateAccountingType.UpdateAccountingTypeSchema
-import v2.updateAccountingType.UpdateAccountingTypeSchema.Def1
+import api.controllers.validators.Validator
+import config.AppConfig
+import play.api.libs.json.JsValue
 import v2.updateAccountingType.model.request.UpdateAccountingTypeRequestData
 
-case class Def1_UpdateAccountingTypeRequestData(nino: Nino, businessId: BusinessId, taxYear: TaxYear, body: Def1_UpdateAccountingTypeRequestBody)
-    extends UpdateAccountingTypeRequestData {
+import javax.inject.Singleton
 
-  override val schema: UpdateAccountingTypeSchema = Def1
+@Singleton
+class UpdateAccountingTypeValidatorFactory {
+
+  def validator(nino: String, businessId: String, taxYear: String, body: JsValue)(implicit
+      appConfig: AppConfig): Validator[UpdateAccountingTypeRequestData] =
+    new UpdateAccountingTypeValidator(nino, businessId, taxYear, body)
 
 }

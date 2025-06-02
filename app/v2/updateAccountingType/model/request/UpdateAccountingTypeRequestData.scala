@@ -17,13 +17,5 @@
 package v2.updateAccountingType.model.request
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import v2.updateAccountingType.UpdateAccountingTypeSchema
 
-trait UpdateAccountingTypeRequestData {
-  def nino: Nino
-  def businessId: BusinessId
-  def taxYear: TaxYear
-  def body: UpdateAccountingTypeRequestBody
-
-  val schema: UpdateAccountingTypeSchema
-}
+case class UpdateAccountingTypeRequestData(nino: Nino, businessId: BusinessId, taxYear: TaxYear, body: UpdateAccountingTypeRequestBody) {}

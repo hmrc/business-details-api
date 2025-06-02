@@ -27,6 +27,10 @@ trait MockAppConfig extends MockFactory {
   implicit val mockAppConfig: AppConfig = mock[AppConfig]
 
   object MockedAppConfig {
+
+    // Tax year Config
+    def updateAccountingTypeMinimumTaxYear: CallHandler[Int] = (() => mockAppConfig.updateAccountingTypeMinimumTaxYear).expects()
+
     // MTD ID Lookup Config
     def mtdIdBaseUrl: CallHandler[String] = (() => mockAppConfig.mtdIdBaseUrl: String).expects()
 

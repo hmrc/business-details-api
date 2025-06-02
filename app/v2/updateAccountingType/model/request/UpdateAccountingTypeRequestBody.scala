@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,22 @@
 
 package v2.updateAccountingType.model.request
 
-import play.api.libs.json.{JsObject, Json, OWrites}
-import utils.JsonWritesUtil
-import v2.updateAccountingType.def1.model.request.Def1_UpdateAccountingTypeRequestBody
+import play.api.libs.json.{Json, OFormat}
+import shapeless.HNil
+import utils.EmptinessChecker
+import v2.common.models.AccountingType
 
-trait UpdateAccountingTypeRequestBody
+import scala.annotation.nowarn
 
-object UpdateAccountingTypeRequestBody extends JsonWritesUtil {
+case class UpdateAccountingTypeRequestBody(accountingType: AccountingType)
 
-  implicit val writes: OWrites[UpdateAccountingTypeRequestBody] = writesFrom { case a: Def1_UpdateAccountingTypeRequestBody =>
-    Json.toJson(a).as[JsObject]
+object UpdateAccountingTypeRequestBody {
+
+  @nowarn("cat=lint-byname-implicit")
+  implicit val emptinessChecker: EmptinessChecker[UpdateAccountingTypeRequestBody] = EmptinessChecker.use { o =>
+    "accountingType" -> o.accountingType.toString :: HNil
   }
+
+  implicit val format: OFormat[UpdateAccountingTypeRequestBody] = Json.format[UpdateAccountingTypeRequestBody]
 
 }
