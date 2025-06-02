@@ -22,27 +22,51 @@ import v2.common.models.AccountingType
 
 class UpdateAccountingTypeRequestBodySpec extends UnitSpec {
 
-  private val validRequestBody = Json.parse("""
+  private val validRequestBodyCASH = Json.parse("""
       |{
       | "accountingType": "CASH"
       |}
       |""".stripMargin)
 
-  private val downstreamRequestBody = Json.parse("""
+  private val downstreamRequestBodyCASH = Json.parse("""
       |{
       | "accountingType": "CASH"
       |}
       |""".stripMargin)
 
-  private val parsedRequestBody = UpdateAccountingTypeRequestBody(AccountingType.CASH)
+  private val validRequestBodyACCRUAL = Json.parse("""
+      |{
+      | "accountingType": "ACCRUAL"
+      |}
+      |""".stripMargin)
+
+  private val downstreamRequestBodyACCRUAL = Json.parse("""
+      |{
+      | "accountingType": "ACCRUAL"
+      |}
+      |""".stripMargin)
+
+  private val parsedRequestBodyCASH = UpdateAccountingTypeRequestBody(AccountingType.CASH)
+
+  private val parsedRequestBodyACCRUAL = UpdateAccountingTypeRequestBody(AccountingType.ACCRUAL)
 
   "UpdateAccountingType" should {
-    "read from vendor JSON" in {
-      validRequestBody.as[UpdateAccountingTypeRequestBody] shouldBe parsedRequestBody
+    "read from vendor JSON with CASH enum" in {
+      validRequestBodyCASH.as[UpdateAccountingTypeRequestBody] shouldBe parsedRequestBodyCASH
     }
 
-    "write to downstream Json" in {
-      Json.toJson(parsedRequestBody) shouldBe downstreamRequestBody
+    "write to downstream Json with CASH enum" in {
+      Json.toJson(parsedRequestBodyCASH) shouldBe downstreamRequestBodyCASH
+    }
+  }
+
+  "UpdateAccountingType with ACCRUAL enum" should {
+    "read from vendor JSON" in {
+      validRequestBodyACCRUAL.as[UpdateAccountingTypeRequestBody] shouldBe parsedRequestBodyACCRUAL
+    }
+
+    "write to downstream Json with ACCRUAL enum" in {
+      Json.toJson(parsedRequestBodyACCRUAL) shouldBe downstreamRequestBodyACCRUAL
     }
   }
 
