@@ -17,23 +17,27 @@
 package v2.updateAccountingType
 
 import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{ResolveBusinessId, ResolveNino, ResolveNonEmptyJsonObject, ResolveTaxYear2026}
+import api.controllers.validators.resolvers.{DetailedResolveTaxYear, ResolveBusinessId, ResolveNino, ResolveNonEmptyJsonObject}
 import api.models.errors.MtdError
 import cats.data.Validated
 import cats.implicits.catsSyntaxTuple4Semigroupal
+import config.AppConfig
 import play.api.libs.json.JsValue
 import v2.updateAccountingType.model.request._
 
-class UpdateAccountingTypeValidator(nino: String, businessId: String, taxYear: String, body: JsValue)
+class UpdateAccountingTypeValidator(nino: String, businessId: String, taxYear: String, body: JsValue)(implicit appConfig: AppConfig)
     extends Validator[UpdateAccountingTypeRequestData] {
 
   private val resolveJson = new ResolveNonEmptyJsonObject[UpdateAccountingTypeRequestBody]()
+
+  private val resolveTaxYear =
+    DetailedResolveTaxYear(allowIncompleteTaxYear = false, maybeMinimumTaxYear = Some(appConfig.updateAccountingTypeMinimumTaxYear))
 
   def validate: Validated[Seq[MtdError], UpdateAccountingTypeRequestData] =
     (
       ResolveNino(nino),
       ResolveBusinessId(businessId),
-      ResolveTaxYear2026(taxYear),
+      resolveTaxYear(taxYear),
       resolveJson(body)
     ) mapN UpdateAccountingTypeRequestData
 

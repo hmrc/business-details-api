@@ -17,6 +17,7 @@
 package v2.updateAccountingType
 
 import api.controllers.validators.Validator
+import config.AppConfig
 import play.api.libs.json.JsValue
 import v2.updateAccountingType.model.request.UpdateAccountingTypeRequestData
 
@@ -25,7 +26,8 @@ import javax.inject.Singleton
 @Singleton
 class UpdateAccountingTypeValidatorFactory {
 
-  def validator(nino: String, businessId: String, taxYear: String, body: JsValue): Validator[UpdateAccountingTypeRequestData] =
+  def validator(nino: String, businessId: String, taxYear: String, body: JsValue)(implicit
+      appConfig: AppConfig): Validator[UpdateAccountingTypeRequestData] =
     new UpdateAccountingTypeValidator(nino, businessId, taxYear, body)
 
 }
