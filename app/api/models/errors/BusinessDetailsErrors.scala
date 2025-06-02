@@ -23,6 +23,8 @@ object RuleBusinessIdNotFoundError extends MtdError("RULE_BUSINESS_ID_NOT_FOUND"
 object RuleBusinessIdStateConflictError
     extends MtdError("RULE_BUSINESS_ID_STATE_CONFLICT", "The request conflicts with the current state of the business ID", BAD_REQUEST)
 
+object RuleOutsideAmendmentWindowError extends MtdError("RULE_OUTSIDE_AMENDMENT_WINDOW", "You are outside the amendment window", BAD_REQUEST)
+
 object RuleQuarterlyPeriodUpdatingError
     extends MtdError(
       "RULE_QUARTERLY_PERIOD_UPDATING",
