@@ -21,7 +21,7 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import v2.common.models.AccountingType
-import v2.updateAccountingType.def1.model.request._
+import v2.updateAccountingType.model.request._
 
 import scala.concurrent.Future
 
@@ -30,8 +30,8 @@ class UpdateAccountingTypeServiceSpec extends ServiceSpec {
   private val nino        = Nino("AA123456A")
   private val businessId  = BusinessId("XAIS12345678910")
   private val taxYear     = TaxYear.fromMtd("2024-25")
-  private val body        = Def1_UpdateAccountingTypeRequestBody(AccountingType.`CASH`)
-  private val requestData = Def1_UpdateAccountingTypeRequestData(nino, businessId, taxYear, body)
+  private val body        = UpdateAccountingTypeRequestBody(AccountingType.`CASH`)
+  private val requestData = UpdateAccountingTypeRequestData(nino, businessId, taxYear, body)
 
   "service" when {
     "a connector call is successful" should {

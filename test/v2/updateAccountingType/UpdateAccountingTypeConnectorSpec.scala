@@ -21,7 +21,7 @@ import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
 import v2.common.models.AccountingType
-import v2.updateAccountingType.def1.model.request._
+import v2.updateAccountingType.model.request._
 
 import scala.concurrent.Future
 
@@ -30,9 +30,9 @@ class UpdateAccountingTypeConnectorSpec extends ConnectorSpec {
   private val nino       = Nino("AA123456A")
   private val businessId = BusinessId("XAIS12345678910")
   private val taxYear    = TaxYear.fromMtd("2024-25")
-  private val body       = Def1_UpdateAccountingTypeRequestBody(AccountingType.`CASH`)
+  private val body       = UpdateAccountingTypeRequestBody(AccountingType.`CASH`)
 
-  private val request = Def1_UpdateAccountingTypeRequestData(nino, businessId, taxYear, body)
+  private val request = UpdateAccountingTypeRequestData(nino, businessId, taxYear, body)
 
   "retrieveBusinessDetailsConnector" must {
     "return a successful response" when {
