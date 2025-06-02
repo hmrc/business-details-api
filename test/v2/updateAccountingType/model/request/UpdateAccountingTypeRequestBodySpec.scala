@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package v2.updateAccountingType.def1.model.request
+package v2.updateAccountingType.model.request
 
 import play.api.libs.json.Json
 import support.UnitSpec
 import v2.common.models.AccountingType
 
-class Def1_UpdateAccountingTypeRequestBodySpec extends UnitSpec {
+class UpdateAccountingTypeRequestBodySpec extends UnitSpec {
 
   private val validRequestBody = Json.parse("""
       |{
@@ -34,11 +34,11 @@ class Def1_UpdateAccountingTypeRequestBodySpec extends UnitSpec {
       |}
       |""".stripMargin)
 
-  private val parsedRequestBody = Def1_UpdateAccountingTypeRequestBody(AccountingType.CASH)
+  private val parsedRequestBody = UpdateAccountingTypeRequestBody(AccountingType.CASH)
 
   "UpdateAccountingType" should {
     "read from vendor JSON" in {
-      validRequestBody.as[Def1_UpdateAccountingTypeRequestBody] shouldBe parsedRequestBody
+      validRequestBody.as[UpdateAccountingTypeRequestBody] shouldBe parsedRequestBody
     }
 
     "write to downstream Json" in {

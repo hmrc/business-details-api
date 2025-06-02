@@ -20,7 +20,6 @@ import api.controllers.validators.Validator
 import api.utils.JsonErrorValidators
 import play.api.libs.json._
 import support.UnitSpec
-import v2.updateAccountingType.def1.Def1_UpdateAccountingTypeValidator
 import v2.updateAccountingType.model.request.UpdateAccountingTypeRequestData
 
 class UpdateAccountingTypeValidatorFactorySpec extends UnitSpec with JsonErrorValidators {
@@ -39,11 +38,11 @@ class UpdateAccountingTypeValidatorFactorySpec extends UnitSpec with JsonErrorVa
 
   "validator()" when {
     "given any tax year" should {
-      "return the Validator for schema definition 1" in {
+      "return the Validator for Update Accounting Type" in {
         val requestBody = validBody
         val result: Validator[UpdateAccountingTypeRequestData] =
           validatorFactory.validator(validNino, validBusinessId, validTaxYear, requestBody)
-        result shouldBe a[Def1_UpdateAccountingTypeValidator]
+        result shouldBe a[UpdateAccountingTypeValidator]
       }
     }
   }

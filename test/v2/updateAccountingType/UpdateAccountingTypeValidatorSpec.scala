@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v2.updateAccountingType.def1
+package v2.updateAccountingType
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors._
@@ -22,9 +22,9 @@ import api.utils.JsonErrorValidators
 import play.api.libs.json._
 import support.UnitSpec
 import v2.common.models.AccountingType
-import v2.updateAccountingType.def1.model.request._
+import v2.updateAccountingType.model.request.{UpdateAccountingTypeRequestBody, UpdateAccountingTypeRequestData}
 
-class Def1_UpdateAccountingTypeValidatorSpec extends UnitSpec with JsonErrorValidators {
+class UpdateAccountingTypeValidatorSpec extends UnitSpec with JsonErrorValidators {
 
   private implicit val correlationId: String = "1234"
 
@@ -42,17 +42,17 @@ class Def1_UpdateAccountingTypeValidatorSpec extends UnitSpec with JsonErrorVali
   private val parsedBusinessId = BusinessId(validBusinessId)
   private val parsedTaxYear    = TaxYear.fromMtd(validTaxYear)
 
-  private val parsedBody = Def1_UpdateAccountingTypeRequestBody(AccountingType.CASH)
+  private val parsedBody = UpdateAccountingTypeRequestBody(AccountingType.CASH)
 
   private def validator(nino: String, businessId: String, taxYear: String, body: JsValue) =
-    new Def1_UpdateAccountingTypeValidator(nino, businessId, taxYear, body)
+    new UpdateAccountingTypeValidator(nino, businessId, taxYear, body)
 
   "validator" should {
     "return the parsed domain object" when {
       "passed a valid request" in {
         val result = validator(validNino, validBusinessId, validTaxYear, validBody).validateAndWrapResult()
 
-        result shouldBe Right(Def1_UpdateAccountingTypeRequestData(parsedNino, parsedBusinessId, parsedTaxYear, parsedBody))
+        result shouldBe Right(UpdateAccountingTypeRequestData(parsedNino, parsedBusinessId, parsedTaxYear, parsedBody))
       }
     }
 
@@ -81,7 +81,7 @@ class Def1_UpdateAccountingTypeValidatorSpec extends UnitSpec with JsonErrorVali
       "passed an too early tax year" in {
         val result = validator(validNino, validBusinessId, "2024-25", validBody).validateAndWrapResult()
         result shouldBe Left(
-          ErrorWrapper(correlationId, InvalidTaxYearParameterError)
+          ErrorWrapper(correlationId, RuleTaxYearNotSupportedError)
         )
       }
 

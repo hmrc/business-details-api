@@ -76,7 +76,7 @@ object ResolveTaxYear2026 extends TaxYearResolving {
     resolve(value, maybeError, errorPath)
       .andThen { taxYear =>
         if (taxYear.year < 2026)
-          Invalid(List(InvalidTaxYearParameterError) ++ maybeError)
+          Invalid(List(RuleTaxYearNotSupportedError) ++ maybeError)
         else
           Valid(taxYear)
       }

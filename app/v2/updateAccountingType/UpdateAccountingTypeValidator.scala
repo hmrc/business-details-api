@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v2.updateAccountingType.def1
+package v2.updateAccountingType
 
 import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.{ResolveBusinessId, ResolveNino, ResolveNonEmptyJsonObject, ResolveTaxYear2026}
@@ -22,13 +22,12 @@ import api.models.errors.MtdError
 import cats.data.Validated
 import cats.implicits.catsSyntaxTuple4Semigroupal
 import play.api.libs.json.JsValue
-import v2.updateAccountingType.def1.model.request._
-import v2.updateAccountingType.model.request.UpdateAccountingTypeRequestData
+import v2.updateAccountingType.model.request._
 
-class Def1_UpdateAccountingTypeValidator(nino: String, businessId: String, taxYear: String, body: JsValue)
+class UpdateAccountingTypeValidator(nino: String, businessId: String, taxYear: String, body: JsValue)
     extends Validator[UpdateAccountingTypeRequestData] {
 
-  private val resolveJson = new ResolveNonEmptyJsonObject[Def1_UpdateAccountingTypeRequestBody]()
+  private val resolveJson = new ResolveNonEmptyJsonObject[UpdateAccountingTypeRequestBody]()
 
   def validate: Validated[Seq[MtdError], UpdateAccountingTypeRequestData] =
     (
@@ -36,6 +35,6 @@ class Def1_UpdateAccountingTypeValidator(nino: String, businessId: String, taxYe
       ResolveBusinessId(businessId),
       ResolveTaxYear2026(taxYear),
       resolveJson(body)
-    ) mapN Def1_UpdateAccountingTypeRequestData
+    ) mapN UpdateAccountingTypeRequestData
 
 }
