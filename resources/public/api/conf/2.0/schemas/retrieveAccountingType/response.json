@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Retrieve accounting type response",
+  "type": "object",
+  "properties": {
+    "accountingType": {
+      "type": "string",
+      "description": "The accounting type used.\n - CASH for cash basis (money actually received and paid out to calculate income and expenses).\n - ACCRUAL records revenues and expenses when they are incurred, regardless of when cash is exchanged.",
+      "enum": [
+        "CASH",
+        "ACCRUAL"
+      ]
+    }
+  },
+  "required": ["accountingType"]
+}

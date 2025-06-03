@@ -23,9 +23,9 @@ components:
       name: taxYear
       in: path
       description: |
-        The tax year for which a quarterly period type is being set.
+        The tax year the data applies to, for example, 2021-22. The start year and end year must not span two tax years. The minimum tax year is 2025-26. No gaps are allowed, for example, 2025-27 is not valid. (The minimum tax year in Sandbox is 2024-25.)
       schema:
         type: string
         pattern: ^2[0-9]{3}-[0-9]{2}$
-        example: "2023-24"
+        example: "2024-25"
       required: true
