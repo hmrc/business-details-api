@@ -16,15 +16,12 @@
 
 package v2.retrieveAccountingType
 
-import api.models.domain.{BusinessId, Nino, TaxYear}
-import api.models.errors._
+import api.controllers.validators.Validator
 import config.MockAppConfig
 import support.UnitSpec
 import v2.retrieveAccountingType.model.request.RetrieveAccountingTypeRequest
 
 class RetrieveAccountingTypeValidatorFactorySpec extends UnitSpec with MockAppConfig {
-
-  private implicit val correlationId: String = "1234"
 
   private val validNino       = "AA123456A"
   private val validBusinessId = "X0IS12345678901"
@@ -38,77 +35,15 @@ class RetrieveAccountingTypeValidatorFactorySpec extends UnitSpec with MockAppCo
 
   }
 
-  private val parsedNino       = Nino(validNino)
-  private val parsedBusinessId = BusinessId(validBusinessId)
-  private val parsedTaxYear    = TaxYear.fromMtd(validTaxYear)
+  private val validatorFactory = new RetrieveAccountingTypeValidatorFactory
 
-  val validatorFactory = new RetrieveAccountingTypeValidatorFactory
-
-  "validator()" should {
-    "passed a valid request" when {
-      "return the parsed domain object" in new Test {
-        val result = validatorFactory.validator(validNino, validBusinessId, validTaxYear).validateAndWrapResult()
-
-        result shouldBe Right(RetrieveAccountingTypeRequest(parsedNino, parsedBusinessId, parsedTaxYear))
+  "validator()" when {
+    "given any tax year" should {
+      "return the Validator for Update Accounting Type" in new Test {
+        val result: Validator[RetrieveAccountingTypeRequest] =
+          validatorFactory.validator(validNino, validBusinessId, validTaxYear)
+        result shouldBe a[RetrieveAccountingTypeValidator]
       }
-    }
-  }
-
-  "return a single error" when {
-    "passed an invalid nino" in new Test {
-      val result = validatorFactory.validator("invalid", validBusinessId, validTaxYear).validateAndWrapResult()
-      result shouldBe Left(
-        ErrorWrapper(correlationId, NinoFormatError)
-      )
-    }
-
-    "passed an invalid business id" in new Test {
-      val result = validatorFactory.validator(validNino, "invalid", validTaxYear).validateAndWrapResult()
-      result shouldBe Left(
-        ErrorWrapper(correlationId, BusinessIdFormatError)
-      )
-    }
-
-    "passed an invalid tax year" in new Test {
-      val result = validatorFactory.validator(validNino, validBusinessId, "invalid").validateAndWrapResult()
-      result shouldBe Left(
-        ErrorWrapper(correlationId, TaxYearFormatError)
-      )
-    }
-
-    "passed an too early tax year" in new Test {
-      val result = validatorFactory.validator(validNino, validBusinessId, "2023-24").validateAndWrapResult()
-      result shouldBe Left(
-        ErrorWrapper(correlationId, RuleTaxYearNotSupportedError)
-      )
-    }
-
-    "passed an tax year that has not ended" in new Test {
-      val result = validatorFactory.validator(validNino, validBusinessId, "2025-26").validateAndWrapResult()
-      result shouldBe Left(
-        ErrorWrapper(correlationId, RuleTaxYearNotEndedError)
-      )
-    }
-
-    "passed an invalid range tax year" in new Test {
-      val result = validatorFactory.validator(validNino, validBusinessId, "2024-26").validateAndWrapResult()
-      result shouldBe Left(
-        ErrorWrapper(correlationId, RuleTaxYearRangeInvalidError)
-      )
-    }
-  }
-
-  "return multiple errors" when {
-    "passed multiple invalid fields" in new Test {
-      val result = validatorFactory.validator("invalid", "invalid", "invalid").validateAndWrapResult()
-
-      result shouldBe Left(
-        ErrorWrapper(
-          correlationId,
-          BadRequestError,
-          Some(List(BusinessIdFormatError, NinoFormatError, TaxYearFormatError))
-        )
-      )
     }
   }
 

@@ -17,15 +17,25 @@
 package v2.retrieveAccountingType
 
 import api.controllers.validators.Validator
+import api.controllers.validators.resolvers.{DetailedResolveTaxYear, ResolveBusinessId, ResolveNino}
+import api.models.errors.MtdError
+import cats.data.Validated
+import cats.data.Validated._
+import cats.implicits._
 import config.AppConfig
 import v2.retrieveAccountingType.model.request.RetrieveAccountingTypeRequest
 
-import javax.inject.Singleton
+class RetrieveAccountingTypeValidator(nino: String, businessId: String, taxYear: String)(implicit appConfig: AppConfig)
+    extends Validator[RetrieveAccountingTypeRequest] {
 
-@Singleton
-class RetrieveAccountingTypeValidatorFactory {
+  private val resolveTaxYear =
+    DetailedResolveTaxYear(allowIncompleteTaxYear = false, maybeMinimumTaxYear = Some(appConfig.accountingTypeMinimumTaxYear))
 
-  def validator(nino: String, businessId: String, taxYear: String)(implicit appConfig: AppConfig): Validator[RetrieveAccountingTypeRequest] =
-    new RetrieveAccountingTypeValidator(nino, businessId, taxYear)
+  def validate: Validated[Seq[MtdError], RetrieveAccountingTypeRequest] =
+    (
+      ResolveNino(nino),
+      ResolveBusinessId(businessId),
+      resolveTaxYear(taxYear)
+    ).mapN(RetrieveAccountingTypeRequest)
 
 }
