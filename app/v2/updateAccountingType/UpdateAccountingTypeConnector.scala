@@ -20,7 +20,7 @@ import api.connectors.DownstreamUri.HipUri
 import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
-import play.api.http.Status.OK
+import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import v2.updateAccountingType.model.request.UpdateAccountingTypeRequestData
 
@@ -44,7 +44,7 @@ class UpdateAccountingTypeConnector @Inject() (val http: HttpClient, val appConf
 
     val mappedQueryParams: Map[String, String] = queryParams.collect { case (k: String, v: String) => (k, v) }
 
-    implicit val successCode: SuccessCode = SuccessCode(OK)
+    implicit val successCode: SuccessCode = SuccessCode(NO_CONTENT)
 
     val downstreamUri = HipUri[Unit](s"itsd/income-sources/$nino/accounting-type/$businessId")
 
