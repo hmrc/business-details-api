@@ -31,7 +31,7 @@ class UpdateAccountingTypeValidatorFactorySpec extends UnitSpec with JsonErrorVa
 
   class Test {
 
-    MockedAppConfig.updateAccountingTypeMinimumTaxYear
+    MockedAppConfig.accountingTypeMinimumTaxYear
       .returns(2025)
       .anyNumberOfTimes()
 

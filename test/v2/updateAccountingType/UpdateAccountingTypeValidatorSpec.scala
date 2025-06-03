@@ -49,7 +49,7 @@ class UpdateAccountingTypeValidatorSpec extends UnitSpec with JsonErrorValidator
     new UpdateAccountingTypeValidator(nino, businessId, taxYear, body)(mockAppConfig)
 
   class Test {
-    MockedAppConfig.updateAccountingTypeMinimumTaxYear.returns(2025).anyNumberOfTimes()
+    MockedAppConfig.accountingTypeMinimumTaxYear.returns(2025).anyNumberOfTimes()
   }
 
   "validator" should {

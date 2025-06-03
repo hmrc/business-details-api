@@ -31,7 +31,7 @@ class UpdateAccountingTypeValidator(nino: String, businessId: String, taxYear: S
   private val resolveJson = new ResolveNonEmptyJsonObject[UpdateAccountingTypeRequestBody]()
 
   private val resolveTaxYear =
-    DetailedResolveTaxYear(allowIncompleteTaxYear = false, maybeMinimumTaxYear = Some(appConfig.updateAccountingTypeMinimumTaxYear))
+    DetailedResolveTaxYear(allowIncompleteTaxYear = false, maybeMinimumTaxYear = Some(appConfig.accountingTypeMinimumTaxYear))
 
   def validate: Validated[Seq[MtdError], UpdateAccountingTypeRequestData] =
     (
