@@ -38,17 +38,11 @@ class UpdateAccountingTypeConnector @Inject() (val http: HttpClient, val appConf
 
     import request._
 
-    val queryParams = Map(
-      "taxYear" -> taxYear.asDownstream
-    )
-
-    val mappedQueryParams: Map[String, String] = queryParams.collect { case (k: String, v: String) => (k, v) }
-
     implicit val successCode: SuccessCode = SuccessCode(NO_CONTENT)
 
-    val downstreamUri = HipUri[Unit](s"itsd/income-sources/$nino/accounting-type/$businessId")
+    val downstreamUri = HipUri[Unit](s"itsd/income-sources/$nino/accounting-type/$businessId?taxYear=${taxYear.asTysDownstream}")
 
-    put(body, downstreamUri, mappedQueryParams.toList)
+    put(body, downstreamUri)
 
   }
 
