@@ -107,24 +107,6 @@ trait BaseDownstreamConnector extends Logging {
     } yield result
   }
 
-  def put[Body: Writes, Resp](body: Body, uri: DownstreamUri[Resp], queryParams: Seq[(String, String)] = Nil)(implicit
-      ec: ExecutionContext,
-      hc: HeaderCarrier,
-      httpReads: HttpReads[DownstreamOutcome[Resp]],
-      correlationId: String): Future[DownstreamOutcome[Resp]] = {
-
-    val strategy = uri.strategy
-
-    def doPut(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] = {
-      http.PUT(getBackendUri(uri.path, strategy), body, queryParams)
-    }
-
-    for {
-      headers <- getBackendHeaders(strategy, jsonContentTypeHeader)
-      result  <- doPut(headers)
-    } yield result
-  }
-
   private def getBackendUri(path: String, strategy: DownstreamStrategy): String =
     s"${strategy.baseUrl}/$path"
 
