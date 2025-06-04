@@ -34,7 +34,7 @@ class UpdateAccountingTypeConnectorSpec extends ConnectorSpec {
 
   private val request = UpdateAccountingTypeRequestData(nino, businessId, taxYear, body)
 
-  "retrieveBusinessDetailsConnector" must {
+  "UpdateAccountingTypeConnector" must {
     "return a successful response" when {
       "the downstream request is successful" in new HipTest with Test {
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))

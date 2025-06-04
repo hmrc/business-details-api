@@ -33,7 +33,7 @@ class UpdateAccountingTypeServiceSpec extends ServiceSpec {
   private val body        = UpdateAccountingTypeRequestBody(AccountingType.`CASH`)
   private val requestData = UpdateAccountingTypeRequestData(nino, businessId, taxYear, body)
 
-  "service" when {
+  "UpdateAccountingTypeService" when {
     "a connector call is successful" should {
       "return a mapped result" in new Test {
         MockedUpdateAccountingTypeConnector
