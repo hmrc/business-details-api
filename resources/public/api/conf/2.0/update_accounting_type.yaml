@@ -23,8 +23,8 @@ parameters:
   - $ref: './common/headers.yaml#/components/parameters/authorization'
   - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
 
-
-
+tags:
+  - Accounting Type
 
 security:
   - User-Restricted:
