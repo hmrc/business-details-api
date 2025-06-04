@@ -30,6 +30,17 @@ security:
   - User-Restricted:
       - read:self-assessment
 
+requestBody:
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/updateAccountingType/request.json'
+      examples:
+        example-request:
+          description: Example request given any tax year
+          value:
+            $ref: './schemas/updateAccountingType/request.json'
+
 responses:
   "204":
     description: Success
