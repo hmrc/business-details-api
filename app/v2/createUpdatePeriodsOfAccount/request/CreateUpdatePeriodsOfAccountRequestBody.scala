@@ -16,11 +16,20 @@
 
 package v2.createUpdatePeriodsOfAccount.request
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Json, OWrites, Reads}
 import v2.common.models.PeriodsOfAccountDates
 
 case class CreateUpdatePeriodsOfAccountRequestBody(periodsOfAccount: Boolean, periodsOfAccountDates: Option[Seq[PeriodsOfAccountDates]])
 
 object CreateUpdatePeriodsOfAccountRequestBody {
-  implicit val format: OFormat[CreateUpdatePeriodsOfAccountRequestBody] = Json.format[CreateUpdatePeriodsOfAccountRequestBody]
+
+  implicit val reads: Reads[CreateUpdatePeriodsOfAccountRequestBody] = Json.reads[CreateUpdatePeriodsOfAccountRequestBody]
+
+  implicit val writes: OWrites[CreateUpdatePeriodsOfAccountRequestBody] = (o: CreateUpdatePeriodsOfAccountRequestBody) =>
+    (o.periodsOfAccount, o.periodsOfAccountDates) match {
+      case (true, Some(dates)) => Json.obj("periodsOfAccountDates" -> dates)
+      case (false, None)       => Json.obj("periodsOfAccount" -> false)
+      case _                   => Json.obj()
+    }
+
 }
