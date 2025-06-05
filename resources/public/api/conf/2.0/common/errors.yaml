@@ -24,6 +24,62 @@ components:
         code: FORMAT_TAX_YEAR
         message: The provided tax year is invalid
 
+    formatStartDate:
+      description: |
+        The format of the supplied start date field is not valid.
+      value:
+        code: FORMAT_START_DATE
+        message: The start date field format is invalid
+
+    formatEndDate:
+      description: |
+        The format of the supplied end date field is not valid.
+      value:
+        code: FORMAT_END_DATE
+        message: The end date field format is invalid
+
+    rulePeriodsOfAccount:
+      description: |
+        Periods of account dates must be supplied if periodsOfAccount is set to true.  Dates should not be supplied if periodsOfAccount is set to false.
+      value:
+        code: RULE_PERIODS_OF_ACCOUNT
+        message: Periods of account dates must be supplied if periodsOfAccount is set to true.  They should not be supplied of periodsOfAccount is set to false
+
+    ruleEndDateBeforeStartDate:
+      description: |
+        One or more periods of account end date values is before the start date.
+      value:
+        code: RULE_END_DATE_BEFORE_START_DATE
+        message: The supplied values for periods of account endDate must not be earlier than the startDate
+
+    ruleStartDate:
+      description: |
+        Periods of account start dates must fall within or before the tax year provided.
+      value:
+        code: RULE_START_DATE
+        message: One or more of the supplied periods of account start dates do not fall within or before the tax year provided
+
+    ruleEndDate:
+      description: |
+        Periods of account end dates must fall within the tax year provided.
+      value:
+        code: RULE_END_DATE
+        message: One or more of the supplied periods of account end dates do not fall within the tax year provided
+
+    rulePeriodsOverlap:
+      description: |
+        Periods of account start and end dates must not overlap.
+      value:
+        code: RULE_PERIODS_OVERLAP
+        message: One or more of the supplied periods of account start and end dates overlap
+
+    ruleCessationDate:
+      description: |
+        Period of account end dates cannot be greater than the income source cessation date
+      value:
+        code: RULE_CESSATION_DATE
+        message: One of more of the supplied periods of account end dates exceeds the business cessation date
+
     ruleTaxYearRangeInvalid:
       description: |
         Tax year range invalid. A tax year range of one year is required.

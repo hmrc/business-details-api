@@ -22,7 +22,7 @@ parameters:
   - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
 
 tags:
-  - Periods Of Account
+  - Periods of Account
 
 security:
   - User-Restricted:
