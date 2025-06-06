@@ -42,7 +42,7 @@ requestBody:
             $ref: './examples/updateAccountingType/periodOfAccountTrueResponse.json'
 
         periodOfAccountFalse:
-          description: Example request when periodsOfAccountDates doesn't need to be submitted
+          description: Example request when periodsOfAccountDates don't need to be submitted
           value:
             $ref: './examples/updateAccountingType/periodOfAccountFalseResponse.json'
 
