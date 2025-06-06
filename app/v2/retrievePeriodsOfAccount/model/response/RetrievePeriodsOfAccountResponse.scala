@@ -19,13 +19,13 @@ package v2.retrievePeriodsOfAccount.model.response
 import play.api.libs.json.{Json, OWrites, Reads}
 import v2.common.models.PeriodsOfAccountDates
 
-case class RetreievePeriodsOfAccountResponse(periodsOfAccount: Option[Boolean], periodsOfAccountDates: Option[Seq[PeriodsOfAccountDates]])
+case class RetrievePeriodsOfAccountResponse(periodsOfAccount: Option[Boolean], periodsOfAccountDates: Option[Seq[PeriodsOfAccountDates]])
 
-object RetreievePeriodsOfAccountResponse {
+object RetrievePeriodsOfAccountResponse {
 
-  implicit val reads: Reads[RetreievePeriodsOfAccountResponse] = Json.reads[RetreievePeriodsOfAccountResponse]
+  implicit val reads: Reads[RetrievePeriodsOfAccountResponse] = Json.reads[RetrievePeriodsOfAccountResponse]
 
-  implicit val writes: OWrites[RetreievePeriodsOfAccountResponse] = (o: RetreievePeriodsOfAccountResponse) =>
+  implicit val writes: OWrites[RetrievePeriodsOfAccountResponse] = (o: RetrievePeriodsOfAccountResponse) =>
     (o.periodsOfAccount, o.periodsOfAccountDates) match {
       case (None, Some(dates)) => Json.obj("periodsOfAccount" -> true, "periodsOfAccountDates" -> dates)
       case _                   => Json.obj("periodsOfAccount" -> false)

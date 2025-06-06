@@ -59,14 +59,14 @@ class RetrievePeriodsOfAccountResponseSpec extends UnitSpec {
       |}
       |""".stripMargin)
 
-  private val parsedResponseWithDates = RetreievePeriodsOfAccountResponse(None, Some(Seq(PeriodsOfAccountDates("2024-04-06", "2025-03-05"))))
+  private val parsedResponseWithDates = RetrievePeriodsOfAccountResponse(None, Some(Seq(PeriodsOfAccountDates("2024-04-06", "2025-03-05"))))
 
-  private val parsedResponseWithoutDates = RetreievePeriodsOfAccountResponse(Some(false), None)
+  private val parsedResponseWithoutDates = RetrievePeriodsOfAccountResponse(Some(false), None)
 
   "RetreievePeriodsOfAccountResponse" when {
     "There are periods of accounts dates" should {
       "read from json" in {
-        downstreamResponseWithDates.as[RetreievePeriodsOfAccountResponse] shouldBe parsedResponseWithDates
+        downstreamResponseWithDates.as[RetrievePeriodsOfAccountResponse] shouldBe parsedResponseWithDates
       }
       "write to json" in {
         Json.toJson(parsedResponseWithDates) shouldBe vendorResponseWithDates
@@ -77,7 +77,7 @@ class RetrievePeriodsOfAccountResponseSpec extends UnitSpec {
 
   "There are no periods of accounts dates" should {
     "read from json" in {
-      downstreamResponseWithoutDates.as[RetreievePeriodsOfAccountResponse] shouldBe parsedResponseWithoutDates
+      downstreamResponseWithoutDates.as[RetrievePeriodsOfAccountResponse] shouldBe parsedResponseWithoutDates
     }
 
     "write to json" in {
