@@ -29,7 +29,7 @@ trait MockAppConfig extends MockFactory {
   object MockedAppConfig {
 
     // Tax year Config
-    def updateAccountingTypeMinimumTaxYear: CallHandler[Int] = (() => mockAppConfig.updateAccountingTypeMinimumTaxYear).expects()
+    def accountingTypeMinimumTaxYear: CallHandler[Int] = (() => mockAppConfig.accountingTypeMinimumTaxYear).expects()
 
     // MTD ID Lookup Config
     def mtdIdBaseUrl: CallHandler[String] = (() => mockAppConfig.mtdIdBaseUrl: String).expects()

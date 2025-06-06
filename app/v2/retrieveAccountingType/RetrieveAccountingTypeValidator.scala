@@ -14,31 +14,28 @@
  * limitations under the License.
  */
 
-package v2.updateAccountingType
+package v2.retrieveAccountingType
 
 import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{DetailedResolveTaxYear, ResolveBusinessId, ResolveNino, ResolveNonEmptyJsonObject}
+import api.controllers.validators.resolvers.{DetailedResolveTaxYear, ResolveBusinessId, ResolveNino}
 import api.models.errors.MtdError
 import cats.data.Validated
-import cats.implicits.catsSyntaxTuple4Semigroupal
+import cats.data.Validated._
+import cats.implicits._
 import config.AppConfig
-import play.api.libs.json.JsValue
-import v2.updateAccountingType.model.request._
+import v2.retrieveAccountingType.model.request.RetrieveAccountingTypeRequest
 
-class UpdateAccountingTypeValidator(nino: String, businessId: String, taxYear: String, body: JsValue)(implicit appConfig: AppConfig)
-    extends Validator[UpdateAccountingTypeRequestData] {
-
-  private val resolveJson = new ResolveNonEmptyJsonObject[UpdateAccountingTypeRequestBody]()
+class RetrieveAccountingTypeValidator(nino: String, businessId: String, taxYear: String)(implicit appConfig: AppConfig)
+    extends Validator[RetrieveAccountingTypeRequest] {
 
   private val resolveTaxYear =
     DetailedResolveTaxYear(allowIncompleteTaxYear = false, maybeMinimumTaxYear = Some(appConfig.accountingTypeMinimumTaxYear))
 
-  def validate: Validated[Seq[MtdError], UpdateAccountingTypeRequestData] =
+  def validate: Validated[Seq[MtdError], RetrieveAccountingTypeRequest] =
     (
       ResolveNino(nino),
       ResolveBusinessId(businessId),
-      resolveTaxYear(taxYear),
-      resolveJson(body)
-    ) mapN UpdateAccountingTypeRequestData
+      resolveTaxYear(taxYear)
+    ).mapN(RetrieveAccountingTypeRequest)
 
 }

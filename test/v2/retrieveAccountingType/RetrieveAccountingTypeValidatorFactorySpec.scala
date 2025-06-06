@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package v2.updateAccountingType
+package v2.retrieveAccountingType
 
 import api.controllers.validators.Validator
-import api.utils.JsonErrorValidators
 import config.MockAppConfig
-import play.api.libs.json._
 import support.UnitSpec
-import v2.updateAccountingType.model.request.UpdateAccountingTypeRequestData
+import v2.retrieveAccountingType.model.request.RetrieveAccountingTypeRequest
 
-class UpdateAccountingTypeValidatorFactorySpec extends UnitSpec with JsonErrorValidators with MockAppConfig {
+class RetrieveAccountingTypeValidatorFactorySpec extends UnitSpec with MockAppConfig {
 
   private val validNino       = "AA123456A"
   private val validBusinessId = "X0IS12345678901"
@@ -37,21 +35,14 @@ class UpdateAccountingTypeValidatorFactorySpec extends UnitSpec with JsonErrorVa
 
   }
 
-  private val validBody = Json.parse("""
-      |{
-      | "accountingType": "CASH"
-      |}
-      |""".stripMargin)
-
-  private val validatorFactory = new UpdateAccountingTypeValidatorFactory
+  private val validatorFactory = new RetrieveAccountingTypeValidatorFactory
 
   "validator()" when {
     "given any tax year" should {
       "return the Validator for Update Accounting Type" in new Test {
-        val requestBody = validBody
-        val result: Validator[UpdateAccountingTypeRequestData] =
-          validatorFactory.validator(validNino, validBusinessId, validTaxYear, requestBody)
-        result shouldBe a[UpdateAccountingTypeValidator]
+        val result: Validator[RetrieveAccountingTypeRequest] =
+          validatorFactory.validator(validNino, validBusinessId, validTaxYear)
+        result shouldBe a[RetrieveAccountingTypeValidator]
       }
     }
   }
