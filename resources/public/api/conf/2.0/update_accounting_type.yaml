@@ -39,7 +39,7 @@ requestBody:
         example-request:
           description: Example request given any tax year
           value:
-            $ref: './schemas/updateAccountingType/request.json'
+            $ref: './examples/updateAccountingType/request.json'
 
 responses:
   "204":

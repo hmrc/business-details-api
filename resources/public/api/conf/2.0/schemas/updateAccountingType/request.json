@@ -5,7 +5,7 @@
   "properties": {
     "accountingType": {
       "type": "string",
-      "description": "The accounting type used.\n\nCASH for cash basis (money actually received and paid out to calculate income and expenses).\nACCRUAL records revenues and expenses when they are incurred, regardless of when cash is exchanged.\n\n\nValue: CASH",
+      "description": "The accounting type used.\n\nCASH for cash basis (money actually received and paid out to calculate income and expenses).\n\nACCRUAL records revenues and expenses when they are incurred, regardless of when cash is exchanged.",
       "enum": [
         "CASH",
         "ACCRUAL"
