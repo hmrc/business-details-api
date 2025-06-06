@@ -37,12 +37,12 @@ requestBody:
         $ref: './schemas/updateAccountingType/request.json'
       examples:
         periodOfAccountTrue:
-          description: Example request when given tax year is true
+          description: Example request when periodsOfAccountDates must be submitted
           value:
             $ref: './examples/updateAccountingType/periodOfAccountTrueResponse.json'
 
         periodOfAccountFalse:
-          description: Example request when given tax year is false
+          description: Example request when periodsOfAccountDates doesn't need to be submitted
           value:
             $ref: './examples/updateAccountingType/periodOfAccountFalseResponse.json'
 
