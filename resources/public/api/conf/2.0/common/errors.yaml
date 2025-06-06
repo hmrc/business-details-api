@@ -31,13 +31,6 @@ components:
         code: RULE_TAX_YEAR_RANGE_INVALID
         message: A tax year range of one year is required
 
-    ruleTaxYearNotSupported:
-      description: |
-        The specified tax year is not supported. Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
-      value:
-        code: RULE_TAX_YEAR_NOT_SUPPORTED
-        message: The tax year specified does not lie within the supported range
-
     ruleBusinessIdStateConflict:
       description: |
         The request conflicts with the current state of the business ID.
@@ -51,6 +44,13 @@ components:
       value:
         code: RULE_QUARTERLY_PERIOD_UPDATING
         message: Quarterly period type cannot be changed for the current year as the business is treated as commencing in the following year
+
+    ruleTaxYearNotEnded:
+      description: |
+        Submission is provided before the tax year has ended.
+      value:
+        code: RULE_TAX_YEAR_NOT_ENDED
+        message: Submission is provided before the tax year has ended
 
     ruleIncorrectOrEmptyBodySubmitted:
       description: |
@@ -66,6 +66,20 @@ components:
       value:
         code: RULE_INCORRECT_GOV_TEST_SCENARIO
         message: The Gov-Test-Scenario was not found
+
+    ruleOutsideAmendmentWindow:
+      description: |
+        The request cannot be completed as you are outside the amendment window.
+      value:
+        code: RULE_OUTSIDE_AMENDMENT_WINDOW
+        message: You are outside the amendment window
+
+    ruleTaxYearNotSupported:
+      description: |
+        The specified tax year is not supported. Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+      value:
+        code: RULE_TAX_YEAR_NOT_SUPPORTED
+        message: The tax year specified does not lie within the supported range
 
     # 403
 
@@ -98,6 +112,14 @@ components:
       value:
         code: RULE_BUSINESS_ID_NOT_FOUND
         message: The business ID provided is not found
+
+    ruleTaxYearInvalid:
+      description: |
+        Tax year range invalid. A tax year range of one year is required.
+      value:
+        code: RULE_TAX_YEAR_RANGE_INVALID
+        message: A tax year range of one year is required
+
 
     #422
 

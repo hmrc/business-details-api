@@ -1,13 +1,17 @@
-summary: Retrieve Accounting Type
+summary: Update Accounting Type
 description: |
-  This endpoint allows a customer to retrieve the Accounting Type that they have on record. A National Insurance number, business ID and tax year must be provided.
-  
+  This endpoint allows a customer to update the Accounting Type that they have on record. This can be done at the end of the year after their Final Declaration.
+
   ### Test data
   Scenario simulations using <code>Gov-Test-Scenario</code> headers is only available in the sandbox environment.
-  | Header Value (Gov-Test-Scenario) | Scenario                                    |
-  | -------------------------------- | ------------------------------------------- |
-  | N/A - DEFAULT                    | Simulate a successful response              |
-  | NOT_FOUND                        | Simulate a scenario where no data is found. |
+  
+  | Header Value (Gov-Test-Scenario)         | Scenario                                                                                                                                      |
+  |------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+  | N/A - DEFAULT                            | Simulate a successful response with a self-employment business. <br/> Use the following businessId for this scenario: <br/> - XBIS12345678901 |
+  | NOT_FOUND                                | Simulate a scenario where no data is found.                                                                                                   |
+  | OUTSIDE_AMENDMENT_WINDOW                 | Simulates the scenario where request cannot be completed as it is outside the amendment window.                                               |
+  | STATEFUL                                 | Performs a stateful update.                                                                                                                 |
+
 
 
 
@@ -26,8 +30,25 @@ security:
   - User-Restricted:
       - read:self-assessment
 
+requestBody:
+  content:
+    application/json:
+      schema:
+        $ref: './schemas/updateAccountingType/request.json'
+      examples:
+        periodOfAccountTrue:
+          description: Example request when periodsOfAccountDates must be submitted
+          value:
+            $ref: './examples/updateAccountingType/periodOfAccountTrueResponse.json'
+
+        periodOfAccountFalse:
+          description: Example request when periodsOfAccountDates don't need to be submitted
+          value:
+            $ref: './examples/updateAccountingType/periodOfAccountFalseResponse.json'
+
+
 responses:
-  "200":
+  "204":
     description: Success
     headers:
       X-CorrelationId:
@@ -38,15 +59,8 @@ responses:
         $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
       Link:
         $ref: ./common/headers.yaml#/components/parameters/linkHeader
-    content:
-      application/json:
-        schema:
-          $ref: './schemas/retrieveAccountingType/response.json'
-        examples:
-          example-response:
-            description: Example Response
-            value:
-              $ref: './examples/retrieveAccountingType/response.json'
+    content: { }
+
   "400":
     description: Bad request
     headers:
@@ -69,15 +83,19 @@ responses:
             $ref: './common/errors.yaml#/components/examples/formatTaxYear'
           FORMAT_BUSINESS_ID:
             $ref: './common/errors.yaml#/components/examples/formatBusinessId'
+          RULE_TAX_YEAR_NOT_ENDED:
+            $ref: './common/errors.yaml#/components/examples/ruleTaxYearNotEnded'
+          RULE_OUTSIDE_AMENDMENT_WINDOW:
+            $ref: './common/errors.yaml#/components/examples/ruleOutsideAmendmentWindow'
+          RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
+            $ref: './common/errors.yaml#/components/examples/ruleIncorrectOrEmptyBodySubmitted'
           RULE_TAX_YEAR_RANGE_INVALID:
-            $ref: './common/errors.yaml#/components/examples/ruleTaxYearRangeInvalid'
+            $ref: './common/errors.yaml#/components/examples/ruleTaxYearInvalid'
           RULE_TAX_YEAR_NOT_SUPPORTED:
             $ref: './common/errors.yaml#/components/examples/ruleTaxYearNotSupported'
-          RULE_INCORRECT_GOV_TEST_SCENARIO:
-            $ref: './common/errors.yaml#/components/examples/ruleIncorrectGovTestScenario'
 
   "403":
-    description: Forbidden
+    description: Not Found
     headers:
       X-CorrelationId:
         $ref: './common/headers.yaml#/components/parameters/correlationId'
@@ -111,5 +129,7 @@ responses:
         schema:
           $ref: './schemas/error-response.yaml'
         examples:
+          RULE_INCORRECT_GOV_TEST_SCENARIO:
+            $ref: './common/errors.yaml#/components/examples/ruleIncorrectGovTestScenario'
           MATCHING_RESOURCE_NOT_FOUND:
             $ref: './common/errors.yaml#/components/examples/notFound'

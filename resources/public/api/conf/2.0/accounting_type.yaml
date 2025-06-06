@@ -1,0 +1,13 @@
+put:
+  $ref: "./update_accounting_type.yaml"
+  summary: Update Accounting Type
+  security:
+    - User-Restricted:
+        - write:self-assessment
+
+get:
+  $ref: "./retrieve_accounting_type.yaml"
+  summary: Retrieve Accounting Type
+  security:
+    - User-Restricted:
+        - write:self-assessment
