@@ -36,10 +36,16 @@ requestBody:
       schema:
         $ref: './schemas/updateAccountingType/request.json'
       examples:
-        example-request:
-          description: Example request given any tax year
+        periodOfAccountTrue:
+          description: Example request when given tax year is true
           value:
-            $ref: './examples/updateAccountingType/request.json'
+            $ref: './examples/updateAccountingType/periodOfAccountTrueResponse.json'
+
+        periodOfAccountFalse:
+          description: Example request when given tax year is false
+          value:
+            $ref: './examples/updateAccountingType/periodOfAccountFalseResponse.json'
+
 
 responses:
   "204":
