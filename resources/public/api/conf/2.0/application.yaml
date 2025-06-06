@@ -64,4 +64,4 @@ paths:
   /individuals/business/details/{nino}/{businessId}/{taxYear}/accounting-type:
     $ref: "./retrieve_accounting_type.yaml"
   /individuals/business/details/{nino}/{businessId}/{taxYear}/periods-of-account:
-    $ref:
+    $ref: "./createUpdatePeriodsOfAccount.yaml"
