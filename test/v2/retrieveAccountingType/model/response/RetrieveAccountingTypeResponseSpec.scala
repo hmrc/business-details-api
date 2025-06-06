@@ -16,42 +16,68 @@
 
 package v2.retrieveAccountingType.model.response
 
-import play.api.libs.json.{JsResultException, Json}
+import play.api.libs.json.{JsResultException, JsValue, Json}
 import support.UnitSpec
 import v2.common.models.AccountingType
 
 class RetrieveAccountingTypeResponseSpec extends UnitSpec {
 
-  private val validDownstreamResponse = Json.parse(
-    """
-      |{
-      | "accountingType": "CASH"
-      |}
-      |""".stripMargin
+  private def validDownstreamJson(typeOfBusiness: String, accountingType: String): JsValue = Json.parse(
+    s"""
+       |{
+       |  "$typeOfBusiness": [
+       |    {
+       |      "accountingType": "$accountingType"
+       |    }
+       |  ]
+       |}
+    """.stripMargin
   )
 
-  private val invalidDownstreamResponse = Json.parse(
-    """
-      |{
-      | "accountingType": "TEST"
-      |}
-      |""".stripMargin
+  private def validMtdJson(accountingType: String): JsValue = Json.parse(
+    s"""
+       |{
+       |  "accountingType": "$accountingType"
+       |}
+    """.stripMargin
   )
 
-  private val parsedRequestBody = RetrieveAccountingTypeResponse(AccountingType.CASH)
+  private def parsedBody(accountingType: AccountingType): RetrieveAccountingTypeResponse = RetrieveAccountingTypeResponse(accountingType)
+
+  private val businessTypes: Seq[String]           = Seq("selfEmployments", "ukProperty", "foreignProperty")
+  private val accountingTypes: Seq[AccountingType] = Seq(AccountingType.CASH, AccountingType.ACCRUAL)
+
+  private val invalidDownstreamJson: JsValue = Json.parse(
+    """
+      |{
+      |  "selfEmployments": [
+      |    {
+      |      "accountingType": "TEST"
+      |    }
+      |  ]
+      |}
+    """.stripMargin
+  )
 
   "RetrieveAccountingType" should {
-    "parse downstream response correctly given valid Json" in {
-      validDownstreamResponse.as[RetrieveAccountingTypeResponse] shouldBe parsedRequestBody
+    businessTypes.foreach { typeOfBusiness =>
+      accountingTypes.foreach { accountingType =>
+        val responseModel: RetrieveAccountingTypeResponse = parsedBody(accountingType)
+        val downstreamJson: JsValue                       = validDownstreamJson(typeOfBusiness, accountingType.toString)
+
+        s"correctly parse valid JSON with typeOfBusiness $typeOfBusiness and accountingType $accountingType" in {
+          downstreamJson.as[RetrieveAccountingTypeResponse] shouldBe responseModel
+        }
+
+        s"write to flat JSON correctly for typeOfBusiness $typeOfBusiness and accountingType $accountingType" in {
+          Json.toJson(responseModel) shouldBe validMtdJson(accountingType.toString)
+        }
+      }
     }
-  }
 
-  "write to Json correctly" in {
-    Json.toJson(parsedRequestBody) shouldBe validDownstreamResponse
-  }
-
-  "throw an error given invalid Json" in {
-    assertThrows[JsResultException](invalidDownstreamResponse.as[RetrieveAccountingTypeResponse])
+    "throw an error given invalid Json" in {
+      assertThrows[JsResultException](invalidDownstreamJson.as[RetrieveAccountingTypeResponse])
+    }
   }
 
 }
