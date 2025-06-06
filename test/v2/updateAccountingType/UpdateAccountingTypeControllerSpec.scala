@@ -25,6 +25,7 @@ import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
 import config.MockAppConfig
+import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import routing.Version2
@@ -97,7 +98,7 @@ class UpdateAccountingTypeControllerSpec
     }
   }
 
-  private trait Test extends ControllerTest with MockAppConfig with AuditEventChecking[FlattenedGenericAuditDetail] {
+  private trait Test extends ControllerTest with AuditEventChecking[FlattenedGenericAuditDetail] {
 
     val controller = new UpdateAccountingTypeController(
       authService = mockEnrolmentsAuthService,
@@ -112,6 +113,12 @@ class UpdateAccountingTypeControllerSpec
     MockedAppConfig.updateAccountingTypeMinimumTaxYear
       .returns(2025)
       .anyNumberOfTimes()
+
+    MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
+      "supporting-agents-access-control.enabled" -> true
+    )
+
+    MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
     protected def callController(): Future[Result] = controller.handleRequest(nino, validBusinessId, validTaxYear)(fakePutRequest(validBody))
 

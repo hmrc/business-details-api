@@ -16,6 +16,7 @@
 
 package v2.updateAccountingType
 
+import api.models.domain.TaxYear
 import api.models.errors._
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
@@ -99,7 +100,7 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
           ("AA1123A", "XAIS12345678910", "2024-25", requestBodyJson, BAD_REQUEST, NinoFormatError),
           ("AA123456A", "invalid", "2024-25", requestBodyJson, BAD_REQUEST, BusinessIdFormatError),
           ("AA123456A", "XAIS12345678910", "invalid", requestBodyJson, BAD_REQUEST, TaxYearFormatError),
-          ("AA123456A", "XAIS12345678910", "2025-26", requestBodyJson, BAD_REQUEST, RuleTaxYearNotEndedError),
+          ("AA123456A", "XAIS12345678910", TaxYear.currentTaxYear().asMtd, requestBodyJson, BAD_REQUEST, RuleTaxYearNotEndedError),
           ("AA123456A", "XAIS12345678910", "2024-26", requestBodyJson, BAD_REQUEST, RuleTaxYearRangeInvalidError),
           ("AA123456A", "XAIS12345678910", "2023-24", requestBodyJson, BAD_REQUEST, RuleTaxYearNotSupportedError),
           ("AA123456A", "XAIS12345678910", "2024-25", JsObject.empty, BAD_REQUEST, RuleIncorrectOrEmptyBodyError)
@@ -130,7 +131,7 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
           (BAD_REQUEST, "1000", INTERNAL_SERVER_ERROR, InternalError),
           (BAD_REQUEST, "1216", INTERNAL_SERVER_ERROR, InternalError),
           (BAD_REQUEST, "1007", BAD_REQUEST, BusinessIdFormatError),
-          (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
+          (NOT_FOUND, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
           (BAD_REQUEST, "5010", NOT_FOUND, NotFoundError),
           (UNPROCESSABLE_ENTITY, "1115", BAD_REQUEST, RuleTaxYearNotEndedError),
           (UNPROCESSABLE_ENTITY, "4200", BAD_REQUEST, RuleOutsideAmendmentWindowError)

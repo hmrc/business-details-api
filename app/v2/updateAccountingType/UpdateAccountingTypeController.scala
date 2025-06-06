@@ -71,8 +71,10 @@ class UpdateAccountingTypeController @Inject() (
           httpStatus: Int,
           response: Either[ErrorWrapper, Option[JsValue]]
       )(implicit ctx: RequestContext, ec: ExecutionContext): Unit = {
-        val versionNumber = Version.from(request, orElse = Version1)
-        val params        = Map("nino" -> nino, "businessId" -> businessId, "taxYear" -> taxYear)
+        val versionNumber  = Version.from(request, orElse = Version1)
+        val accountingType = (request.request.body \ "accountingType").asOpt[String]
+
+        val params = Map("nino" -> nino, "businessId" -> businessId, "taxYear" -> taxYear) ++ accountingType.map("accountingType" -> _)
 
         response match {
           case Left(err: ErrorWrapper) =>

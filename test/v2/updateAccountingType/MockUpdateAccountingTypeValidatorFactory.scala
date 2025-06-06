@@ -20,7 +20,7 @@ import api.controllers.validators.Validator
 import api.models.errors.MtdError
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
-import config.MockAppConfig
+import config.{AppConfig, MockAppConfig}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
@@ -35,8 +35,8 @@ trait MockUpdateAccountingTypeValidatorFactory extends MockFactory with MockAppC
 
     def expectValidator(): CallHandler[Validator[UpdateAccountingTypeRequestData]] = {
       (mockUpdateAccountingTypeValidatorFactory
-        .validator(_: String, _: String, _: String, _: JsValue))
-        .expects(*, *, *, *)
+        .validator(_: String, _: String, _: String, _: JsValue)(_: AppConfig))
+        .expects(*, *, *, *, *)
     }
 
   }
