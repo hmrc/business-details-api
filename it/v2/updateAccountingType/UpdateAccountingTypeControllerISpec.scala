@@ -43,10 +43,14 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
 
   private def errorBody(code: String): String =
     s"""
-       |      {
-       |        "code": "$code",
-       |        "reason": "message"
-       |      }
+       |{
+       |  "response": [
+       |    {
+       |      "type": "$code",
+       |      "reason": "message"
+       |    }
+       |  ]
+       |}
   """.stripMargin
 
   "Calling the update accounting type endpoint" should {
