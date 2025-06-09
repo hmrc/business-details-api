@@ -46,8 +46,8 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
        |{
        |  "response": [
        |    {
-       |      "type": "$code",
-       |      "reason": "message"
+       |      "errorCode": "$code",
+       |      "errorDescription": "message"
        |    }
        |  ]
        |}
