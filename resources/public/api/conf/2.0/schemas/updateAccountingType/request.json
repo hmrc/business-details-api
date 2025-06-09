@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "description": "Retrieve accounting type response",
+  "title": "Update Accounting Type",
   "type": "object",
   "properties": {
     "accountingType": {
@@ -12,5 +12,8 @@
       ]
     }
   },
-  "required": ["accountingType"]
+  "required": [
+    "accountingType"
+  ],
+  "additionalProperties": false
 }
