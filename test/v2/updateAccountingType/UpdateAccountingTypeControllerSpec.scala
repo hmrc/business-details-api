@@ -110,7 +110,7 @@ class UpdateAccountingTypeControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    MockedAppConfig.updateAccountingTypeMinimumTaxYear
+    MockedAppConfig.accountingTypeMinimumTaxYear
       .returns(2025)
       .anyNumberOfTimes()
 
