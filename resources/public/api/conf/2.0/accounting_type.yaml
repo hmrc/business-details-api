@@ -10,4 +10,4 @@ get:
   summary: Retrieve Accounting Type
   security:
     - User-Restricted:
-        - write:self-assessment
+        - read:self-assessment
