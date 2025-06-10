@@ -21,6 +21,16 @@ components:
         example: Bearer bb7fed3fe10dd235a2ccda3d50fb
       required: true
 
+    authorizationWriteScopeHeader:
+      name: "Authorization"
+      in: header
+      description: |
+        An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+      schema:
+        type: string
+        example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+      required: true
+
     contentTypeJson:
       name: "Content-Type"
       in: header
@@ -60,7 +70,7 @@ components:
         See the API documentation:
       schema:
         type: string
-        example: "https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/individual-calculations-api"
+        example: "https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/business-details-api"
       required: false
 
     deprecationHeader:

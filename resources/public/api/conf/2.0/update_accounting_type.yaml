@@ -1,26 +1,25 @@
 summary: Update Accounting Type
 description: |
   This endpoint allows a customer to update the Accounting Type that they have on record. This can be done at the end of the year after their Final Declaration.
+  A National Insurance number, business ID and tax year must be provided.
 
   ### Test data
   Scenario simulations using <code>Gov-Test-Scenario</code> headers is only available in the sandbox environment.
   
-  | Header Value (Gov-Test-Scenario)         | Scenario                                                                                                                                      |
-  |------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-  | N/A - DEFAULT                            | Simulate a successful response with a self-employment business. <br/> Use the following businessId for this scenario: <br/> - XBIS12345678901 |
-  | NOT_FOUND                                | Simulate a scenario where no data is found.                                                                                                   |
-  | OUTSIDE_AMENDMENT_WINDOW                 | Simulates the scenario where request cannot be completed as it is outside the amendment window.                                               |
-  | STATEFUL                                 | Performs a stateful update.                                                                                                                 |
-
-
-
+  | Header Value (Gov-Test-Scenario)         | Scenario                                                                                           |
+  |------------------------------------------|----------------------------------------------------------------------------------------------------|
+  | N/A - DEFAULT                            | Simulates success response.                                                                        |
+  | NOT_FOUND                                | Simulates the scenario where no data is found.                                                     |
+  | OUTSIDE_AMENDMENT_WINDOW                 | Simulates the scenario where request cannot be completed as it is outside the amendment window.    |
+  | STATEFUL                                 | Performs a stateful update.                                                                        |
 
 parameters:
   - $ref: './common/pathParameters.yaml#/components/parameters/nino'
   - $ref: './common/pathParameters.yaml#/components/parameters/businessId'
-  - $ref: './common/pathParameters.yaml#/components/parameters/taxYear'
+  - $ref: './common/pathParameters.yaml#/components/parameters/accountingTypeTaxYear'
   - $ref: './common/headers.yaml#/components/parameters/acceptJson'
-  - $ref: './common/headers.yaml#/components/parameters/authorization'
+  - $ref: './common/headers.yaml#/components/parameters/contentTypeJson'
+  - $ref: './common/headers.yaml#/components/parameters/authorizationWriteScopeHeader'
   - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
 
 tags:
@@ -28,38 +27,28 @@ tags:
 
 security:
   - User-Restricted:
-      - read:self-assessment
+      - write:self-assessment
 
 requestBody:
   content:
     application/json:
       schema:
         $ref: './schemas/updateAccountingType/request.json'
-      examples:
-        periodOfAccountTrue:
-          description: Example request when periodsOfAccountDates must be submitted
-          value:
-            $ref: './examples/updateAccountingType/periodOfAccountTrueResponse.json'
-
-        periodOfAccountFalse:
-          description: Example request when periodsOfAccountDates don't need to be submitted
-          value:
-            $ref: './examples/updateAccountingType/periodOfAccountFalseResponse.json'
-
+      example:
+        $ref: './examples/updateAccountingType/request.json'
 
 responses:
   "204":
-    description: Success
+    description: Success(No Content)
     headers:
       X-CorrelationId:
         $ref: './common/headers.yaml#/components/parameters/correlationId'
       Deprecation:
-        $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
       Sunset:
-        $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
       Link:
-        $ref: ./common/headers.yaml#/components/parameters/linkHeader
-    content: { }
+        $ref: './common/headers.yaml#/components/parameters/linkHeader'
 
   "400":
     description: Bad request
@@ -67,11 +56,11 @@ responses:
       X-CorrelationId:
         $ref: './common/headers.yaml#/components/parameters/correlationId'
       Deprecation:
-        $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
       Sunset:
-        $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
       Link:
-        $ref: ./common/headers.yaml#/components/parameters/linkHeader
+        $ref: './common/headers.yaml#/components/parameters/linkHeader'
     content:
       application/json:
         schema:
@@ -90,21 +79,23 @@ responses:
           RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
             $ref: './common/errors.yaml#/components/examples/ruleIncorrectOrEmptyBodySubmitted'
           RULE_TAX_YEAR_RANGE_INVALID:
-            $ref: './common/errors.yaml#/components/examples/ruleTaxYearInvalid'
+            $ref: './common/errors.yaml#/components/examples/ruleTaxYearRangeInvalid'
           RULE_TAX_YEAR_NOT_SUPPORTED:
             $ref: './common/errors.yaml#/components/examples/ruleTaxYearNotSupported'
+          RULE_INCORRECT_GOV_TEST_SCENARIO:
+            $ref: './common/errors.yaml#/components/examples/ruleIncorrectGovTestScenario'
 
   "403":
-    description: Not Found
+    description: Forbidden
     headers:
       X-CorrelationId:
         $ref: './common/headers.yaml#/components/parameters/correlationId'
       Deprecation:
-        $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
       Sunset:
-        $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
       Link:
-        $ref: ./common/headers.yaml#/components/parameters/linkHeader
+        $ref: './common/headers.yaml#/components/parameters/linkHeader'
     content:
       application/json:
         schema:
@@ -119,17 +110,15 @@ responses:
       X-CorrelationId:
         $ref: './common/headers.yaml#/components/parameters/correlationId'
       Deprecation:
-        $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
       Sunset:
-        $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
       Link:
-        $ref: ./common/headers.yaml#/components/parameters/linkHeader
+        $ref: './common/headers.yaml#/components/parameters/linkHeader'
     content:
       application/json:
         schema:
           $ref: './schemas/error-response.yaml'
         examples:
-          RULE_INCORRECT_GOV_TEST_SCENARIO:
-            $ref: './common/errors.yaml#/components/examples/ruleIncorrectGovTestScenario'
           MATCHING_RESOURCE_NOT_FOUND:
             $ref: './common/errors.yaml#/components/examples/notFound'

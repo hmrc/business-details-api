@@ -4,17 +4,17 @@ description: |
   
   ### Test data
   Scenario simulations using <code>Gov-Test-Scenario</code> headers is only available in the sandbox environment.
-  | Header Value (Gov-Test-Scenario) | Scenario                                    |
-  | -------------------------------- | ------------------------------------------- |
-  | N/A - DEFAULT                    | Simulate a successful response              |
-  | NOT_FOUND                        | Simulate a scenario where no data is found. |
 
-
+  | Header Value (Gov-Test-Scenario) | Scenario                                       |
+  | -------------------------------- | ---------------------------------------------- |
+  | N/A - DEFAULT                    | Simulates success response.                    |
+  | NOT_FOUND                        | Simulates the scenario where no data is found. |
+  | STATEFUL                         | Performs a stateful retrieve.                  |
 
 parameters:
   - $ref: './common/pathParameters.yaml#/components/parameters/nino'
   - $ref: './common/pathParameters.yaml#/components/parameters/businessId'
-  - $ref: './common/pathParameters.yaml#/components/parameters/taxYear'
+  - $ref: './common/pathParameters.yaml#/components/parameters/accountingTypeTaxYear'
   - $ref: './common/headers.yaml#/components/parameters/acceptJson'
   - $ref: './common/headers.yaml#/components/parameters/authorization'
   - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
@@ -33,31 +33,29 @@ responses:
       X-CorrelationId:
         $ref: './common/headers.yaml#/components/parameters/correlationId'
       Deprecation:
-        $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
       Sunset:
-        $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
       Link:
-        $ref: ./common/headers.yaml#/components/parameters/linkHeader
+        $ref: './common/headers.yaml#/components/parameters/linkHeader'
     content:
       application/json:
         schema:
           $ref: './schemas/retrieveAccountingType/response.json'
-        examples:
-          example-response:
-            description: Example Response
-            value:
-              $ref: './examples/retrieveAccountingType/response.json'
+        example:
+          $ref: './examples/retrieveAccountingType/response.json'
+
   "400":
     description: Bad request
     headers:
       X-CorrelationId:
         $ref: './common/headers.yaml#/components/parameters/correlationId'
       Deprecation:
-        $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
       Sunset:
-        $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
       Link:
-        $ref: ./common/headers.yaml#/components/parameters/linkHeader
+        $ref: './common/headers.yaml#/components/parameters/linkHeader'
     content:
       application/json:
         schema:
@@ -82,11 +80,11 @@ responses:
       X-CorrelationId:
         $ref: './common/headers.yaml#/components/parameters/correlationId'
       Deprecation:
-        $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
       Sunset:
-        $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
       Link:
-        $ref: ./common/headers.yaml#/components/parameters/linkHeader
+        $ref: './common/headers.yaml#/components/parameters/linkHeader'
     content:
       application/json:
         schema:
@@ -101,11 +99,11 @@ responses:
       X-CorrelationId:
         $ref: './common/headers.yaml#/components/parameters/correlationId'
       Deprecation:
-        $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
       Sunset:
-        $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
       Link:
-        $ref: ./common/headers.yaml#/components/parameters/linkHeader
+        $ref: './common/headers.yaml#/components/parameters/linkHeader'
     content:
       application/json:
         schema:

@@ -47,10 +47,10 @@ components:
 
     ruleTaxYearNotEnded:
       description: |
-        Submission is provided before the tax year has ended.
+        The submission has been made before the tax year it relates to has ended.
       value:
         code: RULE_TAX_YEAR_NOT_ENDED
-        message: Submission is provided before the tax year has ended
+        message: The specified tax year has not yet ended
 
     ruleIncorrectOrEmptyBodySubmitted:
       description: |
@@ -94,7 +94,7 @@ components:
 
     notFound:
       description: |
-        The matching resource is not found.
+        The supplied income source could not be found.
       value:
         code: MATCHING_RESOURCE_NOT_FOUND
         message: Matching resource not found
@@ -112,13 +112,6 @@ components:
       value:
         code: RULE_BUSINESS_ID_NOT_FOUND
         message: The business ID provided is not found
-
-    ruleTaxYearInvalid:
-      description: |
-        Tax year range invalid. A tax year range of one year is required.
-      value:
-        code: RULE_TAX_YEAR_RANGE_INVALID
-        message: A tax year range of one year is required
 
 
     #422
