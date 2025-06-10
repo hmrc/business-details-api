@@ -1,0 +1,6 @@
+get:
+  $ref: "./retrieve_periods_of_account.yaml"
+  summary: Retrieve Periods Of Account
+  security:
+    - User-Restricted:
+        - read:self-assessment

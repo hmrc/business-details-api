@@ -63,5 +63,7 @@ paths:
     $ref: "./quarterly_period_type_create_amend.yaml"
   /individuals/business/details/{nino}/{businessId}/{taxYear}/accounting-type:
     $ref: "./accounting_type.yaml"
+  /individuals/business/details/{nino}/{businessId}/{taxYear}/periods-of-account:
+    $ref: "./periods_of_account.yaml"
 
 
