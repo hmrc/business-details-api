@@ -16,19 +16,26 @@
 
 package v2.retrievePeriodsOfAccount.model.response
 
-import play.api.libs.json.{Json, OWrites, Reads}
+import play.api.libs.json._
 import v2.common.models.PeriodsOfAccountDates
 
 case class RetrievePeriodsOfAccountResponse(periodsOfAccount: Option[Boolean], periodsOfAccountDates: Option[Seq[PeriodsOfAccountDates]])
 
 object RetrievePeriodsOfAccountResponse {
 
-  implicit val reads: Reads[RetrievePeriodsOfAccountResponse] = Json.reads[RetrievePeriodsOfAccountResponse]
+  implicit val reads: Reads[RetrievePeriodsOfAccountResponse] = Reads[RetrievePeriodsOfAccountResponse](js => {
+    val poa   = (js \ "periodsOfAccount").asOpt[Boolean]
+    val dates = (js \ "periodsOfAccountDates").asOpt[Seq[PeriodsOfAccountDates]]
 
-  implicit val writes: OWrites[RetrievePeriodsOfAccountResponse] = (o: RetrievePeriodsOfAccountResponse) =>
-    (o.periodsOfAccount, o.periodsOfAccountDates) match {
-      case (None, Some(dates)) => Json.obj("periodsOfAccount" -> true, "periodsOfAccountDates" -> dates)
-      case _                   => Json.obj("periodsOfAccount" -> false)
+    (poa, dates) match {
+      case (None | Some(true), Some(dates)) => JsSuccess(RetrievePeriodsOfAccountResponse(Some(true), Some(dates)))
+      case (Some(false), None)              => JsSuccess(RetrievePeriodsOfAccountResponse(Some(false), None))
+      case (Some(false), Some(_))           => JsError("periodsOfAccountDates present while periodsOfAccount is false")
+      case (Some(true), None)               => JsError("periodsOfAccountDates absent while periodsOfAccount is true")
+      case _                                => JsError("periodsOfAccountDates and periodsOfAccount absent")
     }
+  })
+
+  implicit val writes: OWrites[RetrievePeriodsOfAccountResponse] = Json.writes[RetrievePeriodsOfAccountResponse]
 
 }

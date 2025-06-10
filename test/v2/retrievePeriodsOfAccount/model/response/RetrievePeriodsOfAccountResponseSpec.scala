@@ -16,7 +16,7 @@
 
 package v2.retrievePeriodsOfAccount.model.response
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, JsResultException, Json}
 import support.UnitSpec
 import v2.common.models.PeriodsOfAccountDates
 
@@ -41,6 +41,39 @@ class RetrievePeriodsOfAccountResponseSpec extends UnitSpec {
       |}
       |""".stripMargin)
 
+  private val validDownstreamResponseWithBoth = Json.parse("""
+      |{
+      |  "submittedOn": "2019-08-24T14:15:22Z",
+      |  "periodsOfAccount": true,
+      |  "periodsOfAccountDates": [
+      |    {
+      |      "startDate": "2024-04-06",
+      |      "endDate": "2025-03-05"
+      |    }
+      |  ]
+      |}
+      |""".stripMargin)
+
+  private val invalidDownstreamResponseWithDates = Json.parse("""
+      |{
+      |  "submittedOn": "2019-08-24T14:15:22Z",
+      |  "periodsOfAccount": false,
+      |  "periodsOfAccountDates": [
+      |    {
+      |      "startDate": "2024-04-06",
+      |      "endDate": "2025-03-05"
+      |    }
+      |  ]
+      |}
+      |""".stripMargin)
+
+  private val invalidDownstreamResponseWithOutDates = Json.parse("""
+      |{
+      |  "submittedOn": "2019-08-24T14:15:22Z",
+      |  "periodsOfAccount": true
+      |}
+      |""".stripMargin)
+
   private val vendorResponseWithDates = Json.parse("""
       |{
       |  "periodsOfAccount": true,
@@ -59,7 +92,7 @@ class RetrievePeriodsOfAccountResponseSpec extends UnitSpec {
       |}
       |""".stripMargin)
 
-  private val parsedResponseWithDates = RetrievePeriodsOfAccountResponse(None, Some(Seq(PeriodsOfAccountDates("2024-04-06", "2025-03-05"))))
+  private val parsedResponseWithDates = RetrievePeriodsOfAccountResponse(Some(true), Some(Seq(PeriodsOfAccountDates("2024-04-06", "2025-03-05"))))
 
   private val parsedResponseWithoutDates = RetrievePeriodsOfAccountResponse(Some(false), None)
 
@@ -68,6 +101,7 @@ class RetrievePeriodsOfAccountResponseSpec extends UnitSpec {
       "read from json" in {
         downstreamResponseWithDates.as[RetrievePeriodsOfAccountResponse] shouldBe parsedResponseWithDates
       }
+
       "write to json" in {
         Json.toJson(parsedResponseWithDates) shouldBe vendorResponseWithDates
       }
@@ -82,6 +116,30 @@ class RetrievePeriodsOfAccountResponseSpec extends UnitSpec {
 
     "write to json" in {
       Json.toJson(parsedResponseWithoutDates) shouldBe vendorResponseWithoutDates
+    }
+  }
+
+  "The response contains periodOfAccounts dates and periodsOfAccount is false" should {
+    "throw an error when reading" in {
+      assertThrows[JsResultException](
+        invalidDownstreamResponseWithDates.as[RetrievePeriodsOfAccountResponse]
+      )
+    }
+  }
+
+  "The response does not contain periodOfAccounts dates and periodsOfAccount is true" should {
+    "throw an error when reading" in {
+      assertThrows[JsResultException](
+        invalidDownstreamResponseWithOutDates.as[RetrievePeriodsOfAccountResponse]
+      )
+    }
+  }
+
+  "The response is empty" should {
+    "throw an error when reading" in {
+      assertThrows[JsResultException](
+        Json.obj().as[RetrievePeriodsOfAccountResponse]
+      )
     }
   }
 
