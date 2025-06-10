@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,45 +16,18 @@
 
 package v2.listAllBusinesses
 
-import api.controllers.validators.Validator
-import api.models.errors.MtdError
-import cats.data.Validated
-import cats.data.Validated.{Invalid, Valid}
+import api.controllers.validators.{MockValidatorFactory, Validator}
 import org.scalamock.handlers.CallHandler
-import org.scalamock.scalatest.MockFactory
 import v2.listAllBusinesses.model.request.ListAllBusinessesRequestData
 
-trait MockListAllBusinessDetailsValidatorFactory extends MockFactory {
+trait MockListAllBusinessDetailsValidatorFactory extends MockValidatorFactory[ListAllBusinessesRequestData] {
 
   val mockListAllBusinessDetailsValidatorFactory: ListAllBusinessDetailsValidatorFactory = mock[ListAllBusinessDetailsValidatorFactory]
 
-  object MockedListAllBusinessDetailsValidatorFactory {
-
-    def expectValidator(): CallHandler[Validator[ListAllBusinessesRequestData]] = {
-      (mockListAllBusinessDetailsValidatorFactory
-        .validator(_: String))
-        .expects(*)
-    }
-
+  def validator(): CallHandler[Validator[ListAllBusinessesRequestData]] = {
+    (mockListAllBusinessDetailsValidatorFactory
+      .validator(_: String))
+      .expects(*)
   }
-
-  def willUseValidator(use: Validator[ListAllBusinessesRequestData]): CallHandler[Validator[ListAllBusinessesRequestData]] = {
-    MockedListAllBusinessDetailsValidatorFactory
-      .expectValidator()
-      .anyNumberOfTimes()
-      .returns(use)
-  }
-
-  def returningSuccess(result: ListAllBusinessesRequestData): Validator[ListAllBusinessesRequestData] =
-    new Validator[ListAllBusinessesRequestData] {
-      def validate: Validated[Seq[MtdError], ListAllBusinessesRequestData] = Valid(result)
-    }
-
-  def returning(result: MtdError*): Validator[ListAllBusinessesRequestData] = returningErrors(result)
-
-  def returningErrors(result: Seq[MtdError]): Validator[ListAllBusinessesRequestData] =
-    new Validator[ListAllBusinessesRequestData] {
-      def validate: Validated[Seq[MtdError], ListAllBusinessesRequestData] = Invalid(result)
-    }
 
 }

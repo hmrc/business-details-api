@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,19 @@ import java.time.format.DateTimeParseException
 
 /** Checks that the date format is YYYY-MM-DD, and returns a new LocalDate.
   */
-object ResolveIsoDate extends Resolver[String, LocalDate] {
+case class ResolveIsoDate(error: MtdError) extends ResolverSupport {
 
-  def apply(value: String, error: Option[MtdError], path: Option[String]): Validated[Seq[MtdError], LocalDate] =
+  val resolver: Resolver[String, LocalDate] = value =>
     try Valid(LocalDate.parse(value))
     catch {
-      case _: DateTimeParseException => Invalid(List(requireError(error, path)))
+      case _: DateTimeParseException => Invalid(List(error))
     }
+
+}
+
+object ResolveIsoDate extends ResolverSupport {
+
+  def apply(value: String, error: MtdError): Validated[Seq[MtdError], LocalDate] =
+    ResolveIsoDate(error).resolver(value)
 
 }

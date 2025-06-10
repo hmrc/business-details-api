@@ -28,12 +28,12 @@ class RetrieveAccountingTypeValidatorSpec extends UnitSpec with MockAppConfig {
 
   private val validNino       = "AA123456A"
   private val validBusinessId = "X0IS12345678901"
-  private val validTaxYear    = "2024-25"
+  private val validTaxYear    = "2025-26"
 
   class Test {
 
     MockedAppConfig.accountingTypeMinimumTaxYear
-      .returns(2025)
+      .returns(2026)
       .anyNumberOfTimes()
 
   }
@@ -77,17 +77,10 @@ class RetrieveAccountingTypeValidatorSpec extends UnitSpec with MockAppConfig {
       )
     }
 
-    "passed an too early tax year" in new Test {
-      val result = validator(validNino, validBusinessId, "2023-24").validateAndWrapResult()
+    "passed an unsupported tax year" in new Test {
+      val result = validator(validNino, validBusinessId, "2024-25").validateAndWrapResult()
       result shouldBe Left(
         ErrorWrapper(correlationId, RuleTaxYearNotSupportedError)
-      )
-    }
-
-    "passed an tax year that has not ended" in new Test {
-      val result = validator(validNino, validBusinessId, "2025-26").validateAndWrapResult()
-      result shouldBe Left(
-        ErrorWrapper(correlationId, RuleTaxYearNotEndedError)
       )
     }
 

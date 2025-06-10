@@ -84,7 +84,7 @@ class UpdateAccountingTypeValidatorSpec extends UnitSpec with JsonErrorValidator
         )
       }
 
-      "passed an too early tax year" in new Test {
+      "passed an unsupported tax year" in new Test {
         val result = validator(validNino, validBusinessId, "2023-24", validBody).validateAndWrapResult()
         result shouldBe Left(
           ErrorWrapper(correlationId, RuleTaxYearNotSupportedError)
@@ -92,7 +92,7 @@ class UpdateAccountingTypeValidatorSpec extends UnitSpec with JsonErrorValidator
       }
 
       "passed an tax year that has not ended" in new Test {
-        val result = validator(validNino, validBusinessId, "2025-26", validBody).validateAndWrapResult()
+        val result = validator(validNino, validBusinessId, TaxYear.currentTaxYear.asMtd, validBody).validateAndWrapResult()
         result shouldBe Left(
           ErrorWrapper(correlationId, RuleTaxYearNotEndedError)
         )
@@ -113,7 +113,7 @@ class UpdateAccountingTypeValidatorSpec extends UnitSpec with JsonErrorValidator
         )
       }
 
-      "passed a request body with an invalidly formatted quarterlyPeriodType" in new Test {
+      "passed a request body with an invalidly formatted accountingType" in new Test {
         val invalidBody = validBody.update("accountingType", JsBoolean(true))
         val result      = validator(validNino, validBusinessId, validTaxYear, invalidBody).validateAndWrapResult()
         result shouldBe Left(
@@ -121,7 +121,7 @@ class UpdateAccountingTypeValidatorSpec extends UnitSpec with JsonErrorValidator
         )
       }
 
-      "passed a request body with a non-enum value for quarterlyPeriodType" in new Test {
+      "passed a request body with a non-enum value for accountingType" in new Test {
         val invalidBody = validBody.update("accountingType", JsString("cash"))
         val result      = validator(validNino, validBusinessId, validTaxYear, invalidBody).validateAndWrapResult()
         result shouldBe Left(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,62 +17,94 @@
 package api.controllers.validators.resolvers
 
 import api.models.domain.TaxYear
-import api.models.errors.{InvalidTaxYearParameterError, RuleTaxYearRangeInvalidError, TaxYearFormatError}
+import api.models.errors._
+import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import support.UnitSpec
+
+import java.time.{Clock, Instant, ZoneOffset}
 
 class ResolveTaxYearSpec extends UnitSpec {
 
   "ResolveTaxYear" should {
-    "return the parsed TaxYear" when {
+    "return no errors" when {
+      val validTaxYear: String = "2018-19"
+
       "given a valid tax year" in {
-        val validTaxYear = "2018-19"
-        val result       = ResolveTaxYear(validTaxYear)
+        val result: Validated[Seq[MtdError], TaxYear] = ResolveTaxYear(validTaxYear)
         result shouldBe Valid(TaxYear.fromMtd(validTaxYear))
       }
     }
 
     "return an error" when {
       "given an invalid tax year format" in {
-        val result = ResolveTaxYear("2019")
-        result shouldBe Invalid(List(TaxYearFormatError))
+        ResolveTaxYear("2019") shouldBe Invalid(List(TaxYearFormatError))
       }
 
       "given a tax year string in which the range is greater than 1 year" in {
-        val result = ResolveTaxYear("2017-19")
-        result shouldBe Invalid(List(RuleTaxYearRangeInvalidError))
+        ResolveTaxYear("2017-19") shouldBe Invalid(List(RuleTaxYearRangeInvalidError))
       }
 
       "the end year is before the start year" in {
-        val result = ResolveTaxYear("2018-17")
-        result shouldBe Invalid(List(RuleTaxYearRangeInvalidError))
+        ResolveTaxYear("2018-17") shouldBe Invalid(List(RuleTaxYearRangeInvalidError))
       }
 
       "the start and end years are the same" in {
-        val result = ResolveTaxYear("2017-17")
-        result shouldBe Invalid(List(RuleTaxYearRangeInvalidError))
+        ResolveTaxYear("2017-17") shouldBe Invalid(List(RuleTaxYearRangeInvalidError))
       }
 
       "the tax year is bad" in {
-        val result = ResolveTaxYear("20177-17")
-        result shouldBe Invalid(List(TaxYearFormatError))
+        ResolveTaxYear("20177-17") shouldBe Invalid(List(TaxYearFormatError))
       }
     }
   }
 
-  "ResolveTysTaxYear" should {
+  "ResolveDetailedTaxYear" should {
+    implicit val fixedClock: Clock = Clock.fixed(Instant.parse("2026-08-01T00:00:00Z"), ZoneOffset.UTC)
+    val minimumTaxYear: TaxYear    = TaxYear.fromMtd("2025-26")
+
+    def resolver(allowIncompleteTaxYear: Boolean = true): ResolveDetailedTaxYear = ResolveDetailedTaxYear(
+      minimumTaxYear = minimumTaxYear,
+      allowIncompleteTaxYear = allowIncompleteTaxYear
+    )
+
     "return no errors" when {
-      "passed a valid tax year that's above or equal to TaxYear.tysTaxYear" in {
-        val validTaxYear = "2023-24"
-        val result       = ResolveTysTaxYear(validTaxYear)
-        result shouldBe Valid(TaxYear.fromMtd(validTaxYear))
+      "given the minimum allowed tax year" in {
+        val result: Validated[Seq[MtdError], TaxYear] = resolver()("2025-26")
+        result shouldBe Valid(minimumTaxYear)
+      }
+
+      "given an incomplete tax year but incomplete years are allowed" in {
+        val result: Validated[Seq[MtdError], TaxYear] = resolver()("2026-27")
+        result shouldBe Valid(TaxYear.fromMtd("2026-27"))
       }
     }
 
-    "return an error" when {
-      "passed a valid tax year but below TaxYear.tysTaxYear" in {
-        val result = ResolveTysTaxYear("2021-22")
-        result shouldBe Invalid(List(InvalidTaxYearParameterError))
+    "return RuleTaxYearNotSupportedError" when {
+      "given a tax year before the minimum tax year" in {
+        val result: Validated[Seq[MtdError], TaxYear] = resolver()("2024-25")
+        result shouldBe Invalid(List(RuleTaxYearNotSupportedError))
+      }
+    }
+
+    "return RuleTaxYearNotEndedError" when {
+      "given an incomplete tax year and incomplete years are not allowed" in {
+        val result: Validated[Seq[MtdError], TaxYear] = resolver(false)("2026-27")
+        result shouldBe Invalid(List(RuleTaxYearNotEndedError))
+      }
+    }
+
+    "return TaxYearFormatError" when {
+      "given a badly formatted tax year" in {
+        val result: Validated[Seq[MtdError], TaxYear] = resolver()("not-a-tax-year")
+        result shouldBe Invalid(List(TaxYearFormatError))
+      }
+    }
+
+    "return RuleTaxYearRangeInvalidError" when {
+      "given a tax year with an invalid range" in {
+        val result: Validated[Seq[MtdError], TaxYear] = resolver()("2025-27")
+        result shouldBe Invalid(List(RuleTaxYearRangeInvalidError))
       }
     }
   }

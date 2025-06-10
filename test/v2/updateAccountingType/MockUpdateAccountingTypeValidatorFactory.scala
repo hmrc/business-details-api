@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,48 +16,21 @@
 
 package v2.updateAccountingType
 
-import api.controllers.validators.Validator
-import api.models.errors.MtdError
-import cats.data.Validated
-import cats.data.Validated.{Invalid, Valid}
-import config.{AppConfig, MockAppConfig}
+import api.controllers.validators.{MockValidatorFactory, Validator}
+import config.AppConfig
 import org.scalamock.handlers.CallHandler
-import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
 import v2.updateAccountingType.model.request.UpdateAccountingTypeRequestData
 
-trait MockUpdateAccountingTypeValidatorFactory extends MockFactory with MockAppConfig {
+trait MockUpdateAccountingTypeValidatorFactory extends MockValidatorFactory[UpdateAccountingTypeRequestData] {
 
   val mockUpdateAccountingTypeValidatorFactory: UpdateAccountingTypeValidatorFactory =
     mock[UpdateAccountingTypeValidatorFactory]
 
-  object MockedUpdateAccountingTypeValidatorFactory {
-
-    def expectValidator(): CallHandler[Validator[UpdateAccountingTypeRequestData]] = {
-      (mockUpdateAccountingTypeValidatorFactory
-        .validator(_: String, _: String, _: String, _: JsValue)(_: AppConfig))
-        .expects(*, *, *, *, *)
-    }
-
+  def validator(): CallHandler[Validator[UpdateAccountingTypeRequestData]] = {
+    (mockUpdateAccountingTypeValidatorFactory
+      .validator(_: String, _: String, _: String, _: JsValue)(_: AppConfig))
+      .expects(*, *, *, *, *)
   }
-
-  def willUseValidator(use: Validator[UpdateAccountingTypeRequestData]): CallHandler[Validator[UpdateAccountingTypeRequestData]] = {
-    MockedUpdateAccountingTypeValidatorFactory
-      .expectValidator()
-      .anyNumberOfTimes()
-      .returns(use)
-  }
-
-  def returningSuccess(result: UpdateAccountingTypeRequestData): Validator[UpdateAccountingTypeRequestData] =
-    new Validator[UpdateAccountingTypeRequestData] {
-      def validate: Validated[Seq[MtdError], UpdateAccountingTypeRequestData] = Valid(result)
-    }
-
-  def returning(result: MtdError*): Validator[UpdateAccountingTypeRequestData] = returningErrors(result)
-
-  def returningErrors(result: Seq[MtdError]): Validator[UpdateAccountingTypeRequestData] =
-    new Validator[UpdateAccountingTypeRequestData] {
-      def validate: Validated[Seq[MtdError], UpdateAccountingTypeRequestData] = Invalid(result)
-    }
 
 }

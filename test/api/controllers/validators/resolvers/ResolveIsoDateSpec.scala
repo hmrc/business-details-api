@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,8 @@
 
 package api.controllers.validators.resolvers
 
-import api.models.errors.StartDateFormatError
+import api.models.errors.{MtdError, StartDateFormatError}
+import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import support.UnitSpec
 
@@ -27,16 +28,16 @@ class ResolveIsoDateSpec extends UnitSpec {
   "ResolveIsoDate" should {
     "return the parsed date" when {
       "given a valid ISO date string" in {
-        val validDate = "2024-06-21"
-        val result    = ResolveIsoDate(validDate, Some(StartDateFormatError), None)
+        val validDate: String                           = "2024-06-21"
+        val result: Validated[Seq[MtdError], LocalDate] = ResolveIsoDate(validDate, StartDateFormatError)
         result shouldBe Valid(LocalDate.parse("2024-06-21"))
       }
     }
 
     "return an error" when {
       "given an invalid/non-ISO date string" in {
-        val invalidDate = "not-a-date"
-        val result      = ResolveIsoDate(invalidDate, Some(StartDateFormatError), None)
+        val invalidDate: String                         = "not-a-date"
+        val result: Validated[Seq[MtdError], LocalDate] = ResolveIsoDate(invalidDate, StartDateFormatError)
         result shouldBe Invalid(List(StartDateFormatError))
       }
     }
