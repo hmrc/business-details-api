@@ -17,20 +17,7 @@
 package v2.createUpdatePeriodsOfAccount
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import api.models.errors.{
-  BusinessIdFormatError,
-  DownstreamErrorCode,
-  DownstreamErrors,
-  ErrorWrapper,
-  InternalError,
-  MtdError,
-  NinoFormatError,
-  NotFoundError,
-  RuleIncorrectGovTestScenarioError,
-  RuleOutsideAmendmentWindowError,
-  RuleTaxYearNotEndedError,
-  TaxYearFormatError
-}
+import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import v2.common.models.PeriodsOfAccountDates
@@ -72,15 +59,21 @@ class CreateUpdatePeriodsOfAccountServiceSpec extends ServiceSpec {
         }
 
       val errors = List(
-        ("1215", NinoFormatError),
-        ("1117", TaxYearFormatError),
-        ("1000", InternalError),
-        ("1216", InternalError),
-        ("1007", BusinessIdFormatError),
-        ("5010", NotFoundError),
-        ("1115", RuleTaxYearNotEndedError),
-        ("4200", RuleOutsideAmendmentWindowError),
-        ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError)
+        "1000"                 -> InternalError,
+        "1007"                 -> BusinessIdFormatError,
+        "1115"                 -> RuleTaxYearNotEndedError,
+        "1117"                 -> TaxYearFormatError,
+        "1128"                 -> RuleEndBeforeStartDateError,
+        "1129"                 -> RuleStartDateError,
+        "1130"                 -> RuleEndDateError,
+        "1131"                 -> RulePeriodsOverlapError,
+        "1132"                 -> RuleCessationDateError,
+        "1215"                 -> NinoFormatError,
+        "1216"                 -> InternalError,
+        "4200"                 -> RuleOutsideAmendmentWindowError,
+        "5000"                 -> RuleTaxYearNotSupportedError,
+        "5010"                 -> NotFoundError,
+        "UNMATCHED_STUB_ERROR" -> RuleIncorrectGovTestScenarioError
       )
 
       errors.foreach((serviceError _).tupled)

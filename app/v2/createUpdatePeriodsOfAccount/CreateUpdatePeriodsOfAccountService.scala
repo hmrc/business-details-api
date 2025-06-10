@@ -23,9 +23,15 @@ import api.models.errors.{
   MtdError,
   NinoFormatError,
   NotFoundError,
+  RuleCessationDateError,
+  RuleEndBeforeStartDateError,
+  RuleEndDateError,
   RuleIncorrectGovTestScenarioError,
   RuleOutsideAmendmentWindowError,
+  RulePeriodsOverlapError,
+  RuleStartDateError,
   RuleTaxYearNotEndedError,
+  RuleTaxYearNotSupportedError,
   TaxYearFormatError
 }
 import api.services.{BaseService, ServiceOutcome}
@@ -43,14 +49,20 @@ class CreateUpdatePeriodsOfAccountService @Inject() (connector: CreateUpdatePeri
 
   private val downstreamErrorMap: Map[String, MtdError] =
     Map(
-      "1215"                 -> NinoFormatError,
-      "1117"                 -> TaxYearFormatError,
       "1000"                 -> InternalError,
-      "1216"                 -> InternalError,
       "1007"                 -> BusinessIdFormatError,
-      "5010"                 -> NotFoundError,
       "1115"                 -> RuleTaxYearNotEndedError,
+      "1117"                 -> TaxYearFormatError,
+      "1128"                 -> RuleEndBeforeStartDateError,
+      "1129"                 -> RuleStartDateError,
+      "1130"                 -> RuleEndDateError,
+      "1131"                 -> RulePeriodsOverlapError,
+      "1132"                 -> RuleCessationDateError,
+      "1215"                 -> NinoFormatError,
+      "1216"                 -> InternalError,
       "4200"                 -> RuleOutsideAmendmentWindowError,
+      "5000"                 -> RuleTaxYearNotSupportedError,
+      "5010"                 -> NotFoundError,
       "UNMATCHED_STUB_ERROR" -> RuleIncorrectGovTestScenarioError
     )
 

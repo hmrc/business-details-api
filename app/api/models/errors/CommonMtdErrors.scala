@@ -67,7 +67,31 @@ object InvalidTaxYearParameterError
 object RuleCountryCodeError extends MtdError("RULE_COUNTRY_CODE", "The country code is not a valid ISO 3166-1 alpha-3 country code", BAD_REQUEST)
 
 object RuleEndBeforeStartDateError
-    extends MtdError("RULE_END_DATE_BEFORE_START_DATE", "The supplied accounting period end date is before the start date", BAD_REQUEST)
+    extends MtdError(
+      "RULE_END_DATE_BEFORE_START_DATE",
+      "The supplied values for periods of account endDate must not be earlier than the startDate",
+      BAD_REQUEST)
+
+object RuleStartDateError
+    extends MtdError(
+      "RULE_START_DATE",
+      "One or more of the supplied periods of account start dates do not fall within or before the tax year provided",
+      BAD_REQUEST)
+
+object RuleEndDateError
+    extends MtdError(
+      "RULE_END_DATE",
+      "One or more of the supplied periods of account end dates do not fall within the tax year provided",
+      BAD_REQUEST)
+
+object RulePeriodsOverlapError
+    extends MtdError("RULE_PERIODS_OVERLAP", "One or more of the supplied periods of account start and end dates overlap", BAD_REQUEST)
+
+object RuleCessationDateError
+    extends MtdError(
+      "RULE_CESSATION_DATE",
+      "One of more of the supplied periods of account end dates exceeds the business cessation date",
+      BAD_REQUEST)
 
 //Standard Errors
 object NotFoundError           extends MtdError("MATCHING_RESOURCE_NOT_FOUND", "Matching resource not found", NOT_FOUND)
