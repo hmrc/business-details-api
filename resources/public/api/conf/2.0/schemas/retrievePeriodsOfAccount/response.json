@@ -10,7 +10,7 @@
     },
     "periodsOfAccountDates": {
       "type": "array",
-      "description": "List of periods of account. These must be submitted if a customer has periods of account.\n\nIf periodsOfAccount is set to false, then this value should not be submitted.",
+      "description": "List of periods of account. These will be returned if a customer has submitted periods of account.\n\nIf periodsOfAccount is set to false, then this value will not be returned.",
       "items": {
         "type": "object",
         "properties": {
