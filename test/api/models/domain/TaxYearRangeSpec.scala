@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package api.models.domain
 
 import support.UnitSpec
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate, ZoneOffset}
 
 class TaxYearRangeSpec extends UnitSpec {
 
@@ -26,7 +26,7 @@ class TaxYearRangeSpec extends UnitSpec {
 
     "return a TaxYearRange" when {
       "given an MTD-format taxYear" in {
-        val taxYear              = TaxYear.fromMtd("2019-20")
+        val taxYear: TaxYear     = TaxYear.fromMtd("2019-20")
         val result: TaxYearRange = TaxYearRange.fromMtd("2019-20")
         result shouldBe TaxYearRange(taxYear)
       }
@@ -37,23 +37,19 @@ class TaxYearRangeSpec extends UnitSpec {
     "return the correct taxYearStart and taxYearEnd respectively" when {
       "given a valid taxYear" in {
         val range: TaxYearRange = TaxYearRange.fromMtd("2019-20")
-        range.from.taxYearStart shouldBe "2019-04-06"
-        range.to.taxYearEnd shouldBe "2020-04-05"
+        range.from.startDate shouldBe LocalDate.parse("2019-04-06")
+        range.to.endDate shouldBe LocalDate.parse("2020-04-05")
       }
     }
   }
 
   "todayMinus(years)" should {
     "return a TaxYearRange from the 'subtracted' tax year to the current tax year" in {
-      val currentTaxYear = "2022-23"
-      val expectedFrom   = TaxYear.fromMtd("2018-19")
+      implicit val clock: Clock = Clock.fixed(LocalDate.parse("2023-04-01").atStartOfDay(ZoneOffset.UTC).toInstant, ZoneOffset.UTC)
 
-      implicit val todaySupplier: TodaySupplier = new TodaySupplier {
-        override def today(): LocalDate = LocalDate.parse("2023-04-01")
-      }
+      val years: Int = 4
 
-      val result: TaxYearRange = TaxYearRange.todayMinus(years = 4)
-      result shouldBe TaxYearRange(expectedFrom, TaxYear.fromMtd(currentTaxYear))
+      TaxYearRange.todayMinus(years) shouldBe TaxYearRange(TaxYear.fromMtd("2018-19"), TaxYear.fromMtd("2022-23"))
     }
   }
 

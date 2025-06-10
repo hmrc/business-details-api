@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,48 +16,20 @@
 
 package v2.createAmendQuarterlyPeriodType
 
-import api.controllers.validators.Validator
-import api.models.errors.MtdError
-import cats.data.Validated
-import cats.data.Validated.{Invalid, Valid}
+import api.controllers.validators.{MockValidatorFactory, Validator}
 import org.scalamock.handlers.CallHandler
-import org.scalamock.scalatest.MockFactory
 import play.api.libs.json.JsValue
 import v2.createAmendQuarterlyPeriodType.model.request.CreateAmendQuarterlyPeriodTypeRequestData
 
-trait MockCreateAmendQuarterlyPeriodTypeValidatorFactory extends MockFactory {
+trait MockCreateAmendQuarterlyPeriodTypeValidatorFactory extends MockValidatorFactory[CreateAmendQuarterlyPeriodTypeRequestData] {
 
   val mockCreateAmendQuarterlyPeriodTypeValidatorFactory: CreateAmendQuarterlyPeriodTypeValidatorFactory =
     mock[CreateAmendQuarterlyPeriodTypeValidatorFactory]
 
-  object MockedCreateAmendQuarterlyPeriodTypeValidatorFactory {
-
-    def expectValidator(): CallHandler[Validator[CreateAmendQuarterlyPeriodTypeRequestData]] = {
-      (mockCreateAmendQuarterlyPeriodTypeValidatorFactory
-        .validator(_: String, _: String, _: String, _: JsValue))
-        .expects(*, *, *, *)
-    }
-
+  def validator(): CallHandler[Validator[CreateAmendQuarterlyPeriodTypeRequestData]] = {
+    (mockCreateAmendQuarterlyPeriodTypeValidatorFactory
+      .validator(_: String, _: String, _: String, _: JsValue))
+      .expects(*, *, *, *)
   }
-
-  def willUseValidator(
-      use: Validator[CreateAmendQuarterlyPeriodTypeRequestData]): CallHandler[Validator[CreateAmendQuarterlyPeriodTypeRequestData]] = {
-    MockedCreateAmendQuarterlyPeriodTypeValidatorFactory
-      .expectValidator()
-      .anyNumberOfTimes()
-      .returns(use)
-  }
-
-  def returningSuccess(result: CreateAmendQuarterlyPeriodTypeRequestData): Validator[CreateAmendQuarterlyPeriodTypeRequestData] =
-    new Validator[CreateAmendQuarterlyPeriodTypeRequestData] {
-      def validate: Validated[Seq[MtdError], CreateAmendQuarterlyPeriodTypeRequestData] = Valid(result)
-    }
-
-  def returning(result: MtdError*): Validator[CreateAmendQuarterlyPeriodTypeRequestData] = returningErrors(result)
-
-  def returningErrors(result: Seq[MtdError]): Validator[CreateAmendQuarterlyPeriodTypeRequestData] =
-    new Validator[CreateAmendQuarterlyPeriodTypeRequestData] {
-      def validate: Validated[Seq[MtdError], CreateAmendQuarterlyPeriodTypeRequestData] = Invalid(result)
-    }
 
 }

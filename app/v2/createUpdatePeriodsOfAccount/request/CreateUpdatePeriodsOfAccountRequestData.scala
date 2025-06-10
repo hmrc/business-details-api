@@ -16,9 +16,9 @@
 
 package v2.createUpdatePeriodsOfAccount.request
 
-import api.models.domain.{BusinessId, TaxYear}
+import api.models.domain.{BusinessId, Nino, TaxYear}
 
-case class CreateUpdatePeriodsOfAccountRequestData(nino: String,
+case class CreateUpdatePeriodsOfAccountRequestData(nino: Nino,
                                                    businessId: BusinessId,
                                                    taxYear: TaxYear,
                                                    body: CreateUpdatePeriodsOfAccountRequestBody)

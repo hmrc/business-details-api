@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package api.models.domain
 
+import java.time.Clock
+
 /** A tax year range.
   *
   * @param from
@@ -27,9 +29,9 @@ case class TaxYearRange(from: TaxYear, to: TaxYear)
 
 object TaxYearRange {
 
-  def todayMinus(years: Int)(implicit todaySupplier: TodaySupplier = new TodaySupplier): TaxYearRange = {
-    val currentTaxYear = TaxYear.currentTaxYear()
-    val from           = TaxYear.fromDownstreamInt(currentTaxYear.year - years)
+  def todayMinus(years: Int)(implicit clock: Clock = Clock.systemUTC): TaxYearRange = {
+    val currentTaxYear: TaxYear = TaxYear.currentTaxYear
+    val from: TaxYear           = TaxYear.fromDownstreamInt(currentTaxYear.year - years)
     TaxYearRange(from = from, to = currentTaxYear)
   }
 
@@ -41,7 +43,7 @@ object TaxYearRange {
     *   a 1-year range e.g. 2017 to 2018
     */
   def fromMtd(taxYear: String): TaxYearRange = {
-    val ty = TaxYear.fromMtd(taxYear)
+    val ty: TaxYear = TaxYear.fromMtd(taxYear)
     new TaxYearRange(ty, ty)
   }
 
