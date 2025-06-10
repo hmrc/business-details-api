@@ -44,10 +44,14 @@ responses:
         schema:
           $ref: './schemas/retrievePeriodsOfAccount/response.json'
         examples:
-          example-response:
-            description: Example Response
+          PERIODS_OF_ACCOUNT_TRUE:
+            description: Example Response when the periodsOfAccount field is true
             value:
               $ref: './examples/retrievePeriodsOfAccount/response.json'
+          PERIODS_OF_ACCOUNT_FALSE:
+            description: Example Response when the periodsOfAccount field is false
+            value:
+              $ref: './examples/retrievePeriodsOfAccount/response2.json'
   "400":
     description: Bad request
     headers:
