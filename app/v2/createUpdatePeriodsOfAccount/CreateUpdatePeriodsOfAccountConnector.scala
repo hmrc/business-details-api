@@ -37,7 +37,7 @@ class CreateUpdatePeriodsOfAccountConnector @Inject() (val http: HttpClient, val
 
     import request._
 
-    implicit val succesCode: SuccessCode = SuccessCode(NO_CONTENT)
+    implicit val successCode: SuccessCode = SuccessCode(NO_CONTENT)
 
     val downstreamUri = HipUri[Unit](s"itsd/income-sources/$nino/periods-of-account/$businessId?taxYear=${taxYear.asTysDownstream}")
 

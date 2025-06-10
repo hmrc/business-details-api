@@ -61,7 +61,6 @@ class CreateUpdatePeriodsOfAccountServiceSpec extends ServiceSpec {
       val errors = List(
         "1000"                 -> InternalError,
         "1007"                 -> BusinessIdFormatError,
-        "1115"                 -> RuleTaxYearNotEndedError,
         "1117"                 -> TaxYearFormatError,
         "1128"                 -> RuleEndBeforeStartDateError,
         "1129"                 -> RuleStartDateError,
@@ -72,6 +71,7 @@ class CreateUpdatePeriodsOfAccountServiceSpec extends ServiceSpec {
         "1216"                 -> InternalError,
         "4200"                 -> RuleOutsideAmendmentWindowError,
         "5000"                 -> RuleTaxYearNotSupportedError,
+        "5009"                 -> InternalError,
         "5010"                 -> NotFoundError,
         "UNMATCHED_STUB_ERROR" -> RuleIncorrectGovTestScenarioError
       )
