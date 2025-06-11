@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Retrieve accounting type response",
+  "type": "object",
+  "properties": {
+    "periodsOfAccount": {
+      "type": "boolean",
+      "description": "Indicates whether the customer has periods of account.\n\nIf this value is true then periodsOfAccountDates must be submitted.",
+      "example": true
+    },
+    "periodsOfAccountDates": {
+      "type": "array",
+      "description": "List of periods of account. These will be returned if a customer has submitted periods of account.\n\nIf periodsOfAccount is set to false, then this value will not be returned.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "description": "The start date of the period of account.",
+            "example": "2024-01-01"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "The end date of the period of account.",
+            "example": "2024-03-31"
+          }
+        },
+        "required": ["startDate", "endDate"]
+      }
+    }
+  },
+  "required": ["periodsOfAccount"]
+}
