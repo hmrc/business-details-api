@@ -16,7 +16,7 @@
 
 package v2.retrievePeriodsOfAccount.model.response
 
-import play.api.libs.json.{JsResultException, Json}
+import play.api.libs.json.Json
 import support.UnitSpec
 import v2.common.models.PeriodsOfAccountDates
 
@@ -59,9 +59,10 @@ class RetrievePeriodsOfAccountResponseSpec extends UnitSpec {
       |}
       |""".stripMargin)
 
-  private val parsedResponseWithDates = RetrievePeriodsOfAccountResponse(Some(true), Some(Seq(PeriodsOfAccountDates("2024-04-06", "2025-03-05"))))
+  private val parsedResponseWithDates =
+    RetrievePeriodsOfAccountResponse(periodsOfAccount = true, Some(Seq(PeriodsOfAccountDates("2024-04-06", "2025-03-05"))))
 
-  private val parsedResponseWithoutDates = RetrievePeriodsOfAccountResponse(Some(false), None)
+  private val parsedResponseWithoutDates = RetrievePeriodsOfAccountResponse(periodsOfAccount = false, None)
 
   "RetreievePeriodsOfAccountResponse" when {
     "There are periods of accounts dates" should {
@@ -83,14 +84,6 @@ class RetrievePeriodsOfAccountResponseSpec extends UnitSpec {
 
     "write to json" in {
       Json.toJson(parsedResponseWithoutDates) shouldBe vendorResponseWithoutDates
-    }
-  }
-
-  "The response is empty" should {
-    "throw an error when reading" in {
-      assertThrows[JsResultException](
-        Json.obj().as[RetrievePeriodsOfAccountResponse]
-      )
     }
   }
 

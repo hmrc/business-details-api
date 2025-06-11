@@ -16,23 +16,18 @@
 
 package v2.retrievePeriodsOfAccount.model.response
 
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
 import v2.common.models.PeriodsOfAccountDates
 
-case class RetrievePeriodsOfAccountResponse(periodsOfAccount: Option[Boolean], periodsOfAccountDates: Option[Seq[PeriodsOfAccountDates]])
+case class RetrievePeriodsOfAccountResponse(periodsOfAccount: Boolean, periodsOfAccountDates: Option[Seq[PeriodsOfAccountDates]])
 
 object RetrievePeriodsOfAccountResponse {
 
-  implicit val reads: Reads[RetrievePeriodsOfAccountResponse] = Reads[RetrievePeriodsOfAccountResponse](js => {
-    val poa   = (js \ "periodsOfAccount").asOpt[Boolean]
-    val dates = (js \ "periodsOfAccountDates").asOpt[Seq[PeriodsOfAccountDates]]
-
-    (poa, dates) match {
-      case (None, Some(dates)) => JsSuccess(RetrievePeriodsOfAccountResponse(Some(true), Some(dates)))
-      case (Some(false), None) => JsSuccess(RetrievePeriodsOfAccountResponse(Some(false), None))
-      case _                   => JsError("incorrect body returned")
-    }
-  })
+  implicit val reads: Reads[RetrievePeriodsOfAccountResponse] = (
+    (JsPath \ "periodsOfAccount").readWithDefault[Boolean](true) and
+      (JsPath \ "periodsOfAccountDates").readNullable[Seq[PeriodsOfAccountDates]]
+  )(RetrievePeriodsOfAccountResponse.apply _)
 
   implicit val writes: OWrites[RetrievePeriodsOfAccountResponse] = Json.writes[RetrievePeriodsOfAccountResponse]
 
