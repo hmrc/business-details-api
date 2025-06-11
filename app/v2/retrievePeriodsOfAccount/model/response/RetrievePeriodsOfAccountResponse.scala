@@ -28,11 +28,9 @@ object RetrievePeriodsOfAccountResponse {
     val dates = (js \ "periodsOfAccountDates").asOpt[Seq[PeriodsOfAccountDates]]
 
     (poa, dates) match {
-      case (None | Some(true), Some(dates)) => JsSuccess(RetrievePeriodsOfAccountResponse(Some(true), Some(dates)))
-      case (Some(false), None)              => JsSuccess(RetrievePeriodsOfAccountResponse(Some(false), None))
-      case (Some(false), Some(_))           => JsError("periodsOfAccountDates present while periodsOfAccount is false")
-      case (Some(true), None)               => JsError("periodsOfAccountDates absent while periodsOfAccount is true")
-      case _                                => JsError("periodsOfAccountDates and periodsOfAccount absent")
+      case (None, Some(dates)) => JsSuccess(RetrievePeriodsOfAccountResponse(Some(true), Some(dates)))
+      case (Some(false), None) => JsSuccess(RetrievePeriodsOfAccountResponse(Some(false), None))
+      case _                   => JsError("incorrect body returned")
     }
   })
 
