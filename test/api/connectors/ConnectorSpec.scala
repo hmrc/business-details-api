@@ -53,6 +53,8 @@ trait ConnectorSpec extends UnitSpec {
 
     protected val allowedHeaders: Seq[String] = List("Gov-Test-Scenario")
 
+    protected def intent: Option[String] = None
+
     protected def willGet[T](url: String, parameters: Seq[(String, String)] = Nil): CallHandler[Future[T]] = {
       MockedHttpClient
         .get(
@@ -143,12 +145,12 @@ trait ConnectorSpec extends UnitSpec {
     private val environment = "hip-environment"
 
     protected def requiredHeaders: Seq[(String, String)] = List(
-      "Authorization"     -> s"Basic $token",
-      "Environment"       -> environment,
-      "User-Agent"        -> "business-details-api",
-      "CorrelationId"     -> correlationId,
-      "Gov-Test-Scenario" -> "DEFAULT"
-    )
+      "Authorization"        -> s"Basic $token",
+      "Environment"          -> environment,
+      "User-Agent"           -> "business-details-api",
+      "CorrelationId"        -> correlationId,
+      "Gov-Test-Scenario"    -> "DEFAULT"
+    ) ++ intent.map("intent" -> _)
 
     MockedAppConfig.hipDownstreamConfig
       .anyNumberOfTimes() returns BasicAuthDownstreamConfig(this.baseUrl, environment, clientId, clientSecret, Some(allowedHeaders))

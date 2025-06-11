@@ -54,7 +54,7 @@ trait BaseDownstreamConnector extends Logging {
     } yield result
   }
 
-  def get[Resp](uri: DownstreamUri[Resp], queryParams: Seq[(String, String)] = Seq.empty)(implicit
+  def get[Resp](uri: DownstreamUri[Resp], queryParams: Seq[(String, String)] = Seq.empty, maybeIntent: Option[String] = None)(implicit
       ec: ExecutionContext,
       hc: HeaderCarrier,
       httpReads: HttpReads[DownstreamOutcome[Resp]],
@@ -66,7 +66,7 @@ trait BaseDownstreamConnector extends Logging {
       http.GET(getBackendUri(uri.path, strategy), queryParams)
 
     for {
-      headers <- getBackendHeaders(strategy)
+      headers <- getBackendHeaders(strategy, intentHeader(maybeIntent))
       result  <- doGet(headers)
     } yield result
   }
@@ -106,6 +106,9 @@ trait BaseDownstreamConnector extends Logging {
       result  <- doPut(headers)
     } yield result
   }
+
+  private def intentHeader(maybeIntent: Option[String]): Seq[(String, String)] =
+    maybeIntent.map(intent => Seq("intent" -> intent)).getOrElse(Nil)
 
   private def getBackendUri(path: String, strategy: DownstreamStrategy): String =
     s"${strategy.baseUrl}/$path"

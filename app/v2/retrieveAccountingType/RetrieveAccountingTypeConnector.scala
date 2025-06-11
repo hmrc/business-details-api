@@ -43,7 +43,9 @@ class RetrieveAccountingTypeConnector @Inject() (val http: HttpClient, val appCo
 
     val mappedQueryParams: Map[String, String] = queryParams.collect { case (k: String, v: String) => (k, v) }
 
-    get(HipUri[RetrieveAccountingTypeResponse](downstreamUri), mappedQueryParams.toList)
+    val maybeIntent: Option[String] = if (featureSwitches.isEnabled("passIntentHeader")) Some("ACCOUNTING_TYPE") else None
+
+    get(HipUri[RetrieveAccountingTypeResponse](downstreamUri), mappedQueryParams.toList, maybeIntent)
 
   }
 

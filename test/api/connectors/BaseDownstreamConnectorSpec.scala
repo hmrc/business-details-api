@@ -82,6 +82,11 @@ class BaseDownstreamConnectorSpec extends UnitSpec with MockHttpClient with Mock
     trait RequestMethodCaller {
       def makeCall(additionalRequiredHeaders: Seq[(String, String)] = Nil, additionalExcludedHeaders: Seq[(String, String)] = Nil): Assertion
 
+      def makeCallWithIntent(intent: String): Assertion = {
+        val intentHeader: (String, String) = "intent" -> intent
+        makeCall(additionalRequiredHeaders = Seq(intentHeader))
+      }
+
       protected final def standardContractHeadersWith(additionalHeaders: Seq[(String, String)]): Seq[(String, String)] = {
         // Note: User-Agent comes from HeaderCarrier (based on HeaderCarrier.Config)
         standardContractHeaders ++ additionalHeaders :+ ("User-Agent" -> userAgent)
@@ -92,6 +97,14 @@ class BaseDownstreamConnectorSpec extends UnitSpec with MockHttpClient with Mock
       "caller makes a normal request" must {
         "make the request with the required headers and return result" in {
           requestMethod.makeCall()
+        }
+      }
+    }
+
+    def sendsRequestWithIntent(requestMethod: RequestMethodCaller): Unit = {
+      "caller makes a request and specifies an 'intent'" must {
+        "make the request with the required headers as well as the intent header and return result" in {
+          requestMethod.makeCallWithIntent("SOME_INTENT")
         }
       }
     }
@@ -148,11 +161,14 @@ class BaseDownstreamConnectorSpec extends UnitSpec with MockHttpClient with Mock
             excludedHeaders = Seq(contentTypeHeader) ++ additionalExcludedHeaders
           ) returns Future.successful(outcome)
 
-          await(connector.get(uri())) shouldBe outcome
+          val maybeIntent: Option[String] = additionalRequiredHeaders.toMap.get("intent")
+
+          await(connector.get(uri(), maybeIntent = maybeIntent)) shouldBe outcome
         }
       }
 
       behave like sendsRequest(Get)
+      behave like sendsRequestWithIntent(Get)
     }
 
     "get is called with query parameters" must {
@@ -170,11 +186,14 @@ class BaseDownstreamConnectorSpec extends UnitSpec with MockHttpClient with Mock
               excludedHeaders = Seq(contentTypeHeader) ++ additionalExcludedHeaders
             ) returns Future.successful(outcome)
 
-          await(connector.get(uri(), queryParams = qps)) shouldBe outcome
+          val maybeIntent: Option[String] = additionalRequiredHeaders.toMap.get("intent")
+
+          await(connector.get(uri(), queryParams = qps, maybeIntent = maybeIntent)) shouldBe outcome
         }
       }
 
       behave like sendsRequest(GetWithQueryParams)
+      behave like sendsRequestWithIntent(GetWithQueryParams)
     }
 
     "delete is called" must {
