@@ -20,6 +20,7 @@ import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
+import play.api.Configuration
 import v2.common.models.AccountingType
 import v2.retrieveAccountingType.model.request._
 import v2.retrieveAccountingType.model.response.RetrieveAccountingTypeResponse
@@ -42,27 +43,45 @@ class RetrieveAccountingTypeConnectorSpec extends ConnectorSpec {
 
   val mappedQueryParams: Map[String, String] = queryParams.collect { case (k: String, v: String) => (k, v) }
 
-  "retrieveAccountingTypeConnector" must {
+  "RetrieveAccountingTypeConnector" must {
     "return a successful response" when {
-      "the downstream request is successful" in new HipTest with Test {
-        val outcome: Right[Nothing, ResponseWrapper[RetrieveAccountingTypeResponse]] = Right(ResponseWrapper(correlationId, response))
+      List(
+        (false, None),
+        (true, Some("ACCOUNTING_TYPE"))
+      ).foreach { case (passIntentHeaderFlag, intentValue) =>
+        s"the downstream request is successful and passIntentHeader is set to $passIntentHeaderFlag" in new HipTest with Test {
+          override def intent: Option[String] = intentValue
 
-        willGet(s"$baseUrl/itsd/income-sources/v2/$nino", mappedQueryParams.toList).returns(Future.successful(outcome))
+          val outcome: Right[Nothing, ResponseWrapper[RetrieveAccountingTypeResponse]] = Right(ResponseWrapper(correlationId, response))
 
-        val result: DownstreamOutcome[RetrieveAccountingTypeResponse] = await(connector.retrieveAccountingType(request))
-        result shouldBe outcome
+          MockedAppConfig.featureSwitches returns Configuration("passIntentHeader.enabled" -> passIntentHeaderFlag)
+
+          willGet(s"$baseUrl/itsd/income-sources/v2/$nino", mappedQueryParams.toList).returns(Future.successful(outcome))
+
+          val result: DownstreamOutcome[RetrieveAccountingTypeResponse] = await(connector.retrieveAccountingType(request))
+          result shouldBe outcome
+        }
       }
     }
 
     "return an unsuccessful response" when {
-      "the downstream request is unsuccessful" in new HipTest with Test {
-        val downstreamErrorResponse: DownstreamErrors                 = DownstreamErrors.single(DownstreamErrorCode("SOME_ERROR"))
-        val outcome: Left[ResponseWrapper[DownstreamErrors], Nothing] = Left(ResponseWrapper(correlationId, downstreamErrorResponse))
+      List(
+        (false, None),
+        (true, Some("ACCOUNTING_TYPE"))
+      ).foreach { case (passIntentHeaderFlag, intentValue) =>
+        s"the downstream request is unsuccessful and passIntentHeader is set to $passIntentHeaderFlag" in new HipTest with Test {
+          override def intent: Option[String] = intentValue
 
-        willGet(s"$baseUrl/itsd/income-sources/v2/$nino", mappedQueryParams.toList).returns(Future.successful(outcome))
+          val downstreamErrorResponse: DownstreamErrors                 = DownstreamErrors.single(DownstreamErrorCode("SOME_ERROR"))
+          val outcome: Left[ResponseWrapper[DownstreamErrors], Nothing] = Left(ResponseWrapper(correlationId, downstreamErrorResponse))
 
-        val result: DownstreamOutcome[RetrieveAccountingTypeResponse] = await(connector.retrieveAccountingType(request))
-        result shouldBe outcome
+          MockedAppConfig.featureSwitches returns Configuration("passIntentHeader.enabled" -> passIntentHeaderFlag)
+
+          willGet(s"$baseUrl/itsd/income-sources/v2/$nino", mappedQueryParams.toList).returns(Future.successful(outcome))
+
+          val result: DownstreamOutcome[RetrieveAccountingTypeResponse] = await(connector.retrieveAccountingType(request))
+          result shouldBe outcome
+        }
       }
     }
   }
