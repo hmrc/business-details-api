@@ -64,7 +64,7 @@ class RetrievePeriodsOfAccountResponseSpec extends UnitSpec {
 
   private val parsedResponseWithoutDates = RetrievePeriodsOfAccountResponse(periodsOfAccount = false, None)
 
-  "RetreievePeriodsOfAccountResponse" when {
+  "RetrievePeriodsOfAccountResponse" when {
     "There are periods of accounts dates" should {
       "read from json" in {
         downstreamResponseWithDates.as[RetrievePeriodsOfAccountResponse] shouldBe parsedResponseWithDates

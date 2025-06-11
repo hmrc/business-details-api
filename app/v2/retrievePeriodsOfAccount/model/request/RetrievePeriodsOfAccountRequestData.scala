@@ -16,6 +16,6 @@
 
 package v2.retrievePeriodsOfAccount.model.request
 
-import api.models.domain.{BusinessId, TaxYear}
+import api.models.domain.{BusinessId, Nino, TaxYear}
 
-case class RetrievePeriodsOfAccountRequestData(nino: String, businessId: BusinessId, taxYear: TaxYear)
+case class RetrievePeriodsOfAccountRequestData(nino: Nino, businessId: BusinessId, taxYear: TaxYear)
