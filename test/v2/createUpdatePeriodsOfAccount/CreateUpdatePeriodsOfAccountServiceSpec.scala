@@ -31,7 +31,7 @@ class CreateUpdatePeriodsOfAccountServiceSpec extends ServiceSpec {
   private val businessId = BusinessId("XAIS12345678910")
   private val taxYear    = TaxYear.fromMtd("2024-25")
   private val body       = CreateUpdatePeriodsOfAccountRequestBody(true, Some(Seq(PeriodsOfAccountDates("2024-04-06", "2025-04-05"))))
-  private val request    = CreateUpdatePeriodsOfAccountRequestData(nino.nino, businessId, taxYear, body)
+  private val request    = CreateUpdatePeriodsOfAccountRequestData(nino, businessId, taxYear, body)
 
   "CreateUpdatePeriodsOfAccountService" when {
     "the connector call is successful" should {
@@ -71,7 +71,6 @@ class CreateUpdatePeriodsOfAccountServiceSpec extends ServiceSpec {
         "1216"                 -> InternalError,
         "4200"                 -> RuleOutsideAmendmentWindowError,
         "5000"                 -> RuleTaxYearNotSupportedError,
-        "5009"                 -> InternalError,
         "5010"                 -> NotFoundError,
         "UNMATCHED_STUB_ERROR" -> RuleIncorrectGovTestScenarioError
       )

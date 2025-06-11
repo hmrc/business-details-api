@@ -60,7 +60,6 @@ class CreateUpdatePeriodsOfAccountService @Inject() (connector: CreateUpdatePeri
       "1216"                 -> InternalError,
       "4200"                 -> RuleOutsideAmendmentWindowError,
       "5000"                 -> RuleTaxYearNotSupportedError,
-      "5009"                 -> InternalError,
       "5010"                 -> NotFoundError,
       "UNMATCHED_STUB_ERROR" -> RuleIncorrectGovTestScenarioError
     )
