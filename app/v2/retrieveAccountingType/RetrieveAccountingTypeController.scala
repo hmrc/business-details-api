@@ -50,6 +50,7 @@ class RetrieveAccountingTypeController @Inject() (
         RequestHandler
           .withValidator(validator)
           .withService(service.retrieveAccountingType)
+          .withPlainJsonResult(OK)
 
       requestHandler.handleRequest()
     }
