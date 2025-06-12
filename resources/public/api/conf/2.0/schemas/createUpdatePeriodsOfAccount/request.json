@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Create or Update Periods of Accounting",
+  "type": "object",
+  "properties": {
+    "periodsOfAccount": {
+      "type": "boolean",
+      "description": "Indicates whether the customer has periods of account.\n\nIf this value is true then periodsOfAccountDates must be submitted."
+    },
+      "periodsOfAccountDates": {
+        "type": "array",
+        "description": "List of periods of account. These must be submitted if a customer has periods of account.\n\nIf periodsOfAccount is set to false, then this value should not be submitted.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "startDate": {
+              "type": "string",
+              "description": "The start date of the period of account."
+            },
+            "endDate": {
+              "type": "string",
+              "description": "The start end of the period of account."
+            }
+          },
+          "required": ["startDate", "endDate"]
+        }
+      }
+  },
+  "required": [
+    "periodsOfAccount"
+  ],
+  "additionalProperties": false
+}

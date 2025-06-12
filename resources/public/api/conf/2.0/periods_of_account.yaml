@@ -4,3 +4,11 @@ get:
   security:
     - User-Restricted:
         - read:self-assessment
+
+
+put:
+  $ref: "./create_update_periods_of_account.yaml"
+  summary: Create or Update Periods of Account
+  security:
+    - User-Restricted:
+        - write:self-assessment
