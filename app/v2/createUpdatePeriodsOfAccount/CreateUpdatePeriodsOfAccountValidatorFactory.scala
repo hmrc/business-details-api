@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package v2.createUpdatePeriodsOfAccount.request
+package v2.createUpdatePeriodsOfAccount
 
-import api.models.domain.{BusinessId, Nino, TaxYear}
+import api.controllers.validators.Validator
+import play.api.libs.json.JsValue
+import v2.createUpdatePeriodsOfAccount.request.CreateUpdatePeriodsOfAccountRequest
 
-case class CreateUpdatePeriodsOfAccountRequestData(nino: Nino,
-                                                   businessId: BusinessId,
-                                                   taxYear: TaxYear,
-                                                   body: CreateUpdatePeriodsOfAccountRequestBody)
+import javax.inject.Singleton
+
+@Singleton
+class CreateUpdatePeriodsOfAccountValidatorFactory {
+
+  def validator(nino: String, businessId: String, taxYear: String, body: JsValue): Validator[CreateUpdatePeriodsOfAccountRequest] =
+    new CreateUpdatePeriodsOfAccountValidator(nino, businessId, taxYear, body)
+
+}

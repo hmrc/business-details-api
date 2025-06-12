@@ -17,25 +17,10 @@
 package v2.createUpdatePeriodsOfAccount
 
 import api.controllers.RequestContext
-import api.models.errors.{
-  BusinessIdFormatError,
-  InternalError,
-  MtdError,
-  NinoFormatError,
-  NotFoundError,
-  RuleCessationDateError,
-  RuleEndBeforeStartDateError,
-  RuleEndDateError,
-  RuleIncorrectGovTestScenarioError,
-  RuleOutsideAmendmentWindowError,
-  RulePeriodsOverlapError,
-  RuleStartDateError,
-  RuleTaxYearNotSupportedError,
-  TaxYearFormatError
-}
+import api.models.errors._
 import api.services.{BaseService, ServiceOutcome}
 import cats.implicits.toBifunctorOps
-import v2.createUpdatePeriodsOfAccount.request.CreateUpdatePeriodsOfAccountRequestData
+import v2.createUpdatePeriodsOfAccount.request.CreateUpdatePeriodsOfAccountRequest
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,8 +28,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CreateUpdatePeriodsOfAccountService @Inject() (connector: CreateUpdatePeriodsOfAccountConnector) extends BaseService {
 
-  def create(request: CreateUpdatePeriodsOfAccountRequestData)(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[Unit]] =
-    connector.create(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
+  def createUpdate(request: CreateUpdatePeriodsOfAccountRequest)(implicit ctx: RequestContext, ec: ExecutionContext): Future[ServiceOutcome[Unit]] =
+    connector.createUpdate(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
 
   private val downstreamErrorMap: Map[String, MtdError] =
     Map(
