@@ -1,33 +1,38 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "title": "Create or Update Periods of Accounting",
+  "title": "Create or Update Periods of Account Request",
+  "description": "Create or Update Periods of Account Request",
   "type": "object",
   "properties": {
     "periodsOfAccount": {
       "type": "boolean",
-      "description": "Indicates whether the customer has periods of account.\n\nIf this value is true then periodsOfAccountDates must be submitted."
+      "description": "Indicates whether the customer has periods of account.\n\nIf this value is true, then periodsOfAccountDates must be submitted.",
+      "example": true
     },
-      "periodsOfAccountDates": {
-        "type": "array",
-        "description": "List of periods of account. These must be submitted if a customer has periods of account.\n\nIf periodsOfAccount is set to false, then this value should not be submitted.",
-        "items": {
-          "type": "object",
-          "properties": {
-            "startDate": {
-              "type": "string",
-              "description": "The start date of the period of account."
-            },
-            "endDate": {
-              "type": "string",
-              "description": "The start end of the period of account."
-            }
+    "periodsOfAccountDates": {
+      "type": "array",
+      "description": "List of periods of account. These must be submitted if a customer has periods of account.\n\nIf periodsOfAccount is set to false, then this field should not be submitted.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "description": "The start date of the period of account. Must conform to the format YYYY-MM-DD",
+            "format": "date",
+            "example": "2025-04-06"
           },
-          "required": ["startDate", "endDate"]
-        }
+          "endDate": {
+            "type": "string",
+            "description": "The end date of the period of account. Must conform to the format YYYY-MM-DD",
+            "format": "date",
+            "example": "2025-07-05"
+          }
+        },
+        "required": ["startDate", "endDate"],
+        "additionalProperties": false
       }
+    }
   },
-  "required": [
-    "periodsOfAccount"
-  ],
+  "required": ["periodsOfAccount"],
   "additionalProperties": false
 }

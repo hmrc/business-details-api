@@ -1,22 +1,22 @@
-summary: Retrieve Periods Of Account
+summary: Retrieve Periods of Account
 description: |
   This API is used to retrieve a customers Periods of Account and can submit the Periods of Account dates.
-  
+  A National Insurance number, business ID and tax year must be provided.
+
   ### Test data
   Scenario simulations using <code>Gov-Test-Scenario</code> headers is only available in the sandbox environment.
-  | Header Value (Gov-Test-Scenario) | Scenario                                                         |
-  | -------------------------------- | ---------------------------------------------------------------- |
-  | N/A - DEFAULT                    | Simulate a successful response                                   |
-  | NO_PERIODS_OF_ACCOUNT            | Simulate a successful response with no periods of account        |
-  | NOT_FOUND                        | Simulate a scenario where no data is found.                      |
-  | STATEFUL                         | Performs a stateful submission of the request that is submitted. |
 
-
+  | Header Value (Gov-Test-Scenario) | Scenario                                                   |
+  | -------------------------------- | -----------------------------------------------------------|
+  | N/A - DEFAULT                    | Simulates success response.                                |
+  | NO_PERIODS_OF_ACCOUNT            | Simulate a successful response with no periods of account. |
+  | NOT_FOUND                        | Simulates the scenario where no data is found.             |
+  | STATEFUL                         | Performs a stateful retrieve.                              |
 
 parameters:
   - $ref: './common/pathParameters.yaml#/components/parameters/nino'
   - $ref: './common/pathParameters.yaml#/components/parameters/businessId'
-  - $ref: './common/pathParameters.yaml#/components/parameters/periodsOfAccountTypeTaxYear'
+  - $ref: './common/pathParameters.yaml#/components/parameters/taxYearMinimum2025'
   - $ref: './common/headers.yaml#/components/parameters/acceptJson'
   - $ref: './common/headers.yaml#/components/parameters/authorization'
   - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
@@ -45,14 +45,13 @@ responses:
         schema:
           $ref: './schemas/retrievePeriodsOfAccount/response.json'
         examples:
-          PERIODS_OF_ACCOUNT_TRUE:
-            description: Example Response when the periodsOfAccount field is true
+          Example response when periodsOfAccount is true:
             value:
-              $ref: './examples/retrievePeriodsOfAccount/response.json'
-          PERIODS_OF_ACCOUNT_FALSE:
-            description: Example Response when the periodsOfAccount field is false
+              $ref: './examples/retrievePeriodsOfAccount/periodOfAccountTrueResponse.json'
+          Example response when periodsOfAccount is false:
             value:
-              $ref: './examples/retrievePeriodsOfAccount/response2.json'
+              $ref: './examples/retrievePeriodsOfAccount/periodOfAccountFalseResponse.json'
+
   "400":
     description: Bad request
     headers:

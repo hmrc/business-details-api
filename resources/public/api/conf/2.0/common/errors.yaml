@@ -43,7 +43,7 @@ components:
         Periods of account dates must be supplied if periodsOfAccount is set to true.  Dates should not be supplied if periodsOfAccount is set to false.
       value:
         code: RULE_PERIODS_OF_ACCOUNT
-        message: Periods of account dates must be supplied if periodsOfAccount is set to true.  They should not be supplied of periodsOfAccount is set to false
+        message: Periods of account dates must be supplied if periodsOfAccount is set to true. They should not be supplied of periodsOfAccount is set to false
 
     ruleEndDateBeforeStartDate:
       description: |
@@ -75,7 +75,7 @@ components:
 
     ruleCessationDate:
       description: |
-        Period of account end dates cannot be greater than the income source cessation date
+        Period of account end dates cannot be greater than the income source cessation date.
       value:
         code: RULE_CESSATION_DATE
         message: One of more of the supplied periods of account end dates exceeds the business cessation date
