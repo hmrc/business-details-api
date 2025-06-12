@@ -16,30 +16,29 @@
 
 package v2.createUpdatePeriodsOfAccount
 
-import api.connectors.DownstreamOutcome
+import api.controllers.RequestContext
+import api.services.ServiceOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
-import uk.gov.hmrc.http.HeaderCarrier
 import v2.createUpdatePeriodsOfAccount.request.CreateUpdatePeriodsOfAccountRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockCreateUpdatePeriodsOfAccountConnector extends MockFactory {
+trait MockCreateUpdatePeriodsOfAccountService extends MockFactory {
 
-  val mockCreateUpdatePeriodsOfAccountConnector: CreateUpdatePeriodsOfAccountConnector = mock[CreateUpdatePeriodsOfAccountConnector]
+  val mockCreateUpdatePeriodsOfAccountService: CreateUpdatePeriodsOfAccountService = mock[CreateUpdatePeriodsOfAccountService]
 
-  object MockedCreateUpdatePeriodsOfAccountConnector {
+  object MockCreateUpdatePeriodsOfAccountService {
 
-    def createUpdate(request: CreateUpdatePeriodsOfAccountRequest): CallHandler[Future[DownstreamOutcome[Unit]]] = {
+    def createUpdate(request: CreateUpdatePeriodsOfAccountRequest): CallHandler[Future[ServiceOutcome[Unit]]] = {
       (
-        mockCreateUpdatePeriodsOfAccountConnector
+        mockCreateUpdatePeriodsOfAccountService
           .createUpdate(_: CreateUpdatePeriodsOfAccountRequest)(
-            _: HeaderCarrier,
-            _: ExecutionContext,
-            _: String
+            _: RequestContext,
+            _: ExecutionContext
           )
         )
-        .expects(request, *, *, *)
+        .expects(request, *, *)
     }
 
   }

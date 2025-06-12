@@ -20,28 +20,32 @@ import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
-import v2.common.models.PeriodsOfAccountDates
-import v2.createUpdatePeriodsOfAccount.request.{CreateUpdatePeriodsOfAccountRequestBody, CreateUpdatePeriodsOfAccountRequestData}
+import v2.createUpdatePeriodsOfAccount.request.CreateUpdatePeriodsOfAccountRequest
+import v2.fixtures.CreateUpdatePeriodsOfAccountFixtures.minimumRequestBodyModel
 
 import scala.concurrent.Future
 
 class CreateUpdatePeriodsOfAccountServiceSpec extends ServiceSpec {
 
-  private val nino       = Nino("AA123456A")
-  private val businessId = BusinessId("XAIS12345678910")
-  private val taxYear    = TaxYear.fromMtd("2024-25")
-  private val body       = CreateUpdatePeriodsOfAccountRequestBody(true, Some(Seq(PeriodsOfAccountDates("2024-04-06", "2025-04-05"))))
-  private val request    = CreateUpdatePeriodsOfAccountRequestData(nino, businessId, taxYear, body)
+  private val nino: Nino             = Nino("AA123456A")
+  private val businessId: BusinessId = BusinessId("XAIS12345678910")
+  private val taxYear: TaxYear       = TaxYear.fromMtd("2025-26")
+
+  private val request: CreateUpdatePeriodsOfAccountRequest = CreateUpdatePeriodsOfAccountRequest(
+    nino = nino,
+    businessId = businessId,
+    taxYear = taxYear,
+    body = minimumRequestBodyModel
+  )
 
   "CreateUpdatePeriodsOfAccountService" when {
     "the connector call is successful" should {
       "return a mapped result" in new Test {
-
         MockedCreateUpdatePeriodsOfAccountConnector
-          .create(request)
+          .createUpdate(request)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
-        val result = await(service.create(request))
+        val result: ServiceOutcome[Unit] = await(service.createUpdate(request))
         result shouldBe Right(ResponseWrapper(correlationId, ()))
 
       }
@@ -51,10 +55,10 @@ class CreateUpdatePeriodsOfAccountServiceSpec extends ServiceSpec {
       def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
         s"return ${error.code} when $downstreamErrorCode error is returned from the service" in new Test {
           MockedCreateUpdatePeriodsOfAccountConnector
-            .create(request)
+            .createUpdate(request)
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
 
-          val result: ServiceOutcome[Unit] = await(service.create(request))
+          val result: ServiceOutcome[Unit] = await(service.createUpdate(request))
           result shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
@@ -81,7 +85,10 @@ class CreateUpdatePeriodsOfAccountServiceSpec extends ServiceSpec {
 
   private trait Test extends MockCreateUpdatePeriodsOfAccountConnector {
 
-    protected val service = new CreateUpdatePeriodsOfAccountService(mockCreateUpdatePeriodsOfAccountConnector)
+    protected val service: CreateUpdatePeriodsOfAccountService = new CreateUpdatePeriodsOfAccountService(
+      connector = mockCreateUpdatePeriodsOfAccountConnector
+    )
+
   }
 
 }

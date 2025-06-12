@@ -27,9 +27,7 @@ import v2.retrievePeriodsOfAccount.model.request.RetrievePeriodsOfAccountRequest
 
 class RetrievePeriodsOfAccountValidator(nino: String, businessId: String, taxYear: String) extends Validator[RetrievePeriodsOfAccountRequest] {
 
-  private val resolveTaxYear: ResolveDetailedTaxYear = ResolveDetailedTaxYear(
-    TaxYear.ending(2026)
-  )
+  private val resolveTaxYear: ResolveDetailedTaxYear = ResolveDetailedTaxYear(TaxYear.fromMtd("2025-26"))
 
   def validate: Validated[Seq[MtdError], RetrievePeriodsOfAccountRequest] =
     (

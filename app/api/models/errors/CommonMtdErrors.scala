@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,8 +38,8 @@ object ValueFormatError extends MtdError("FORMAT_VALUE", "The value must be betw
 
 }
 
-object StartDateFormatError extends MtdError("FORMAT_START_DATE", "The provided Start date is invalid", BAD_REQUEST)
-object EndDateFormatError   extends MtdError("FORMAT_END_DATE", "The provided End date is invalid", BAD_REQUEST)
+object StartDateFormatError extends MtdError("FORMAT_START_DATE", "The start date field format is invalid", BAD_REQUEST)
+object EndDateFormatError   extends MtdError("FORMAT_END_DATE", "The end date field format is invalid", BAD_REQUEST)
 
 object TypeOfBusinessFormatError extends MtdError("FORMAT_TYPE_OF_BUSINESS", "The provided type of business is invalid", BAD_REQUEST)
 
@@ -66,33 +66,6 @@ object InvalidTaxYearParameterError
 
 object RuleCountryCodeError extends MtdError("RULE_COUNTRY_CODE", "The country code is not a valid ISO 3166-1 alpha-3 country code", BAD_REQUEST)
 
-object RuleEndBeforeStartDateError
-    extends MtdError(
-      "RULE_END_DATE_BEFORE_START_DATE",
-      "The supplied values for periods of account endDate must not be earlier than the startDate",
-      BAD_REQUEST)
-
-object RuleStartDateError
-    extends MtdError(
-      "RULE_START_DATE",
-      "One or more of the supplied periods of account start dates do not fall within or before the tax year provided",
-      BAD_REQUEST)
-
-object RuleEndDateError
-    extends MtdError(
-      "RULE_END_DATE",
-      "One or more of the supplied periods of account end dates do not fall within the tax year provided",
-      BAD_REQUEST)
-
-object RulePeriodsOverlapError
-    extends MtdError("RULE_PERIODS_OVERLAP", "One or more of the supplied periods of account start and end dates overlap", BAD_REQUEST)
-
-object RuleCessationDateError
-    extends MtdError(
-      "RULE_CESSATION_DATE",
-      "One of more of the supplied periods of account end dates exceeds the business cessation date",
-      BAD_REQUEST)
-
 //Standard Errors
 object NotFoundError           extends MtdError("MATCHING_RESOURCE_NOT_FOUND", "Matching resource not found", NOT_FOUND)
 object InternalError           extends MtdError("INTERNAL_SERVER_ERROR", "An internal server error occurred", INTERNAL_SERVER_ERROR)
@@ -118,4 +91,4 @@ object InvalidBodyTypeError     extends MtdError("INVALID_BODY_TYPE", "Expecting
 object RuleIncorrectGovTestScenarioError extends MtdError("RULE_INCORRECT_GOV_TEST_SCENARIO", "The Gov-Test-Scenario was not found", BAD_REQUEST)
 
 object RuleRequestCannotBeFulfilledError
-    extends MtdError("RULE_REQUEST_CANNOT_BE_FULFILLED", "Custom (will vary in production depending on the actual error)", 422)
+    extends MtdError("RULE_REQUEST_CANNOT_BE_FULFILLED", "Custom (will vary in production depending on the actual error)", UNPROCESSABLE_ENTITY)
