@@ -40,7 +40,7 @@ components:
         pattern: ^2[0-9]{3}-[0-9]{2}$
         example: "2024-25"
       required: true
-    periodsOfAccountTypeTaxYear:
+    taxYearMinimum2025:
       name: taxYear
       in: path
       description: |

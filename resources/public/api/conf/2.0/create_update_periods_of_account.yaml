@@ -1,24 +1,26 @@
 summary: Create or Update Periods of Account
 description: |
   This API is used to declare whether a customer has Periods of Account and can submit the Periods of Account dates.
+  A National Insurance number, business ID and tax year must be provided.
 
   ### Test data
   Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.    
 
   | Header Value (Gov-Test-Scenario) | Scenario                                                                                                                  |
   |----------------------------------|---------------------------------------------------------------------------------------------------------------------------|
-  | N/A - DEFAULT                    | Simulate a successful response.                                                                                           |
+  | N/A - DEFAULT                    | Simulates success response.                                                                                               |
   | CESSATION_DATE                   | Simulates the scenario where the periods of account are being submitted against a business income source that has ceased. |
-  | NOT_FOUND                        | Simulate a scenario where no data is found.                                                                               |
+  | NOT_FOUND                        | Simulates the scenario where no data is found.                                                                            |
   | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window.                           |
-  | STATEFUL                         | Performs a stateful create and update.                                                                                    |
+  | STATEFUL                         | Performs a stateful create or update.                                                                                     |
 
 parameters:
   - $ref: './common/pathParameters.yaml#/components/parameters/nino'
   - $ref: './common/pathParameters.yaml#/components/parameters/businessId'
-  - $ref: './common/pathParameters.yaml#/components/parameters/taxYear'
+  - $ref: './common/pathParameters.yaml#/components/parameters/taxYearMinimum2025'
   - $ref: './common/headers.yaml#/components/parameters/acceptJson'
-  - $ref: './common/headers.yaml#/components/parameters/authorization'
+  - $ref: './common/headers.yaml#/components/parameters/contentTypeJson'
+  - $ref: './common/headers.yaml#/components/parameters/authorizationWriteScopeHeader'
   - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
 
 tags:
@@ -34,12 +36,10 @@ requestBody:
       schema:
         $ref: './schemas/createUpdatePeriodsOfAccount/request.json'
       examples:
-        PERIODS_OF_ACCOUNT_TRUE:
-          description: Example request when periods of account dates must be submitted
+        Example request when periodsOfAccount is true:
           value:
             $ref: './examples/createUpdatePeriodsOfAccount/periodOfAccountTrueRequest.json'
-        PERIODS_OF_ACCOUNT_FALSE:
-          description: Example request when periods of account dates don't need to be submitted
+        Example request when periodsOfAccount is false:
           value:
             $ref: './examples/createUpdatePeriodsOfAccount/periodOfAccountFalseRequest.json'
 
@@ -50,12 +50,11 @@ responses:
       X-CorrelationId:
         $ref: './common/headers.yaml#/components/parameters/correlationId'
       Deprecation:
-        $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
       Sunset:
-        $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
       Link:
-        $ref: ./common/headers.yaml#/components/parameters/linkHeader
-    content: { }
+        $ref: './common/headers.yaml#/components/parameters/linkHeader'
 
   "400":
     description: Bad request
@@ -63,11 +62,11 @@ responses:
       X-CorrelationId:
         $ref: './common/headers.yaml#/components/parameters/correlationId'
       Deprecation:
-        $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
       Sunset:
-        $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
       Link:
-        $ref: ./common/headers.yaml#/components/parameters/linkHeader
+        $ref: './common/headers.yaml#/components/parameters/linkHeader'
     content:
       application/json:
         schema:
@@ -112,11 +111,11 @@ responses:
       X-CorrelationId:
         $ref: './common/headers.yaml#/components/parameters/correlationId'
       Deprecation:
-        $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
       Sunset:
-        $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
       Link:
-        $ref: ./common/headers.yaml#/components/parameters/linkHeader
+        $ref: './common/headers.yaml#/components/parameters/linkHeader'
     content:
       application/json:
         schema:
@@ -131,11 +130,11 @@ responses:
       X-CorrelationId:
         $ref: './common/headers.yaml#/components/parameters/correlationId'
       Deprecation:
-        $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
       Sunset:
-        $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
       Link:
-        $ref: ./common/headers.yaml#/components/parameters/linkHeader
+        $ref: './common/headers.yaml#/components/parameters/linkHeader'
     content:
       application/json:
         schema:

@@ -4,9 +4,14 @@ info:
   version: "2.0"
   title: Business Details (MTD)
   description: |
-    The following endpoints are stateful in the sandbox:
+    The following groups of endpoints are stateful in the Sandbox:
+    * [Accounting Type](#tag/Accounting-Type)
+    * [Periods of Account](#tag/Periods-of-Account)
+
+    The following endpoints are stateful in the Sandbox:
     * Retrieve Business Details
     * List All Businesses
+    * Create and Amend Quarterly Period Type for a Business
     
     **Some of the endpoints in this API return accounting period start and end dates. These should not be displayed to users of your software and will be removed in a future update.**
     

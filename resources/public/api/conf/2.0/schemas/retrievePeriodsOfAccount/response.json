@@ -1,33 +1,38 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "description": "Retrieve accounting type response",
+  "title": "Retrieve Periods of Account Response",
+  "description": "Retrieve Periods of Account Response",
   "type": "object",
   "properties": {
     "periodsOfAccount": {
       "type": "boolean",
-      "description": "Indicates whether the customer has periods of account.\n\nIf this value is true then periodsOfAccountDates must be submitted.",
+      "description": "Indicates whether the customer has periods of account.\n\nIf this value is true, then periodsOfAccountDates will be returned.",
       "example": true
     },
     "periodsOfAccountDates": {
       "type": "array",
-      "description": "List of periods of account. These will be returned if a customer has submitted periods of account.\n\nIf periodsOfAccount is set to false, then this value will not be returned.",
+      "description": "List of periods of account. These will be returned if a customer has submitted periods of account.\n\nIf periodsOfAccount is set to false, then this field will not be returned.",
       "items": {
         "type": "object",
         "properties": {
           "startDate": {
             "type": "string",
-            "description": "The start date of the period of account.",
-            "example": "2024-01-01"
+            "description": "The start date of the period of account. Must conform to the format YYYY-MM-DD",
+            "format": "date",
+            "example": "2025-04-06"
           },
           "endDate": {
             "type": "string",
-            "description": "The end date of the period of account.",
-            "example": "2024-03-31"
+            "description": "The end date of the period of account. Must conform to the format YYYY-MM-DD",
+            "format": "date",
+            "example": "2025-07-05"
           }
         },
-        "required": ["startDate", "endDate"]
+        "required": ["startDate", "endDate"],
+        "additionalProperties": false
       }
     }
   },
-  "required": ["periodsOfAccount"]
+  "required": ["periodsOfAccount"],
+  "additionalProperties": false
 }
