@@ -37,7 +37,7 @@ class RetrievePeriodsOfAccountConnector @Inject() (val http: HttpClient, val app
     val downstreamUri: String = s"itsd/income-sources/${request.nino}/periods-of-account/${request.businessId}"
 
     val queryParams = Map(
-      "taxYearExplicit" -> request.taxYear.asDownstream
+      "taxYear" -> request.taxYear.asTysDownstream
     )
 
     val mappedQueryParams: Map[String, String] = queryParams.collect { case (k: String, v: String) => (k, v) }

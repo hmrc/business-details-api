@@ -47,7 +47,7 @@ class RetrievePeriodsOfAccountConnectorSpec extends ConnectorSpec {
   )
 
   val queryParams = Map(
-    "taxYearExplicit" -> "2025"
+    "taxYear" -> "24-25"
   )
 
   val mappedQueryParams: Map[String, String] = queryParams.collect { case (k: String, v: String) => (k, v) }
