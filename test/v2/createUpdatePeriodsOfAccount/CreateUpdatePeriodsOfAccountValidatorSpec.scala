@@ -21,7 +21,7 @@ import api.models.errors._
 import api.utils.JsonErrorValidators
 import play.api.libs.json._
 import support.UnitSpec
-import v2.createUpdatePeriodsOfAccount.request.CreateUpdatePeriodsOfAccountRequest
+import v2.createUpdatePeriodsOfAccount.request.{CreateUpdatePeriodsOfAccountRequest, CreateUpdatePeriodsOfAccountRequestBody}
 import v2.fixtures.CreateUpdatePeriodsOfAccountFixtures._
 
 class CreateUpdatePeriodsOfAccountValidatorSpec extends UnitSpec with JsonErrorValidators {
@@ -41,14 +41,37 @@ class CreateUpdatePeriodsOfAccountValidatorSpec extends UnitSpec with JsonErrorV
 
   "running a validation" should {
     "return no errors" when {
-      "a full valid request with periodsOfAccount set to true and periodsOfAccountDates is supplied" in {
-        val result: Either[ErrorWrapper, CreateUpdatePeriodsOfAccountRequest] =
-          validator(validNino, validBusinessId, validTaxYear, validFullRequestBodyJson).validateAndWrapResult()
+      "a full valid request is provided with periodsOfAccount set to true and periodsOfAccountDates" when {
+        "all start dates are within the supplied tax year" in {
+          val result: Either[ErrorWrapper, CreateUpdatePeriodsOfAccountRequest] =
+            validator(validNino, validBusinessId, validTaxYear, validFullRequestBodyJson).validateAndWrapResult()
 
-        result shouldBe Right(CreateUpdatePeriodsOfAccountRequest(parsedNino, parsedBusinessId, parsedTaxYear, fullRequestBodyModel))
+          result shouldBe Right(CreateUpdatePeriodsOfAccountRequest(parsedNino, parsedBusinessId, parsedTaxYear, fullRequestBodyModel))
+        }
+
+        "a start date is before the start of the supplied tax year" in {
+          val validJson: JsValue = validFullRequestBodyJson.update(
+            "/periodsOfAccountDates",
+            Json.arr(
+              Json.obj("startDate" -> "2025-03-29", "endDate" -> "2025-07-05"),
+              Json.obj("startDate" -> "2025-07-06", "endDate" -> "2025-10-05")
+            )
+          )
+
+          val validModel: CreateUpdatePeriodsOfAccountRequestBody = fullRequestBodyModel.copy(
+            periodsOfAccountDates = fullRequestBodyModel.periodsOfAccountDates.map { dates =>
+              dates.updated(0, dates.head.copy(startDate = "2025-03-29"))
+            }
+          )
+
+          val result: Either[ErrorWrapper, CreateUpdatePeriodsOfAccountRequest] =
+            validator(validNino, validBusinessId, validTaxYear, validJson).validateAndWrapResult()
+
+          result shouldBe Right(CreateUpdatePeriodsOfAccountRequest(parsedNino, parsedBusinessId, parsedTaxYear, validModel))
+        }
       }
 
-      "a minimum valid request with only periodsOfAccount set to false is supplied" in {
+      "a minimum valid request is provided with only periodsOfAccount set to false" in {
         val result: Either[ErrorWrapper, CreateUpdatePeriodsOfAccountRequest] =
           validator(validNino, validBusinessId, validTaxYear, validMinimumRequestBodyJson).validateAndWrapResult()
 
@@ -201,34 +224,6 @@ class CreateUpdatePeriodsOfAccountValidatorSpec extends UnitSpec with JsonErrorV
       }
     }
 
-    "return RuleStartDateError error" when {
-      "passed a body with a start date outside the supplied tax year" in {
-        val invalidJson: JsValue = validFullRequestBodyJson.update(
-          "/periodsOfAccountDates",
-          Json.arr(Json.obj("startDate" -> "2025-04-05", "endDate" -> "2026-04-05"))
-        )
-
-        val result: Either[ErrorWrapper, CreateUpdatePeriodsOfAccountRequest] =
-          validator(validNino, validBusinessId, validTaxYear, invalidJson).validateAndWrapResult()
-
-        result shouldBe Left(ErrorWrapper(correlationId, RuleStartDateError.withPath("/periodsOfAccountDates/0/startDate")))
-      }
-    }
-
-    "return RuleEndDateError error" when {
-      "passed a body with an end date outside the supplied tax year" in {
-        val invalidJson: JsValue = validFullRequestBodyJson.update(
-          "/periodsOfAccountDates",
-          Json.arr(Json.obj("startDate" -> "2025-04-06", "endDate" -> "2026-04-06"))
-        )
-
-        val result: Either[ErrorWrapper, CreateUpdatePeriodsOfAccountRequest] =
-          validator(validNino, validBusinessId, validTaxYear, invalidJson).validateAndWrapResult()
-
-        result shouldBe Left(ErrorWrapper(correlationId, RuleEndDateError.withPath("/periodsOfAccountDates/0/endDate")))
-      }
-    }
-
     "return RulePeriodsOverlapError error" when {
       val overlappingPeriodCases: Seq[(String, JsArray)] = Seq(
         "overlapping periods (forward order)" -> Json.arr(
@@ -266,6 +261,29 @@ class CreateUpdatePeriodsOfAccountValidatorSpec extends UnitSpec with JsonErrorV
           validator("A12344A", "X0IS", "20256", validFullRequestBodyJson).validateAndWrapResult()
 
         result shouldBe Left(ErrorWrapper(correlationId, BadRequestError, Some(List(BusinessIdFormatError, NinoFormatError, TaxYearFormatError))))
+      }
+
+      "passed a body with start and end dates outside the valid tax year bounds" in {
+        val invalidJson: JsValue = validFullRequestBodyJson.update(
+          "/periodsOfAccountDates",
+          Json.arr(Json.obj("startDate" -> "2026-04-06", "endDate" -> "2026-04-06"))
+        )
+
+        val result: Either[ErrorWrapper, CreateUpdatePeriodsOfAccountRequest] =
+          validator(validNino, validBusinessId, validTaxYear, invalidJson).validateAndWrapResult()
+
+        result shouldBe Left(
+          ErrorWrapper(
+            correlationId,
+            BadRequestError,
+            Some(
+              List(
+                RuleEndDateError.withPath("/periodsOfAccountDates/0/endDate"),
+                RuleStartDateError.withPath("/periodsOfAccountDates/0/startDate")
+              )
+            )
+          )
+        )
       }
     }
   }

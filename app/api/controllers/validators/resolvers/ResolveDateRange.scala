@@ -42,12 +42,14 @@ case class ResolveDateRange(startDateFormatError: MtdError = StartDateFormatErro
   def withDatesLimitedTo(minDate: LocalDate,
                          minError: MtdError = startDateFormatError,
                          maxDate: LocalDate,
-                         maxError: MtdError = endDateFormatError): Resolver[(String, String), DateRange] =
+                         maxError: MtdError = endDateFormatError,
+                         enforceStartOnOrAfterMin: Boolean = true): Resolver[(String, String), DateRange] =
     resolver thenValidate ResolveDateRange.datesLimitedTo(
       minDate,
       minError,
       maxDate,
-      maxError
+      maxError,
+      enforceStartOnOrAfterMin
     )
 
   private def resolveDateRange(parsedStartDate: LocalDate, parsedEndDate: LocalDate): Validated[Seq[MtdError], DateRange] =
@@ -61,12 +63,22 @@ case class ResolveDateRange(startDateFormatError: MtdError = StartDateFormatErro
 
 object ResolveDateRange extends ResolverSupport {
 
-  def datesLimitedTo(minDate: LocalDate, minError: => MtdError, maxDate: LocalDate, maxError: => MtdError): Validator[DateRange] =
-    combinedValidator[DateRange](
-      satisfies(minError)(_.startDate >= minDate),
-      satisfies(minError)(_.startDate <= maxDate),
-      satisfies(maxError)(_.endDate <= maxDate),
-      satisfies(maxError)(_.endDate >= minDate)
-    )
+  def datesLimitedTo(minDate: LocalDate,
+                     minError: => MtdError,
+                     maxDate: LocalDate,
+                     maxError: => MtdError,
+                     enforceStartOnOrAfterMin: Boolean): Validator[DateRange] = {
+    val maybeStartOnAfterMin: Option[Validator[DateRange]] =
+      if (enforceStartOnOrAfterMin) Some(satisfies(minError)(_.startDate >= minDate)) else None
+
+    val validators: List[Validator[DateRange]] = List(
+      maybeStartOnAfterMin,
+      Some[Validator[DateRange]](satisfies(minError)(_.startDate <= maxDate)),
+      Some[Validator[DateRange]](satisfies(maxError)(_.endDate <= maxDate)),
+      Some[Validator[DateRange]](satisfies(maxError)(_.endDate >= minDate))
+    ).flatten
+
+    combinedValidator(validators.head, validators.tail: _*)
+  }
 
 }
