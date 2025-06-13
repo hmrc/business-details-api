@@ -39,6 +39,6 @@
       }
     }
   },
-  "required": ["periodsOfAccount"],
+  "required": ["submittedOn", "periodsOfAccount"],
   "additionalProperties": false
 }
