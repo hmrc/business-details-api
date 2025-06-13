@@ -50,6 +50,7 @@ class RetrievePeriodsOfAccountControllerSpec
   private val responseBody = Json.parse(
     """
       |{
+      |  "submittedOn": "2019-08-24T14:15:22.000Z",
       |  "periodsOfAccount": true,
       |  "periodsOfAccountDates": [
       |    {
@@ -74,6 +75,7 @@ class RetrievePeriodsOfAccountControllerSpec
   )
 
   private val responseData = RetrievePeriodsOfAccountResponse(
+    Timestamp("2019-08-24T14:15:22Z"),
     true,
     Some(
       Seq(

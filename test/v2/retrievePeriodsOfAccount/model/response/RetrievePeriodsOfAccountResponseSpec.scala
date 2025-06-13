@@ -16,6 +16,7 @@
 
 package v2.retrievePeriodsOfAccount.model.response
 
+import api.models.domain.Timestamp
 import play.api.libs.json.Json
 import support.UnitSpec
 import v2.common.models.PeriodsOfAccountDates
@@ -43,6 +44,7 @@ class RetrievePeriodsOfAccountResponseSpec extends UnitSpec {
 
   private val vendorResponseWithDates = Json.parse("""
       |{
+      |  "submittedOn": "2019-08-24T14:15:22.000Z",
       |  "periodsOfAccount": true,
       |  "periodsOfAccountDates": [
       |    {
@@ -55,14 +57,19 @@ class RetrievePeriodsOfAccountResponseSpec extends UnitSpec {
 
   private val vendorResponseWithoutDates = Json.parse("""
       |{
+      |  "submittedOn": "2019-08-24T14:15:22.000Z",
       |  "periodsOfAccount": false
       |}
       |""".stripMargin)
 
   private val parsedResponseWithDates =
-    RetrievePeriodsOfAccountResponse(periodsOfAccount = true, Some(Seq(PeriodsOfAccountDates("2024-04-06", "2025-03-05"))))
+    RetrievePeriodsOfAccountResponse(
+      submittedOn = Timestamp("2019-08-24T14:15:22Z"),
+      periodsOfAccount = true,
+      Some(Seq(PeriodsOfAccountDates("2024-04-06", "2025-03-05")))
+    )
 
-  private val parsedResponseWithoutDates = RetrievePeriodsOfAccountResponse(periodsOfAccount = false, None)
+  private val parsedResponseWithoutDates = RetrievePeriodsOfAccountResponse(Timestamp("2019-08-24T14:15:22Z"), periodsOfAccount = false, None)
 
   "RetrievePeriodsOfAccountResponse" when {
     "There are periods of accounts dates" should {

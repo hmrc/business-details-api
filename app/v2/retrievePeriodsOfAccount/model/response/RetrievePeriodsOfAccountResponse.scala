@@ -16,16 +16,20 @@
 
 package v2.retrievePeriodsOfAccount.model.response
 
+import api.models.domain.Timestamp
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
 import v2.common.models.PeriodsOfAccountDates
 
-case class RetrievePeriodsOfAccountResponse(periodsOfAccount: Boolean, periodsOfAccountDates: Option[Seq[PeriodsOfAccountDates]])
+case class RetrievePeriodsOfAccountResponse(submittedOn: Timestamp,
+                                            periodsOfAccount: Boolean,
+                                            periodsOfAccountDates: Option[Seq[PeriodsOfAccountDates]])
 
 object RetrievePeriodsOfAccountResponse {
 
   implicit val reads: Reads[RetrievePeriodsOfAccountResponse] = (
-    (JsPath \ "periodsOfAccount").readWithDefault[Boolean](true) and
+    (JsPath \ "submittedOn").read[Timestamp] and
+      (JsPath \ "periodsOfAccount").readWithDefault[Boolean](true) and
       (JsPath \ "periodsOfAccountDates").readNullable[Seq[PeriodsOfAccountDates]]
   )(RetrievePeriodsOfAccountResponse.apply _)
 

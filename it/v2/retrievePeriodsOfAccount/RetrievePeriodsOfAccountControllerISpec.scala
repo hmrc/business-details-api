@@ -142,6 +142,7 @@ class RetrievePeriodsOfAccountControllerISpec extends IntegrationBaseSpec {
     val fullMtdJson: JsValue = Json.parse(
       s"""
         |{
+        |  "submittedOn": "2019-08-24T14:15:22.000Z",
         |  "periodsOfAccount": true,
         |  "periodsOfAccountDates": [
         |    {
