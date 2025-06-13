@@ -17,7 +17,7 @@
 package v2.retrievePeriodsOfAccount
 
 import api.connectors.{ConnectorSpec, DownstreamOutcome}
-import api.models.domain.{BusinessId, Nino, TaxYear}
+import api.models.domain.{BusinessId, Nino, TaxYear, Timestamp}
 import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
 import v2.common.models.PeriodsOfAccountDates
@@ -35,6 +35,7 @@ class RetrievePeriodsOfAccountConnectorSpec extends ConnectorSpec {
   private val request = RetrievePeriodsOfAccountRequest(nino, businessId, taxYear)
 
   private val response = RetrievePeriodsOfAccountResponse(
+    Timestamp("2019-08-24T14:15:22Z"),
     true,
     Some(
       Seq(
