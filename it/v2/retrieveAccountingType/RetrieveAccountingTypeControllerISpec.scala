@@ -20,13 +20,13 @@ import api.models.errors._
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
-class RetrieveAccountingTypeControllerSpec extends IntegrationBaseSpec {
+class RetrieveAccountingTypeControllerISpec extends IntegrationBaseSpec {
 
   "Calling the retrieve accounting type endpoint" should {
 
@@ -53,18 +53,6 @@ class RetrieveAccountingTypeControllerSpec extends IntegrationBaseSpec {
     }
 
     "return error according to spec" when {
-
-      def errorBody(code: String): String =
-        s"""
-           |{
-           |  "response": [
-           |    {
-           |      "errorCode": "$code",
-           |      "errorDescription": "message"
-           |    }
-           |  ]
-           |}
-  """.stripMargin
 
       "validation error" when {
         def validationErrorTest(requestNino: String,
@@ -121,6 +109,9 @@ class RetrieveAccountingTypeControllerSpec extends IntegrationBaseSpec {
           (BAD_REQUEST, "1215", BAD_REQUEST, NinoFormatError),
           (BAD_REQUEST, "1117", BAD_REQUEST, TaxYearFormatError),
           (BAD_REQUEST, "1007", BAD_REQUEST, BusinessIdFormatError),
+          (BAD_REQUEST, "1122", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "1229", INTERNAL_SERVER_ERROR, InternalError),
+          (BAD_REQUEST, "5009", INTERNAL_SERVER_ERROR, InternalError),
           (NOT_FOUND, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
           (NOT_FOUND, "5010", NOT_FOUND, NotFoundError)
         )
@@ -206,6 +197,18 @@ class RetrieveAccountingTypeControllerSpec extends IntegrationBaseSpec {
           (AUTHORIZATION, "Bearer 123")
         )
     }
+
+    def errorBody(code: String): String =
+      s"""
+         |{
+         |  "response": [
+         |    {
+         |      "errorCode": "$code",
+         |      "errorDescription": "message"
+         |    }
+         |  ]
+         |}
+  """.stripMargin
 
   }
 
