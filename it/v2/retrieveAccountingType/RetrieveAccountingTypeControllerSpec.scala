@@ -118,7 +118,11 @@ class RetrieveAccountingTypeControllerSpec extends IntegrationBaseSpec {
         }
 
         val errors = List(
-          (BAD_REQUEST, "5010", NOT_FOUND, NotFoundError)
+          (BAD_REQUEST, "1215", BAD_REQUEST, NinoFormatError),
+          (BAD_REQUEST, "1117", BAD_REQUEST, TaxYearFormatError),
+          (BAD_REQUEST, "1007", BAD_REQUEST, BusinessIdFormatError),
+          (NOT_FOUND, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
+          (NOT_FOUND, "5010", NOT_FOUND, NotFoundError)
         )
 
         errors.foreach((serviceErrorTest _).tupled)
