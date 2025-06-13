@@ -93,7 +93,7 @@ class TimestampSpec extends UnitSpec {
 
     "serialised to a JSON string field" should {
       "serialise correctly" in {
-        val result = Json.toJson(response)
+        val result: JsValue = Json.toJson(response)
         result shouldBe responseJs
       }
     }
