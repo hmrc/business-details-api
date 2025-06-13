@@ -4,6 +4,12 @@
   "description": "Retrieve Periods of Account Response",
   "type": "object",
   "properties": {
+    "submittedOn": {
+      "type": "string",
+      "description": "The date and time of the submission. Must conform to the format YYYY-MM-DDThh:mm:ss.SSSZ",
+      "format": "date-time",
+      "example": "2025-08-24T14:15:22.802Z"
+    },
     "periodsOfAccount": {
       "type": "boolean",
       "description": "Indicates whether the customer has periods of account.\n\nIf this value is true, then periodsOfAccountDates will be returned.",
@@ -33,6 +39,6 @@
       }
     }
   },
-  "required": ["periodsOfAccount"],
+  "required": ["submittedOn", "periodsOfAccount"],
   "additionalProperties": false
 }

@@ -64,7 +64,8 @@ object CreateUpdatePeriodsOfAccountRulesValidator extends RulesValidator[CreateU
             minDate = taxYear.startDate,
             minError = RuleStartDateError.withPath(startDatePath),
             maxDate = taxYear.endDate,
-            maxError = RuleEndDateError.withPath(endDatePath)
+            maxError = RuleEndDateError.withPath(endDatePath),
+            enforceStartOnOrAfterMin = false
           )(periodOfAccountDates.startDate -> periodOfAccountDates.endDate)
         }
 

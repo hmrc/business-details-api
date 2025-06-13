@@ -64,8 +64,8 @@ class CreateUpdatePeriodsOfAccountControllerISpec extends IntegrationBaseSpec wi
           |      "endDate": "2025-07-05"
           |    },
           |    {
-          |      "startDate": "2024-07-06",
-          |      "endDate": "2024-10-05"
+          |      "startDate": "2026-04-06",
+          |      "endDate": "2026-07-05"
           |    }
           |  ]
           |}

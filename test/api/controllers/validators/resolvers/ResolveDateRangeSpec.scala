@@ -16,7 +16,6 @@
 
 package api.controllers.validators.resolvers
 
-import api.controllers.validators.resolvers
 import api.models.domain.DateRange
 import api.models.errors.{EndDateFormatError, MtdError, RuleEndBeforeStartDateError, StartDateFormatError}
 import cats.data.Validated
@@ -103,37 +102,62 @@ class ResolveDateRangeSpec extends UnitSpec {
     }
   }
 
-  "ResolveDateRange datesLimitedTo" should {
-    val minDate: LocalDate = LocalDate.parse("2000-02-01")
-    val maxDate: LocalDate = LocalDate.parse("2000-02-10")
-    val validator: resolvers.ResolveDateRange.Validator[DateRange] = ResolveDateRange.datesLimitedTo(
-      minDate = minDate,
-      minError = startDateFormatError,
-      maxDate = maxDate,
-      maxError = endDateFormatError
-    )
-
+  "ResolveDateRange datesLimitedTo" when {
+    val minDate: LocalDate  = LocalDate.parse("2000-02-01")
+    val maxDate: LocalDate  = LocalDate.parse("2000-02-10")
     val tooEarly: LocalDate = minDate.minusDays(1)
     val tooLate: LocalDate  = maxDate.plusDays(1)
 
-    "allow min and max dates" in {
-      val result: Option[Seq[MtdError]] = validator(DateRange(minDate, maxDate))
-      result shouldBe None
+    def validator(enforceStartOnOrAfterMin: Boolean): ResolveDateRange.Validator[DateRange] = ResolveDateRange.datesLimitedTo(
+      minDate = minDate,
+      minError = startDateFormatError,
+      maxDate = maxDate,
+      maxError = endDateFormatError,
+      enforceStartOnOrAfterMin = enforceStartOnOrAfterMin
+    )
+
+    "enforceStartOnOrAfterMin is true" should {
+      "allow min and max dates" in {
+        val result: Option[Seq[MtdError]] = validator(true)(DateRange(minDate, maxDate))
+        result shouldBe None
+      }
+
+      "disallow dates earlier than min or later than max" in {
+        val result: Option[Seq[MtdError]] = validator(true)(DateRange(tooEarly, tooLate))
+        result shouldBe Some(List(startDateFormatError, endDateFormatError))
+      }
+
+      "disallow dates later than max" in {
+        val result: Option[Seq[MtdError]] = validator(true)(DateRange(tooLate, tooLate))
+        result shouldBe Some(List(startDateFormatError, endDateFormatError))
+      }
+
+      "disallow dates earlier than min" in {
+        val result: Option[Seq[MtdError]] = validator(true)(DateRange(tooEarly, tooEarly))
+        result shouldBe Some(List(startDateFormatError, endDateFormatError))
+      }
     }
 
-    "disallow dates earlier than min or later than max" in {
-      val result: Option[Seq[MtdError]] = validator(DateRange(tooEarly, tooLate))
-      result shouldBe Some(List(startDateFormatError, endDateFormatError))
-    }
+    "enforceStartOnOrAfterMin is false" should {
+      "allow min and max dates" in {
+        val result: Option[Seq[MtdError]] = validator(false)(DateRange(minDate, maxDate))
+        result shouldBe None
+      }
 
-    "disallow dates later than max" in {
-      val result: Option[Seq[MtdError]] = validator(DateRange(tooLate, tooLate))
-      result shouldBe Some(List(startDateFormatError, endDateFormatError))
-    }
+      "allow start dates earlier than min" in {
+        val result: Option[Seq[MtdError]] = validator(false)(DateRange(tooEarly, maxDate))
+        result shouldBe None
+      }
 
-    "disallow dates earlier than min" in {
-      val result: Option[Seq[MtdError]] = validator(DateRange(tooEarly, tooEarly))
-      result shouldBe Some(List(startDateFormatError, endDateFormatError))
+      "disallow dates later than max" in {
+        val result: Option[Seq[MtdError]] = validator(false)(DateRange(tooLate, tooLate))
+        result shouldBe Some(List(startDateFormatError, endDateFormatError))
+      }
+
+      "disallow only end dates earlier than min" in {
+        val result: Option[Seq[MtdError]] = validator(false)(DateRange(tooEarly, tooEarly))
+        result shouldBe Some(List(endDateFormatError))
+      }
     }
   }
 
