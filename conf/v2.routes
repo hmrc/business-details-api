@@ -6,4 +6,6 @@ PUT        /:nino/:businessId/:taxYear                     v2.createAmendQuarter
 
 PUT        /:nino/:businessId/:taxYear/accounting-type     v2.updateAccountingType.UpdateAccountingTypeController.handleRequest(nino: String, businessId: String, taxYear: String)
 
+GET        /:nino/:businessId/:taxYear/periods-of-account  v2.retrievePeriodsOfAccount.RetrievePeriodsOfAccountController.handleRequest(nino: String, businessId: String, taxYear: String)
+
 PUT        /:nino/:businessId/:taxYear/periods-of-account  v2.createUpdatePeriodsOfAccount.CreateUpdatePeriodsOfAccountController.handleRequest(nino: String, businessId: String, taxYear: String)
