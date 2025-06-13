@@ -68,11 +68,11 @@ object ResolveDateRange extends ResolverSupport {
                      maxDate: LocalDate,
                      maxError: => MtdError,
                      enforceStartOnOrAfterMin: Boolean): Validator[DateRange] = {
-    val maybeStartOnAfterMin: Option[Validator[DateRange]] =
+    val maybeStartOnOrAfterMin: Option[Validator[DateRange]] =
       if (enforceStartOnOrAfterMin) Some(satisfies(minError)(_.startDate >= minDate)) else None
 
     val validators: List[Validator[DateRange]] = List(
-      maybeStartOnAfterMin,
+      maybeStartOnOrAfterMin,
       Some[Validator[DateRange]](satisfies(minError)(_.startDate <= maxDate)),
       Some[Validator[DateRange]](satisfies(maxError)(_.endDate <= maxDate)),
       Some[Validator[DateRange]](satisfies(maxError)(_.endDate >= minDate))
