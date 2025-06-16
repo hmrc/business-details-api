@@ -1,6 +1,6 @@
 summary: Retrieve Periods of Account
 description: |
-  This API is used to retrieve a customers Periods of Account and can submit the Periods of Account dates.
+  This API is used to retrieve a customers Periods of Account and Periods of Account dates.
   A National Insurance number, business ID and tax year must be provided.
 
   ### Test data
