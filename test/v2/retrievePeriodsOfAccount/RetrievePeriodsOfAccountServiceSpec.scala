@@ -16,7 +16,7 @@
 
 package v2.retrievePeriodsOfAccount
 
-import api.models.domain.{BusinessId, Nino, TaxYear}
+import api.models.domain.{BusinessId, Nino, TaxYear, Timestamp}
 import api.models.errors._
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
@@ -34,6 +34,7 @@ class RetrievePeriodsOfAccountServiceSpec extends ServiceSpec {
   private val requestData = RetrievePeriodsOfAccountRequest(nino, businessId, taxYear)
 
   private val expectedResponse = RetrievePeriodsOfAccountResponse(
+    Timestamp("2019-08-24T14:15:22Z"),
     true,
     Some(
       Seq(
