@@ -5,7 +5,7 @@ put:
     You can choose standard quarterly periods (where the first period is 6 April to 5 July) or calendar quarterly periods (first period 1 April to 30 June) for each tax year.
     Note that the quarterly period type cannot be changed after a submission is made for that year.
     
-    **Warning:** If an invalid tax year or invalid business ID is submitted, the service will return an HTTP 500 INTERNAL_SERVER_ERROR response. Only the current tax year is allowed and business IDs must relate to a self-employment or property income source. This is a known issue and will be fixed to return an appropriate error in a future release.
+    **Warning:** If an invalid tax year or invalid business ID is submitted, the service will return a RULE_REQUEST_CANNOT_BE_FULFILLED error response. Only the current tax year is allowed and business IDs must relate to a self-employment or property income source.
     
     
     ### Test data
