@@ -21,13 +21,10 @@ import shapeless.HNil
 import utils.EmptinessChecker
 import v2.common.models.AccountingType
 
-import scala.annotation.nowarn
-
 case class UpdateAccountingTypeRequestBody(accountingType: AccountingType)
 
 object UpdateAccountingTypeRequestBody {
 
-  @nowarn("cat=lint-byname-implicit")
   implicit val emptinessChecker: EmptinessChecker[UpdateAccountingTypeRequestBody] = EmptinessChecker.use { o =>
     "accountingType" -> o.accountingType.toString :: HNil
   }

@@ -25,12 +25,9 @@ import cats.implicits.catsSyntaxTuple4Semigroupal
 import play.api.libs.json.JsValue
 import v2.createUpdatePeriodsOfAccount.request.{CreateUpdatePeriodsOfAccountRequest, CreateUpdatePeriodsOfAccountRequestBody}
 
-import scala.annotation.nowarn
-
 class CreateUpdatePeriodsOfAccountValidator(nino: String, businessId: String, taxYear: String, body: JsValue)
     extends Validator[CreateUpdatePeriodsOfAccountRequest] {
 
-  @nowarn("cat=lint-byname-implicit")
   private val resolveJson: ResolveNonEmptyJsonObject[CreateUpdatePeriodsOfAccountRequestBody] =
     new ResolveNonEmptyJsonObject[CreateUpdatePeriodsOfAccountRequestBody]()
 
