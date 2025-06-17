@@ -21,7 +21,7 @@ Start the service manager profile: `sm2 -start MTDFB_BUSINESS_DETAILS`
 
 ```
 sbt test
-sbt it:test
+sbt it/test
 ```
 
 ## Viewing Open API Spec (OAS) docs

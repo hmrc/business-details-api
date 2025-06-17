@@ -14,46 +14,50 @@
  * limitations under the License.
  */
 
-import sbt._
-import uk.gov.hmrc.DefaultBuildSettings.{addTestReportOption, defaultSettings}
-import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
-import org.scalafmt.sbt.ScalafmtPlugin
+import sbt.*
+import uk.gov.hmrc.DefaultBuildSettings
+
+ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / majorVersion := 0
 
 val appName = "business-details-api"
 
-lazy val ItTest = config("it") extend Test
-
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
-  .disablePlugins(JUnitXmlReportPlugin) // Required to prevent https://github.com/scalatest/scalatest/issues/1427
+  .disablePlugins(JUnitXmlReportPlugin)
   .settings(
-    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test(),
+    libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     retrieveManaged                 := true,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(warnScalaVersionEviction = false),
-    scalaVersion                    := "2.13.16",
-    scalafmtOnCompile               := true,
-    scalacOptions ++= List(
-      "-Xfatal-warnings",
-      "-Wconf:src=routes/.*:silent",
+    scalacOptions ++= Seq(
       "-feature",
-      "-language:higherKinds"
-    )
+      "-Wconf:src=routes/.*:s",
+      "-Werror"
+    ),
+    scalacOptions ++= Seq("-nowarn")
   )
   .settings(
-    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources"
+    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
+    Compile / unmanagedClasspath += baseDirectory.value / "resources"
   )
-  .settings(majorVersion := 0)
-  .settings(CodeCoverageSettings.settings: _*)
-  .settings(defaultSettings(): _*)
-  .configs(ItTest)
-  .settings(inConfig(ItTest)(
-    Defaults.testSettings ++ headerSettings(ItTest) ++ automateHeaderSettings(ItTest) ++ ScalafmtPlugin.scalafmtConfigSettings): _*)
+  .settings(CodeCoverageSettings.settings)
+  .settings(PlayKeys.playDefaultPort := 7792)
+
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test")
+  .settings(DefaultBuildSettings.itSettings() ++ ScalafmtPlugin.scalafmtConfigSettings)
   .settings(
-    ItTest / fork                       := true,
-    ItTest / unmanagedSourceDirectories := Seq((ItTest / baseDirectory).value / "it"),
-    ItTest / unmanagedClasspath += baseDirectory.value / "resources",
-    Runtime / unmanagedClasspath += baseDirectory.value / "resources",
-    ItTest / javaOptions += "-Dlogger.resource=logback-test.xml",
-    ItTest / parallelExecution := false,
-    addTestReportOption(ItTest, "int-test-reports")
-  ).settings(PlayKeys.playDefaultPort := 7792)
+    Test / fork := true,
+    Test / javaOptions += "-Dlogger.resource=logback-test.xml")
+  .settings(libraryDependencies ++= AppDependencies.itDependencies)
+  .settings(
+    scalacOptions ++= Seq("-Werror"),
+    scalacOptions ++= Seq("-nowarn")
+  )
+
+dependencyUpdatesFilter -= moduleFilter(name = "bootstrap-backend-play-30")
+dependencyUpdatesFilter -= moduleFilter(organization = "org.playframework")
+dependencyUpdatesFilter -= moduleFilter(name = "scala-library")
+dependencyUpdatesFilter -= moduleFilter(name = "scalatestplus-play")
+
