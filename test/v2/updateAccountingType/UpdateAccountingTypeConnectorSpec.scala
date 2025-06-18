@@ -20,6 +20,7 @@ import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
+import uk.gov.hmrc.http.StringContextOps
 import v2.common.models.AccountingType
 import v2.updateAccountingType.model.request._
 
@@ -39,7 +40,7 @@ class UpdateAccountingTypeConnectorSpec extends ConnectorSpec {
       "the downstream request is successful" in new HipTest with Test {
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
-        willPut(s"$baseUrl/itsd/income-sources/$nino/accounting-type/$businessId?taxYear=${taxYear.asTysDownstream}", body)
+        willPut(url"$baseUrl/itsd/income-sources/$nino/accounting-type/$businessId?taxYear=${taxYear.asTysDownstream}", body)
           .returns(Future.successful(outcome))
 
         val result: DownstreamOutcome[Unit] = await(connector.update(request))
@@ -52,7 +53,7 @@ class UpdateAccountingTypeConnectorSpec extends ConnectorSpec {
         val downstreamErrorResponse: DownstreamErrors                 = DownstreamErrors.single(DownstreamErrorCode("SOME_ERROR"))
         val outcome: Left[ResponseWrapper[DownstreamErrors], Nothing] = Left(ResponseWrapper(correlationId, downstreamErrorResponse))
 
-        willPut(s"$baseUrl/itsd/income-sources/$nino/accounting-type/$businessId?taxYear=${taxYear.asTysDownstream}", body)
+        willPut(url"$baseUrl/itsd/income-sources/$nino/accounting-type/$businessId?taxYear=${taxYear.asTysDownstream}", body)
           .returns(Future.successful(outcome))
 
         val result: DownstreamOutcome[Unit] = await(connector.update(request))

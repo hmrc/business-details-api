@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import play.core.PlayVersion
-import play.sbt.PlayImport.*
 import sbt.*
 
 object AppDependencies {
 
-  val bootstrapPlayVersion = "8.6.0"
+  val bootstrapPlayVersion = "9.13.0"
 
   val compile: Seq[ModuleID] = Seq(
     "uk.gov.hmrc"                   %% "bootstrap-backend-play-30" % bootstrapPlayVersion,

@@ -20,6 +20,7 @@ import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{BusinessId, Nino, TaxYear, Timestamp}
 import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
+import uk.gov.hmrc.http.StringContextOps
 import v2.common.models.PeriodsOfAccountDates
 import v2.retrievePeriodsOfAccount.model.request._
 import v2.retrievePeriodsOfAccount.model.response.RetrievePeriodsOfAccountResponse
@@ -58,7 +59,7 @@ class RetrievePeriodsOfAccountConnectorSpec extends ConnectorSpec {
       "the downstream request is successful" in new HipTest with Test {
         val outcome: Right[Nothing, ResponseWrapper[RetrievePeriodsOfAccountResponse]] = Right(ResponseWrapper(correlationId, response))
 
-        willGet(s"$baseUrl/itsd/income-sources/$nino/periods-of-account/$businessId", mappedQueryParams.toList).returns(Future.successful(outcome))
+        willGet(url"$baseUrl/itsd/income-sources/$nino/periods-of-account/$businessId", mappedQueryParams.toList).returns(Future.successful(outcome))
 
         val result: DownstreamOutcome[RetrievePeriodsOfAccountResponse] = await(connector.retrievePeriodsOfAccount(request))
         result shouldBe outcome
@@ -70,7 +71,7 @@ class RetrievePeriodsOfAccountConnectorSpec extends ConnectorSpec {
         val downstreamErrorResponse: DownstreamErrors                 = DownstreamErrors.single(DownstreamErrorCode("SOME_ERROR"))
         val outcome: Left[ResponseWrapper[DownstreamErrors], Nothing] = Left(ResponseWrapper(correlationId, downstreamErrorResponse))
 
-        willGet(s"$baseUrl/itsd/income-sources/$nino/periods-of-account/$businessId", mappedQueryParams.toList).returns(Future.successful(outcome))
+        willGet(url"$baseUrl/itsd/income-sources/$nino/periods-of-account/$businessId", mappedQueryParams.toList).returns(Future.successful(outcome))
 
         val result: DownstreamOutcome[RetrievePeriodsOfAccountResponse] = await(connector.retrievePeriodsOfAccount(request))
         result shouldBe outcome

@@ -20,14 +20,15 @@ import api.connectors.DownstreamUri.HipUri
 import api.connectors.httpparsers.StandardDownstreamHttpParser.reads
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.HeaderCarrier
 import v2.retrievePeriodsOfAccount.model.request.RetrievePeriodsOfAccountRequest
 import v2.retrievePeriodsOfAccount.model.response.RetrievePeriodsOfAccountResponse
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RetrievePeriodsOfAccountConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends BaseDownstreamConnector {
+class RetrievePeriodsOfAccountConnector @Inject() (val http: HttpClientV2, val appConfig: AppConfig) extends BaseDownstreamConnector {
 
   def retrievePeriodsOfAccount(request: RetrievePeriodsOfAccountRequest)(implicit
       hc: HeaderCarrier,

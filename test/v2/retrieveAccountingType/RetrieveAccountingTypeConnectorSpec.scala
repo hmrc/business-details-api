@@ -21,6 +21,7 @@ import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
+import uk.gov.hmrc.http.StringContextOps
 import v2.common.models.AccountingType
 import v2.retrieveAccountingType.model.request._
 import v2.retrieveAccountingType.model.response.RetrieveAccountingTypeResponse
@@ -56,7 +57,7 @@ class RetrieveAccountingTypeConnectorSpec extends ConnectorSpec {
 
           MockedAppConfig.featureSwitches returns Configuration("passIntentHeader.enabled" -> passIntentHeaderFlag)
 
-          willGet(s"$baseUrl/itsd/income-sources/v2/$nino", mappedQueryParams.toList).returns(Future.successful(outcome))
+          willGet(url"$baseUrl/itsd/income-sources/v2/$nino", mappedQueryParams.toList).returns(Future.successful(outcome))
 
           val result: DownstreamOutcome[RetrieveAccountingTypeResponse] = await(connector.retrieveAccountingType(request))
           result shouldBe outcome
@@ -77,7 +78,7 @@ class RetrieveAccountingTypeConnectorSpec extends ConnectorSpec {
 
           MockedAppConfig.featureSwitches returns Configuration("passIntentHeader.enabled" -> passIntentHeaderFlag)
 
-          willGet(s"$baseUrl/itsd/income-sources/v2/$nino", mappedQueryParams.toList).returns(Future.successful(outcome))
+          willGet(url"$baseUrl/itsd/income-sources/v2/$nino", mappedQueryParams.toList).returns(Future.successful(outcome))
 
           val result: DownstreamOutcome[RetrieveAccountingTypeResponse] = await(connector.retrieveAccountingType(request))
           result shouldBe outcome

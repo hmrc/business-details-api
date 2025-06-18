@@ -18,14 +18,15 @@ package api.connectors
 
 import config.{AppConfig, FeatureSwitches}
 import play.api.http.{HeaderNames, MimeTypes}
-import play.api.libs.json.Writes
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
-import utils.Logging
+import play.api.libs.json.{Json, Writes}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, StringContextOps}
+import utils.{Logging, UrlUtils}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait BaseDownstreamConnector extends Logging {
-  val http: HttpClient
+  val http: HttpClientV2
   val appConfig: AppConfig
 
   // This is to provide an implicit AppConfig in existing connector implementations (which
@@ -45,7 +46,7 @@ trait BaseDownstreamConnector extends Logging {
     val strategy = uri.strategy
 
     def doPost(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] = {
-      http.POST(getBackendUri(uri.path, strategy), body)
+      http.post(url"${getBackendUri(uri.path, strategy)}").withBody(Json.toJson(body)).execute[DownstreamOutcome[Resp]]
     }
 
     for {
@@ -62,16 +63,17 @@ trait BaseDownstreamConnector extends Logging {
 
     val strategy = uri.strategy
 
-    def doGet(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] =
-      http.GET(getBackendUri(uri.path, strategy), queryParams)
-
+    def doGet(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] = {
+      val fullUrl = UrlUtils.appendQueryParams(getBackendUri(uri.path, strategy), queryParams)
+      http.get(url"$fullUrl").execute
+    }
     for {
       headers <- getBackendHeaders(strategy, intentHeader(maybeIntent))
       result  <- doGet(headers)
     } yield result
   }
 
-  def delete[Resp](uri: DownstreamUri[Resp])(implicit
+  def delete[Resp](uri: DownstreamUri[Resp], queryParams: Seq[(String, String)] = Nil, maybeIntent: Option[String] = None)(implicit
       ec: ExecutionContext,
       hc: HeaderCarrier,
       httpReads: HttpReads[DownstreamOutcome[Resp]],
@@ -80,7 +82,8 @@ trait BaseDownstreamConnector extends Logging {
     val strategy = uri.strategy
 
     def doDelete(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] = {
-      http.DELETE(getBackendUri(uri.path, strategy))
+      val fullUrl = UrlUtils.appendQueryParams(getBackendUri(uri.path, strategy), queryParams)
+      http.delete(url"$fullUrl").execute
     }
 
     for {
@@ -89,7 +92,7 @@ trait BaseDownstreamConnector extends Logging {
     } yield result
   }
 
-  def put[Body: Writes, Resp](body: Body, uri: DownstreamUri[Resp])(implicit
+  def put[Body: Writes, Resp](body: Body, uri: DownstreamUri[Resp], maybeIntent: Option[String] = None)(implicit
       ec: ExecutionContext,
       hc: HeaderCarrier,
       httpReads: HttpReads[DownstreamOutcome[Resp]],
@@ -98,11 +101,11 @@ trait BaseDownstreamConnector extends Logging {
     val strategy = uri.strategy
 
     def doPut(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] = {
-      http.PUT(getBackendUri(uri.path, strategy), body)
+      http.put(url"${getBackendUri(uri.path, strategy)}").withBody(Json.toJson(body)).execute
     }
 
     for {
-      headers <- getBackendHeaders(strategy, jsonContentTypeHeader)
+      headers <- getBackendHeaders(strategy, jsonContentTypeHeader ++ intentHeader(maybeIntent))
       result  <- doPut(headers)
     } yield result
   }
