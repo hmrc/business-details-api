@@ -37,7 +37,7 @@ trait BaseDownstreamConnector extends Logging {
 
   private val jsonContentTypeHeader = Seq(HeaderNames.CONTENT_TYPE -> MimeTypes.JSON)
 
-  def post[Body: Writes, Resp](body: Body, uri: DownstreamUri[Resp])(implicit
+  def post[Body: Writes, Resp](body: Body, uri: DownstreamUri[Resp], maybeIntent: Option[String] = None)(implicit
       ec: ExecutionContext,
       hc: HeaderCarrier,
       httpReads: HttpReads[DownstreamOutcome[Resp]],
@@ -50,7 +50,7 @@ trait BaseDownstreamConnector extends Logging {
     }
 
     for {
-      headers <- getBackendHeaders(strategy, jsonContentTypeHeader)
+      headers <- getBackendHeaders(strategy, jsonContentTypeHeader ++ intentHeader(maybeIntent))
       result  <- doPost(headers)
     } yield result
   }
@@ -87,7 +87,7 @@ trait BaseDownstreamConnector extends Logging {
     }
 
     for {
-      headers <- getBackendHeaders(strategy)
+      headers <- getBackendHeaders(strategy, intentHeader(maybeIntent))
       result  <- doDelete(headers)
     } yield result
   }
