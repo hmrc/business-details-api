@@ -148,8 +148,8 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
     "return 406" in new Test {
 
       val request: RequestHeader = buildRequest("/v1")
-      inside(requestHandler.routeRequest(request)) { case Some(ar: EssentialAction) =>
-        val result = ar.apply(request)
+      inside(requestHandler.routeRequest(request)) { case Some(arr: EssentialAction) =>
+        val result = arr.apply(request)
 
         status(result) shouldBe NOT_ACCEPTABLE
         contentAsJson(result) shouldBe Json.toJson(InvalidAcceptHeaderError)
