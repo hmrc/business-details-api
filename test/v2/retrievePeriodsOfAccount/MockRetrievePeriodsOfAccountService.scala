@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,13 @@ import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import v2.retrievePeriodsOfAccount.model.request.RetrievePeriodsOfAccountRequest
 import v2.retrievePeriodsOfAccount.model.response.RetrievePeriodsOfAccountResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockRetrievePeriodsOfAccountService extends MockFactory {
+trait MockRetrievePeriodsOfAccountService extends TestSuite with MockFactory {
 
   val mockRetrievePeriodsOfAccountService: RetrievePeriodsOfAccountService = mock[RetrievePeriodsOfAccountService]
 

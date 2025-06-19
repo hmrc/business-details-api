@@ -16,16 +16,25 @@
 
 package utils
 
-import org.scalamock.handlers.CallHandler
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.TestSuite
+import java.net.URI
 
-trait MockIdGenerator extends TestSuite with MockFactory {
+object UrlUtils {
 
-  val mockIdGenerator: IdGenerator = mock[IdGenerator]
+  def appendQueryParams(uri: String, queryParams: Seq[(String, String)]): String =
+    if (queryParams.isEmpty) {
+      uri
+    } else {
+      val oldUri   = new URI(uri)
+      val oldQuery = oldUri.getQuery
 
-  object MockIdGenerator {
-    def generateCorrelationId: CallHandler[String] = (mockIdGenerator.generateCorrelationId _).expects()
-  }
+      val appendQuery = queryParams.map { case (k, v) => s"$k=$v" }.mkString("&")
+
+      val newQuery = Option(oldQuery) match {
+        case None                => appendQuery
+        case Some(existingQuery) => s"$existingQuery&$appendQuery"
+      }
+
+      new URI(oldUri.getScheme, oldUri.getAuthority, oldUri.getPath, newQuery, oldUri.getFragment).toString
+    }
 
 }

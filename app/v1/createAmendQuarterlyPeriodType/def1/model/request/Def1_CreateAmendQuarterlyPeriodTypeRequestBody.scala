@@ -21,13 +21,10 @@ import shapeless.HNil
 import utils.EmptinessChecker
 import v1.createAmendQuarterlyPeriodType.model.request.CreateAmendQuarterlyPeriodTypeRequestBody
 
-import scala.annotation.nowarn
-
 case class Def1_CreateAmendQuarterlyPeriodTypeRequestBody(quarterlyPeriodType: QuarterlyPeriodType) extends CreateAmendQuarterlyPeriodTypeRequestBody
 
 object Def1_CreateAmendQuarterlyPeriodTypeRequestBody {
 
-  @nowarn("cat=lint-byname-implicit")
   implicit val emptinessChecker: EmptinessChecker[Def1_CreateAmendQuarterlyPeriodTypeRequestBody] = EmptinessChecker.use { o =>
     "quarterlyPeriodType" -> o.quarterlyPeriodType.toString :: HNil
   }

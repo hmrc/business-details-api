@@ -20,9 +20,11 @@ import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
+import uk.gov.hmrc.http.StringContextOps
 import v2.createUpdatePeriodsOfAccount.request.CreateUpdatePeriodsOfAccountRequest
 import v2.fixtures.CreateUpdatePeriodsOfAccountFixtures.minimumRequestBodyModel
 
+import java.net.URL
 import scala.concurrent.Future
 
 class CreateUpdatePeriodsOfAccountConnectorSpec extends ConnectorSpec {
@@ -64,7 +66,7 @@ class CreateUpdatePeriodsOfAccountConnectorSpec extends ConnectorSpec {
   }
 
   trait Test { _: ConnectorTest =>
-    protected val downstreamUri: String = s"$baseUrl/itsd/income-sources/$nino/periods-of-account/$businessId?taxYear=${taxYear.asTysDownstream}"
+    protected val downstreamUri: URL = url"$baseUrl/itsd/income-sources/$nino/periods-of-account/$businessId?taxYear=${taxYear.asTysDownstream}"
 
     protected val connector: CreateUpdatePeriodsOfAccountConnector = new CreateUpdatePeriodsOfAccountConnector(
       http = mockHttpClient,

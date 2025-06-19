@@ -19,6 +19,7 @@ package api.connectors
 import config.MockAppConfig
 import mocks.MockHttpClient
 import play.api.http.Status.IM_A_TEAPOT
+import uk.gov.hmrc.http.StringContextOps
 
 import scala.concurrent.Future
 
@@ -42,10 +43,7 @@ class MtdIdLookupConnectorSpec extends ConnectorSpec {
     "return an MtdId" when {
       "the http client returns a mtd id" in new Test {
         MockedHttpClient
-          .get[MtdIdLookupConnector.Outcome](
-            url = s"$baseUrl/mtd-identifier-lookup/nino/$nino",
-            config = dummyHeaderCarrierConfig
-          )
+          .get[MtdIdLookupConnector.Outcome](url"$baseUrl/mtd-identifier-lookup/nino/$nino", dummyHeaderCarrierConfig)
           .returns(Future.successful(Right(mtdId)))
 
         await(connector.getMtdId(nino)) shouldBe Right(mtdId)
@@ -58,7 +56,7 @@ class MtdIdLookupConnectorSpec extends ConnectorSpec {
 
         MockedHttpClient
           .get[MtdIdLookupConnector.Outcome](
-            url = s"$baseUrl/mtd-identifier-lookup/nino/$nino",
+            url = url"$baseUrl/mtd-identifier-lookup/nino/$nino",
             config = dummyHeaderCarrierConfig
           )
           .returns(Future.successful(Left(MtdIdLookupConnector.Error(statusCode))))

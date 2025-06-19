@@ -20,6 +20,7 @@ import api.connectors.ConnectorSpec
 import api.models.domain._
 import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
+import uk.gov.hmrc.http.StringContextOps
 import utils.DateUtils.nowAsUtc
 import v1.retrieveBusinessDetails.model.response.downstream.RetrieveBusinessDetailsDownstreamResponse
 
@@ -38,7 +39,7 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
 
         private val outcome = Right(ResponseWrapper(correlationId, response))
 
-        willGet(url = s"$baseUrl/registration/business-details/nino/${nino.nino}") returns
+        willGet(url = url"$baseUrl/registration/business-details/nino/${nino.nino}") returns
           Future.successful(outcome)
 
         await(connector.retrieveBusinessDetails(nino)) shouldBe outcome
@@ -49,7 +50,7 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
 
         private val outcome = Right(ResponseWrapper(correlationId, response))
 
-        willGet(url = s"$baseUrl/registration/business-details/nino/${nino.nino}") returns
+        willGet(url = url"$baseUrl/registration/business-details/nino/${nino.nino}") returns
           Future.successful(outcome)
 
         await(connector.retrieveBusinessDetails(nino)) shouldBe outcome
@@ -69,7 +70,7 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
         private val outcome: Right[Nothing, ResponseWrapper[RetrieveBusinessDetailsDownstreamResponse]] =
           Right(ResponseWrapper(correlationId, response))
 
-        willGet(url = s"$baseUrl/etmp/RESTAdapter/itsa/taxpayer/business-details?nino=${nino.nino}") returns
+        willGet(url = url"$baseUrl/etmp/RESTAdapter/itsa/taxpayer/business-details?nino=${nino.nino}") returns
           Future.successful(outcome)
 
         await(connector.retrieveBusinessDetails(nino)) shouldBe outcome

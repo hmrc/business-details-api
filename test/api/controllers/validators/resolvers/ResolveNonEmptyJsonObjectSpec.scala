@@ -24,8 +24,6 @@ import shapeless.HNil
 import support.UnitSpec
 import utils.EmptinessChecker
 
-import scala.annotation.nowarn
-
 class ResolveNonEmptyJsonObjectSpec extends UnitSpec with JsonErrorValidators {
 
   case class TestDataObject(field1: String, field2: String, oneOf1: Option[String] = None, oneOf2: Option[String] = None)
@@ -35,14 +33,12 @@ class ResolveNonEmptyJsonObjectSpec extends UnitSpec with JsonErrorValidators {
   implicit val testDataWrapperFormat: OFormat[TestDataWrapper] = Json.format[TestDataWrapper]
 
   // at least one of oneOf1 and oneOf2 must be included:
-  @nowarn("cat=lint-byname-implicit")
   implicit val emptinessChecker: EmptinessChecker[TestDataObject] = EmptinessChecker.use { o =>
     "oneOf1" -> o.oneOf1 :: "oneOf2" -> o.oneOf2 :: HNil
   }
 
   private val resolveTestDataObject = new ResolveNonEmptyJsonObject[TestDataObject]()
 
-  @nowarn("cat=lint-byname-implicit")
   private val resolveTestDataWrapper = new ResolveNonEmptyJsonObject[TestDataWrapper]()
 
   "ResolveNonEmptyJsonObject" should {

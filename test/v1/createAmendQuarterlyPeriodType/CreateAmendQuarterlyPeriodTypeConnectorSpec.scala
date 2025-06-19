@@ -20,6 +20,7 @@ import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
+import uk.gov.hmrc.http.StringContextOps
 import v1.createAmendQuarterlyPeriodType.def1.model.request._
 
 import scala.concurrent.Future
@@ -38,7 +39,7 @@ class CreateAmendQuarterlyPeriodTypeConnectorSpec extends ConnectorSpec {
       "the downstream request is successful" in new Api2089Test with Test {
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
-        willPut(s"$baseUrl/income-tax/23-24/income-sources/reporting-type/$nino/$businessId", body).returns(Future.successful(outcome))
+        willPut(url"$baseUrl/income-tax/23-24/income-sources/reporting-type/$nino/$businessId", body).returns(Future.successful(outcome))
 
         val result: DownstreamOutcome[Unit] = await(connector.create(request))
         result shouldBe outcome
@@ -50,7 +51,7 @@ class CreateAmendQuarterlyPeriodTypeConnectorSpec extends ConnectorSpec {
         val downstreamErrorResponse: DownstreamErrors                 = DownstreamErrors.single(DownstreamErrorCode("SOME_ERROR"))
         val outcome: Left[ResponseWrapper[DownstreamErrors], Nothing] = Left(ResponseWrapper(correlationId, downstreamErrorResponse))
 
-        willPut(s"$baseUrl/income-tax/23-24/income-sources/reporting-type/$nino/$businessId", body).returns(Future.successful(outcome))
+        willPut(url"$baseUrl/income-tax/23-24/income-sources/reporting-type/$nino/$businessId", body).returns(Future.successful(outcome))
 
         val result: DownstreamOutcome[Unit] = await(connector.create(request))
         result shouldBe outcome

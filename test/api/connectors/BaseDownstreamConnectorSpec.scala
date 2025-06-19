@@ -20,8 +20,10 @@ import api.models.outcomes.ResponseWrapper
 import config.{AppConfig, MockAppConfig}
 import mocks.MockHttpClient
 import org.scalatest.Assertion
+import play.api.libs.json.Json
 import support.UnitSpec
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, StringContextOps}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,10 +35,9 @@ class BaseDownstreamConnectorSpec extends UnitSpec with MockHttpClient with Mock
 
   private val baseUrl     = "http://test-BaseUrl"
   private val path        = "some/url"
-  private val absoluteUrl = s"$baseUrl/$path"
-  private val body        = "body"
-  private val userAgent   = "this-api"
-
+  private val absoluteUrl = url"$baseUrl/some/url"
+  private val body        = Json.toJson("body")
+  private val userAgent = "this-api"
   private implicit val correlationId: String = "someCorrelationId"
   private val outcome                        = Right(ResponseWrapper(correlationId, Result(2)))
 
@@ -59,7 +60,7 @@ class BaseDownstreamConnectorSpec extends UnitSpec with MockHttpClient with Mock
     HeaderCarrier(otherHeaders = inputHeaders)
 
   val connector: BaseDownstreamConnector = new BaseDownstreamConnector {
-    val http: HttpClient     = mockHttpClient
+    val http: HttpClientV2   = mockHttpClient
     val appConfig: AppConfig = mockAppConfig
   }
 
