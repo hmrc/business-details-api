@@ -164,8 +164,8 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
 
       private val request = buildRequest("/v1")
 
-      inside(requestHandler.routeRequest(request)) { case Some(arr: EssentialAction) =>
-        val result = arr.apply(request)
+      inside(requestHandler.routeRequest(request)) { case Some(action: EssentialAction) =>
+        val result = action.apply(request)
 
         status(result) shouldBe NOT_FOUND
         contentAsJson(result) shouldBe Json.toJson(UnsupportedVersionError)
@@ -180,8 +180,8 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
       "return 404 Not Found" in new Test {
 
         private val request = buildRequest("/v1")
-        inside(requestHandler.routeRequest(request)) { case Some(arr: EssentialAction) =>
-          val result = arr.apply(request)
+        inside(requestHandler.routeRequest(request)) { case Some(action: EssentialAction) =>
+          val result = action.apply(request)
 
           status(result) shouldBe NOT_FOUND
           contentAsJson(result) shouldBe Json.toJson(UnsupportedVersionError)
