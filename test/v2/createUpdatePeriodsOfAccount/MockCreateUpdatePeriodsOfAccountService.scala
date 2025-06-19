@@ -20,11 +20,12 @@ import api.controllers.RequestContext
 import api.services.ServiceOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import v2.createUpdatePeriodsOfAccount.request.CreateUpdatePeriodsOfAccountRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockCreateUpdatePeriodsOfAccountService extends MockFactory {
+trait MockCreateUpdatePeriodsOfAccountService extends TestSuite with MockFactory {
 
   val mockCreateUpdatePeriodsOfAccountService: CreateUpdatePeriodsOfAccountService = mock[CreateUpdatePeriodsOfAccountService]
 

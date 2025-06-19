@@ -19,13 +19,14 @@ package v2.retrievePeriodsOfAccount
 import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 import v2.retrievePeriodsOfAccount.model.request.RetrievePeriodsOfAccountRequest
 import v2.retrievePeriodsOfAccount.model.response.RetrievePeriodsOfAccountResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockRetrievePeriodsOfAccountConnector extends MockFactory {
+trait MockRetrievePeriodsOfAccountConnector extends TestSuite with MockFactory {
 
   val mockRetrievePeriodsOfAccountConnector: RetrievePeriodsOfAccountConnector = mock[RetrievePeriodsOfAccountConnector]
 

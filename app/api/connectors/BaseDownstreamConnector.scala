@@ -55,7 +55,7 @@ trait BaseDownstreamConnector extends Logging {
     } yield result
   }
 
-  def get[Resp](uri: DownstreamUri[Resp], queryParams: Seq[(String, String)] = Seq.empty, maybeIntent: Option[String] = None)(implicit
+  def get[Resp](uri: DownstreamUri[Resp], queryParams: Seq[(String, String)] = Nil, maybeIntent: Option[String] = None)(implicit
       ec: ExecutionContext,
       hc: HeaderCarrier,
       httpReads: HttpReads[DownstreamOutcome[Resp]],
@@ -67,6 +67,7 @@ trait BaseDownstreamConnector extends Logging {
       val fullUrl = UrlUtils.appendQueryParams(getBackendUri(uri.path, strategy), queryParams)
       http.get(url"$fullUrl").execute
     }
+
     for {
       headers <- getBackendHeaders(strategy, intentHeader(maybeIntent))
       result  <- doGet(headers)
@@ -110,16 +111,16 @@ trait BaseDownstreamConnector extends Logging {
     } yield result
   }
 
-  private def intentHeader(maybeIntent: Option[String]): Seq[(String, String)] =
+  private def intentHeader(maybeIntent: Option[String]) =
     maybeIntent.map(intent => Seq("intent" -> intent)).getOrElse(Nil)
 
   private def getBackendUri(path: String, strategy: DownstreamStrategy): String =
     s"${strategy.baseUrl}/$path"
 
-  private def getBackendHeaders(strategy: DownstreamStrategy, additionalHeaders: Seq[(String, String)] = Seq.empty)(implicit
-      ec: ExecutionContext,
-      hc: HeaderCarrier,
-      correlationId: String): Future[HeaderCarrier] = {
+  private def getBackendHeaders(
+      strategy: DownstreamStrategy,
+      additionalHeaders: Seq[(String, String)]
+  )(implicit ec: ExecutionContext, hc: HeaderCarrier, correlationId: String): Future[HeaderCarrier] = {
 
     for {
       contractHeaders <- strategy.contractHeaders(correlationId)

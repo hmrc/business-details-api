@@ -21,12 +21,13 @@ import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import v2.listAllBusinesses.model.request.ListAllBusinessesRequestData
 import v2.listAllBusinesses.model.response.{Business, ListAllBusinessesResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockListAllBusinessesService extends MockFactory {
+trait MockListAllBusinessesService extends TestSuite with MockFactory {
 
   val mockListAllBusinessesService: ListAllBusinessesService = mock[ListAllBusinessesService]
 

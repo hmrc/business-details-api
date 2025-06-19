@@ -20,12 +20,13 @@ import api.connectors.DownstreamOutcome
 import api.models.domain.Nino
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 import v1.retrieveBusinessDetails.model.response.downstream.RetrieveBusinessDetailsDownstreamResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockRetrieveBusinessDetailsConnector extends MockFactory {
+trait MockRetrieveBusinessDetailsConnector extends TestSuite with MockFactory {
 
   val mockRetrieveBusinessDetailsConnector: RetrieveBusinessDetailsConnector = mock[RetrieveBusinessDetailsConnector]
 

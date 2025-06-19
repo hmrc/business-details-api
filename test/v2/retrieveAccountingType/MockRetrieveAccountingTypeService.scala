@@ -21,12 +21,13 @@ import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import v2.retrieveAccountingType.model.request.RetrieveAccountingTypeRequest
 import v2.retrieveAccountingType.model.response.RetrieveAccountingTypeResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockRetrieveAccountingTypeService extends MockFactory {
+trait MockRetrieveAccountingTypeService extends TestSuite with MockFactory {
 
   val mockRetrieveAccountingTypeService: RetrieveAccountingTypeService = mock[RetrieveAccountingTypeService]
 

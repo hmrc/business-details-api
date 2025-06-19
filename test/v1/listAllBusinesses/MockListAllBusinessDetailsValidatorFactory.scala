@@ -22,9 +22,10 @@ import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import v1.listAllBusinesses.model.request.ListAllBusinessesRequestData
 
-trait MockListAllBusinessDetailsValidatorFactory extends MockFactory {
+trait MockListAllBusinessDetailsValidatorFactory extends TestSuite with MockFactory {
 
   val mockListAllBusinessDetailsValidatorFactory: ListAllBusinessDetailsValidatorFactory = mock[ListAllBusinessDetailsValidatorFactory]
 

@@ -19,12 +19,13 @@ package v2.createUpdatePeriodsOfAccount
 import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 import v2.createUpdatePeriodsOfAccount.request.CreateUpdatePeriodsOfAccountRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockCreateUpdatePeriodsOfAccountConnector extends MockFactory {
+trait MockCreateUpdatePeriodsOfAccountConnector extends TestSuite with MockFactory {
 
   val mockCreateUpdatePeriodsOfAccountConnector: CreateUpdatePeriodsOfAccountConnector = mock[CreateUpdatePeriodsOfAccountConnector]
 

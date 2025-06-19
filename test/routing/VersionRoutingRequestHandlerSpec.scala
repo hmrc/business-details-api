@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
   test =>
 
   implicit private val actorSystem: ActorSystem = ActorSystem("test")
-  val action: DefaultActionBuilder              = app.injector.instanceOf[DefaultActionBuilder]
+  val actionBuilder: DefaultActionBuilder              = app.injector.instanceOf[DefaultActionBuilder]
 
   import play.api.mvc.Handler
   import play.api.routing.sird._
@@ -68,7 +68,7 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
     (() => filters.filters).stubs().returns(Seq.empty)
 
     val requestHandler: VersionRoutingRequestHandler =
-      new VersionRoutingRequestHandler(routingMap, errorHandler, httpConfiguration, mockAppConfig, filters, action)
+      new VersionRoutingRequestHandler(routingMap, errorHandler, httpConfiguration, mockAppConfig, filters, actionBuilder)
 
     def buildRequest(path: String): RequestHeader =
       acceptHeader

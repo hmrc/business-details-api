@@ -19,12 +19,13 @@ package v2.createAmendQuarterlyPeriodType
 import api.connectors.DownstreamOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 import v2.createAmendQuarterlyPeriodType.model.request.CreateAmendQuarterlyPeriodTypeRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockCreateAmendQuarterlyPeriodTypeConnector extends MockFactory {
+trait MockCreateAmendQuarterlyPeriodTypeConnector extends TestSuite with MockFactory {
 
   val mockCreateAmendQuarterlyPeriodTypeConnector: CreateAmendQuarterlyPeriodTypeConnector = mock[CreateAmendQuarterlyPeriodTypeConnector]
 

@@ -21,12 +21,13 @@ import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import v2.retrieveBusinessDetails.model.request.RetrieveBusinessDetailsRequestData
 import v2.retrieveBusinessDetails.model.response.RetrieveBusinessDetailsResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockRetrieveBusinessDetailsService extends MockFactory {
+trait MockRetrieveBusinessDetailsService extends TestSuite with MockFactory {
 
   val mockRetrieveBusinessDetailsService: RetrieveBusinessDetailsService = mock[RetrieveBusinessDetailsService]
 

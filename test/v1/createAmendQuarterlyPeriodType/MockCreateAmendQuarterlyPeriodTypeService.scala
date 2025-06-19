@@ -21,11 +21,12 @@ import api.models.errors.ErrorWrapper
 import api.models.outcomes.ResponseWrapper
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import v1.createAmendQuarterlyPeriodType.model.request.CreateAmendQuarterlyPeriodTypeRequestData
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockCreateAmendQuarterlyPeriodTypeService extends MockFactory {
+trait MockCreateAmendQuarterlyPeriodTypeService extends TestSuite with MockFactory {
 
   val mockCreateAmendQuarterlyPeriodTypeService: CreateAmendQuarterlyPeriodTypeService = mock[CreateAmendQuarterlyPeriodTypeService]
 
