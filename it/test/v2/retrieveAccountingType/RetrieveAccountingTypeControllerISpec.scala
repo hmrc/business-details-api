@@ -39,7 +39,7 @@ class RetrieveAccountingTypeControllerISpec extends IntegrationBaseSpec {
           DownstreamStub.onSuccess(
             method = DownstreamStub.GET,
             uri = downstreamUri,
-            queryParams = Map("incomeSourceId" -> businessId, "taxYearExplicit" -> "2025"),
+            queryParams = Map("incomeSourceId" -> businessId, "taxYearExplicit" -> "2024-25"),
             status = OK,
             body = downstreamResponseBodyAccountingData
           )

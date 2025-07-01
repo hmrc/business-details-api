@@ -39,7 +39,7 @@ class RetrieveAccountingTypeConnector @Inject() (val http: HttpClientV2, val app
 
     val queryParams = Map(
       "incomeSourceId"  -> request.businessId.toString,
-      "taxYearExplicit" -> request.taxYear.asDownstream
+      "taxYearExplicit" -> request.taxYear.asMtd
     )
 
     val mappedQueryParams: Map[String, String] = queryParams.collect { case (k: String, v: String) => (k, v) }

@@ -39,7 +39,7 @@ class RetrieveAccountingTypeConnectorSpec extends ConnectorSpec {
 
   val queryParams = Map(
     "incomeSourceId"  -> "XAIS12345678910",
-    "taxYearExplicit" -> "2025"
+    "taxYearExplicit" -> "2024-25"
   )
 
   val mappedQueryParams: Map[String, String] = queryParams.collect { case (k: String, v: String) => (k, v) }
