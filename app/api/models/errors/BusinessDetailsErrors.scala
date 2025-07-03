@@ -61,7 +61,7 @@ object RulePeriodsOverlapError
 object RuleCessationDateError
     extends MtdError(
       "RULE_CESSATION_DATE",
-      "One of more of the supplied periods of account end dates exceeds the business cessation date",
+      "One or more of the supplied periods of account end dates exceeds the business cessation date",
       BAD_REQUEST
     )
 
