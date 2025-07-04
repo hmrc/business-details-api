@@ -100,7 +100,7 @@ class RetrieveBusinessDetailsControllerSpec
     "XAIS12345678910",
     TypeOfBusiness.`self-employment`,
     Some("Aardvark Window Cleaning Services"),
-    Seq(AccountingPeriod("2018-04-06", "2019-04-05")),
+    Some(Seq(AccountingPeriod("2018-04-06", "2019-04-05"))),
     Some(AccountingType.ACCRUALS),
     Some("2016-09-24"),
     Some("2020-03-24"),

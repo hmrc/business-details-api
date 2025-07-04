@@ -236,8 +236,7 @@
   },
   "required": [
     "businessId",
-    "typeOfBusiness",
-    "accountingPeriods"
+    "typeOfBusiness"
   ],
   "additionalProperties": false
 }
