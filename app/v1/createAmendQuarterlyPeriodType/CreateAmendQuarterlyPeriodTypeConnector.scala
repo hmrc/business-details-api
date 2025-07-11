@@ -16,7 +16,7 @@
 
 package v1.createAmendQuarterlyPeriodType
 
-import api.connectors.DownstreamUri.Api2089Uri
+import api.connectors.DownstreamUri.{Api2089Uri, HipUri}
 import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
@@ -41,7 +41,12 @@ class CreateAmendQuarterlyPeriodTypeConnector @Inject() (val http: HttpClientV2,
 
     implicit val successCode: SuccessCode = SuccessCode(OK)
 
-    val downstreamUri = Api2089Uri[Unit](s"income-tax/${taxYear.asTysDownstream}/income-sources/reporting-type/$nino/$businessId")
+    val downstreamUri =
+      if (featureSwitches.isEnabled("ifs_hip_migration_2089")) {
+        HipUri[Unit](s"itsd/income-sources/reporting-type/$nino/$businessId?taxYear=${taxYear.asTysDownstream}")
+      } else {
+        Api2089Uri[Unit](s"income-tax/${taxYear.asTysDownstream}/income-sources/reporting-type/$nino/$businessId")
+      }
 
     put(body, downstreamUri)
 

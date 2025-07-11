@@ -55,22 +55,32 @@ class CreateAmendQuarterlyPeriodTypeServiceSpec extends ServiceSpec {
         }
 
       val errors = List(
-        ("INVALID_TAX_YEAR", TaxYearFormatError),
-        ("INVALID_CORRELATION_ID", InternalError),
-        ("INVALID_TAXABLE_ENTITY_ID", NinoFormatError),
-        ("INVALID_INCOME_SOURCE_ID", BusinessIdFormatError),
-        ("INVALID_PAYLOAD", RuleIncorrectOrEmptyBodyError),
-        ("INCOME_SOURCE_NOT_FOUND", RuleBusinessIdNotFoundError),
-        ("INCOME_SOURCE_STATE_CONFLICT", RuleBusinessIdStateConflictError),
-        ("INVALID_PATH_PARAMETERS", InternalError),
-        ("WRONG_TAX_YEAR_PROVIDED", InternalError),
-        ("REQUIRED_PARAMETER_MISSING", InternalError),
-        ("INVALID_INCOME_SOURCE_TYPE", InternalError),
-        ("INVALID_REQUEST_SUBMISSION", RuleBusinessIdStateConflictError),
-        ("ANNUAL_INCOME_SOURCE", RuleBusinessIdStateConflictError),
-        ("QUARTER_REPORTING_UPDATING_ERROR", RuleQuarterlyPeriodUpdatingError),
-        ("SERVER_ERROR", InternalError),
-        ("SERVICE_UNAVAILABLE", InternalError)
+        "INVALID_TAX_YEAR"                 -> TaxYearFormatError,
+        "INVALID_CORRELATION_ID"           -> InternalError,
+        "INVALID_TAXABLE_ENTITY_ID"        -> NinoFormatError,
+        "INVALID_INCOME_SOURCE_ID"         -> BusinessIdFormatError,
+        "INVALID_PAYLOAD"                  -> RuleIncorrectOrEmptyBodyError,
+        "INCOME_SOURCE_NOT_FOUND"          -> RuleBusinessIdNotFoundError,
+        "INCOME_SOURCE_STATE_CONFLICT"     -> RuleBusinessIdStateConflictError,
+        "INVALID_PATH_PARAMETERS"          -> InternalError,
+        "WRONG_TAX_YEAR_PROVIDED"          -> InternalError,
+        "REQUIRED_PARAMETER_MISSING"       -> InternalError,
+        "INVALID_INCOME_SOURCE_TYPE"       -> InternalError,
+        "INVALID_REQUEST_SUBMISSION"       -> RuleBusinessIdStateConflictError,
+        "ANNUAL_INCOME_SOURCE"             -> RuleBusinessIdStateConflictError,
+        "QUARTER_REPORTING_UPDATING_ERROR" -> RuleQuarterlyPeriodUpdatingError,
+        "SERVER_ERROR"                     -> InternalError,
+        "SERVICE_UNAVAILABLE"              -> InternalError,
+        "1000"                             -> RuleIncorrectOrEmptyBodyError,
+        "1007"                             -> BusinessIdFormatError,
+        "1117"                             -> TaxYearFormatError,
+        "1121"                             -> RuleBusinessIdStateConflictError,
+        "1122"                             -> RuleRequestCannotBeFulfilledError,
+        "1123"                             -> RuleBusinessIdStateConflictError,
+        "1124"                             -> RuleBusinessIdStateConflictError,
+        "1125"                             -> RuleQuarterlyPeriodUpdatingError,
+        "1215"                             -> NinoFormatError,
+        "1216"                             -> InternalError
       )
 
       errors.foreach((serviceError _).tupled)

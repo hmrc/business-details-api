@@ -20,6 +20,7 @@ import api.connectors.{ConnectorSpec, DownstreamOutcome}
 import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
+import play.api.Configuration
 import uk.gov.hmrc.http.StringContextOps
 import v2.createAmendQuarterlyPeriodType.def1.model.request._
 
@@ -34,9 +35,10 @@ class CreateAmendQuarterlyPeriodTypeConnectorSpec extends ConnectorSpec {
 
   private val request = Def1_CreateAmendQuarterlyPeriodTypeRequestData(nino, businessId, taxYear, body)
 
-  "retrieveBusinessDetailsConnector" must {
+  "CreateAmendQuarterlyPeriodTypeConnector" must {
     "return a successful response" when {
-      "the downstream request is successful" in new Api2089Test with Test {
+      "the downstream request to IFS is successful" in new Api2089Test with Test {
+        MockedAppConfig.featureSwitches returns Configuration("ifs_hip_migration_2089.enabled" -> false, "ifs.enabled" -> true)
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
         willPut(url"$baseUrl/income-tax/23-24/income-sources/reporting-type/$nino/$businessId", body).returns(Future.successful(outcome))
@@ -44,14 +46,36 @@ class CreateAmendQuarterlyPeriodTypeConnectorSpec extends ConnectorSpec {
         val result: DownstreamOutcome[Unit] = await(connector.create(request))
         result shouldBe outcome
       }
+
+      "the downstream request to HIP is successful" in new HipTest with Test {
+        MockedAppConfig.featureSwitches returns Configuration("ifs_hip_migration_2089.enabled" -> true, "ifs.enabled" -> true)
+        val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
+
+        willPut(url"$baseUrl/itsd/income-sources/reporting-type/$nino/$businessId?taxYear=23-24", body).returns(Future.successful(outcome))
+
+        val result: DownstreamOutcome[Unit] = await(connector.create(request))
+        result shouldBe outcome
+      }
     }
 
     "return an unsuccessful response" when {
-      "the downstream request is unsuccessful" in new Api2089Test with Test {
+      "the downstream request to IFS is unsuccessful" in new Api2089Test with Test {
+        MockedAppConfig.featureSwitches returns Configuration("ifs_hip_migration_2089.enabled" -> false, "ifs.enabled" -> true)
         val downstreamErrorResponse: DownstreamErrors                 = DownstreamErrors.single(DownstreamErrorCode("SOME_ERROR"))
         val outcome: Left[ResponseWrapper[DownstreamErrors], Nothing] = Left(ResponseWrapper(correlationId, downstreamErrorResponse))
 
         willPut(url"$baseUrl/income-tax/23-24/income-sources/reporting-type/$nino/$businessId", body).returns(Future.successful(outcome))
+
+        val result: DownstreamOutcome[Unit] = await(connector.create(request))
+        result shouldBe outcome
+      }
+
+      "the downstream request to HIP is unsuccessful" in new HipTest with Test {
+        MockedAppConfig.featureSwitches returns Configuration("ifs_hip_migration_2089.enabled" -> true, "ifs.enabled" -> true)
+        val downstreamErrorResponse: DownstreamErrors                 = DownstreamErrors.single(DownstreamErrorCode("SOME_ERROR"))
+        val outcome: Left[ResponseWrapper[DownstreamErrors], Nothing] = Left(ResponseWrapper(correlationId, downstreamErrorResponse))
+
+        willPut(url"$baseUrl/itsd/income-sources/reporting-type/$nino/$businessId?taxYear=23-24", body).returns(Future.successful(outcome))
 
         val result: DownstreamOutcome[Unit] = await(connector.create(request))
         result shouldBe outcome
