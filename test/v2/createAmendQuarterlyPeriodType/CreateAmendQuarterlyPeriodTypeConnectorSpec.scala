@@ -38,7 +38,7 @@ class CreateAmendQuarterlyPeriodTypeConnectorSpec extends ConnectorSpec {
   "CreateAmendQuarterlyPeriodTypeConnector" must {
     "return a successful response" when {
       "the downstream request to IFS is successful" in new Api2089Test with Test {
-        MockedAppConfig.featureSwitches returns Configuration("ifs_hip_migration_2089.enabled" -> false, "ifs.enabled" -> true)
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration("ifs_hip_migration_2089.enabled" -> false, "ifs.enabled" -> true)
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
         willPut(url"$baseUrl/income-tax/23-24/income-sources/reporting-type/$nino/$businessId", body).returns(Future.successful(outcome))
@@ -48,7 +48,7 @@ class CreateAmendQuarterlyPeriodTypeConnectorSpec extends ConnectorSpec {
       }
 
       "the downstream request to HIP is successful" in new HipTest with Test {
-        MockedAppConfig.featureSwitches returns Configuration("ifs_hip_migration_2089.enabled" -> true, "ifs.enabled" -> true)
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration("ifs_hip_migration_2089.enabled" -> true, "ifs.enabled" -> true)
         val outcome: Right[Nothing, ResponseWrapper[Unit]] = Right(ResponseWrapper(correlationId, ()))
 
         willPut(url"$baseUrl/itsd/income-sources/reporting-type/$nino/$businessId?taxYear=23-24", body).returns(Future.successful(outcome))
@@ -60,7 +60,7 @@ class CreateAmendQuarterlyPeriodTypeConnectorSpec extends ConnectorSpec {
 
     "return an unsuccessful response" when {
       "the downstream request to IFS is unsuccessful" in new Api2089Test with Test {
-        MockedAppConfig.featureSwitches returns Configuration("ifs_hip_migration_2089.enabled" -> false, "ifs.enabled" -> true)
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration("ifs_hip_migration_2089.enabled" -> false, "ifs.enabled" -> true)
         val downstreamErrorResponse: DownstreamErrors                 = DownstreamErrors.single(DownstreamErrorCode("SOME_ERROR"))
         val outcome: Left[ResponseWrapper[DownstreamErrors], Nothing] = Left(ResponseWrapper(correlationId, downstreamErrorResponse))
 
@@ -71,7 +71,7 @@ class CreateAmendQuarterlyPeriodTypeConnectorSpec extends ConnectorSpec {
       }
 
       "the downstream request to HIP is unsuccessful" in new HipTest with Test {
-        MockedAppConfig.featureSwitches returns Configuration("ifs_hip_migration_2089.enabled" -> true, "ifs.enabled" -> true)
+        MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration("ifs_hip_migration_2089.enabled" -> true, "ifs.enabled" -> true)
         val downstreamErrorResponse: DownstreamErrors                 = DownstreamErrors.single(DownstreamErrorCode("SOME_ERROR"))
         val outcome: Left[ResponseWrapper[DownstreamErrors], Nothing] = Left(ResponseWrapper(correlationId, downstreamErrorResponse))
 
