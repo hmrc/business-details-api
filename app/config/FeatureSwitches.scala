@@ -16,8 +16,10 @@
 
 package config
 
+import org.apache.commons.lang3.BooleanUtils
 import com.google.inject.ImplementedBy
 import play.api.Configuration
+import play.api.mvc.Request
 
 import javax.inject.{Inject, Singleton}
 
@@ -41,6 +43,14 @@ class FeatureSwitchesImpl(featureSwitchConfig: Configuration) extends FeatureSwi
   val isIfsEnabled: Boolean                         = isEnabled("ifs")
   val isScp005aQuarterlyTypeChoiceEnabled: Boolean  = isEnabled("scp005a_QuarterlyTypeChoice")
   val supportingAgentsAccessControlEnabled: Boolean = isEnabled("supporting-agents-access-control")
+
+  def isTemporalValidationEnabled(implicit request: Request[_]): Boolean = {
+    if (isEnabled("allowTemporalValidationSuspension")) {
+      request.headers.get("suspend-temporal-validations").forall(!BooleanUtils.toBoolean(_))
+    } else {
+      true
+    }
+  }
 
   def isEnabled(key: String): Boolean = isConfigTrue(key + ".enabled")
 
