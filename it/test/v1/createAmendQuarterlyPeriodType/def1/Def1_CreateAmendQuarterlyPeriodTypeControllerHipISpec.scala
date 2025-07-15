@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v2.createAmendQuarterlyPeriodType.def1
+package v1.createAmendQuarterlyPeriodType.def1
 
 import api.models.errors._
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
@@ -26,26 +26,32 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
-class Def1_CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBaseSpec {
+class Def1_CreateAmendQuarterlyPeriodTypeControllerHipISpec extends IntegrationBaseSpec {
 
-  private val requestBodyJson = Json.parse("""
+  private val requestBodyJson = Json.parse(
+    """
       |{
       | "quarterlyPeriodType": "standard"
       |}
       |""".stripMargin)
 
-  private val downstreamRequestBodyJson = Json.parse("""
+  private val downstreamRequestBodyJson = Json.parse(
+    """
       |{
-      | "QRT": "Standard"
+      | "quarterReportingType": "STANDARD"
       |}
       |""".stripMargin)
 
   private def errorBody(code: String): String =
     s"""
-       |      {
-       |        "code": "$code",
-       |        "reason": "message"
-       |      }
+       |{
+       |  "response":
+       |    {
+       |      "errorCode": "$code",
+       |      "errorDescription": "some reason"
+       |    }
+       |
+       |}
   """.stripMargin
 
   "Calling the create amend quarterly period type endpoint" should {
@@ -57,9 +63,9 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBase
           AuthStub.authorised()
 
           DownstreamStub
-            .when(DownstreamStub.PUT, downstreamUri)
+            .when(DownstreamStub.PUT, downstreamUri, downstreamQueryParams)
             .withRequestBody(downstreamRequestBodyJson)
-            .thenReturn(OK, JsObject.empty)
+            .thenReturn(NO_CONTENT, JsObject.empty)
         }
 
         val response: WSResponse = await(request().put(requestBodyJson))
@@ -77,9 +83,9 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBase
                                 expectedBody: MtdError): Unit = {
           s"validation fails with ${expectedBody.code} error" in new Test {
 
-            override val nino: String       = requestNino
+            override val nino: String = requestNino
             override val businessId: String = requestBusinessId
-            override val taxYear: String    = requestTaxYear
+            override val taxYear: String = requestTaxYear
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
@@ -110,7 +116,7 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBase
               AuditStub.audit()
               MtdIdLookupStub.ninoFound(nino)
               AuthStub.authorised()
-              DownstreamStub.onError(DownstreamStub.PUT, downstreamUri, downstreamStatus, errorBody(downstreamCode))
+              DownstreamStub.onError(DownstreamStub.PUT, downstreamUri, downstreamQueryParams, downstreamStatus, errorBody(downstreamCode))
             }
 
             val response: WSResponse = await(request().put(requestBodyJson))
@@ -120,22 +126,16 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBase
         }
 
         val errors = List(
-          (BAD_REQUEST, "INVALID_TAX_YEAR", BAD_REQUEST, TaxYearFormatError),
-          (BAD_REQUEST, "INVALID_CORRELATION_ID", INTERNAL_SERVER_ERROR, InternalError),
-          (BAD_REQUEST, "INVALID_TAXABLE_ENTITY_ID", BAD_REQUEST, NinoFormatError),
-          (BAD_REQUEST, "INVALID_INCOME_SOURCE_ID", BAD_REQUEST, BusinessIdFormatError),
-          (BAD_REQUEST, "INVALID_PAYLOAD", BAD_REQUEST, RuleIncorrectOrEmptyBodyError),
-          (NOT_FOUND, "INCOME_SOURCE_NOT_FOUND", NOT_FOUND, RuleBusinessIdNotFoundError),
-          (CONFLICT, "INCOME_SOURCE_STATE_CONFLICT", BAD_REQUEST, RuleBusinessIdStateConflictError),
-          (UNPROCESSABLE_ENTITY, "INVALID_PATH_PARAMETERS", INTERNAL_SERVER_ERROR, InternalError),
-          (UNPROCESSABLE_ENTITY, "WRONG_TAX_YEAR_PROVIDED", UNPROCESSABLE_ENTITY, RuleRequestCannotBeFulfilledError),
-          (UNPROCESSABLE_ENTITY, "REQUIRED_PARAMETER_MISSING", INTERNAL_SERVER_ERROR, InternalError),
-          (UNPROCESSABLE_ENTITY, "INVALID_INCOME_SOURCE_TYPE", UNPROCESSABLE_ENTITY, RuleRequestCannotBeFulfilledError),
-          (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_SUBMISSION", BAD_REQUEST, RuleBusinessIdStateConflictError),
-          (UNPROCESSABLE_ENTITY, "ANNUAL_INCOME_SOURCE", BAD_REQUEST, RuleBusinessIdStateConflictError),
-          (UNPROCESSABLE_ENTITY, "QUARTER_REPORTING_UPDATING_ERROR", BAD_REQUEST, RuleQuarterlyPeriodUpdatingError),
-          (INTERNAL_SERVER_ERROR, "SERVER_ERROR", INTERNAL_SERVER_ERROR, InternalError),
-          (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError)
+          (BAD_REQUEST, "1000", BAD_REQUEST, RuleIncorrectOrEmptyBodyError),
+          (BAD_REQUEST, "1007", BAD_REQUEST, BusinessIdFormatError),
+          (BAD_REQUEST, "1117", BAD_REQUEST, TaxYearFormatError),
+          (CONFLICT, "1121", BAD_REQUEST, RuleBusinessIdStateConflictError),
+          (UNPROCESSABLE_ENTITY, "1122", UNPROCESSABLE_ENTITY, RuleRequestCannotBeFulfilledError),
+          (UNPROCESSABLE_ENTITY, "1123", BAD_REQUEST, RuleBusinessIdStateConflictError),
+          (UNPROCESSABLE_ENTITY, "1124", BAD_REQUEST, RuleBusinessIdStateConflictError),
+          (UNPROCESSABLE_ENTITY, "1125", BAD_REQUEST, RuleQuarterlyPeriodUpdatingError),
+          (BAD_REQUEST, "1215", BAD_REQUEST, NinoFormatError),
+          (BAD_REQUEST, "1216", INTERNAL_SERVER_ERROR, InternalError),
         )
 
         errors.foreach((serviceErrorTest _).tupled)
@@ -144,9 +144,10 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBase
   }
 
   private trait Test {
-    val nino: String       = "AA123456A"
+    val nino: String = "AA123456A"
     val businessId: String = "X0IS12345678901"
-    val taxYear: String    = "2023-24"
+    val taxYear: String = "2023-24"
+    val downstreamQueryParams: Map[String, String] = Map("taxYear" -> "23-24")
 
     def setupStubs(): StubMapping
 
@@ -163,7 +164,7 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBase
         )
     }
 
-    def downstreamUri: String = s"/income-tax/23-24/income-sources/reporting-type/$nino/$businessId"
+    def downstreamUri: String = s"/itsd/income-sources/reporting-type/$nino/$businessId"
 
   }
 

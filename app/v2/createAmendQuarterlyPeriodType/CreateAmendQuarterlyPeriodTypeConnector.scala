@@ -20,7 +20,7 @@ import api.connectors.DownstreamUri.{Api2089Uri, HipUri}
 import api.connectors.httpparsers.StandardDownstreamHttpParser._
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
-import play.api.http.Status.OK
+import play.api.http.Status.{NO_CONTENT, OK}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
 import v2.createAmendQuarterlyPeriodType.model.request.CreateAmendQuarterlyPeriodTypeRequestData
@@ -39,14 +39,16 @@ class CreateAmendQuarterlyPeriodTypeConnector @Inject() (val http: HttpClientV2,
 
     import request._
 
-    implicit val successCode: SuccessCode = SuccessCode(OK)
-
-    val downstreamUri =
+    val (downstreamUri, successfulStatus) =
       if (featureSwitches.isEnabled("ifs_hip_migration_2089")) {
-        HipUri[Unit](s"itsd/income-sources/reporting-type/$nino/$businessId?taxYear=${taxYear.asTysDownstream}")
+        (HipUri[Unit](s"itsd/income-sources/reporting-type/$nino/$businessId?taxYear=${taxYear.asTysDownstream}"),
+          SuccessCode(NO_CONTENT))
       } else {
-        Api2089Uri[Unit](s"income-tax/${taxYear.asTysDownstream}/income-sources/reporting-type/$nino/$businessId")
+        (Api2089Uri[Unit](s"income-tax/${taxYear.asTysDownstream}/income-sources/reporting-type/$nino/$businessId"),
+          SuccessCode(OK))
       }
+
+    implicit val successCode: SuccessCode = successfulStatus
 
     put(body, downstreamUri)
 
