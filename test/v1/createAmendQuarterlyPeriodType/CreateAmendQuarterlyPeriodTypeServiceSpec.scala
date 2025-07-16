@@ -80,7 +80,8 @@ class CreateAmendQuarterlyPeriodTypeServiceSpec extends ServiceSpec {
         "1124"                             -> RuleBusinessIdStateConflictError,
         "1125"                             -> RuleQuarterlyPeriodUpdatingError,
         "1215"                             -> NinoFormatError,
-        "1216"                             -> InternalError
+        "1216"                             -> InternalError,
+        "5010"                             -> RuleBusinessIdNotFoundError
       )
 
       errors.foreach((serviceError _).tupled)

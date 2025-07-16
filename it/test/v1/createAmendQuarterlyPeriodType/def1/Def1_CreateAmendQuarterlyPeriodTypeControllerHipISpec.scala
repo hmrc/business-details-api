@@ -136,6 +136,7 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerHipISpec extends IntegrationB
           (UNPROCESSABLE_ENTITY, "1125", BAD_REQUEST, RuleQuarterlyPeriodUpdatingError),
           (BAD_REQUEST, "1215", BAD_REQUEST, NinoFormatError),
           (BAD_REQUEST, "1216", INTERNAL_SERVER_ERROR, InternalError),
+          (NOT_FOUND, "5010", NOT_FOUND, RuleBusinessIdNotFoundError)
         )
 
         errors.foreach((serviceErrorTest _).tupled)
@@ -159,7 +160,7 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerHipISpec extends IntegrationB
 
       buildRequest(mtdUri)
         .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.2.0+json"),
+          (ACCEPT, "application/vnd.hmrc.1.0+json"),
           (AUTHORIZATION, "Bearer 123")
         )
     }

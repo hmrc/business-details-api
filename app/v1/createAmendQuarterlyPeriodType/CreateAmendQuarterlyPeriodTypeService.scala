@@ -63,7 +63,8 @@ class CreateAmendQuarterlyPeriodTypeService @Inject() (connector: CreateAmendQua
         "1124" -> RuleBusinessIdStateConflictError,
         "1125" -> RuleQuarterlyPeriodUpdatingError,
         "1215" -> NinoFormatError,
-        "1216" -> InternalError
+        "1216" -> InternalError,
+        "5010" -> RuleBusinessIdNotFoundError
       )
 
     ifsErrors ++ hipErrors

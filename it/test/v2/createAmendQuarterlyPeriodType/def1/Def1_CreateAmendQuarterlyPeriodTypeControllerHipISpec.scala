@@ -134,6 +134,7 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerHipISpec extends IntegrationB
           (UNPROCESSABLE_ENTITY, "1125", BAD_REQUEST, RuleQuarterlyPeriodUpdatingError),
           (BAD_REQUEST, "1215", BAD_REQUEST, NinoFormatError),
           (BAD_REQUEST, "1216", INTERNAL_SERVER_ERROR, InternalError),
+          (NOT_FOUND, "5010", NOT_FOUND, RuleBusinessIdNotFoundError)
         )
 
         errors.foreach((serviceErrorTest _).tupled)
