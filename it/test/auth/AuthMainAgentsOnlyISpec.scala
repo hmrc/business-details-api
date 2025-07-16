@@ -44,6 +44,8 @@ abstract class AuthMainAgentsOnlyISpec extends IntegrationBaseSpec {
 
   protected val maybeDownstreamResponseJson: Option[JsValue]
 
+  protected val queryParams: Map[String, String]
+
   protected val downstreamHttpMethod: DownstreamStub.HTTPMethod = DownstreamStub.POST
 
   protected val downstreamSuccessStatus: Int = OK
@@ -70,7 +72,7 @@ abstract class AuthMainAgentsOnlyISpec extends IntegrationBaseSpec {
           AuthStub.authorisedWithPrimaryAgentEnrolment()
 
           DownstreamStub
-            .when(downstreamHttpMethod, downstreamUri)
+            .when(downstreamHttpMethod, downstreamUri, queryParams)
             .thenReturn(downstreamSuccessStatus, maybeDownstreamResponseJson)
         }
 

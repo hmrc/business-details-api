@@ -19,13 +19,11 @@ package api.controllers.validators.resolvers
 import api.models.errors.{MtdError, RuleIncorrectOrEmptyBodyError}
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
-import play.api.libs.json.{JsObject, JsValue, OFormat, Reads}
+import play.api.libs.json.{JsObject, JsValue, Reads}
 import utils.EmptinessChecker
 import utils.EmptyPathsResult.{CompletelyEmpty, EmptyPaths, NoEmptyPaths}
 
-class ResolveNonEmptyJsonObject[T: OFormat: EmptinessChecker]()(implicit val reads: Reads[T])
-    extends Resolver[JsValue, T]
-    with JsonObjectResolving[T] {
+class ResolveNonEmptyJsonObject[T: EmptinessChecker]()(implicit val reads: Reads[T]) extends Resolver[JsValue, T] with JsonObjectResolving[T] {
 
   def apply(data: JsValue, error: Option[MtdError], path: Option[String]): Validated[Seq[MtdError], T] =
     validateAndCheckNonEmpty(data).leftMap(schemaErrors => withErrors(error, schemaErrors, path))

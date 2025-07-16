@@ -24,7 +24,7 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 
 class BusinessDetailsAuthMainAgentsOnlyISpec extends AuthMainAgentsOnlyISpec {
 
-  val callingApiVersion = "1.0"
+  val callingApiVersion = "2.0"
 
   val supportingAgentsNotAllowedEndpoint = "create-amend-quarterly-period-type"
 
@@ -33,27 +33,24 @@ class BusinessDetailsAuthMainAgentsOnlyISpec extends AuthMainAgentsOnlyISpec {
 
   val mtdUrl = s"/$nino/$businessId/${taxYear.asMtd}"
 
+  val queryParams: Map[String, String]               = Map("taxYear" -> "24-25")
   def sendMtdRequest(request: WSRequest): WSResponse = await(request.put(requestJson))
 
   val downstreamUri: String =
-    s"/income-tax/${taxYear.asTysDownstream}/income-sources/reporting-type/$nino/$businessId"
+    s"/itsd/income-sources/reporting-type/$nino/$businessId"
 
-  val maybeDownstreamResponseJson: Option[JsValue] = Some(
-    Json.parse("""
-                 |{
-                 | "QRT": "Standard"
-                 |}
-                 |""".stripMargin)
-  )
+  val maybeDownstreamResponseJson: Option[JsValue] = None
 
   override val downstreamHttpMethod: DownstreamStub.HTTPMethod = DownstreamStub.PUT
 
   override val expectedMtdSuccessStatus: Int = NO_CONTENT
 
+  override protected val downstreamSuccessStatus: Int = NO_CONTENT
+
   private val requestJson = Json.parse("""
-    |{
-    | "quarterlyPeriodType": "standard"
-    |}
-    |""".stripMargin)
+                                         |{
+                                         | "quarterlyPeriodType": "standard"
+                                         |}
+                                         |""".stripMargin)
 
 }

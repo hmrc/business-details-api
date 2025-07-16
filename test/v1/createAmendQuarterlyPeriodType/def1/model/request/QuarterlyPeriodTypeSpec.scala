@@ -33,7 +33,7 @@ class QuarterlyPeriodTypeSpec extends UnitSpec {
         result shouldBe JsSuccess(quarterlyPeriodType)
       }
 
-      s"write $quarterlyPeriodType to downstream format correctly" in {
+      s"write $quarterlyPeriodType to ifs downstream format correctly" in {
         val downstreamJson: JsValue = JsString(quarterlyPeriodType.asDownstream)
         Json.toJson(quarterlyPeriodType) shouldBe downstreamJson
       }
