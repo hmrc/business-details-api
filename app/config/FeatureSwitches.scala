@@ -29,7 +29,7 @@ trait FeatureSwitches {
   def isIfsEnabled: Boolean
   def isScp005aQuarterlyTypeChoiceEnabled: Boolean
   def supportingAgentsAccessControlEnabled: Boolean
-
+  def isTemporalValidationEnabled(implicit request: Request[_]): Boolean
   def isEnabled(key: String): Boolean
   def isReleasedInProduction(feature: String): Boolean
 }

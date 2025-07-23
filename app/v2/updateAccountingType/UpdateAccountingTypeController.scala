@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,19 @@
 package v2.updateAccountingType
 
 import api.controllers._
+import api.controllers.validators.Validator
 import api.models.audit.{AuditEvent, AuditResponse, FlattenedGenericAuditDetail}
 import api.models.auth.UserDetails
 import api.models.errors.ErrorWrapper
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
-import config.AppConfig
+import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
 import routing.{Version, Version1}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.IdGenerator
+import v2.updateAccountingType.model.request.UpdateAccountingTypeRequestData
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -53,9 +55,15 @@ class UpdateAccountingTypeController @Inject() (
     authorisedAction(nino).async(parse.json) { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val validator = validatorFactory.validator(nino, businessId, taxYear, request.body)
+      val validator: Validator[UpdateAccountingTypeRequestData] = validatorFactory.validator(
+        nino = nino,
+        businessId = businessId,
+        taxYear = taxYear,
+        body = request.body,
+        temporalValidationEnabled = FeatureSwitches(appConfig).isTemporalValidationEnabled
+      )
 
-      val requestHandler =
+      val requestHandler: RequestHandler.RequestHandlerBuilder[UpdateAccountingTypeRequestData, Unit] =
         RequestHandler
           .withValidator(validator)
           .withService(service.update)
