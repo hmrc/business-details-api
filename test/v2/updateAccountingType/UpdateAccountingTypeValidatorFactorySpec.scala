@@ -17,40 +17,40 @@
 package v2.updateAccountingType
 
 import api.controllers.validators.Validator
-import api.utils.JsonErrorValidators
 import config.MockAppConfig
 import play.api.libs.json._
 import support.UnitSpec
 import v2.updateAccountingType.model.request.UpdateAccountingTypeRequestData
 
-class UpdateAccountingTypeValidatorFactorySpec extends UnitSpec with JsonErrorValidators with MockAppConfig {
+class UpdateAccountingTypeValidatorFactorySpec extends UnitSpec with MockAppConfig {
 
-  private val validNino       = "AA123456A"
-  private val validBusinessId = "X0IS12345678901"
-  private val validTaxYear    = "2024-25"
+  private val validNino: String = "AA123456A"
+  private val validBusinessId: String = "X0IS12345678901"
+  private val validTaxYear: String = "2024-25"
 
-  class Test {
-
-    MockedAppConfig.accountingTypeMinimumTaxYear
-      .returns(2025)
-      .anyNumberOfTimes()
-
-  }
-
-  private val validBody = Json.parse("""
+  private val validBody: JsValue = Json.parse(
+    """
       |{
-      | "accountingType": "CASH"
+      |  "accountingType": "CASH"
       |}
-      |""".stripMargin)
+    """.stripMargin
+  )
 
-  private val validatorFactory = new UpdateAccountingTypeValidatorFactory
+  private val validatorFactory: UpdateAccountingTypeValidatorFactory = new UpdateAccountingTypeValidatorFactory
 
   "validator()" when {
     "given any tax year" should {
-      "return the Validator for Update Accounting Type" in new Test {
-        val requestBody = validBody
-        val result: Validator[UpdateAccountingTypeRequestData] =
-          validatorFactory.validator(validNino, validBusinessId, validTaxYear, requestBody)
+      "return the Validator for Update Accounting Type" in {
+        MockedAppConfig.accountingTypeMinimumTaxYear.returns(2025).anyNumberOfTimes()
+
+        val result: Validator[UpdateAccountingTypeRequestData] = validatorFactory.validator(
+          nino = validNino,
+          businessId = validBusinessId,
+          taxYear = validTaxYear,
+          body = validBody,
+          temporalValidationEnabled = true
+        )
+
         result shouldBe a[UpdateAccountingTypeValidator]
       }
     }

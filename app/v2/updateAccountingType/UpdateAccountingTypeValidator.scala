@@ -26,7 +26,11 @@ import config.AppConfig
 import play.api.libs.json.JsValue
 import v2.updateAccountingType.model.request._
 
-class UpdateAccountingTypeValidator(nino: String, businessId: String, taxYear: String, body: JsValue)(implicit appConfig: AppConfig)
+class UpdateAccountingTypeValidator(nino: String,
+                                    businessId: String,
+                                    taxYear: String,
+                                    body: JsValue,
+                                    temporalValidationEnabled: Boolean)(implicit appConfig: AppConfig)
     extends Validator[UpdateAccountingTypeRequestData] {
 
   private val resolveJson: ResolveNonEmptyJsonObject[UpdateAccountingTypeRequestBody] =
@@ -34,7 +38,7 @@ class UpdateAccountingTypeValidator(nino: String, businessId: String, taxYear: S
 
   private val resolveTaxYear: ResolveDetailedTaxYear = ResolveDetailedTaxYear(
     minimumTaxYear = TaxYear.ending(appConfig.accountingTypeMinimumTaxYear),
-    allowIncompleteTaxYear = false
+    allowIncompleteTaxYear = !temporalValidationEnabled
   )
 
   def validate: Validated[Seq[MtdError], UpdateAccountingTypeRequestData] =

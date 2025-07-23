@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,33 +29,29 @@ import support.IntegrationBaseSpec
 
 class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
 
-  private val requestBodyJson = Json.parse("""
+  private val requestBodyJson: JsValue = Json.parse(
+    """
       |{
-      | "accountingType": "CASH"
+      |  "accountingType": "CASH"
       |}
-      |""".stripMargin)
-
-  private val downstreamRequestBodyJson = Json.parse("""
-      |{
-      | "accountingType": "CASH"
-      |}
-      |""".stripMargin)
+    """.stripMargin
+  )
 
   private def errorBody(code: String): String =
     s"""
-       |{
-       |  "response": [
-       |    {
-       |      "errorCode": "$code",
-       |      "errorDescription": "message"
-       |    }
-       |  ]
-       |}
-  """.stripMargin
+      |{
+      |  "response": [
+      |    {
+      |      "errorCode": "$code",
+      |      "errorDescription": "message"
+      |    }
+      |  ]
+      |}
+    """.stripMargin
 
   "Calling the update accounting type endpoint" should {
     "return a 204 status code" when {
-      "any valid request is made" in new Test {
+      "a valid request is made with a past tax year and suspendTemporalValidations is false" in new Test {
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           MtdIdLookupStub.ninoFound(nino)
@@ -66,7 +62,30 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
             uri = downstreamUri,
             queryParams = Map("taxYear" -> "24-25"),
             status = NO_CONTENT,
-            body = downstreamRequestBodyJson)
+            body = requestBodyJson
+          )
+        }
+
+        val response: WSResponse = await(request().put(requestBodyJson))
+        response.status shouldBe NO_CONTENT
+      }
+
+      "a valid request is made with the current tax year and suspendTemporalValidations is true" in new Test {
+        override val taxYear: String = TaxYear.currentTaxYear.asMtd
+        override val suspendTemporalValidations: String = "true"
+
+        override def setupStubs(): StubMapping = {
+          AuditStub.audit()
+          AuthStub.authorised()
+          MtdIdLookupStub.ninoFound(nino)
+
+          DownstreamStub.onSuccess(
+            method = DownstreamStub.PUT,
+            uri = downstreamUri,
+            queryParams = Map("taxYear" -> TaxYear.currentTaxYear.asTysDownstream),
+            status = NO_CONTENT,
+            body = requestBodyJson
+          )
         }
 
         val response: WSResponse = await(request().put(requestBodyJson))
@@ -151,6 +170,8 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
     val businessId: String = "X0IS12345678901"
     val taxYear: String    = "2024-25"
 
+    val suspendTemporalValidations: String = "false"
+
     def setupStubs(): StubMapping
 
     private def mtdUri: String = s"/$nino/$businessId/$taxYear/accounting-type"
@@ -162,7 +183,8 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
       buildRequest(mtdUri)
         .withHttpHeaders(
           (ACCEPT, "application/vnd.hmrc.2.0+json"),
-          (AUTHORIZATION, "Bearer 123")
+          (AUTHORIZATION, "Bearer 123"),
+          ("suspend-temporal-validations", suspendTemporalValidations)
         )
     }
 
