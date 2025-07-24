@@ -16,7 +16,8 @@
 
 package v2.createAmendQuarterlyPeriodType.def1.model.request
 
-import play.api.libs.json.{Json, OWrites, Reads}
+import config.{AppConfig, FeatureSwitches}
+import play.api.libs.json._
 import shapeless.HNil
 import utils.EmptinessChecker
 import v2.createAmendQuarterlyPeriodType.model.request.CreateAmendQuarterlyPeriodTypeRequestBody
@@ -31,7 +32,13 @@ object Def1_CreateAmendQuarterlyPeriodTypeRequestBody {
 
   implicit val reads: Reads[Def1_CreateAmendQuarterlyPeriodTypeRequestBody] = Json.reads[Def1_CreateAmendQuarterlyPeriodTypeRequestBody]
 
-  implicit val writes: OWrites[Def1_CreateAmendQuarterlyPeriodTypeRequestBody] = (body: Def1_CreateAmendQuarterlyPeriodTypeRequestBody) =>
-    Json.obj("QRT" -> body.quarterlyPeriodType.asDownstream)
+  implicit def writes(implicit appConfig: AppConfig): OWrites[Def1_CreateAmendQuarterlyPeriodTypeRequestBody] =
+    (body: Def1_CreateAmendQuarterlyPeriodTypeRequestBody) => {
+      if (FeatureSwitches(appConfig).isEnabled("ifs_hip_migration_2089")) {
+        Json.obj("quarterReportingType" -> body.quarterlyPeriodType.asHipDownstream)
+      } else {
+        Json.obj("QRT" -> body.quarterlyPeriodType.asDownstream)
+      }
+    }
 
 }

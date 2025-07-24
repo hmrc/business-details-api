@@ -16,10 +16,13 @@
 
 package v2.createAmendQuarterlyPeriodType.def1.model.request
 
+import config.MockAppConfig
+import play.api.Configuration
 import play.api.libs.json.Json
 import support.UnitSpec
+import v2.createAmendQuarterlyPeriodType.def1.model.request.Def1_CreateAmendQuarterlyPeriodTypeRequestBody._
 
-class Def1_CreateAmendQuarterlyPeriodTypeRequestBodySpec extends UnitSpec {
+class Def1_CreateAmendQuarterlyPeriodTypeRequestBodySpec extends UnitSpec with MockAppConfig{
 
   private val validRequestBody = Json.parse("""
       |{
@@ -27,9 +30,15 @@ class Def1_CreateAmendQuarterlyPeriodTypeRequestBodySpec extends UnitSpec {
       |}
       |""".stripMargin)
 
-  private val downstreamRequestBody = Json.parse("""
+  private val downstreamRequestBodyIfs = Json.parse("""
       |{
       | "QRT": "Standard"
+      |}
+      |""".stripMargin)
+
+  private val downstreamRequestBodyHip = Json.parse("""
+      |{
+      | "quarterReportingType": "STANDARD"
       |}
       |""".stripMargin)
 
@@ -40,8 +49,14 @@ class Def1_CreateAmendQuarterlyPeriodTypeRequestBodySpec extends UnitSpec {
       validRequestBody.as[Def1_CreateAmendQuarterlyPeriodTypeRequestBody] shouldBe parsedRequestBody
     }
 
-    "write to downstream Json" in {
-      Json.toJson(parsedRequestBody) shouldBe downstreamRequestBody
+    "write to downstream Json when ifs is enabled" in {
+      MockedAppConfig.featureSwitches.returns(Configuration("ifs_hip_migration_2089.enabled" -> false))
+      Json.toJson(parsedRequestBody) shouldBe downstreamRequestBodyIfs
+    }
+
+    "write to downstream Json when hip is enabled" in {
+      MockedAppConfig.featureSwitches.returns(Configuration("ifs_hip_migration_2089.enabled" -> true))
+      Json.toJson(parsedRequestBody) shouldBe downstreamRequestBodyHip
     }
   }
 

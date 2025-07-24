@@ -21,6 +21,7 @@ import utils.enums.Enums
 
 sealed trait QuarterlyPeriodType {
   val asDownstream: String
+  val asHipDownstream: String
 }
 
 object QuarterlyPeriodType {
@@ -33,10 +34,12 @@ object QuarterlyPeriodType {
 
   case object `standard` extends QuarterlyPeriodType {
     val asDownstream: String = "Standard"
+    val asHipDownstream: String = "STANDARD"
   }
 
   case object `calendar` extends QuarterlyPeriodType {
     val asDownstream: String = "Calendar"
+    val asHipDownstream: String = "CALENDAR"
   }
 
 }
