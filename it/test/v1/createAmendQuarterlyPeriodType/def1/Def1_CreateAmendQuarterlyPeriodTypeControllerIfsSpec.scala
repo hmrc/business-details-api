@@ -26,7 +26,7 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
-class Def1_CreateAmendQuarterlyPeriodTypeControllerIIfsSpec extends IntegrationBaseSpec {
+class Def1_CreateAmendQuarterlyPeriodTypeControllerIfsSpec extends IntegrationBaseSpec {
 
   override def servicesConfig: Map[String, Any] =
     Map("feature-switch.ifs_hip_migration_2089.enabled" -> false) ++ super.servicesConfig

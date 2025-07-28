@@ -75,7 +75,7 @@ class CreateAmendQuarterlyPeriodTypeServiceSpec extends ServiceSpec {
         "1007"                             -> BusinessIdFormatError,
         "1117"                             -> TaxYearFormatError,
         "1121"                             -> RuleBusinessIdStateConflictError,
-        "1122"                             -> RuleRequestCannotBeFulfilledError,
+        "1122"                             -> InternalError,
         "1123"                             -> RuleBusinessIdStateConflictError,
         "1124"                             -> RuleBusinessIdStateConflictError,
         "1125"                             -> RuleQuarterlyPeriodUpdatingError,

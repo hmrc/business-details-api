@@ -130,7 +130,7 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerHipISpec extends IntegrationB
           (BAD_REQUEST, "1007", BAD_REQUEST, BusinessIdFormatError),
           (BAD_REQUEST, "1117", BAD_REQUEST, TaxYearFormatError),
           (CONFLICT, "1121", BAD_REQUEST, RuleBusinessIdStateConflictError),
-          (UNPROCESSABLE_ENTITY, "1122", UNPROCESSABLE_ENTITY, RuleRequestCannotBeFulfilledError),
+          (UNPROCESSABLE_ENTITY, "1122", INTERNAL_SERVER_ERROR, InternalError),
           (UNPROCESSABLE_ENTITY, "1123", BAD_REQUEST, RuleBusinessIdStateConflictError),
           (UNPROCESSABLE_ENTITY, "1124", BAD_REQUEST, RuleBusinessIdStateConflictError),
           (UNPROCESSABLE_ENTITY, "1125", BAD_REQUEST, RuleQuarterlyPeriodUpdatingError),

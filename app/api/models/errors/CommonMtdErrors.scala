@@ -91,4 +91,6 @@ object InvalidBodyTypeError     extends MtdError("INVALID_BODY_TYPE", "Expecting
 object RuleIncorrectGovTestScenarioError extends MtdError("RULE_INCORRECT_GOV_TEST_SCENARIO", "The supplied Gov-Test-Scenario is not valid", BAD_REQUEST)
 
 object RuleRequestCannotBeFulfilledError
-    extends MtdError("RULE_REQUEST_CANNOT_BE_FULFILLED", "Custom (will vary in production depending on the actual error)", UNPROCESSABLE_ENTITY)
+    extends MtdError("RULE_REQUEST_CANNOT_BE_FULFILLED", "Custom (will vary in production depending on the actual error)", UNPROCESSABLE_ENTITY) {
+  def incomeSourceTypeMsg: MtdError = RuleRequestCannotBeFulfilledError.copy(message = "Request cannot proceed for this income source type")
+}
