@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v2.createAmendQuarterlyPeriodType.def1
+package v1.createAmendQuarterlyPeriodType.def1
 
 import api.models.errors._
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
@@ -26,7 +26,10 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
-class Def1_CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBaseSpec {
+class Def1_CreateAmendQuarterlyPeriodTypeControllerIfsSpec extends IntegrationBaseSpec {
+
+  override def servicesConfig: Map[String, Any] =
+    Map("feature-switch.ifs_hip_migration_2089.enabled" -> false) ++ super.servicesConfig
 
   private val requestBodyJson = Json.parse("""
       |{
@@ -128,9 +131,9 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBase
           (NOT_FOUND, "INCOME_SOURCE_NOT_FOUND", NOT_FOUND, RuleBusinessIdNotFoundError),
           (CONFLICT, "INCOME_SOURCE_STATE_CONFLICT", BAD_REQUEST, RuleBusinessIdStateConflictError),
           (UNPROCESSABLE_ENTITY, "INVALID_PATH_PARAMETERS", INTERNAL_SERVER_ERROR, InternalError),
-          (UNPROCESSABLE_ENTITY, "WRONG_TAX_YEAR_PROVIDED", UNPROCESSABLE_ENTITY, RuleRequestCannotBeFulfilledError),
+          (UNPROCESSABLE_ENTITY, "WRONG_TAX_YEAR_PROVIDED", INTERNAL_SERVER_ERROR, InternalError),
           (UNPROCESSABLE_ENTITY, "REQUIRED_PARAMETER_MISSING", INTERNAL_SERVER_ERROR, InternalError),
-          (UNPROCESSABLE_ENTITY, "INVALID_INCOME_SOURCE_TYPE", UNPROCESSABLE_ENTITY, RuleRequestCannotBeFulfilledError),
+          (UNPROCESSABLE_ENTITY, "INVALID_INCOME_SOURCE_TYPE", INTERNAL_SERVER_ERROR, InternalError),
           (UNPROCESSABLE_ENTITY, "INVALID_REQUEST_SUBMISSION", BAD_REQUEST, RuleBusinessIdStateConflictError),
           (UNPROCESSABLE_ENTITY, "ANNUAL_INCOME_SOURCE", BAD_REQUEST, RuleBusinessIdStateConflictError),
           (UNPROCESSABLE_ENTITY, "QUARTER_REPORTING_UPDATING_ERROR", BAD_REQUEST, RuleQuarterlyPeriodUpdatingError),
@@ -158,7 +161,7 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBase
 
       buildRequest(mtdUri)
         .withHttpHeaders(
-          (ACCEPT, "application/vnd.hmrc.2.0+json"),
+          (ACCEPT, "application/vnd.hmrc.1.0+json"),
           (AUTHORIZATION, "Bearer 123")
         )
     }

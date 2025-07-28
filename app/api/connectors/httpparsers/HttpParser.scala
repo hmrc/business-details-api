@@ -52,6 +52,9 @@ trait HttpParser extends Logging {
 
   private val singleHipErrorReads: Reads[DownstreamErrorCode] = (__ \ "errors").read[DownstreamErrorCode]
 
+  private val singleErrorCodeInResponse: Reads[DownstreamErrorCode] =
+    (__ \ "response").read[JsObject].map(obj => DownstreamErrorCode((obj \ "errorCode").as[String]))
+
   private val multipleTopLevelErrorCodesReads: Reads[Seq[DownstreamErrorCode]] =
     __.read[Seq[JsObject]].map(_.map(obj => DownstreamErrorCode((obj \ "errorCode").as[String])))
 
@@ -66,6 +69,7 @@ trait HttpParser extends Logging {
   def parseErrors(response: HttpResponse): DownstreamError = {
     val singleError         = response.validateJson[DownstreamErrorCode].map(err => DownstreamErrors(List(err)))
     lazy val singleHipError = response.validateJson(singleHipErrorReads).map(err => DownstreamErrors.single(err))
+    lazy val singleErrorInResponse = response.validateJson(singleErrorCodeInResponse).map(err => DownstreamErrors.single(err))
     lazy val multipleErrors = response.validateJson(multipleErrorReads).map(errs => DownstreamErrors(errs))
     lazy val bvrErrors      = response.validateJson(bvrErrorReads).map(errs => OutboundError(BVRError, Some(errs.map(_.toMtd(BVRError.httpStatus)))))
     lazy val multipleTopLevelErrorCodes   = response.validateJson(multipleTopLevelErrorCodesReads).map(errs => DownstreamErrors(errs))
@@ -75,7 +79,7 @@ trait HttpParser extends Logging {
       OutboundError(InternalError)
     }
 
-    singleError orElse singleHipError orElse multipleErrors orElse bvrErrors orElse
+    singleError orElse singleHipError orElse singleErrorInResponse orElse multipleErrors orElse bvrErrors orElse
       multipleTopLevelErrorCodes orElse multipleErrorCodesInResponse getOrElse unableToParseJsonError
   }
 

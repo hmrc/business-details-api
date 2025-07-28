@@ -178,3 +178,10 @@ components:
       value:
         code: RULE_REQUEST_CANNOT_BE_FULFILLED
         message: Custom (will vary in production depending on the actual error)
+
+    ruleRequestCannotBeFulfilledQRT:
+      description: |
+        Reporting type can only be changed for self-employment and property income sources
+      value:
+        code: RULE_REQUEST_CANNOT_BE_FULFILLED
+        message: Request cannot proceed for this income source type

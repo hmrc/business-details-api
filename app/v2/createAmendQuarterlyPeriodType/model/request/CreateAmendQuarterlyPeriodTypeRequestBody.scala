@@ -16,6 +16,7 @@
 
 package v2.createAmendQuarterlyPeriodType.model.request
 
+import config.AppConfig
 import play.api.libs.json.{JsObject, Json, OWrites}
 import utils.JsonWritesUtil
 import v2.createAmendQuarterlyPeriodType.def1.model.request.Def1_CreateAmendQuarterlyPeriodTypeRequestBody
@@ -24,7 +25,8 @@ trait CreateAmendQuarterlyPeriodTypeRequestBody
 
 object CreateAmendQuarterlyPeriodTypeRequestBody extends JsonWritesUtil {
 
-  implicit val writes: OWrites[CreateAmendQuarterlyPeriodTypeRequestBody] = writesFrom { case a: Def1_CreateAmendQuarterlyPeriodTypeRequestBody =>
+  implicit def writes(implicit appConfig: AppConfig): OWrites[CreateAmendQuarterlyPeriodTypeRequestBody] = writesFrom {
+    case a: Def1_CreateAmendQuarterlyPeriodTypeRequestBody =>
     Json.toJson(a).as[JsObject]
   }
 

@@ -142,4 +142,4 @@ put:
             $ref: './schemas/error-response.yaml'
           examples:
             RULE_REQUEST_CANNOT_BE_FULFILLED:
-              $ref: './common/errors.yaml#/components/examples/ruleRequestCannotBeFulfilled'
+              $ref: './common/errors.yaml#/components/examples/ruleRequestCannotBeFulfilledQRT'
