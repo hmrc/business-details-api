@@ -169,7 +169,6 @@ components:
         code: RULE_BUSINESS_ID_NOT_FOUND
         message: The business ID provided is not found
 
-
     #422
 
     ruleRequestCannotBeFulfilled:
@@ -178,6 +177,27 @@ components:
       value:
         code: RULE_REQUEST_CANNOT_BE_FULFILLED
         message: Custom (will vary in production depending on the actual error)
+
+    ruleNoAccountingDateFound:
+      description: |
+        No Accounting Date found between 31 March and 4 April inclusive.
+      value:
+        code: RULE_NO_ACCOUNTING_DATE_FOUND
+        message: Cannot disapply LADR. No Accounting Date found between 31 March and 4 April inclusive
+
+    ruleElectionPeriodNotExpired:
+      description: |
+        The existing LADR status has not expired.  Once the year is finalised, the election cannot be changed for 5 years.
+      value:
+        code: RULE_ELECTION_PERIOD_NOT_EXPIRED
+        message: Cannot change LADR disapplication. Existing status has not expired
+
+    ruleTypeOfBusinessIncorrect:
+      description: |
+        The supplied Business ID does not represent a self-employment business.
+      value:
+        code: RULE_TYPE_OF_BUSINESS_INCORRECT
+        message: The businessId is not for a self-employment business
 
     ruleRequestCannotBeFulfilledQRT:
       description: |
