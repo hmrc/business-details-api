@@ -7,6 +7,7 @@ info:
     The following groups of endpoints are stateful in the Sandbox:
     * [Accounting Type](#tag/Accounting-Type)
     * [Periods of Account](#tag/Periods-of-Account)
+    * [Late Accounting Date Rule](#tag/late-accounting-date-rule)
 
     The following endpoints are stateful in the Sandbox:
     * Retrieve Business Details
@@ -70,5 +71,7 @@ paths:
     $ref: "./accounting_type.yaml"
   /individuals/business/details/{nino}/{businessId}/{taxYear}/periods-of-account:
     $ref: "./periods_of_account.yaml"
-
-
+# {{#if (enabled 'late-accounting-date-rule')}}
+  /individuals/business/details/{nino}/{businessId}/{taxYear}/late-accounting-date-rule-election/disapply:
+    $ref: "./late_accounting_date_rule.yaml"
+# {{/if}}
