@@ -14,7 +14,7 @@ description: |
   | STATEFUL                         | Performs a stateful delete.                                                                     |
   
   
-  tags:
+tags:
   - Late Accounting Date Rule
 
 parameters:
