@@ -16,7 +16,7 @@
 
 package v2.retrieveAccountingType.model.response
 
-import play.api.libs.json.{JsPath, OFormat}
+import play.api.libs.json.{JsPath, OFormat, Reads}
 import v2.common.models.AccountingType
 
 case class RetrieveAccountingTypeResponse(accountingType: AccountingType)
@@ -24,7 +24,9 @@ case class RetrieveAccountingTypeResponse(accountingType: AccountingType)
 object RetrieveAccountingTypeResponse {
 
   implicit val format: OFormat[RetrieveAccountingTypeResponse] = OFormat(
-    (JsPath \\ "accountingType").read[AccountingType].map(RetrieveAccountingTypeResponse.apply),
+    Reads { json =>
+      (json \\ "accountingType").head.validate[AccountingType].map(RetrieveAccountingTypeResponse.apply)
+    },
     (JsPath \ "accountingType").write[AccountingType].contramap[RetrieveAccountingTypeResponse](_.accountingType)
   )
 

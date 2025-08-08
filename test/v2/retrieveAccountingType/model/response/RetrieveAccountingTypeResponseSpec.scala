@@ -22,17 +22,19 @@ import v2.common.models.AccountingType
 
 class RetrieveAccountingTypeResponseSpec extends UnitSpec {
 
-  private def validDownstreamJson(typeOfBusiness: String, accountingType: String): JsValue = Json.parse(
-    s"""
-       |{
-       |  "$typeOfBusiness": [
-       |    {
-       |      "accountingType": "$accountingType"
-       |    }
-       |  ]
-       |}
-    """.stripMargin
-  )
+  private def validDownstreamJson(typeOfBusiness: String, accountingType: String, count: Int): JsValue = {
+    val entries: String = Seq.fill(count)(s"""{"accountingType": "$accountingType"}""").mkString(", ")
+
+    Json.parse(
+      s"""
+        |{
+        |  "$typeOfBusiness": [
+        |    $entries
+        |  ]
+        |}
+      """.stripMargin
+    )
+  }
 
   private def validMtdJson(accountingType: String): JsValue = Json.parse(
     s"""
@@ -63,10 +65,14 @@ class RetrieveAccountingTypeResponseSpec extends UnitSpec {
     businessTypes.foreach { typeOfBusiness =>
       accountingTypes.foreach { accountingType =>
         val responseModel: RetrieveAccountingTypeResponse = parsedBody(accountingType)
-        val downstreamJson: JsValue                       = validDownstreamJson(typeOfBusiness, accountingType.toString)
+        def downstreamJson(count: Int): JsValue       = validDownstreamJson(typeOfBusiness, accountingType.toString, count)
 
-        s"correctly parse valid JSON with typeOfBusiness $typeOfBusiness and accountingType $accountingType" in {
-          downstreamJson.as[RetrieveAccountingTypeResponse] shouldBe responseModel
+        s"correctly parse valid JSON with single item for typeOfBusiness $typeOfBusiness and accountingType $accountingType" in {
+          downstreamJson(1).as[RetrieveAccountingTypeResponse] shouldBe responseModel
+        }
+
+        s"correctly parse valid JSON with multiple items for typeOfBusiness $typeOfBusiness and accountingType $accountingType" in {
+          downstreamJson(2).as[RetrieveAccountingTypeResponse] shouldBe responseModel
         }
 
         s"write to flat JSON correctly for typeOfBusiness $typeOfBusiness and accountingType $accountingType" in {
