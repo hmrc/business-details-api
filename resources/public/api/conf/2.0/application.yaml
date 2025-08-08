@@ -8,7 +8,7 @@ info:
       * [Accounting Type](#tag/Accounting-Type)
       * [Periods of Account](#tag/Periods-of-Account)
     {{#if (enabled 'late-accounting-date-rule')}}
-      * [Late Accounting Date Rule](#tag/late-accounting-date-rule)
+      * [Late Accounting Date Rule](#tag/Late-Accounting-Date-Rule)
     {{/if}}
 
     The following endpoints are stateful in the Sandbox:
