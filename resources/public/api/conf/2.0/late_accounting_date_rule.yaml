@@ -1,6 +1,0 @@
-post:
-  $ref: "./disapply_late_accounting_date_rule.yaml"
-  summary: Disapply Late Accounting Date Rule{{#maybeTestOnly "2.0 disapply-late-accounting-date-rule"}}{{/maybeTestOnly}}
-  security:
-    - User-Restricted:
-        - write:self-assessment
