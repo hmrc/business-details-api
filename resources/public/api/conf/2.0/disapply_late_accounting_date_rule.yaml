@@ -1,0 +1,136 @@
+post:
+  summary: Disapply Late Accounting Date Rule
+  description: |
+    Allows a customer to submit an election to disapply the automatic Late Accounting Date Rule treatment for a given tax year. A National Insurance number, business ID and tax year must be provided.
+  
+    ### Test data
+    Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+    
+    | Header Value (Gov-Test-Scenario) | Scenario                                                                                        |
+    |----------------------------------|-------------------------------------------------------------------------------------------------|
+    | N/A - DEFAULT                    | Simulates a success response.                                                                   |
+    | NOT_FOUND                        | Simulates the scenario where no data is found.                                                  |
+    | NO_ACCOUNTING_DATE_FOUND         | Simulates the scenario where no accounting date between the 1st and 4th April can be found.     |
+    | ELECTION_PERIOD_NOT_EXPIRED      | Simulates the scenario where the existing status has not expired.                               |
+    | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
+    | TYPE_OF_BUSINESS_INCORRECT       | Simulates the scenario where the type of business is incorrect.                                 |
+    | STATEFUL                         | Performs a stateful disapplication.                                                             |
+  
+
+  tags:
+    - Late Accounting Date Rule
+
+  parameters:
+    - $ref: './common/pathParameters.yaml#/components/parameters/nino'
+    - $ref: './common/pathParameters.yaml#/components/parameters/businessId'
+    - $ref: './common/pathParameters.yaml#/components/parameters/accountingTypeTaxYear'
+    - $ref: './common/headers.yaml#/components/parameters/acceptJson'
+    - $ref: './common/headers.yaml#/components/parameters/authorization'
+    - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
+
+      security:
+    - User-Restricted:
+        - write:self-assessment
+
+  responses:
+    "204":
+      description: Success(No Content)
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
+        Sunset:
+          $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
+        Link:
+          $ref: './common/headers.yaml#/components/parameters/linkHeader'
+    "400":
+      description: Bad request
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
+        Sunset:
+          $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
+        Link:
+          $ref: './common/headers.yaml#/components/parameters/linkHeader'
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/error-response.yaml"
+          examples:
+            FORMAT_NINO:
+              $ref: "./common/errors.yaml#/components/examples/formatNino"
+            FORMAT_TAX_YEAR:
+              $ref: "./common/errors.yaml#/components/examples/formatTaxYear"
+            FORMAT_BUSINESS_ID:
+              $ref: "./common/errors.yaml#/components/examples/formatBusinessId"
+            RULE_TAX_YEAR_RANGE_INVALID:
+              $ref: "./common/errors.yaml#/components/examples/ruleTaxYearRangeInvalid"
+            RULE_TAX_YEAR_NOT_SUPPORTED:
+              $ref: "./common/errors.yaml#/components/examples/ruleTaxYearNotSupported"
+            RULE_TAX_YEAR_NOT_ENDED:
+              $ref: "./common/errors.yaml#/components/examples/ruleTaxYearNotEnded"
+            RULE_OUTSIDE_AMENDMENT_WINDOW:
+              $ref: "./common/errors.yaml#/components/examples/ruleOutsideAmendmentWindow"
+            RULE_INCORRECT_GOV_TEST_SCENARIO:
+              $ref: './common/errors.yaml#/components/examples/ruleIncorrectGovTestScenario'
+    "403":
+      description: Forbidden
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
+        Sunset:
+          $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
+        Link:
+          $ref: './common/headers.yaml#/components/parameters/linkHeader'
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/error-response.yaml"
+          examples:
+            CLIENT_OR_AGENT_NOT_AUTHORISED:
+              $ref: "./common/errors.yaml#/components/examples/clientOrAgentNotAuthorised"
+    "404":
+      description: Not Found
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
+        Sunset:
+          $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
+        Link:
+          $ref: './common/headers.yaml#/components/parameters/linkHeader'
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error-response.yaml'
+          examples:
+            MATCHING_RESOURCE_NOT_FOUND:
+              $ref: "./common/errors.yaml#/components/examples/notFound"
+    "422":
+      description: Unprocessable Entity
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
+        Sunset:
+          $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
+        Link:
+          $ref: './common/headers.yaml#/components/parameters/linkHeader'
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error-response.yaml'
+          examples:
+            RULE_NO_ACCOUNTING_DATE_FOUND:
+              $ref: "./common/errors.yaml#/components/examples/ruleNoAccountingDateFound"
+            RULE_ELECTION_PERIOD_NOT_EXPIRED:
+              $ref: "./common/errors.yaml#/components/examples/ruleElectionPeriodNotExpired"
+            RULE_TYPE_OF_BUSINESS_INCORRECT:
+              $ref: "./common/errors.yaml#/components/examples/ruleTypeOfBusinessIncorrect"

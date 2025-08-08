@@ -5,13 +5,16 @@ info:
   title: Business Details (MTD)
   description: |
     The following groups of endpoints are stateful in the Sandbox:
-    * [Accounting Type](#tag/Accounting-Type)
-    * [Periods of Account](#tag/Periods-of-Account)
+      * [Accounting Type](#tag/Accounting-Type)
+      * [Periods of Account](#tag/Periods-of-Account)
+    {{#if (enabled 'late-accounting-date-rule')}}
+      * [Late Accounting Date Rule](#tag/late-accounting-date-rule)
+    {{/if}}
 
     The following endpoints are stateful in the Sandbox:
-    * Retrieve Business Details
-    * List All Businesses
-    * Create and Amend Quarterly Period Type for a Business
+      * Retrieve Business Details
+      * List All Businesses
+      * Create and Amend Quarterly Period Type for a Business
     
     **Some of the endpoints in this API return accounting period start and end dates. These should not be displayed to users of your software and will be removed in a future update.**
     
@@ -70,5 +73,7 @@ paths:
     $ref: "./accounting_type.yaml"
   /individuals/business/details/{nino}/{businessId}/{taxYear}/periods-of-account:
     $ref: "./periods_of_account.yaml"
-
-
+# {{#if (enabled 'late-accounting-date-rule')}}
+  /individuals/business/details/{nino}/{businessId}/{taxYear}/late-accounting-date-rule-election/disapply:
+    $ref: "./disapply_late_accounting_date_rule.yaml"
+# {{/if}}
