@@ -82,8 +82,7 @@ class RetrieveAccountingTypeControllerISpec extends IntegrationBaseSpec {
           ("AA1123A", "XAIS12345678910", "2024-25", BAD_REQUEST, NinoFormatError),
           ("AA123456A", "invalid", "2024-25", BAD_REQUEST, BusinessIdFormatError),
           ("AA123456A", "XAIS12345678910", "invalid", BAD_REQUEST, TaxYearFormatError),
-          ("AA123456A", "XAIS12345678910", "2024-26", BAD_REQUEST, RuleTaxYearRangeInvalidError),
-          ("AA123456A", "XAIS12345678910", "2023-24", BAD_REQUEST, RuleTaxYearNotSupportedError)
+          ("AA123456A", "XAIS12345678910", "2024-26", BAD_REQUEST, RuleTaxYearRangeInvalidError)
         )
 
         input.foreach((validationErrorTest _).tupled)

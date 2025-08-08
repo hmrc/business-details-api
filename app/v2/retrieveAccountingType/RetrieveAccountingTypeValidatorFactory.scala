@@ -17,7 +17,6 @@
 package v2.retrieveAccountingType
 
 import api.controllers.validators.Validator
-import config.AppConfig
 import v2.retrieveAccountingType.model.request.RetrieveAccountingTypeRequest
 
 import javax.inject.Singleton
@@ -25,7 +24,7 @@ import javax.inject.Singleton
 @Singleton
 class RetrieveAccountingTypeValidatorFactory {
 
-  def validator(nino: String, businessId: String, taxYear: String)(implicit appConfig: AppConfig): Validator[RetrieveAccountingTypeRequest] =
+  def validator(nino: String, businessId: String, taxYear: String): Validator[RetrieveAccountingTypeRequest] =
     new RetrieveAccountingTypeValidator(nino, businessId, taxYear)
 
 }
