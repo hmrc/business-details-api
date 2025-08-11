@@ -17,7 +17,6 @@
 package v2.retrieveAccountingType
 
 import api.controllers.validators.{MockValidatorFactory, Validator}
-import config.AppConfig
 import org.scalamock.handlers.CallHandler
 import v2.retrieveAccountingType.model.request.RetrieveAccountingTypeRequest
 
@@ -28,8 +27,8 @@ trait MockRetrieveAccountingTypeValidatorFactory extends MockValidatorFactory[Re
 
   def validator(): CallHandler[Validator[RetrieveAccountingTypeRequest]] = {
     (mockRetrieveAccountingTypeValidatorFactory
-      .validator(_: String, _: String, _: String)(_: AppConfig))
-      .expects(*, *, *, *)
+      .validator(_: String, _: String, _: String))
+      .expects(*, *, *)
   }
 
 }

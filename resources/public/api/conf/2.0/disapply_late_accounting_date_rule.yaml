@@ -14,8 +14,7 @@ post:
     | ELECTION_PERIOD_NOT_EXPIRED      | Simulates the scenario where the existing status has not expired.                               |
     | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
     | TYPE_OF_BUSINESS_INCORRECT       | Simulates the scenario where the type of business is incorrect.                                 |
-    | STATEFUL                         | Performs a stateful disapply                                                                    |
-  
+    | STATEFUL                         | Performs a stateful disapplication.                                                             |
 
   tags:
     - Late Accounting Date Rule
@@ -25,10 +24,10 @@ post:
     - $ref: './common/pathParameters.yaml#/components/parameters/businessId'
     - $ref: './common/pathParameters.yaml#/components/parameters/accountingTypeTaxYear'
     - $ref: './common/headers.yaml#/components/parameters/acceptJson'
-    - $ref: './common/headers.yaml#/components/parameters/authorization'
+    - $ref: './common/headers.yaml#/components/parameters/authorizationWriteScopeHeader'
     - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
 
-      security:
+  security:
     - User-Restricted:
         - write:self-assessment
 

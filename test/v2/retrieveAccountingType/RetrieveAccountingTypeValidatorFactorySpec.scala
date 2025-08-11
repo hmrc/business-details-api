@@ -17,31 +17,22 @@
 package v2.retrieveAccountingType
 
 import api.controllers.validators.Validator
-import config.MockAppConfig
 import support.UnitSpec
 import v2.retrieveAccountingType.model.request.RetrieveAccountingTypeRequest
 
-class RetrieveAccountingTypeValidatorFactorySpec extends UnitSpec with MockAppConfig {
+class RetrieveAccountingTypeValidatorFactorySpec extends UnitSpec {
 
-  private val validNino       = "AA123456A"
-  private val validBusinessId = "X0IS12345678901"
-  private val validTaxYear    = "2024-25"
-
-  class Test {
-
-    MockedAppConfig.accountingTypeMinimumTaxYear
-      .returns(2025)
-      .anyNumberOfTimes()
-
-  }
-
+  private val nino       = "AA123456A"
+  private val businessId = "X0IS12345678901"
+  private val taxYear    = "2024-25"
+  
   private val validatorFactory = new RetrieveAccountingTypeValidatorFactory
 
   "validator()" when {
     "given any tax year" should {
-      "return the Validator for Update Accounting Type" in new Test {
+      "return the Validator for Update Accounting Type" in {
         val result: Validator[RetrieveAccountingTypeRequest] =
-          validatorFactory.validator(validNino, validBusinessId, validTaxYear)
+          validatorFactory.validator(nino, businessId, taxYear)
         result shouldBe a[RetrieveAccountingTypeValidator]
       }
     }

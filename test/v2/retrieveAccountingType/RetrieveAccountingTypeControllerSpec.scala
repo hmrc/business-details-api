@@ -22,7 +22,6 @@ import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors.{ErrorWrapper, NinoFormatError, TaxYearFormatError}
 import api.models.outcomes.ResponseWrapper
 import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
-import config.MockAppConfig
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Result
@@ -41,12 +40,11 @@ class RetrieveAccountingTypeControllerSpec
     with MockMtdIdLookupService
     with MockRetrieveAccountingTypeValidatorFactory
     with MockRetrieveAccountingTypeService
-    with MockIdGenerator
-    with MockAppConfig {
+    with MockIdGenerator {
 
   implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
-  private val validBusinessId                        = "XAIS12345678910"
-  private val validTaxYear                           = "2024-25"
+  private val businessId                             = "XAIS12345678910"
+  private val taxYear                                = "2024-25"
   val userType: String                               = "Individual"
   val userDetails: UserDetails                       = UserDetails("mtdId", userType, None)
 
@@ -57,8 +55,8 @@ class RetrieveAccountingTypeControllerSpec
       |""".stripMargin)
 
   private val parsedNino       = Nino(nino)
-  private val parsedBusinessId = BusinessId(validBusinessId)
-  private val parsedTaxYear    = TaxYear.fromMtd(validTaxYear)
+  private val parsedBusinessId = BusinessId(businessId)
+  private val parsedTaxYear    = TaxYear.fromMtd(taxYear)
 
   private val requestData =
     RetrieveAccountingTypeRequest(parsedNino, parsedBusinessId, parsedTaxYear)
@@ -106,17 +104,13 @@ class RetrieveAccountingTypeControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    MockedAppConfig.accountingTypeMinimumTaxYear
-      .returns(2025)
-      .anyNumberOfTimes()
-
     MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
       "supporting-agents-access-control.enabled" -> true
     )
 
     MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
 
-    protected def callController(): Future[Result] = controller.handleRequest(nino, validBusinessId, validTaxYear)(fakeGetRequest)
+    protected def callController(): Future[Result] = controller.handleRequest(nino, businessId, taxYear)(fakeGetRequest)
 
   }
 

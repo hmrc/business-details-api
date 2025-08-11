@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package v2.retrieveAccountingType
+package v2.disapplyLateAccountingDateRule
 
 import api.controllers.validators.Validator
-import v2.retrieveAccountingType.model.request.RetrieveAccountingTypeRequest
+import config.AppConfig
+import v2.disapplyLateAccountingDateRule.model.request.DisapplyLateAccountingDateRuleRequest
 
 import javax.inject.Singleton
 
 @Singleton
-class RetrieveAccountingTypeValidatorFactory {
+class DisapplyLateAccountingDateRuleValidatorFactory {
 
-  def validator(nino: String, businessId: String, taxYear: String): Validator[RetrieveAccountingTypeRequest] =
-    new RetrieveAccountingTypeValidator(nino, businessId, taxYear)
+  def validator(nino: String, businessId: String, taxYear: String)(implicit appConfig: AppConfig): Validator[DisapplyLateAccountingDateRuleRequest] =
+    new DisapplyLateAccountingDateRuleValidator(nino, businessId, taxYear)
 
 }

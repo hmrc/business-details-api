@@ -14,24 +14,30 @@
  * limitations under the License.
  */
 
-package v2.retrieveAccountingType
+package v2.disapplyLateAccountingDateRule
 
 import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{ResolveBusinessId, ResolveNino, ResolveTaxYear}
+import api.controllers.validators.resolvers.{ResolveBusinessId, ResolveDetailedTaxYear, ResolveNino}
+import api.models.domain.TaxYear
 import api.models.errors.MtdError
 import cats.data.Validated
 import cats.data.Validated._
 import cats.implicits._
-import v2.retrieveAccountingType.model.request.RetrieveAccountingTypeRequest
+import config.AppConfig
+import v2.disapplyLateAccountingDateRule.model.request.DisapplyLateAccountingDateRuleRequest
 
-class RetrieveAccountingTypeValidator(nino: String, businessId: String, taxYear: String)
-    extends Validator[RetrieveAccountingTypeRequest] {
+class DisapplyLateAccountingDateRuleValidator(nino: String, businessId: String, taxYear: String)(implicit appConfig: AppConfig)
+    extends Validator[DisapplyLateAccountingDateRuleRequest] {
 
-  def validate: Validated[Seq[MtdError], RetrieveAccountingTypeRequest] =
+  private val resolveTaxYear: ResolveDetailedTaxYear = ResolveDetailedTaxYear(
+    TaxYear.ending(appConfig.accountingTypeMinimumTaxYear)
+  )
+
+  def validate: Validated[Seq[MtdError], DisapplyLateAccountingDateRuleRequest] =
     (
       ResolveNino(nino),
       ResolveBusinessId(businessId),
-      ResolveTaxYear(taxYear)
-    ).mapN(RetrieveAccountingTypeRequest)
+      resolveTaxYear(taxYear)
+    ).mapN(DisapplyLateAccountingDateRuleRequest)
 
 }
