@@ -1,5 +1,5 @@
 delete:
-  summary: Delete Late Accounting Date Rule
+  summary: Withdraw Late Accounting Date Rule
   description: |
     Allows a customer to withdraw an election to disapply the automatic Late Accounting Date Rule treatment for a given tax year. This setting cannot be changed after finalisation (except when submitting post finalisation amendments) and will remain in place for 5 years. A National Insurance number, business ID and tax year must be provided.
     
@@ -12,7 +12,7 @@ delete:
     | NOT_FOUND                        | Simulates the scenario where no data is found.                                                  |
     | ELECTION_PERIOD_NOT_EXPIRED      | Simulates the scenario where the existing status has not expired.                               |
     | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
-    | STATEFUL                         | Performs a stateful delete.                                                                     |
+    | STATEFUL                         | Performs a stateful withdrawal.                                                                 |
 
   tags:
     - Late Accounting Date Rule
