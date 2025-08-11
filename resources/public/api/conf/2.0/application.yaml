@@ -73,9 +73,9 @@ paths:
     $ref: "./accounting_type.yaml"
   /individuals/business/details/{nino}/{businessId}/{taxYear}/periods-of-account:
     $ref: "./periods_of_account.yaml"
-# {{#if (enabled 'late-accounting-date-rule')}}
+  # {{#if (enabled 'late-accounting-date-rule')}}
   /individuals/business/details/{nino}/{businessId}/{taxYear}/late-accounting-date-rule-election/disapply:
     $ref: "./disapply_late_accounting_date_rule.yaml"
   /individuals/business/details/{nino}/{businessId}/{taxYear}/late-accounting-date-rule-election/withdraw:
-    $ref: "./delete_late_accounting_date_rule.yaml"
-# {{/if}}
+    $ref: "./withdraw_late_accounting_date_rule.yaml"
+  # {{/if}}

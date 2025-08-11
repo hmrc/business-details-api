@@ -13,7 +13,6 @@ delete:
     | ELECTION_PERIOD_NOT_EXPIRED      | Simulates the scenario where the existing status has not expired.                               |
     | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
     | STATEFUL                         | Performs a stateful delete.                                                                     |
-  
 
   tags:
     - Late Accounting Date Rule
