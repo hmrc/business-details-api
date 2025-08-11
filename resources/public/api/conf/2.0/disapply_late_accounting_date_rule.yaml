@@ -15,7 +15,7 @@ post:
     | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window. |
     | TYPE_OF_BUSINESS_INCORRECT       | Simulates the scenario where the type of business is incorrect.                                 |
     | STATEFUL                         | Performs a stateful disapplication.                                                             |
-
+  
   tags:
     - Late Accounting Date Rule
 
