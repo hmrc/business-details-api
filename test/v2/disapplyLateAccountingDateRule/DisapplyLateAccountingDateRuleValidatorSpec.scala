@@ -46,8 +46,8 @@ class DisapplyLateAccountingDateRuleValidatorSpec extends UnitSpec with MockAppC
     new DisapplyLateAccountingDateRuleValidator(nino, businessId, taxYear)(mockAppConfig)
 
   "validator()" should {
-    "passed a valid request" when {
-      "return the parsed domain object" in new Test {
+    "return the parsed domain object" when {
+      "passed a valid request" in new Test {
         val result = validator(validNino, validBusinessId, validTaxYear).validateAndWrapResult()
 
         result shouldBe Right(DisapplyLateAccountingDateRuleRequest(parsedNino, parsedBusinessId, parsedTaxYear))
