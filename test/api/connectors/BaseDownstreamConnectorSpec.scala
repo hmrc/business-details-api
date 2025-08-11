@@ -33,11 +33,11 @@ class BaseDownstreamConnectorSpec extends UnitSpec with MockHttpClient with Mock
 
   case class Result(value: Int)
 
-  private val baseUrl     = "http://test-BaseUrl"
-  private val path        = "some/url"
-  private val absoluteUrl = url"$baseUrl/some/url"
-  private val body        = Json.toJson("body")
-  private val userAgent = "this-api"
+  private val baseUrl                        = "http://test-BaseUrl"
+  private val path                           = "some/url"
+  private val absoluteUrl                    = url"$baseUrl/some/url"
+  private val body                           = Json.toJson("body")
+  private val userAgent                      = "this-api"
   private implicit val correlationId: String = "someCorrelationId"
   private val outcome                        = Right(ResponseWrapper(correlationId, Result(2)))
 
@@ -130,8 +130,8 @@ class BaseDownstreamConnectorSpec extends UnitSpec with MockHttpClient with Mock
       behave like sendsRequest(Post)
     }
 
-    "put is called" must {
-      object Put extends RequestMethodCaller {
+    "put is called with body" must {
+      object PutWithBody extends RequestMethodCaller {
         def makeCall(additionalRequiredHeaders: Seq[(String, String)] = Nil, additionalExcludedHeaders: Seq[(String, String)] = Nil): Assertion = {
           implicit val hc: HeaderCarrier = headerCarrierForInput()
 
@@ -147,7 +147,26 @@ class BaseDownstreamConnectorSpec extends UnitSpec with MockHttpClient with Mock
         }
       }
 
-      behave like sendsRequest(Put)
+      behave like sendsRequest(PutWithBody)
+    }
+
+    "put is called without body" must {
+      object PutWithoutBody extends RequestMethodCaller {
+        def makeCall(additionalRequiredHeaders: Seq[(String, String)] = Nil, additionalExcludedHeaders: Seq[(String, String)] = Nil): Assertion = {
+          implicit val hc: HeaderCarrier = headerCarrierForInput()
+
+          MockedHttpClient.putEmpty(
+            absoluteUrl,
+            headerCarrierConfig,
+            requiredHeaders = standardContractHeadersWith(additionalRequiredHeaders),
+            excludedHeaders = additionalExcludedHeaders
+          ) returns Future.successful(outcome)
+
+          await(connector.putEmpty(uri())) shouldBe outcome
+        }
+      }
+
+      behave like sendsRequest(PutWithoutBody)
     }
 
     "get is called without query parameters" must {
