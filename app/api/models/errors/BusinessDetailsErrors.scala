@@ -78,7 +78,7 @@ object RuleQuarterlyPeriodUpdatingError
       "Quarterly period type cannot be changed for the current year as the business is treated as commencing in the following year",
       BAD_REQUEST
     )
-    
+
 object RuleNoAccountingDateFoundError
   extends MtdError(
     "RULE_NO_ACCOUNTING_DATE_FOUND",
