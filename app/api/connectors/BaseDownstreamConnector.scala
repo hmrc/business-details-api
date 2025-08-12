@@ -111,6 +111,24 @@ trait BaseDownstreamConnector extends Logging {
     } yield result
   }
 
+  def putEmpty[Resp](uri: DownstreamUri[Resp], maybeIntent: Option[String] = None)(implicit
+      ec: ExecutionContext,
+      hc: HeaderCarrier,
+      httpReads: HttpReads[DownstreamOutcome[Resp]],
+      correlationId: String): Future[DownstreamOutcome[Resp]] = {
+
+    val strategy = uri.strategy
+
+    def doPut(implicit hc: HeaderCarrier): Future[DownstreamOutcome[Resp]] = {
+      http.put(url"${getBackendUri(uri.path, strategy)}").execute
+    }
+
+    for {
+      headers <- getBackendHeaders(strategy, intentHeader(maybeIntent))
+      result  <- doPut(headers)
+    } yield result
+  }
+
   private def intentHeader(maybeIntent: Option[String]) =
     maybeIntent.map(intent => Seq("intent" -> intent)).getOrElse(Nil)
 

@@ -90,6 +90,16 @@ trait ConnectorSpec extends UnitSpec {
         )
     }
 
+    protected def willPutEmpty[T](url: URL): CallHandler[Future[T]] = {
+      MockedHttpClient
+        .putEmpty(
+          url = url,
+          config = dummyHeaderCarrierConfig,
+          requiredHeaders = requiredHeaders,
+          excludedHeaders = List("AnotherHeader" -> "HeaderValue")
+        )
+    }
+
     protected def willDelete[T](url: URL): CallHandler[Future[T]] = {
       MockedHttpClient
         .delete(
