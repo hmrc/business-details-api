@@ -17,27 +17,16 @@
 package v2.withdrawLateAccountingDateRule
 
 import api.controllers.validators.Validator
-import api.controllers.validators.resolvers.{ResolveBusinessId, ResolveDetailedTaxYear, ResolveNino}
-import api.models.domain.TaxYear
-import api.models.errors.MtdError
-import cats.data.Validated
-import cats.data.Validated._
-import cats.implicits._
 import config.AppConfig
 import v2.withdrawLateAccountingDateRule.model.request.WithdrawLateAccountingDateRuleRequest
 
-class WithdrawLateAccountingDateRuleValidator(nino: String, businessId: String, taxYear: String)(implicit appConfig: AppConfig)
-  extends Validator[WithdrawLateAccountingDateRuleRequest] {
+import javax.inject.Singleton
 
-  private val resolveTaxYear: ResolveDetailedTaxYear = ResolveDetailedTaxYear(
-    TaxYear.ending(appConfig.accountingTypeMinimumTaxYear)
-  )
+@Singleton
+class WithdrawLateAccountingDateRuleValidatorFactory {
 
-  def validate: Validated[Seq[MtdError], WithdrawLateAccountingDateRuleRequest] =
-    (
-      ResolveNino(nino),
-      ResolveBusinessId(businessId),
-      resolveTaxYear(taxYear)
-    ).mapN(WithdrawLateAccountingDateRuleRequest)
+  def validator(nino: String, businessId: String, taxYear: String, temporalValidationEnabled: Boolean)(implicit
+      appConfig: AppConfig): Validator[WithdrawLateAccountingDateRuleRequest] =
+    new WithdrawLateAccountingDateRuleValidator(nino, businessId, taxYear, temporalValidationEnabled)
 
 }
