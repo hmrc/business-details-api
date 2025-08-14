@@ -16,17 +16,20 @@
 
 package v2.disapplyLateAccountingDateRule
 
-import api.controllers.validators.Validator
+import api.controllers.validators.{MockValidatorFactory, Validator}
 import config.AppConfig
+import org.scalamock.handlers.CallHandler
 import v2.disapplyLateAccountingDateRule.model.request.DisapplyLateAccountingDateRuleRequest
 
-import javax.inject.Singleton
+trait MockDisapplyLateAccountingDateRuleValidatorFactory extends MockValidatorFactory[DisapplyLateAccountingDateRuleRequest] {
 
-@Singleton
-class DisapplyLateAccountingDateRuleValidatorFactory {
+  val mockDisapplyLateAccountingDateRuleValidatorFactory: DisapplyLateAccountingDateRuleValidatorFactory =
+    mock[DisapplyLateAccountingDateRuleValidatorFactory]
 
-  def validator(nino: String, businessId: String, taxYear: String, temporalValidationEnabled: Boolean)(implicit
-      appConfig: AppConfig): Validator[DisapplyLateAccountingDateRuleRequest] =
-    new DisapplyLateAccountingDateRuleValidator(nino, businessId, taxYear, temporalValidationEnabled)
+  def validator(): CallHandler[Validator[DisapplyLateAccountingDateRuleRequest]] = {
+    (mockDisapplyLateAccountingDateRuleValidatorFactory
+      .validator(_: String, _: String, _: String, _: Boolean)(_: AppConfig))
+      .expects(*, *, *, *, *)
+  }
 
 }
