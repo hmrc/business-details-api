@@ -28,21 +28,19 @@ class WithdrawLateAccountingDateRuleValidatorFactorySpec extends UnitSpec with M
   private val validTaxYear    = "2024-25"
   private val returnedTaxYear = 2025
 
-  class Test {
-
-    MockedAppConfig.accountingTypeMinimumTaxYear
-      .returns(returnedTaxYear)
-      .anyNumberOfTimes()
-
-  }
-
   private val validatorFactory = new WithdrawLateAccountingDateRuleValidatorFactory
 
   "validator()" when {
     "given any tax year" should {
-      "return the Validator for Withdraw Late Accounting Date Rule" in new Test {
-        val result: Validator[WithdrawLateAccountingDateRuleRequest] =
-          validatorFactory.validator(validNino, validBusinessId, validTaxYear)
+      "return the Validator for Withdraw Late Accounting Date Rule" in {
+        MockedAppConfig.accountingTypeMinimumTaxYear.returns(returnedTaxYear).anyNumberOfTimes()
+        
+        val result: Validator[WithdrawLateAccountingDateRuleRequest] = validatorFactory.validator(
+          nino = validNino,
+          businessId = validBusinessId,
+          taxYear = validTaxYear,
+          temporalValidationEnabled = true)
+        
         result shouldBe a[WithdrawLateAccountingDateRuleValidator]
       }
     }
