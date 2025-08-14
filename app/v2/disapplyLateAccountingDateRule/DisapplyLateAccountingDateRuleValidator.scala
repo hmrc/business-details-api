@@ -26,11 +26,13 @@ import cats.implicits._
 import config.AppConfig
 import v2.disapplyLateAccountingDateRule.model.request.DisapplyLateAccountingDateRuleRequest
 
-class DisapplyLateAccountingDateRuleValidator(nino: String, businessId: String, taxYear: String)(implicit appConfig: AppConfig)
+class DisapplyLateAccountingDateRuleValidator(nino: String, businessId: String, taxYear: String, temporalValidationEnabled: Boolean)(implicit
+    appConfig: AppConfig)
     extends Validator[DisapplyLateAccountingDateRuleRequest] {
 
   private val resolveTaxYear: ResolveDetailedTaxYear = ResolveDetailedTaxYear(
-    TaxYear.ending(appConfig.accountingTypeMinimumTaxYear)
+    minimumTaxYear = TaxYear.ending(appConfig.accountingTypeMinimumTaxYear),
+    allowIncompleteTaxYear = !temporalValidationEnabled
   )
 
   def validate: Validated[Seq[MtdError], DisapplyLateAccountingDateRuleRequest] =

@@ -13,3 +13,5 @@ GET        /:nino/:businessId/:taxYear/periods-of-account                       
 PUT        /:nino/:businessId/:taxYear/periods-of-account                           v2.createUpdatePeriodsOfAccount.CreateUpdatePeriodsOfAccountController.handleRequest(nino: String, businessId: String, taxYear: String)
 
 DELETE     /:nino/:businessId/:taxYear/late-accounting-date-rule-election/withdraw  v2.withdrawLateAccountingDateRule.WithdrawLateAccountingDateRuleController.handleRequest(nino: String, businessId: String, taxYear: String)
+
+POST        /:nino/:businessId/:taxYear/late-accounting-date-rule-election/disapply  v2.disapplyLateAccountingDateRule.DisapplyLateAccountingDateRuleController.handleRequest(nino: String, businessId: String, taxYear: String)
