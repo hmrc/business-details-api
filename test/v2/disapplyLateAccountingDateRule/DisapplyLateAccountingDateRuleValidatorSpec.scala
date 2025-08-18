@@ -28,30 +28,39 @@ class DisapplyLateAccountingDateRuleValidatorSpec extends UnitSpec with MockAppC
 
   private val validNino       = "AA123456A"
   private val validBusinessId = "X0IS12345678901"
-  private val validTaxYear    = "2025-26"
+  private val validTaxYear    = "2024-25"
+  private val returnedTaxYear = 2025
 
-  class Test {
-
-    MockedAppConfig.accountingTypeMinimumTaxYear
-      .returns(2026)
-      .anyNumberOfTimes()
-
+  private trait Test {
+    MockedAppConfig.accountingTypeMinimumTaxYear.returns(returnedTaxYear).anyNumberOfTimes()
   }
 
   private val parsedNino       = Nino(validNino)
   private val parsedBusinessId = BusinessId(validBusinessId)
   private val parsedTaxYear    = TaxYear.fromMtd(validTaxYear)
 
-  private def validator(nino: String, businessId: String, taxYear: String) =
-    new DisapplyLateAccountingDateRuleValidator(nino, businessId, taxYear)(mockAppConfig)
+  private def validator(nino: String, businessId: String, taxYear: String, temporalValidationEnabled: Boolean = true) =
+    new DisapplyLateAccountingDateRuleValidator(nino, businessId, taxYear, temporalValidationEnabled)(mockAppConfig)
 
-  "validator()" should {
+  "validator" should {
     "return the parsed domain object" when {
       "passed a valid request" in new Test {
-        val result = validator(validNino, validBusinessId, validTaxYear).validateAndWrapResult()
+        val result: Either[ErrorWrapper, DisapplyLateAccountingDateRuleRequest] =
+          validator(validNino, validBusinessId, validTaxYear).validateAndWrapResult()
 
         result shouldBe Right(DisapplyLateAccountingDateRuleRequest(parsedNino, parsedBusinessId, parsedTaxYear))
       }
+    }
+
+    "passed a valid request with a tax year that has not ended and temporal validation is disabled" in new Test {
+      val result: Either[ErrorWrapper, DisapplyLateAccountingDateRuleRequest] = validator(
+        validNino,
+        validBusinessId,
+        TaxYear.currentTaxYear.asMtd,
+        temporalValidationEnabled = false
+      ).validateAndWrapResult()
+
+      result shouldBe Right(DisapplyLateAccountingDateRuleRequest(parsedNino, parsedBusinessId, TaxYear.currentTaxYear))
     }
   }
 
@@ -78,7 +87,7 @@ class DisapplyLateAccountingDateRuleValidatorSpec extends UnitSpec with MockAppC
     }
 
     "passed an unsupported tax year" in new Test {
-      val result = validator(validNino, validBusinessId, "2024-25").validateAndWrapResult()
+      val result = validator(validNino, validBusinessId, "2023-24").validateAndWrapResult()
       result shouldBe Left(
         ErrorWrapper(correlationId, RuleTaxYearNotSupportedError)
       )

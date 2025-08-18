@@ -26,22 +26,19 @@ class DisapplyLateAccountingDateRuleValidatorFactorySpec extends UnitSpec with M
   private val validNino       = "AA123456A"
   private val validBusinessId = "X0IS12345678901"
   private val validTaxYear    = "2024-25"
-
-  class Test {
-
-    MockedAppConfig.accountingTypeMinimumTaxYear
-      .returns(2025)
-      .anyNumberOfTimes()
-
-  }
+  private val returnedTaxYear = 2025
 
   private val validatorFactory = new DisapplyLateAccountingDateRuleValidatorFactory
 
   "validator()" when {
     "given any tax year" should {
-      "return the Validator for Disapply Late Accounting Date Rule" in new Test {
+
+      "return the Validator for Disapply Late Accounting Date Rule" in {
+        MockedAppConfig.accountingTypeMinimumTaxYear.returns(returnedTaxYear).anyNumberOfTimes()
+
         val result: Validator[DisapplyLateAccountingDateRuleRequest] =
-          validatorFactory.validator(validNino, validBusinessId, validTaxYear)
+          validatorFactory.validator(nino = validNino, businessId = validBusinessId, taxYear = validTaxYear, temporalValidationEnabled = true)
+
         result shouldBe a[DisapplyLateAccountingDateRuleValidator]
       }
     }
