@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v2.disapplyLateAccountingDateRule
+package v2.withdrawLateAccountingDateRule
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
 import api.hateoas.MockHateoasFactory
@@ -31,18 +31,18 @@ import play.api.libs.json.JsValue
 import play.api.mvc.Result
 import routing.Version2
 import utils.MockIdGenerator
-import v2.disapplyLateAccountingDateRule.model.request.DisapplyLateAccountingDateRuleRequest
+import v2.withdrawLateAccountingDateRule.model.request.WithdrawLateAccountingDateRuleRequest
 
 import scala.concurrent.Future
 
-class DisapplyLateAccountingDateRuleControllerSpec
+class WithdrawLateAccountingDateRuleControllerSpec
     extends ControllerBaseSpec(Version2)
     with ControllerTestRunner
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
-    with MockDisapplyLateAccountingDateRuleService
+    with MockWithdrawLateAccountingDateRuleService
     with MockHateoasFactory
-    with MockDisapplyLateAccountingDateRuleValidatorFactory
+    with MockWithdrawLateAccountingDateRuleValidatorFactory
     with MockIdGenerator
     with MockAppConfig {
 
@@ -56,15 +56,15 @@ class DisapplyLateAccountingDateRuleControllerSpec
   val userDetails: UserDetails                       = UserDetails("mtdId", userType, None)
 
   private val requestData =
-    DisapplyLateAccountingDateRuleRequest(parsedNino, parsedBusinessId, parsedTaxYear)
+    WithdrawLateAccountingDateRuleRequest(parsedNino, parsedBusinessId, parsedTaxYear)
 
   "handleRequest" should {
     "return successful response with status OK" when {
       "valid request" in new Test {
         willUseValidator(returningSuccess(requestData))
 
-        MockDisapplyLateAccountingDateRuleService
-          .disapply(requestData)
+        MockWithdrawLateAccountingDateRuleService
+          .withdraw(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, ()))))
 
         runOkTestWithAudit(NO_CONTENT)
@@ -80,8 +80,8 @@ class DisapplyLateAccountingDateRuleControllerSpec
       "the service returns an error" in new Test {
         willUseValidator(returningSuccess(requestData))
 
-        MockDisapplyLateAccountingDateRuleService
-          .disapply(requestData)
+        MockWithdrawLateAccountingDateRuleService
+          .withdraw(requestData)
           .returns(Future.successful(Left(ErrorWrapper(correlationId, TaxYearFormatError))))
 
         runErrorTestWithAudit(TaxYearFormatError)
@@ -91,12 +91,12 @@ class DisapplyLateAccountingDateRuleControllerSpec
 
   private trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
 
-    val controller = new DisapplyLateAccountingDateRuleController(
+    val controller = new WithdrawLateAccountingDateRuleController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
-      service = mockDisapplyLateAccountingDateRuleService,
+      service = mockWithdrawLateAccountingDateRuleService,
       auditService = mockAuditService,
-      validatorFactory = mockDisapplyLateAccountingDateRuleValidatorFactory,
+      validatorFactory = mockWithdrawLateAccountingDateRuleValidatorFactory,
       cc = cc,
       idGenerator = mockIdGenerator
     )
@@ -113,8 +113,8 @@ class DisapplyLateAccountingDateRuleControllerSpec
 
     def event(auditResponse: AuditResponse, maybeRequestBody: Option[JsValue]): AuditEvent[GenericAuditDetail] =
       AuditEvent(
-        auditType = "DisapplyLateAccountingDateRule",
-        transactionName = "disapply-late-accounting-date-rule",
+        auditType = "WithdrawLateAccountingDateRule",
+        transactionName = "withdraw-late-accounting-date-rule",
         detail = GenericAuditDetail(
           userType = "Individual",
           versionNumber = apiVersion.name,

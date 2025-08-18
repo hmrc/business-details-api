@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package v2.disapplyLateAccountingDateRule
+package v2.withdrawLateAccountingDateRule
 
 import api.controllers.RequestContext
 import api.services.ServiceOutcome
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.TestSuite
-import v2.disapplyLateAccountingDateRule.model.request.DisapplyLateAccountingDateRuleRequest
+import v2.withdrawLateAccountingDateRule.model.request.WithdrawLateAccountingDateRuleRequest
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockDisapplyLateAccountingDateRuleService extends TestSuite with MockFactory {
+trait MockWithdrawLateAccountingDateRuleService extends TestSuite with MockFactory {
 
-  val mockDisapplyLateAccountingDateRuleService: DisapplyLateAccountingDateRuleService = mock[DisapplyLateAccountingDateRuleService]
+  val mockWithdrawLateAccountingDateRuleService: WithdrawLateAccountingDateRuleService = mock[WithdrawLateAccountingDateRuleService]
 
-  object MockDisapplyLateAccountingDateRuleService {
+  object MockWithdrawLateAccountingDateRuleService {
 
-    def disapply(request: DisapplyLateAccountingDateRuleRequest): CallHandler[Future[ServiceOutcome[Unit]]] = {
+    def withdraw(request: WithdrawLateAccountingDateRuleRequest): CallHandler[Future[ServiceOutcome[Unit]]] = {
       (
-        mockDisapplyLateAccountingDateRuleService
-          .disapply(_: DisapplyLateAccountingDateRuleRequest)(
+        mockWithdrawLateAccountingDateRuleService
+          .withdraw(_: WithdrawLateAccountingDateRuleRequest)(
             _: RequestContext,
             _: ExecutionContext
           )
