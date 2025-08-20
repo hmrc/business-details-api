@@ -21,7 +21,7 @@ post:
 
   parameters:
     - $ref: './common/pathParameters.yaml#/components/parameters/nino'
-    - $ref: './common/pathParameters.yaml#/components/parameters/businessId'
+    - $ref: './common/pathParameters.yaml#/components/parameters/selfEmploymentBusinessId'
     - $ref: './common/pathParameters.yaml#/components/parameters/accountingTypeTaxYear'
     - $ref: './common/headers.yaml#/components/parameters/acceptJson'
     - $ref: './common/headers.yaml#/components/parameters/authorizationWriteScopeHeader'
