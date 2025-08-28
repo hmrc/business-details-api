@@ -109,7 +109,7 @@ class CreateUpdatePeriodsOfAccountControllerISpec extends IntegrationBaseSpec wi
           ("AA123456A", "X0IS12345678901", "2025", validFullRequestBodyJson, BAD_REQUEST, TaxYearFormatError, None),
           ("AA123456A", "X0IS123", "2025-26", validFullRequestBodyJson, BAD_REQUEST, BusinessIdFormatError, None),
           ("AA123456A", "X0IS12345678901", "2025-27", validFullRequestBodyJson, BAD_REQUEST, RuleTaxYearRangeInvalidError, None),
-          ("AA123456A", "X0IS12345678901", "2024-25", validFullRequestBodyJson, BAD_REQUEST, RuleTaxYearNotSupportedError, None),
+          ("AA123456A", "X0IS12345678901", "2023-24", validFullRequestBodyJson, BAD_REQUEST, RuleTaxYearNotSupportedError, None),
           ("AA123456A", "X0IS12345678901", "2025-26", JsObject.empty, BAD_REQUEST, RuleIncorrectOrEmptyBodyError, None),
           (
             "AA123456A",

@@ -17,10 +17,11 @@
 package v2.retrievePeriodsOfAccount
 
 import api.controllers.validators.Validator
+import config.MockAppConfig
 import support.UnitSpec
 import v2.retrievePeriodsOfAccount.model.request.RetrievePeriodsOfAccountRequest
 
-class RetrievePeriodsOfAccountValidatorFactorySpec extends UnitSpec {
+class RetrievePeriodsOfAccountValidatorFactorySpec extends UnitSpec with MockAppConfig {
 
   private val validNino       = "AA123456A"
   private val validBusinessId = "X0IS12345678901"
@@ -31,6 +32,7 @@ class RetrievePeriodsOfAccountValidatorFactorySpec extends UnitSpec {
   "validator()" when {
     "given any tax year" should {
       "return the Validator for Update Accounting Type" in {
+        MockedAppConfig.accountingTypeMinimumTaxYear.returns(2025).anyNumberOfTimes()
         val result: Validator[RetrievePeriodsOfAccountRequest] =
           validatorFactory.validator(validNino, validBusinessId, validTaxYear)
         result shouldBe a[RetrievePeriodsOfAccountValidator]

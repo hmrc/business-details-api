@@ -23,11 +23,12 @@ import api.models.errors.MtdError
 import cats.data.Validated
 import cats.data.Validated._
 import cats.implicits._
+import config.AppConfig
 import v2.retrievePeriodsOfAccount.model.request.RetrievePeriodsOfAccountRequest
 
-class RetrievePeriodsOfAccountValidator(nino: String, businessId: String, taxYear: String) extends Validator[RetrievePeriodsOfAccountRequest] {
+class RetrievePeriodsOfAccountValidator(nino: String, businessId: String, taxYear: String)(implicit appConfig: AppConfig) extends Validator[RetrievePeriodsOfAccountRequest] {
 
-  private val resolveTaxYear: ResolveDetailedTaxYear = ResolveDetailedTaxYear(TaxYear.fromMtd("2025-26"))
+  private val resolveTaxYear: ResolveDetailedTaxYear = ResolveDetailedTaxYear(TaxYear.ending(appConfig.accountingTypeMinimumTaxYear))
 
   def validate: Validated[Seq[MtdError], RetrievePeriodsOfAccountRequest] =
     (

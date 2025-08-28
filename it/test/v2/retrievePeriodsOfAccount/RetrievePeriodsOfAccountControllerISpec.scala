@@ -75,7 +75,7 @@ class RetrievePeriodsOfAccountControllerISpec extends IntegrationBaseSpec {
           ("AA1123A", "XAIS12345678901", "2025-26", BAD_REQUEST, NinoFormatError),
           ("AA123456A", "X2", "2025-26", BAD_REQUEST, BusinessIdFormatError),
           ("AA123456A", "XAIS12345678901", "2025-2026", BAD_REQUEST, TaxYearFormatError),
-          ("AA123456A", "XAIS12345678901", "2024-25", BAD_REQUEST, RuleTaxYearNotSupportedError),
+          ("AA123456A", "XAIS12345678901", "2023-24", BAD_REQUEST, RuleTaxYearNotSupportedError),
           ("AA123456A", "XAIS12345678901", "2025-27", BAD_REQUEST, RuleTaxYearRangeInvalidError)
         )
 

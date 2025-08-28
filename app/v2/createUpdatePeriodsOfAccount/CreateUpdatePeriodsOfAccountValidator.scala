@@ -22,16 +22,17 @@ import api.models.domain.TaxYear
 import api.models.errors.MtdError
 import cats.data.Validated
 import cats.implicits.catsSyntaxTuple4Semigroupal
+import config.AppConfig
 import play.api.libs.json.JsValue
 import v2.createUpdatePeriodsOfAccount.request.{CreateUpdatePeriodsOfAccountRequest, CreateUpdatePeriodsOfAccountRequestBody}
 
-class CreateUpdatePeriodsOfAccountValidator(nino: String, businessId: String, taxYear: String, body: JsValue)
+class CreateUpdatePeriodsOfAccountValidator(nino: String, businessId: String, taxYear: String, body: JsValue)(implicit appConfig: AppConfig)
     extends Validator[CreateUpdatePeriodsOfAccountRequest] {
 
   private val resolveJson: ResolveNonEmptyJsonObject[CreateUpdatePeriodsOfAccountRequestBody] =
     new ResolveNonEmptyJsonObject[CreateUpdatePeriodsOfAccountRequestBody]()
 
-  private val resolveTaxYear: ResolveDetailedTaxYear = ResolveDetailedTaxYear(TaxYear.fromMtd("2025-26"))
+  private val resolveTaxYear: ResolveDetailedTaxYear = ResolveDetailedTaxYear(TaxYear.ending(appConfig.accountingTypeMinimumTaxYear))
 
   override def validate: Validated[Seq[MtdError], CreateUpdatePeriodsOfAccountRequest] =
     (

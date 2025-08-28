@@ -17,11 +17,12 @@
 package v2.createUpdatePeriodsOfAccount
 
 import api.controllers.validators.Validator
+import config.MockAppConfig
 import support.UnitSpec
 import v2.createUpdatePeriodsOfAccount.request.CreateUpdatePeriodsOfAccountRequest
 import v2.fixtures.CreateUpdatePeriodsOfAccountFixtures.validFullRequestBodyJson
 
-class CreateUpdatePeriodsOfAccountValidatorFactorySpec extends UnitSpec {
+class CreateUpdatePeriodsOfAccountValidatorFactorySpec extends UnitSpec with MockAppConfig {
 
   private val validNino: String       = "AA123456A"
   private val validBusinessId: String = "X0IS12345678901"
@@ -32,6 +33,7 @@ class CreateUpdatePeriodsOfAccountValidatorFactorySpec extends UnitSpec {
   "validator()" when {
     "given any tax year" should {
       "return the CreateUpdatePeriodsOfAccountValidator" in {
+        MockedAppConfig.accountingTypeMinimumTaxYear.returns(2025).anyNumberOfTimes()
         val result: Validator[CreateUpdatePeriodsOfAccountRequest] = validatorFactory.validator(
           nino = validNino,
           businessId = validBusinessId,
