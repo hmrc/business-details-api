@@ -1,6 +1,6 @@
 get:
   $ref: "./retrieve_periods_of_account.yaml"
-  summary: Retrieve Periods of Account {{#maybeTestOnly "2.0 retrieve-update-periods-of-account"}}{{/maybeTestOnly}}
+  summary: Retrieve Periods of Account {{#maybeTestOnly "2.0 retrieve-periods-of-account"}}{{/maybeTestOnly}}
   security:
     - User-Restricted:
         - read:self-assessment
