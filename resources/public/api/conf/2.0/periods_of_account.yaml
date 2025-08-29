@@ -1,13 +1,13 @@
 get:
   $ref: "./retrieve_periods_of_account.yaml"
-  summary: Retrieve Periods of Account
+  summary: Retrieve Periods of Account {{#maybeTestOnly "2.0 retrieve-periods-of-account"}}{{/maybeTestOnly}}
   security:
     - User-Restricted:
         - read:self-assessment
 
 put:
   $ref: "./create_update_periods_of_account.yaml"
-  summary: Create or Update Periods of Account
+  summary: Create or Update Periods of Account {{#maybeTestOnly "2.0 create-update-periods-of-account"}}{{/maybeTestOnly}}
   security:
     - User-Restricted:
         - write:self-assessment
