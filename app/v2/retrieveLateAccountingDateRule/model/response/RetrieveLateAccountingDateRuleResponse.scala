@@ -27,13 +27,13 @@ case class RetrieveLateAccountingDateRuleResponse(disapply: Boolean,
 
 object RetrieveLateAccountingDateRuleResponse {
 
-  implicit val taxYearReads: Reads[TaxYear] = implicitly[Reads[String]].map(TaxYear.fromDownstream)
+  implicit val taxYearReads: Reads[TaxYear] = implicitly[Reads[String]].map(TaxYear.fromTYSDownstream)
 
   implicit val reads: Reads[RetrieveLateAccountingDateRuleResponse] = (
     (JsPath \\ "disapply").read[Boolean] and
       (JsPath \\ "eligible").read[Boolean] and
-      (JsPath \\ "taxYearOfElection").readNullable[String].map(_. ) and
-      (JsPath \\ "taxYearElectionExpires").readNullable[String]
+      (JsPath \\ "taxYearOfElection").readNullable[TaxYear] and
+      (JsPath \\ "taxYearElectionExpires").readNullable[TaxYear]
   )(RetrieveLateAccountingDateRuleResponse.apply _)
 
   implicit val writes: OWrites[RetrieveLateAccountingDateRuleResponse] = Json.writes[RetrieveLateAccountingDateRuleResponse]
