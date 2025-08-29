@@ -80,6 +80,13 @@ object TaxYear {
     TaxYear(taxYear.take(prefixLength) + taxYear.drop(suffixStartIndex))
   }
 
+  /** @param taxYear
+    *   tax year in TYS Downstream format (e.g. 17-18)
+    */
+  def fromTYSDownstream(taxYear: String): TaxYear = {
+    TaxYear("20" + taxYear.drop(3))
+  }
+
   def now(implicit clock: Clock = Clock.systemUTC): TaxYear            = TaxYear.containing(LocalDate.now(clock))
   def currentTaxYear(implicit clock: Clock = Clock.systemUTC): TaxYear = TaxYear.now
 
