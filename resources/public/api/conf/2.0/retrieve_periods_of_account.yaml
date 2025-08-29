@@ -16,7 +16,7 @@ description: |
 parameters:
   - $ref: './common/pathParameters.yaml#/components/parameters/nino'
   - $ref: './common/pathParameters.yaml#/components/parameters/businessId'
-  - $ref: './common/pathParameters.yaml#/components/parameters/taxYearMinimum2025'
+  - $ref: './common/pathParameters.yaml#/components/parameters/accountingTypeTaxYear'
   - $ref: './common/headers.yaml#/components/parameters/acceptJson'
   - $ref: './common/headers.yaml#/components/parameters/authorization'
   - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'

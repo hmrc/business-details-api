@@ -17,6 +17,7 @@
 package v2.retrievePeriodsOfAccount
 
 import api.controllers.validators.{MockValidatorFactory, Validator}
+import config.AppConfig
 import org.scalamock.handlers.CallHandler
 import v2.retrievePeriodsOfAccount.model.request.RetrievePeriodsOfAccountRequest
 
@@ -26,8 +27,8 @@ trait MockRetrievePeriodsOfAccountValidatorFactory extends MockValidatorFactory[
 
   def validator(): CallHandler[Validator[RetrievePeriodsOfAccountRequest]] = {
     (mockRetrievePeriodsOfAccountValidatorFactory
-      .validator(_: String, _: String, _: String))
-      .expects(*, *, *)
+      .validator(_: String, _: String, _: String)(_: AppConfig))
+      .expects(*, *, *, *)
   }
 
 }

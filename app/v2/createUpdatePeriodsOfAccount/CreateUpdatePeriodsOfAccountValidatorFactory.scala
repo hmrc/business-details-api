@@ -17,6 +17,7 @@
 package v2.createUpdatePeriodsOfAccount
 
 import api.controllers.validators.Validator
+import config.AppConfig
 import play.api.libs.json.JsValue
 import v2.createUpdatePeriodsOfAccount.request.CreateUpdatePeriodsOfAccountRequest
 
@@ -25,7 +26,7 @@ import javax.inject.Singleton
 @Singleton
 class CreateUpdatePeriodsOfAccountValidatorFactory {
 
-  def validator(nino: String, businessId: String, taxYear: String, body: JsValue): Validator[CreateUpdatePeriodsOfAccountRequest] =
+  def validator(nino: String, businessId: String, taxYear: String, body: JsValue)(implicit appConfig: AppConfig): Validator[CreateUpdatePeriodsOfAccountRequest] =
     new CreateUpdatePeriodsOfAccountValidator(nino, businessId, taxYear, body)
 
 }

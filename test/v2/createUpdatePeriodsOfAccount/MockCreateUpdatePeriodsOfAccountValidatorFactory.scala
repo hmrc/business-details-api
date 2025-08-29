@@ -17,6 +17,7 @@
 package v2.createUpdatePeriodsOfAccount
 
 import api.controllers.validators.{MockValidatorFactory, Validator}
+import config.AppConfig
 import org.scalamock.handlers.CallHandler
 import play.api.libs.json.JsValue
 import v2.createUpdatePeriodsOfAccount.request.CreateUpdatePeriodsOfAccountRequest
@@ -28,7 +29,7 @@ trait MockCreateUpdatePeriodsOfAccountValidatorFactory extends MockValidatorFact
 
   def validator(): CallHandler[Validator[CreateUpdatePeriodsOfAccountRequest]] =
     (mockCreateUpdatePeriodsOfAccountValidatorFactory
-      .validator(_: String, _: String, _: String, _: JsValue))
-      .expects(*, *, *, *)
+      .validator(_: String, _: String, _: String, _: JsValue)(_: AppConfig))
+      .expects(*, *, *, *, *)
 
 }

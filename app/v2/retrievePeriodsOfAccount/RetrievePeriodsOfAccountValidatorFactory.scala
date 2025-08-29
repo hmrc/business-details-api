@@ -17,6 +17,7 @@
 package v2.retrievePeriodsOfAccount
 
 import api.controllers.validators.Validator
+import config.AppConfig
 import v2.retrievePeriodsOfAccount.model.request.RetrievePeriodsOfAccountRequest
 
 import javax.inject.Singleton
@@ -24,7 +25,7 @@ import javax.inject.Singleton
 @Singleton
 class RetrievePeriodsOfAccountValidatorFactory {
 
-  def validator(nino: String, businessId: String, taxYear: String): Validator[RetrievePeriodsOfAccountRequest] =
+  def validator(nino: String, businessId: String, taxYear: String)(implicit appConfig: AppConfig): Validator[RetrievePeriodsOfAccountRequest] =
     new RetrievePeriodsOfAccountValidator(nino, businessId, taxYear)
 
 }
