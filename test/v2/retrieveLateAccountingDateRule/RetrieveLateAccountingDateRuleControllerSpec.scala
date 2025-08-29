@@ -43,7 +43,7 @@ class RetrieveLateAccountingDateRuleControllerSpec
 
   implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
   private val businessId                             = "XAIS12345678910"
-  private val taxYear                                = "2024-25"
+  private val taxYear                                = "2025-26"
   val userType: String                               = "Individual"
   val userDetails: UserDetails                       = UserDetails("mtdId", userType, None)
 
@@ -63,7 +63,7 @@ class RetrieveLateAccountingDateRuleControllerSpec
   private val requestData =
     RetrieveLateAccountingDateRuleRequest(parsedNino, parsedBusinessId, parsedTaxYear)
 
-  private val responseData = RetrieveLateAccountingDateRuleResponse(disapply = true, eligible = true, Some(TaxYear("2025")), Some(TaxYear("2025")))
+  private val responseData = RetrieveLateAccountingDateRuleResponse(disapply = true, eligible = true, Some(TaxYear("2026")), Some(TaxYear("2026")))
 
   "handleRequest" should {
     "return successful response with status OK" when {
