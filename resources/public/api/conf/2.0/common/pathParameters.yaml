@@ -28,6 +28,7 @@ components:
         type: string
         pattern: ^X[A-Z0-9]{1}IS[0-9]{11}$
         example: XAIS12345678910
+      required: true
     taxYear:
       name: taxYear
       in: path
