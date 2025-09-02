@@ -78,4 +78,6 @@ paths:
     $ref: "./disapply_late_accounting_date_rule.yaml"
   /individuals/business/details/{nino}/{businessId}/{taxYear}/late-accounting-date-rule-election/withdraw:
     $ref: "./withdraw_late_accounting_date_rule.yaml"
+  /individuals/business/details/{nino}/{businessId}/{taxYear}/late-accounting-date-rule-election:
+    $ref: "./retrieve_late_accounting_date_rule.yaml"
   # {{/if}}

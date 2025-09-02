@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Retrieve Late Accounting Date Rule Response",
+  "description": "Retrieve Late Accounting Date Rule Response",
+  "type": "object",
+  "properties": {
+    "disapply": {
+      "type": "boolean",
+      "description": "Indicates whether the taxpayer is electing to opt out of the automatic application of the Late Accounting Date Rule (LADR)",
+      "example": true
+    },
+    "eligible": {
+      "type": "boolean",
+      "description": "Indicates whether the income source is eligible to disapply the late accounting date rule. Only businesses with an accounting date (Period of Account) that falls between 31 March and 4 April inclusive are eligible.",
+      "example": true
+    },
+    "taxYearOfElection": {
+      "type": "string",
+      "description": "Indicates the first year that the disapplication commenced. This field is only returned when disapply is set to true",
+      "example": "2025-26",
+      "format": "YYYY-YY"
+    },
+    "taxYearElectionExpires": {
+      "type": "string",
+      "description": "Indicates the last tax year for the disapplication.",
+      "example": "2025-26",
+      "format": "YYYY-YY"
+    }
+  },
+  "required": ["disapply", "eligible"],
+  "additionalProperties": false
+}
