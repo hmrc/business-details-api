@@ -1,0 +1,113 @@
+get:
+  summary: Retrieve Late Accounting Date Rule Election
+  description: |
+    This endpoint allows a customer to retrieve the Late Accounting Date Rule election they have on record for their given tax year. A National Insurance number, business ID and tax year must be provided.
+    
+    ### Test data
+    Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+    
+    | Header Value (Gov-Test-Scenario) | Scenario                                                                                        |
+    |----------------------------------|-------------------------------------------------------------------------------------------------|
+    | N/A - DEFAULT                    | Simulates a success response.                                                                   |
+    | NOT_FOUND                        | Simulates the scenario where no data is found.                                                  |
+    | STATEFUL                         | Performs a stateful retrieve.                                                             |
+  
+  tags:
+    - Late Accounting Date Rule
+
+  parameters:
+    - $ref: './common/pathParameters.yaml#/components/parameters/nino'
+    - $ref: './common/pathParameters.yaml#/components/parameters/selfEmploymentBusinessId'
+    - $ref: './common/pathParameters.yaml#/components/parameters/taxYearNoMinimum'
+    - $ref: './common/headers.yaml#/components/parameters/acceptJson'
+    - $ref: './common/headers.yaml#/components/parameters/authorizationWriteScopeHeader'
+    - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
+
+  security:
+    - User-Restricted:
+        - write:self-assessment
+
+  responses:
+    "200":
+      description: Success
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
+        Sunset:
+          $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
+        Link:
+          $ref: './common/headers.yaml#/components/parameters/linkHeader'
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/retrieveLateAccountingDateRule/response.json'
+          example:
+            $ref: './examples/retrieveLateAccountingDateRule/response.json'
+    
+    
+    "400":
+      description: Bad request
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
+        Sunset:
+          $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
+        Link:
+          $ref: './common/headers.yaml#/components/parameters/linkHeader'
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error-response.yaml'
+          examples:
+            FORMAT_NINO:
+              $ref: './common/errors.yaml#/components/examples/formatNino'
+            FORMAT_TAX_YEAR:
+              $ref: './common/errors.yaml#/components/examples/formatTaxYear'
+            FORMAT_BUSINESS_ID:
+              $ref: './common/errors.yaml#/components/examples/formatBusinessId'
+            RULE_TAX_YEAR_RANGE_INVALID:
+              $ref: './common/errors.yaml#/components/examples/ruleTaxYearRangeInvalid'
+            RULE_INCORRECT_GOV_TEST_SCENARIO:
+              $ref: './common/errors.yaml#/components/examples/ruleIncorrectGovTestScenario'
+  
+    "403":
+      description: Forbidden
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
+        Sunset:
+          $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
+        Link:
+          $ref: './common/headers.yaml#/components/parameters/linkHeader'
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error-response.yaml'
+          examples:
+            CLIENT_OR_AGENT_NOT_AUTHORISED:
+              $ref: './common/errors.yaml#/components/examples/clientOrAgentNotAuthorised'
+  
+    "404":
+      description: Not Found
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: './common/headers.yaml#/components/parameters/deprecationHeader'
+        Sunset:
+          $ref: './common/headers.yaml#/components/parameters/sunsetHeader'
+        Link:
+          $ref: './common/headers.yaml#/components/parameters/linkHeader'
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error-response.yaml'
+          examples:
+            MATCHING_RESOURCE_NOT_FOUND:
+              $ref: './common/errors.yaml#/components/examples/notFound'

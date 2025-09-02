@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package api.models.domain
+package v2.retrieveLateAccountingDateRule
 
-import play.api.libs.json.{JsObject, Writes}
+import api.controllers.validators.Validator
+import v2.retrieveLateAccountingDateRule.model.request.RetrieveLateAccountingDateRuleRequest
 
-object EmptyJsonBody {
+import javax.inject.Singleton
 
-  implicit val writes: Writes[EmptyJsonBody.type] = (_: EmptyJsonBody.type) => JsObject.empty
+@Singleton
+class RetrieveLateAccountingDateRuleValidatorFactory {
+
+  def validator(nino: String, businessId: String, taxYear: String): Validator[RetrieveLateAccountingDateRuleRequest] =
+    new RetrieveLateAccountingDateRuleValidator(nino, businessId, taxYear)
 
 }
