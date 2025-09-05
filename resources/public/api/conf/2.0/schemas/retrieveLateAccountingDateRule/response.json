@@ -6,7 +6,7 @@
   "properties": {
     "disapply": {
       "type": "boolean",
-      "description": "Indicates whether the taxpayer is electing to opt out of the automatic application of the Late Accounting Date Rule (LADR)",
+      "description": "Indicates whether the taxpayer is electing to opt out of the automatic application of the Late Accounting Date Rule (LADR). \n* true: The taxpayer elects to opt out of LADR. Profits for the period 1–5 April must be apportioned and reported separately. \n* false: The taxpayer accepts the automatic application of LADR. The accounting period is treated as ending on 5 April for the tax year.",
       "example": true
     },
     "eligible": {
@@ -16,7 +16,7 @@
     },
     "taxYearOfElection": {
       "type": "string",
-      "description": "Indicates the first year that the disapplication commenced. This field is only returned when disapply is set to true",
+      "description": "Indicates the first year that the disapplication commenced. This field is only returned when disapply is set to true.",
       "example": "2025-26",
       "format": "YYYY-YY"
     },
