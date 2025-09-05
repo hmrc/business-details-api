@@ -6,11 +6,11 @@ get:
     ### Test data
     Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
     
-    | Header Value (Gov-Test-Scenario) | Scenario                                                                                        |
-    |----------------------------------|-------------------------------------------------------------------------------------------------|
-    | N/A - DEFAULT                    | Simulates a success response.                                                                   |
-    | NOT_FOUND                        | Simulates the scenario where no data is found.                                                  |
-    | STATEFUL                         | Performs a stateful retrieve.                                                             |
+    | Header Value (Gov-Test-Scenario) | Scenario                                       |
+    |----------------------------------|------------------------------------------------|
+    | N/A - DEFAULT                    | Simulates a success response.                  |
+    | NOT_FOUND                        | Simulates the scenario where no data is found. |
+    | STATEFUL                         | Performs a stateful retrieve.                  |
   
   tags:
     - Late Accounting Date Rule
@@ -20,12 +20,12 @@ get:
     - $ref: './common/pathParameters.yaml#/components/parameters/selfEmploymentBusinessId'
     - $ref: './common/pathParameters.yaml#/components/parameters/taxYearNoMinimum'
     - $ref: './common/headers.yaml#/components/parameters/acceptJson'
-    - $ref: './common/headers.yaml#/components/parameters/authorizationWriteScopeHeader'
+    - $ref: './common/headers.yaml#/components/parameters/authorization'
     - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
 
   security:
     - User-Restricted:
-        - write:self-assessment
+        - read:self-assessment
 
   responses:
     "200":
