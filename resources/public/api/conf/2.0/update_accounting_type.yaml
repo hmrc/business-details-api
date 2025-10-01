@@ -1,6 +1,6 @@
 summary: Update Accounting Type
 description: |
-  This endpoint allows a customer to update the Accounting Type that they have on record. This can be done at the end of the year before their Final Declaration.
+  This endpoint allows a customer to update the Accounting Type that they have on record. This can be done after the tax year has ended, before their Final Declaration.
   A National Insurance number, business ID and tax year must be provided.
 
   ### Test data
