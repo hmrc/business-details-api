@@ -1,7 +1,7 @@
 summary: Create or Update Periods of Account
 description: |
   This API is used to declare whether a customer has Periods of Account and can submit the Periods of Account dates.
-  A National Insurance number, business ID and tax year must be provided.
+  This has to be submitted before final declaration. A National Insurance number, business ID and tax year must be provided.
 
   ### Test data
   Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.    
