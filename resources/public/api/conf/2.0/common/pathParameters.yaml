@@ -23,7 +23,7 @@ components:
       name: businessId
       in: path
       description: |
-        A unique identifier for the self-employment business. It must conform to the following regex: `^X[A-Z0-9]{1}IS[0-9]{11}$`
+        A unique identifier for the self-employment business. Property business IDs will return a 404. It must conform to the following regex: `^X[A-Z0-9]{1}IS[0-9]{11}$`
       schema:
         type: string
         pattern: ^X[A-Z0-9]{1}IS[0-9]{11}$
