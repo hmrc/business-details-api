@@ -152,7 +152,7 @@
       }
     },
     "accountingType": {
-      "description": "CASH if you used the cash basis, money actually received and paid out, to calculate your income and expenses. Otherwise ACCRUALS. This field is deprecated and will be removed in a future release. Use the `Retrieve Accounting Type` endpoint available in version 2.0 instead.",
+      "description": "CASH if you used the cash basis, money actually received and paid out, to calculate your income and expenses. Otherwise ACCRUALS.\n\nThis field is deprecated and will be removed in a future release. Use the `Retrieve Accounting Type` endpoint available in version 2.0 instead.",
       "type": "string",
       "deprecated": true,
       "enum": [
