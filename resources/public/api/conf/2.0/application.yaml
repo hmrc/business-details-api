@@ -16,8 +16,6 @@ info:
       * List All Businesses
       * Create and Amend Quarterly Period Type for a Business
     
-    **Some of the endpoints in this API return accounting period start and end dates. These should not be displayed to users of your software and will be removed in a future update.**
-    
     # Send fraud prevention data
     HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters. 
 
