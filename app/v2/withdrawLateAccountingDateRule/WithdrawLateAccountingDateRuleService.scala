@@ -32,17 +32,18 @@ class WithdrawLateAccountingDateRuleService @Inject() (connector: WithdrawLateAc
     connector.withdraw(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
 
   private val downstreamErrorMap: Map[String, MtdError] = {
-      Map(
-        "1007" -> BusinessIdFormatError,
-        "1117" -> TaxYearFormatError,
-        "1215" -> NinoFormatError,
-        "1216" -> InternalError,
-        "5009" -> InternalError,
-        "5010" -> NotFoundError,
-        "1115" -> RuleTaxYearNotEndedError,
-        "1134" -> RuleElectionPeriodNotExpiredError,
-        "4200" -> RuleOutsideAmendmentWindowError,
-        "5000" -> RuleTaxYearNotSupportedError
-      )
+    Map(
+      "1007" -> BusinessIdFormatError,
+      "1117" -> TaxYearFormatError,
+      "1215" -> NinoFormatError,
+      "1216" -> InternalError,
+      "5009" -> InternalError,
+      "5010" -> NotFoundError,
+      "1115" -> RuleTaxYearNotEndedError,
+      "1134" -> RuleElectionPeriodNotExpiredError,
+      "4200" -> RuleOutsideAmendmentWindowError,
+      "5000" -> RuleTaxYearNotSupportedError
+    )
   }
+
 }

@@ -34,7 +34,7 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
   test =>
 
   implicit private val actorSystem: ActorSystem = ActorSystem("test")
-  val actionBuilder: DefaultActionBuilder              = app.injector.instanceOf[DefaultActionBuilder]
+  val actionBuilder: DefaultActionBuilder       = app.injector.instanceOf[DefaultActionBuilder]
 
   import play.api.mvc.Handler
   import play.api.routing.sird._

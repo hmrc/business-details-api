@@ -24,8 +24,7 @@ import cats.data.Validated._
 import cats.implicits._
 import v2.retrieveAccountingType.model.request.RetrieveAccountingTypeRequest
 
-class RetrieveAccountingTypeValidator(nino: String, businessId: String, taxYear: String)
-    extends Validator[RetrieveAccountingTypeRequest] {
+class RetrieveAccountingTypeValidator(nino: String, businessId: String, taxYear: String) extends Validator[RetrieveAccountingTypeRequest] {
 
   def validate: Validated[Seq[MtdError], RetrieveAccountingTypeRequest] =
     (

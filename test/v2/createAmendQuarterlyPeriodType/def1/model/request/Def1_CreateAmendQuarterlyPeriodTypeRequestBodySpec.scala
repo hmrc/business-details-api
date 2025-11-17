@@ -22,7 +22,7 @@ import play.api.libs.json.Json
 import support.UnitSpec
 import v2.createAmendQuarterlyPeriodType.def1.model.request.Def1_CreateAmendQuarterlyPeriodTypeRequestBody._
 
-class Def1_CreateAmendQuarterlyPeriodTypeRequestBodySpec extends UnitSpec with MockAppConfig{
+class Def1_CreateAmendQuarterlyPeriodTypeRequestBodySpec extends UnitSpec with MockAppConfig {
 
   private val validRequestBody = Json.parse("""
       |{
