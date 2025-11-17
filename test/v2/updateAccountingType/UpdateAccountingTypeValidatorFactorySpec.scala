@@ -24,9 +24,9 @@ import v2.updateAccountingType.model.request.UpdateAccountingTypeRequestData
 
 class UpdateAccountingTypeValidatorFactorySpec extends UnitSpec with MockAppConfig {
 
-  private val validNino: String = "AA123456A"
+  private val validNino: String       = "AA123456A"
   private val validBusinessId: String = "X0IS12345678901"
-  private val validTaxYear: String = "2024-25"
+  private val validTaxYear: String    = "2024-25"
 
   private val validBody: JsValue = Json.parse(
     """

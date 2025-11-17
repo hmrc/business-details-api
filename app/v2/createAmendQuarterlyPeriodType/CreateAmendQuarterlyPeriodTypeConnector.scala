@@ -41,11 +41,9 @@ class CreateAmendQuarterlyPeriodTypeConnector @Inject() (val http: HttpClientV2,
 
     val (downstreamUri, successfulStatus) =
       if (featureSwitches.isEnabled("ifs_hip_migration_2089")) {
-        (HipUri[Unit](s"itsd/income-sources/reporting-type/$nino/$businessId?taxYear=${taxYear.asTysDownstream}"),
-          SuccessCode(NO_CONTENT))
+        (HipUri[Unit](s"itsd/income-sources/reporting-type/$nino/$businessId?taxYear=${taxYear.asTysDownstream}"), SuccessCode(NO_CONTENT))
       } else {
-        (Api2089Uri[Unit](s"income-tax/${taxYear.asTysDownstream}/income-sources/reporting-type/$nino/$businessId"),
-          SuccessCode(OK))
+        (Api2089Uri[Unit](s"income-tax/${taxYear.asTysDownstream}/income-sources/reporting-type/$nino/$businessId"), SuccessCode(OK))
       }
 
     implicit val successCode: SuccessCode = successfulStatus

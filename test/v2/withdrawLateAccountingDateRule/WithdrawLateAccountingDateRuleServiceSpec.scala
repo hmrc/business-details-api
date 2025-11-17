@@ -61,16 +61,16 @@ class WithdrawLateAccountingDateRuleServiceSpec extends ServiceSpec {
         }
 
       val errors = List(
-        "1007"                 -> BusinessIdFormatError,
-        "1117"                 -> TaxYearFormatError,
-        "1215"                 -> NinoFormatError,
-        "1216"                 -> InternalError,
-        "5009"                 -> InternalError,
-        "5010"                 -> NotFoundError,
-        "1115"                 -> RuleTaxYearNotEndedError,
-        "1134"                 -> RuleElectionPeriodNotExpiredError,
-        "4200"                 -> RuleOutsideAmendmentWindowError,
-        "5000"                 -> RuleTaxYearNotSupportedError
+        "1007" -> BusinessIdFormatError,
+        "1117" -> TaxYearFormatError,
+        "1215" -> NinoFormatError,
+        "1216" -> InternalError,
+        "5009" -> InternalError,
+        "5010" -> NotFoundError,
+        "1115" -> RuleTaxYearNotEndedError,
+        "1134" -> RuleElectionPeriodNotExpiredError,
+        "4200" -> RuleOutsideAmendmentWindowError,
+        "5000" -> RuleTaxYearNotSupportedError
       )
       errors.foreach((serviceError _).tupled)
     }
@@ -81,5 +81,7 @@ class WithdrawLateAccountingDateRuleServiceSpec extends ServiceSpec {
     protected val service: WithdrawLateAccountingDateRuleService = new WithdrawLateAccountingDateRuleService(
       connector = mockWithdrawLateAccountingDateRuleConnector
     )
+
   }
+
 }

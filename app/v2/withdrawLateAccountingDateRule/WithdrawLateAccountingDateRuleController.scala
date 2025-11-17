@@ -47,7 +47,8 @@ class WithdrawLateAccountingDateRuleController @Inject() (
     authorisedAction(nino).async { implicit request =>
       implicit val ctx: RequestContext = RequestContext.from(idGenerator, endpointLogContext)
 
-      val validator = validatorFactory.validator(nino, businessId, taxYear, temporalValidationEnabled = FeatureSwitches(appConfig).isTemporalValidationEnabled)
+      val validator =
+        validatorFactory.validator(nino, businessId, taxYear, temporalValidationEnabled = FeatureSwitches(appConfig).isTemporalValidationEnabled)
 
       val requestHandler = RequestHandler
         .withValidator(validator)

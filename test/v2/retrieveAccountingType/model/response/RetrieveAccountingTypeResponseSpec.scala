@@ -65,7 +65,7 @@ class RetrieveAccountingTypeResponseSpec extends UnitSpec {
     businessTypes.foreach { typeOfBusiness =>
       accountingTypes.foreach { accountingType =>
         val responseModel: RetrieveAccountingTypeResponse = parsedBody(accountingType)
-        def downstreamJson(count: Int): JsValue       = validDownstreamJson(typeOfBusiness, accountingType.toString, count)
+        def downstreamJson(count: Int): JsValue           = validDownstreamJson(typeOfBusiness, accountingType.toString, count)
 
         s"correctly parse valid JSON with single item for typeOfBusiness $typeOfBusiness and accountingType $accountingType" in {
           downstreamJson(1).as[RetrieveAccountingTypeResponse] shouldBe responseModel

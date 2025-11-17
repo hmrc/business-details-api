@@ -29,7 +29,7 @@ trait MockUpdateAccountingTypeValidatorFactory extends MockValidatorFactory[Upda
 
   def validator(): CallHandler[Validator[UpdateAccountingTypeRequestData]] = {
     (mockUpdateAccountingTypeValidatorFactory
-      .validator(_: String, _: String, _: String, _: JsValue, _:Boolean)(_: AppConfig))
+      .validator(_: String, _: String, _: String, _: JsValue, _: Boolean)(_: AppConfig))
       .expects(*, *, *, *, *, *)
   }
 
