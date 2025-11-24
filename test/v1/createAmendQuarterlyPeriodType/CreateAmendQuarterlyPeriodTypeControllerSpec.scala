@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import api.hateoas.MockHateoasFactory
 import api.models.audit.{AuditEvent, AuditResponse, FlattenedGenericAuditDetail}
 import api.models.auth.UserDetails
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import api.models.errors._
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
 import config.MockAppConfig
@@ -29,7 +29,7 @@ import play.api.Configuration
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import utils.MockIdGenerator
-import v1.createAmendQuarterlyPeriodType.def1.model.request._
+import v1.createAmendQuarterlyPeriodType.def1.model.request.*
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -98,7 +98,7 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
 
   private trait Test extends ControllerTest with AuditEventChecking[FlattenedGenericAuditDetail] {
 
-    val controller = new CreateAmendQuarterlyPeriodTypeController(
+    val controller: CreateAmendQuarterlyPeriodTypeController = new CreateAmendQuarterlyPeriodTypeController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockCreateAmendQuarterlyPeriodTypeValidatorFactory,

@@ -22,7 +22,7 @@ import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
 import v2.common.models.AccountingType
-import v2.updateAccountingType.model.request._
+import v2.updateAccountingType.model.request.*
 
 import scala.concurrent.Future
 
@@ -62,7 +62,7 @@ class UpdateAccountingTypeConnectorSpec extends ConnectorSpec {
     }
   }
 
-  trait Test { _: ConnectorTest =>
+  trait Test { self: ConnectorTest =>
     protected val connector: UpdateAccountingTypeConnector = new UpdateAccountingTypeConnector(mockHttpClient, mockAppConfig)
   }
 

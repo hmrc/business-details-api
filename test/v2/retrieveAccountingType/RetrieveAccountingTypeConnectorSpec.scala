@@ -23,7 +23,7 @@ import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
 import uk.gov.hmrc.http.StringContextOps
 import v2.common.models.AccountingType
-import v2.retrieveAccountingType.model.request._
+import v2.retrieveAccountingType.model.request.*
 import v2.retrieveAccountingType.model.response.RetrieveAccountingTypeResponse
 
 import scala.concurrent.Future
@@ -37,7 +37,7 @@ class RetrieveAccountingTypeConnectorSpec extends ConnectorSpec {
   private val request  = RetrieveAccountingTypeRequest(nino, businessId, taxYear)
   private val response = RetrieveAccountingTypeResponse(AccountingType.CASH)
 
-  val queryParams = Map(
+  val queryParams: Map[String, String] = Map(
     "incomeSourceId"  -> "XAIS12345678910",
     "taxYearExplicit" -> "2024-25"
   )
@@ -87,7 +87,7 @@ class RetrieveAccountingTypeConnectorSpec extends ConnectorSpec {
     }
   }
 
-  trait Test { _: ConnectorTest =>
+  trait Test { self: ConnectorTest =>
     protected val connector: RetrieveAccountingTypeConnector = new RetrieveAccountingTypeConnector(mockHttpClient, mockAppConfig)
   }
 

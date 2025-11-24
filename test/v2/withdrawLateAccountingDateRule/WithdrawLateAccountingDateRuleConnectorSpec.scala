@@ -63,7 +63,7 @@ class WithdrawLateAccountingDateRuleConnectorSpec extends ConnectorSpec {
     }
   }
 
-  trait Test { _: ConnectorTest =>
+  trait Test { self: ConnectorTest =>
     protected val downstreamUri: URL = url"$baseUrl/itsd/income-sources/$nino/late-accounting-date/$businessId?taxYear=${taxYear.asTysDownstream}"
 
     protected val connector: WithdrawLateAccountingDateRuleConnector = new WithdrawLateAccountingDateRuleConnector(

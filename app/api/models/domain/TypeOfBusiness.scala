@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,11 @@ package api.models.domain
 import play.api.libs.json.Format
 import utils.enums.Enums
 
-sealed trait TypeOfBusiness
+enum TypeOfBusiness {
+  case `self-employment`, `uk-property`, `foreign-property`, `property-unspecified`
+}
 
 object TypeOfBusiness {
-  case object `self-employment`      extends TypeOfBusiness
-  case object `uk-property`          extends TypeOfBusiness
-  case object `foreign-property`     extends TypeOfBusiness
-  case object `property-unspecified` extends TypeOfBusiness
-
-  implicit val format: Format[TypeOfBusiness]         = Enums.format[TypeOfBusiness]
-  val parser: PartialFunction[String, TypeOfBusiness] = Enums.parser[TypeOfBusiness]
+  given Format[TypeOfBusiness]                        = Enums.format(values)
+  val parser: PartialFunction[String, TypeOfBusiness] = Enums.parser(values)
 }

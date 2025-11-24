@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package api.hateoas
 
+import api.hateoas.Method.GET
 import cats.Functor
 import config.{AppConfig, MockAppConfig}
 import support.UnitSpec
-import Method.GET
 
 class HateoasFactorySpec extends UnitSpec with MockAppConfig {
 
@@ -31,7 +31,7 @@ class HateoasFactorySpec extends UnitSpec with MockAppConfig {
   case class Data1(id: String) extends HateoasData
   case class Data2(id: String) extends HateoasData
 
-  val response = Response("X")
+  val response: Response = Response("X")
 
   class Test {
     MockedAppConfig.apiGatewayContext.returns("context").anyNumberOfTimes()

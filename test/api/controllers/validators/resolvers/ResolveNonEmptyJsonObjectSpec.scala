@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ import api.models.errors.RuleIncorrectOrEmptyBodyError
 import api.utils.JsonErrorValidators
 import cats.data.Validated.{Invalid, Valid}
 import play.api.libs.json.{JsString, Json, OFormat}
-import shapeless.HNil
 import support.UnitSpec
 import utils.EmptinessChecker
+import utils.EmptinessChecker.field
 
 class ResolveNonEmptyJsonObjectSpec extends UnitSpec with JsonErrorValidators {
 
@@ -34,7 +34,10 @@ class ResolveNonEmptyJsonObjectSpec extends UnitSpec with JsonErrorValidators {
 
   // at least one of oneOf1 and oneOf2 must be included:
   implicit val emptinessChecker: EmptinessChecker[TestDataObject] = EmptinessChecker.use { o =>
-    "oneOf1" -> o.oneOf1 :: "oneOf2" -> o.oneOf2 :: HNil
+    List(
+      field("oneOf1", o.oneOf1),
+      field("oneOf2", o.oneOf2)
+    )
   }
 
   private val resolveTestDataObject = new ResolveNonEmptyJsonObject[TestDataObject]()

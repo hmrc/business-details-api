@@ -91,7 +91,7 @@ class DisapplyLateAccountingDateRuleControllerSpec
 
   private trait Test extends ControllerTest with AuditEventChecking[GenericAuditDetail] {
 
-    val controller = new DisapplyLateAccountingDateRuleController(
+    val controller: DisapplyLateAccountingDateRuleController = new DisapplyLateAccountingDateRuleController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       service = mockDisapplyLateAccountingDateRuleService,

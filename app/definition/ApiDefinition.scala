@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package definition
 
 import play.api.libs.json.{Format, Json, OFormat}
 import routing.Version
+import routing.Version.{VersionReads, VersionWrites}
 import utils.enums.Enums
 
 case class Parameter(name: String, required: Boolean = false)
@@ -28,28 +29,19 @@ object Parameter {
 
 case class PublishingException(message: String) extends Exception(message)
 
-sealed trait APIStatus
+enum APIStatus {
+  case ALPHA, BETA, STABLE, DEPRECATED, RETIRED
+}
 
-object APIStatus extends Enumeration {
-
-  case object ALPHA extends APIStatus
-
-  case object BETA extends APIStatus
-
-  case object STABLE extends APIStatus
-
-  case object DEPRECATED extends APIStatus
-
-  case object RETIRED extends APIStatus
-
-  implicit val formatApiVersion: Format[APIStatus] = Enums.format[APIStatus]
-  val parser: PartialFunction[String, APIStatus]   = Enums.parser[APIStatus]
+object APIStatus {
+  given Format[APIStatus]                        = Enums.format(values)
+  val parser: PartialFunction[String, APIStatus] = Enums.parser(values)
 }
 
 case class APIVersion(version: Version, status: APIStatus, endpointsEnabled: Boolean)
 
 object APIVersion {
-  implicit val formatAPIVersion: OFormat[APIVersion] = Json.format[APIVersion]
+  given OFormat[APIVersion] = Json.format[APIVersion]
 }
 
 case class APIDefinition(name: String,
@@ -83,5 +75,5 @@ object APIDefinition {
 case class Definition(api: APIDefinition)
 
 object Definition {
-  implicit val formatDefinition: OFormat[Definition] = Json.format[Definition]
+  given OFormat[Definition] = Json.format[Definition]
 }

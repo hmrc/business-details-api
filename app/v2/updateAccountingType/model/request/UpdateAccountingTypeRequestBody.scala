@@ -17,8 +17,8 @@
 package v2.updateAccountingType.model.request
 
 import play.api.libs.json.{Json, OFormat}
-import shapeless.HNil
 import utils.EmptinessChecker
+import utils.EmptinessChecker.field
 import v2.common.models.AccountingType
 
 case class UpdateAccountingTypeRequestBody(accountingType: AccountingType)
@@ -26,9 +26,10 @@ case class UpdateAccountingTypeRequestBody(accountingType: AccountingType)
 object UpdateAccountingTypeRequestBody {
 
   implicit val emptinessChecker: EmptinessChecker[UpdateAccountingTypeRequestBody] = EmptinessChecker.use { o =>
-    "accountingType" -> o.accountingType.toString :: HNil
+    List(
+      field("accountingType", o.accountingType.toString)
+    )
   }
 
   implicit val format: OFormat[UpdateAccountingTypeRequestBody] = Json.format[UpdateAccountingTypeRequestBody]
-
 }

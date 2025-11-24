@@ -17,8 +17,9 @@
 import sbt.*
 import uk.gov.hmrc.DefaultBuildSettings
 
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "3.3.6"
 ThisBuild / majorVersion := 0
+ThisBuild / scalacOptions += "-nowarn"
 
 val appName = "business-details-api"
 

@@ -16,13 +16,15 @@
 
 package v2.createUpdatePeriodsOfAccount
 
-import api.models.errors._
+import api.models.errors.*
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import api.utils.JsonErrorValidators
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json._
+import play.api.libs.json.*
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
+import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 import play.api.libs.ws.{WSRequest, WSResponse}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import support.IntegrationBaseSpec
 import v2.fixtures.CreateUpdatePeriodsOfAccountFixtures.validFullRequestBodyJson
 

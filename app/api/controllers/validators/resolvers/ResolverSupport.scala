@@ -37,7 +37,7 @@ trait ResolverSupport {
 
   def satisfiesMin[A: Ordering](minAllowed: A, error: => MtdError): Validator[A] = satisfies(error)(minAllowed <= _)
 
-  def combinedValidator[A](first: Validator[A], others: Validator[A]*): Validator[A] = { value: A =>
+  def combinedValidator[A](first: Validator[A], others: Validator[A]*): Validator[A] = { (value: A) =>
     val validators = first +: others
 
     val validations = validators.map(validator => validator(value))

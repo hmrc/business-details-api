@@ -95,7 +95,7 @@ class RetrieveAccountingTypeControllerSpec
 
   private trait Test extends ControllerTest {
 
-    val controller = new RetrieveAccountingTypeController(
+    val controller: RetrieveAccountingTypeController = new RetrieveAccountingTypeController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockRetrieveAccountingTypeValidatorFactory,

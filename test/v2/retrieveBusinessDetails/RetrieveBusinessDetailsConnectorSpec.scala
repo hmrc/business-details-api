@@ -17,7 +17,7 @@
 package v2.retrieveBusinessDetails
 
 import api.connectors.ConnectorSpec
-import api.models.domain._
+import api.models.domain.*
 import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
 import uk.gov.hmrc.http.StringContextOps
@@ -79,7 +79,7 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
   }
 
   trait Test {
-    _: ConnectorTest =>
+    self: ConnectorTest =>
 
     protected val connector: RetrieveBusinessDetailsConnector =
       new RetrieveBusinessDetailsConnector(http = mockHttpClient, appConfig = mockAppConfig)

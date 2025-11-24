@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,6 @@ object QuarterTypeElection {
   implicit val writes: Writes[QuarterTypeElection] = (
     (JsPath \ "quarterlyPeriodType").write[QuarterReportingType] and
       (JsPath \ "taxYearOfChoice").write[TaxYear]
-  )(unlift(QuarterTypeElection.unapply))
+  )(w => Tuple.fromProductTyped(w))
 
 }

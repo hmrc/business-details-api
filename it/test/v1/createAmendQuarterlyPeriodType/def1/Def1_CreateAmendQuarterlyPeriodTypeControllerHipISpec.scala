@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,26 @@
 
 package v1.createAmendQuarterlyPeriodType.def1
 
-import api.models.errors._
+import api.models.errors.*
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
 class Def1_CreateAmendQuarterlyPeriodTypeControllerHipISpec extends IntegrationBaseSpec {
 
-  private val requestBodyJson = Json.parse(
-    """
+  private val requestBodyJson = Json.parse("""
       |{
       | "quarterlyPeriodType": "standard"
       |}
       |""".stripMargin)
 
-  private val downstreamRequestBodyJson = Json.parse(
-    """
+  private val downstreamRequestBodyJson = Json.parse("""
       |{
       | "quarterReportingType": "STANDARD"
       |}
@@ -83,9 +82,9 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerHipISpec extends IntegrationB
                                 expectedBody: MtdError): Unit = {
           s"validation fails with ${expectedBody.code} error" in new Test {
 
-            override val nino: String = requestNino
+            override val nino: String       = requestNino
             override val businessId: String = requestBusinessId
-            override val taxYear: String = requestTaxYear
+            override val taxYear: String    = requestTaxYear
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
@@ -145,9 +144,9 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerHipISpec extends IntegrationB
   }
 
   private trait Test {
-    val nino: String = "AA123456A"
-    val businessId: String = "X0IS12345678901"
-    val taxYear: String = "2023-24"
+    val nino: String                               = "AA123456A"
+    val businessId: String                         = "X0IS12345678901"
+    val taxYear: String                            = "2023-24"
     val downstreamQueryParams: Map[String, String] = Map("taxYear" -> "23-24")
 
     def setupStubs(): StubMapping

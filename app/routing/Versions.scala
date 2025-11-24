@@ -50,7 +50,7 @@ object Version {
 
   }
 
-  implicit val versionFormat: Format[Version] = Format(VersionReads, VersionWrites)
+  given Format[Version] = Format(VersionReads, VersionWrites)
 }
 
 sealed trait Version {
@@ -83,13 +83,13 @@ object Versions {
     } yield ver
 
   private def getFrom(headers: Seq[(String, String)]): Either[GetFromRequestError, String] =
-    headers.collectFirst { case (ACCEPT, versionRegex(ver)) => ver }.toRight(left = InvalidHeader)
+    headers.collectFirst { case (ACCEPT, versionRegex(ver)) => ver }.toRight(left = GetFromRequestError.InvalidHeader)
 
   private def getFrom(name: String): Either[GetFromRequestError, Version] =
-    versionsByName.get(name).toRight(left = VersionNotFound)
+    versionsByName.get(name).toRight(left = GetFromRequestError.VersionNotFound)
 
 }
 
-sealed trait GetFromRequestError
-case object InvalidHeader   extends GetFromRequestError
-case object VersionNotFound extends GetFromRequestError
+enum GetFromRequestError {
+  case InvalidHeader, VersionNotFound
+}

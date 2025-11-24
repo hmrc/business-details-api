@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,27 +19,13 @@ package v1.createAmendQuarterlyPeriodType.def1.model.request
 import play.api.libs.json.{Reads, Writes}
 import utils.enums.Enums
 
-sealed trait QuarterlyPeriodType {
-  val asDownstream: String
-  val asHipDownstream: String
+enum QuarterlyPeriodType(val asDownstream: String, val asHipDownstream: String) {
+  case `standard` extends QuarterlyPeriodType("Standard", "STANDARD")
+  case `calendar` extends QuarterlyPeriodType("Calendar", "CALENDAR")
 }
 
 object QuarterlyPeriodType {
-
-  implicit val writes: Writes[QuarterlyPeriodType] = implicitly[Writes[String]].contramap(_.asDownstream)
-
-  implicit val reads: Reads[QuarterlyPeriodType] = Enums.reads[QuarterlyPeriodType]
-
-  val parser: PartialFunction[String, QuarterlyPeriodType] = Enums.parser[QuarterlyPeriodType]
-
-  case object `standard` extends QuarterlyPeriodType {
-    val asDownstream: String    = "Standard"
-    val asHipDownstream: String = "STANDARD"
-  }
-
-  case object `calendar` extends QuarterlyPeriodType {
-    val asDownstream: String    = "Calendar"
-    val asHipDownstream: String = "CALENDAR"
-  }
-
+  given Writes[QuarterlyPeriodType]                        = implicitly[Writes[String]].contramap(_.asDownstream)
+  given Reads[QuarterlyPeriodType]                         = Enums.reads(values)
+  val parser: PartialFunction[String, QuarterlyPeriodType] = Enums.parser(values)
 }

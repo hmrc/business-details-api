@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
 import api.hateoas.Method.GET
 import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
 import api.models.domain.{Nino, TypeOfBusiness}
-import api.models.errors._
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
 import config.MockAppConfig
@@ -95,7 +95,7 @@ class ListAllBusinessesControllerSpec
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData))))
 
         MockHateoasFactory
-          .wrapList(responseData, ListAllBusinessesHateoasData(validNino))
+          .wrap(responseData, ListAllBusinessesHateoasData(validNino))
           .returns(HateoasWrapper(hateoasResponse, Seq(testHateoasLink)))
 
         runOkTest(expectedStatus = OK, maybeExpectedResponseBody = Some(responseBody))
@@ -122,7 +122,7 @@ class ListAllBusinessesControllerSpec
 
   trait Test extends ControllerTest {
 
-    val controller = new ListAllBusinessesController(
+    val controller: ListAllBusinessesController = new ListAllBusinessesController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       service = mockListAllBusinessesService,

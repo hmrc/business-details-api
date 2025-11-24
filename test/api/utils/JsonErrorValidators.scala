@@ -16,11 +16,11 @@
 
 package api.utils
 
-import play.api.libs.json._
+import play.api.libs.json.*
 import support.UnitSpec
 
 trait JsonErrorValidators {
-  _: UnitSpec =>
+  self: UnitSpec =>
 
   private type JsError  = (JsPath, Seq[JsonValidationError])
   private type JsErrors = Seq[JsError]
