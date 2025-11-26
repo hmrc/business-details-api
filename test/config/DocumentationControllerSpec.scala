@@ -18,7 +18,7 @@ package config
 
 import api.controllers.ControllerBaseSpec
 import com.typesafe.config.ConfigFactory
-import config.rewriters._
+import config.rewriters.*
 import controllers.{AssetsConfiguration, DefaultAssetsMetadata, RewriteableAssets}
 import definition.ApiDefinitionFactory
 import play.api.{Configuration, Environment}

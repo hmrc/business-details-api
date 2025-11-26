@@ -17,9 +17,9 @@
 import sbt.*
 import uk.gov.hmrc.DefaultBuildSettings
 
-ThisBuild / scalaVersion := "3.3.6"
+ThisBuild / scalaVersion := "3.5.2"
 ThisBuild / majorVersion := 0
-ThisBuild / scalacOptions += "-nowarn"
+ThisBuild / scalacOptions ++= Seq("-Werror", "-Wconf:msg=Flag.*repeatedly:s")
 
 val appName = "business-details-api"
 
@@ -31,8 +31,6 @@ lazy val microservice = Project(appName, file("."))
     scalafmtOnCompile := true,
     scalacOptions ++= List(
       "-language:higherKinds",
-      "-Xlint:-byname-implicit",
-      "-Xfatal-warnings",
       "-Wconf:src=routes/.*:s",
       "-feature"
     )
@@ -47,11 +45,8 @@ lazy val microservice = Project(appName, file("."))
 lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
-  .settings(DefaultBuildSettings.itSettings() ++ ScalafmtPlugin.scalafmtConfigSettings)
+  .settings(DefaultBuildSettings.itSettings())
   .settings(
     Test / fork := true,
     Test / javaOptions += "-Dlogger.resource=logback-test.xml")
   .settings(libraryDependencies ++= AppDependencies.itDependencies)
-  .settings(
-    scalacOptions ++= Seq("-Xfatal-warnings")
-  )

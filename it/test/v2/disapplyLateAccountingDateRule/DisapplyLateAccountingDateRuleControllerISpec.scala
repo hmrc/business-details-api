@@ -118,7 +118,7 @@ class DisapplyLateAccountingDateRuleControllerISpec extends IntegrationBaseSpec 
             ("AA123456A", "XAIS12345678910", "2023-24", BAD_REQUEST, RuleTaxYearNotSupportedError)
           )
 
-          input.foreach((validationErrorTest _).tupled)
+          input.foreach(validationErrorTest.tupled)
         }
       }
 
@@ -153,7 +153,7 @@ class DisapplyLateAccountingDateRuleControllerISpec extends IntegrationBaseSpec 
           (NOT_IMPLEMENTED, "5000", BAD_REQUEST, RuleTaxYearNotSupportedError)
         )
 
-        errors.foreach((serviceErrorTest _).tupled)
+        errors.foreach(serviceErrorTest.tupled)
       }
     }
   }

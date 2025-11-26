@@ -17,10 +17,10 @@
 package v2.updateAccountingType
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import api.models.errors._
+import api.models.errors.*
 import api.utils.JsonErrorValidators
 import config.MockAppConfig
-import play.api.libs.json._
+import play.api.libs.json.*
 import support.UnitSpec
 import v2.common.models.AccountingType
 import v2.updateAccountingType.model.request.{UpdateAccountingTypeRequestBody, UpdateAccountingTypeRequestData}

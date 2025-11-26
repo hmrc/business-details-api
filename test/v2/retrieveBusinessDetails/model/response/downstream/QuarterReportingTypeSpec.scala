@@ -16,9 +16,9 @@
 
 package v2.retrieveBusinessDetails.model.response.downstream
 
-import play.api.libs.json._
+import play.api.libs.json.*
 import support.UnitSpec
-import v2.retrieveBusinessDetails.model.response.downstream.QuarterReportingType._
+import v2.retrieveBusinessDetails.model.response.downstream.QuarterReportingType.*
 
 class QuarterReportingTypeSpec extends UnitSpec {
 

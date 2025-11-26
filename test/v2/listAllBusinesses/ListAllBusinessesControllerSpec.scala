@@ -17,8 +17,7 @@
 package v2.listAllBusinesses
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.hateoas.Method.GET
-import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
+import api.hateoas.HateoasFactory
 import api.models.domain.{Nino, TypeOfBusiness}
 import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
@@ -41,7 +40,6 @@ class ListAllBusinessesControllerSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockListAllBusinessesService
-    with MockHateoasFactory
     with MockListAllBusinessDetailsValidatorFactory
     with MockIdGenerator
     with MockAppConfig {
@@ -116,7 +114,7 @@ class ListAllBusinessesControllerSpec
       lookupService = mockMtdIdLookupService,
       service = mockListAllBusinessesService,
       validatorFactory = mockListAllBusinessDetailsValidatorFactory,
-      hateoasFactory = mockHateoasFactory,
+      hateoasFactory = new HateoasFactory(mockAppConfig),
       cc = cc,
       idGenerator = mockIdGenerator
     )

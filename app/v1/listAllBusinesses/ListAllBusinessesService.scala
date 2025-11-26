@@ -21,7 +21,7 @@ import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundErro
 import api.models.outcomes.ResponseWrapper
 import api.services.{BaseService, ServiceOutcome}
 import cats.data.EitherT
-import cats.implicits._
+import cats.implicits.*
 import v1.listAllBusinesses.model.request.ListAllBusinessesRequestData
 import v1.listAllBusinesses.model.response.{Business, ListAllBusinessesResponse}
 import v1.retrieveBusinessDetails.RetrieveBusinessDetailsConnector

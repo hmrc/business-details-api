@@ -33,7 +33,7 @@ trait Rewriter {
 @Singleton
 class RewriteableAssets @Inject() (errorHandler: HttpErrorHandler, meta: AssetsMetadata, env: Environment)(implicit ec: ExecutionContext)
     extends Assets(errorHandler, meta, env) {
-  import meta._
+  import meta.*
 
   /** If no rewriters, Play's own static Assets.assetAt() will be called.
     * @param path

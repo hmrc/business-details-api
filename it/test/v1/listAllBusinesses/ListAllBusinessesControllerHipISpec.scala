@@ -16,13 +16,12 @@
 
 package v1.listAllBusinesses
 
-import api.models.errors._
+import api.models.errors.*
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.http.HeaderNames.ACCEPT
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import support.IntegrationBaseSpec
 
 class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
@@ -106,7 +105,7 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
           ("", NOT_FOUND, NotFoundError)
         )
 
-        input.foreach(args => (validationErrorTest _).tupled(args))
+        input.foreach(validationErrorTest.tupled)
       }
 
       "downstream service error" when {
@@ -134,7 +133,7 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
           (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError)
         )
 
-        errors.foreach((serviceErrorTest _).tupled)
+        errors.foreach(serviceErrorTest.tupled)
       }
     }
   }

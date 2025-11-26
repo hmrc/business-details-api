@@ -17,11 +17,11 @@
 package v2.retrievePeriodsOfAccount
 
 import api.models.domain.{BusinessId, Nino, TaxYear, Timestamp}
-import api.models.errors._
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import v2.common.models.PeriodsOfAccountDates
-import v2.retrievePeriodsOfAccount.model.request._
+import v2.retrievePeriodsOfAccount.model.request.*
 import v2.retrievePeriodsOfAccount.model.response.RetrievePeriodsOfAccountResponse
 
 import scala.concurrent.Future
@@ -78,7 +78,7 @@ class RetrievePeriodsOfAccountServiceSpec extends ServiceSpec {
         ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError)
       )
 
-      errors.foreach((serviceError _).tupled)
+      errors.foreach(serviceError.tupled)
     }
   }
 

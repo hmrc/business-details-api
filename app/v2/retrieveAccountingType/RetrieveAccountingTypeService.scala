@@ -17,9 +17,9 @@
 package v2.retrieveAccountingType
 
 import api.controllers.RequestContext
-import api.models.errors._
+import api.models.errors.*
 import api.services.{BaseService, ServiceOutcome}
-import cats.implicits._
+import cats.implicits.*
 import v2.retrieveAccountingType.model.request.RetrieveAccountingTypeRequest
 import v2.retrieveAccountingType.model.response.RetrieveAccountingTypeResponse
 

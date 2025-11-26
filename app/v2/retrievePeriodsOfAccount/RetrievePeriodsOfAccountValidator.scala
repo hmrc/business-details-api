@@ -21,8 +21,8 @@ import api.controllers.validators.resolvers.{ResolveBusinessId, ResolveDetailedT
 import api.models.domain.TaxYear
 import api.models.errors.MtdError
 import cats.data.Validated
-import cats.data.Validated._
-import cats.implicits._
+import cats.data.Validated.*
+import cats.implicits.*
 import config.AppConfig
 import v2.retrievePeriodsOfAccount.model.request.RetrievePeriodsOfAccountRequest
 
@@ -31,11 +31,10 @@ class RetrievePeriodsOfAccountValidator(nino: String, businessId: String, taxYea
 
   private val resolveTaxYear: ResolveDetailedTaxYear = ResolveDetailedTaxYear(TaxYear.ending(appConfig.accountingTypeMinimumTaxYear))
 
-  def validate: Validated[Seq[MtdError], RetrievePeriodsOfAccountRequest] =
-    (
-      ResolveNino(nino),
-      ResolveBusinessId(businessId),
-      resolveTaxYear(taxYear)
-    ).mapN(RetrievePeriodsOfAccountRequest)
+  def validate: Validated[Seq[MtdError], RetrievePeriodsOfAccountRequest] = (
+    ResolveNino(nino),
+    ResolveBusinessId(businessId),
+    resolveTaxYear(taxYear)
+  ).mapN(RetrievePeriodsOfAccountRequest.apply)
 
 }

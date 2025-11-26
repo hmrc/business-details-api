@@ -17,9 +17,9 @@
 package v2.updateAccountingType
 
 import api.controllers.RequestContext
-import api.models.errors._
+import api.models.errors.*
 import api.services.{BaseService, ServiceOutcome}
-import cats.implicits._
+import cats.implicits.*
 import v2.updateAccountingType.model.request.UpdateAccountingTypeRequestData
 
 import javax.inject.{Inject, Singleton}

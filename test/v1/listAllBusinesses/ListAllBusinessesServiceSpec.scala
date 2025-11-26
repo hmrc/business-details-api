@@ -17,7 +17,7 @@
 package v1.listAllBusinesses
 
 import api.models.domain.{Nino, TypeOfBusiness}
-import api.models.errors._
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.ServiceSpec
 import v1.listAllBusinesses.model.request.ListAllBusinessesRequestData
@@ -102,7 +102,7 @@ class ListAllBusinessesServiceSpec extends ServiceSpec {
         ("008", InternalError)
       )
 
-      (errors ++ extraIfsErrors ++ hipErrors).foreach((serviceError _).tupled)
+      (errors ++ extraIfsErrors ++ hipErrors).foreach(serviceError.tupled)
     }
   }
 

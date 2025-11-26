@@ -86,7 +86,7 @@ class RetrieveLateAccountingDateRuleControllerISpec extends IntegrationBaseSpec 
           ("AA123456A", "XAIS12345678910", "2024-26", BAD_REQUEST, RuleTaxYearRangeInvalidError)
         )
 
-        input.foreach((validationErrorTest _).tupled)
+        input.foreach(validationErrorTest.tupled)
       }
 
       "downstream service error" when {
@@ -116,7 +116,7 @@ class RetrieveLateAccountingDateRuleControllerISpec extends IntegrationBaseSpec 
           (NOT_FOUND, "5010", NOT_FOUND, NotFoundError)
         )
 
-        errors.foreach((serviceErrorTest _).tupled)
+        errors.foreach(serviceErrorTest.tupled)
       }
     }
   }

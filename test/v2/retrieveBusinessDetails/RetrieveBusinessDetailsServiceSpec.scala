@@ -16,13 +16,13 @@
 
 package v2.retrieveBusinessDetails
 
-import api.models.domain._
-import api.models.errors._
+import api.models.domain.*
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import config.MockFeatureSwitches
 import v2.retrieveBusinessDetails.model.request.RetrieveBusinessDetailsRequestData
-import v2.retrieveBusinessDetails.model.response.downstream._
+import v2.retrieveBusinessDetails.model.response.downstream.*
 import v2.retrieveBusinessDetails.model.response.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.Future
@@ -236,7 +236,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         ("008", NoBusinessFoundError)
       )
 
-      (errors ++ extraIfsErrors ++ hipErrors).foreach((serviceError _).tupled)
+      (errors ++ extraIfsErrors ++ hipErrors).foreach(serviceError.tupled)
     }
   }
 

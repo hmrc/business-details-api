@@ -17,10 +17,10 @@
 package v1.createAmendQuarterlyPeriodType
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import api.models.errors._
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
-import v1.createAmendQuarterlyPeriodType.def1.model.request._
+import v1.createAmendQuarterlyPeriodType.def1.model.request.*
 
 import scala.concurrent.Future
 
@@ -84,7 +84,7 @@ class CreateAmendQuarterlyPeriodTypeServiceSpec extends ServiceSpec {
         "5010"                             -> RuleBusinessIdNotFoundError
       )
 
-      errors.foreach((serviceError _).tupled)
+      errors.foreach(serviceError.tupled)
     }
   }
 

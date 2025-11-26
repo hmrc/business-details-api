@@ -20,7 +20,7 @@ import api.models.errors.{BusinessIdFormatError, InternalError, MtdError, NinoFo
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
@@ -242,7 +242,7 @@ class RetrieveBusinessDetailsControllerIfsISpec extends IntegrationBaseSpec {
           ("", "X0IS123456789012", NOT_FOUND, NotFoundError),
           ("AA123456A", "X2", BAD_REQUEST, BusinessIdFormatError)
         )
-        input.foreach(args => (validationErrorTest _).tupled(args))
+        input.foreach(validationErrorTest.tupled)
       }
 
       "downstream service error" when {
@@ -279,7 +279,7 @@ class RetrieveBusinessDetailsControllerIfsISpec extends IntegrationBaseSpec {
           (NOT_FOUND, "NOT_FOUND", NOT_FOUND, NotFoundError)
         )
 
-        (errors ++ extraIfsErrors).foreach((serviceErrorTest _).tupled)
+        (errors ++ extraIfsErrors).foreach(serviceErrorTest.tupled)
       }
     }
   }

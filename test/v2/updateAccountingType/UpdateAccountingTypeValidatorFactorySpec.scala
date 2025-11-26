@@ -18,7 +18,7 @@ package v2.updateAccountingType
 
 import api.controllers.validators.Validator
 import config.MockAppConfig
-import play.api.libs.json._
+import play.api.libs.json.*
 import support.UnitSpec
 import v2.updateAccountingType.model.request.UpdateAccountingTypeRequestData
 

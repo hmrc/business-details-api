@@ -17,7 +17,7 @@
 package v2.createUpdatePeriodsOfAccount
 
 import api.connectors.DownstreamUri.HipUri
-import api.connectors.httpparsers.StandardDownstreamHttpParser._
+import api.connectors.httpparsers.StandardDownstreamHttpParser.*
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome, DownstreamUri}
 import config.AppConfig
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -35,7 +35,7 @@ class CreateUpdatePeriodsOfAccountConnector @Inject() (val http: HttpClientV2, v
       ec: ExecutionContext,
       correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
-    import request._
+    import request.*
 
     val downstreamUri: DownstreamUri[Unit] =
       HipUri[Unit](s"itsd/income-sources/$nino/periods-of-account/$businessId?taxYear=${taxYear.asTysDownstream}")

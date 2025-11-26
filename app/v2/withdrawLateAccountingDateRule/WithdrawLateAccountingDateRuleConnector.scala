@@ -17,7 +17,7 @@
 package v2.withdrawLateAccountingDateRule
 
 import api.connectors.DownstreamUri.HipUri
-import api.connectors.httpparsers.StandardDownstreamHttpParser._
+import api.connectors.httpparsers.StandardDownstreamHttpParser.*
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
 import play.api.http.Status.NO_CONTENT
@@ -37,7 +37,7 @@ class WithdrawLateAccountingDateRuleConnector @Inject() (val http: HttpClientV2,
       correlationId: String
   ): Future[DownstreamOutcome[Unit]] = {
 
-    import request._
+    import request.*
 
     val downstreamUri = HipUri[Unit](s"itsd/income-sources/$nino/late-accounting-date/$businessId?taxYear=${taxYear.asTysDownstream}")
 

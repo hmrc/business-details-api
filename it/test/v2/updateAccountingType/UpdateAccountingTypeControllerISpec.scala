@@ -130,7 +130,7 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
           ("AA123456A", "XAIS12345678910", "2024-25", JsObject.empty, BAD_REQUEST, RuleIncorrectOrEmptyBodyError)
         )
 
-        input.foreach((validationErrorTest _).tupled)
+        input.foreach(validationErrorTest.tupled)
       }
 
       "downstream service error" when {
@@ -161,7 +161,7 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
           (UNPROCESSABLE_ENTITY, "4200", BAD_REQUEST, RuleOutsideAmendmentWindowError)
         )
 
-        errors.foreach((serviceErrorTest _).tupled)
+        errors.foreach(serviceErrorTest.tupled)
       }
     }
   }

@@ -104,7 +104,7 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerIfsISpec extends IntegrationB
           ("AA123456A", "XAIS12345678910", "2022-23", JsObject.empty, BAD_REQUEST, RuleIncorrectOrEmptyBodyError)
         )
 
-        input.foreach((validationErrorTest _).tupled)
+        input.foreach(validationErrorTest.tupled)
       }
 
       "downstream service error" when {
@@ -142,7 +142,7 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerIfsISpec extends IntegrationB
           (SERVICE_UNAVAILABLE, "SERVICE_UNAVAILABLE", INTERNAL_SERVER_ERROR, InternalError)
         )
 
-        errors.foreach((serviceErrorTest _).tupled)
+        errors.foreach(serviceErrorTest.tupled)
       }
     }
   }

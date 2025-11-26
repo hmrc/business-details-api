@@ -16,9 +16,9 @@
 
 package v2.common.models
 
-import play.api.libs.json._
+import play.api.libs.json.*
 import support.UnitSpec
-import v2.common.models.AccountingType._
+import v2.common.models.AccountingType.*
 
 class AccountingTypeSpec extends UnitSpec {
 

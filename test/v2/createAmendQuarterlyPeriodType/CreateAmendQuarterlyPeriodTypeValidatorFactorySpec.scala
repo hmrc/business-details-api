@@ -18,7 +18,7 @@ package v2.createAmendQuarterlyPeriodType
 
 import api.controllers.validators.Validator
 import api.utils.JsonErrorValidators
-import play.api.libs.json._
+import play.api.libs.json.*
 import support.UnitSpec
 import v2.createAmendQuarterlyPeriodType.def1.Def1_CreateAmendQuarterlyPeriodTypeValidator
 import v2.createAmendQuarterlyPeriodType.model.request.CreateAmendQuarterlyPeriodTypeRequestData

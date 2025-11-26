@@ -25,7 +25,10 @@ trait MockIdGenerator extends TestSuite with MockFactory {
   val mockIdGenerator: IdGenerator = mock[IdGenerator]
 
   object MockIdGenerator {
-    def generateCorrelationId: CallHandler[String] = (mockIdGenerator.generateCorrelationId _).expects()
+
+    def generateCorrelationId: CallHandler[String] =
+      (() => mockIdGenerator.generateCorrelationId()).expects()
+
   }
 
 }

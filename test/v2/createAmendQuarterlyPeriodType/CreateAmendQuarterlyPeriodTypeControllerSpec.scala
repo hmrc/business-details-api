@@ -30,7 +30,7 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import routing.Version2
 import utils.MockIdGenerator
-import v2.createAmendQuarterlyPeriodType.def1.model.request._
+import v2.createAmendQuarterlyPeriodType.def1.model.request.*
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

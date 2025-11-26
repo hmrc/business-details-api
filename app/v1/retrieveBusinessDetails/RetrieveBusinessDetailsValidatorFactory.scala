@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.{ResolveBusinessId, ResolveNino}
 import api.models.errors.MtdError
 import cats.data.Validated
-import cats.data.Validated._
-import cats.implicits._
+import cats.data.Validated.*
+import cats.implicits.*
 import v1.retrieveBusinessDetails.model.request.RetrieveBusinessDetailsRequestData
 
 import javax.inject.Singleton
@@ -32,11 +32,10 @@ class RetrieveBusinessDetailsValidatorFactory {
   def validator(nino: String, businessId: String): Validator[RetrieveBusinessDetailsRequestData] =
     new Validator[RetrieveBusinessDetailsRequestData] {
 
-      def validate: Validated[Seq[MtdError], RetrieveBusinessDetailsRequestData] =
-        (
-          ResolveNino(nino),
-          ResolveBusinessId(businessId)
-        ).mapN(RetrieveBusinessDetailsRequestData)
+      def validate: Validated[Seq[MtdError], RetrieveBusinessDetailsRequestData] = (
+        ResolveNino(nino),
+        ResolveBusinessId(businessId)
+      ).mapN(RetrieveBusinessDetailsRequestData.apply)
 
     }
 

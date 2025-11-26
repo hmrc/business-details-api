@@ -17,7 +17,7 @@
 package v1.retrieveBusinessDetails.model.response.downstream
 
 import api.models.domain.TaxYear
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, Json, Reads, Writes}
 
 case class QuarterTypeElection(quarterReportingType: QuarterReportingType, taxYearofElection: TaxYear)

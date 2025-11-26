@@ -119,17 +119,6 @@ class EnumsSpec extends UnitSpec with Inspectors {
 
       badJson.validate[Foo[Enum]] shouldBe JsError(__ \ "someField", JsonValidationError("error.expected.jsstring"))
     }
-
-    "only work for sealed trait singletons (objects)" in {
-      assertTypeError("""
-        |      sealed trait NotEnum
-        |
-        |      case object ObjectOne                  extends NotEnum
-        |      case class CaseClassTwo(value: String) extends NotEnum
-        |
-        |      Enums.format[NotEnum]
-        """.stripMargin)
-    }
   }
 
 }

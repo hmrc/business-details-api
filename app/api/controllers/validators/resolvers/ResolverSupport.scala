@@ -18,7 +18,7 @@ package api.controllers.validators.resolvers
 
 import api.models.errors.MtdError
 import cats.data.Validated
-import cats.implicits._
+import cats.implicits.*
 
 import scala.math.Ordered.orderingToOrdered
 

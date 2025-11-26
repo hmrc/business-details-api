@@ -16,7 +16,7 @@
 
 package api.models.audit
 
-import api.fixtures.AuditResponseFixture._
+import api.fixtures.AuditResponseFixture.*
 import play.api.libs.json.Json
 import support.UnitSpec
 

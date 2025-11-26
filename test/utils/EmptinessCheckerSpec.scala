@@ -17,8 +17,8 @@
 package utils
 
 import support.UnitSpec
-import utils.EmptinessChecker._
-import utils.EmptyPathsResult._
+import utils.EmptinessChecker.*
+import utils.EmptyPathsResult.*
 
 class EmptinessCheckerSpec extends UnitSpec {
 

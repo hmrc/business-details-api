@@ -18,7 +18,7 @@ package api.controllers.validators.resolvers
 
 import api.models.errors.MtdError
 import cats.data.Validated
-import play.api.libs.json._
+import play.api.libs.json.*
 
 class ResolveJsonObject[T](implicit val reads: Reads[T]) extends Resolver[JsValue, T] with JsonObjectResolving[T] {
 

@@ -17,7 +17,7 @@
 package v2.withdrawLateAccountingDateRule
 
 import api.models.domain.TaxYear
-import api.models.errors._
+import api.models.errors.*
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
@@ -117,7 +117,7 @@ class WithdrawLateAccountingDateRuleControllerISpec extends IntegrationBaseSpec 
             ("AA123456A", "XAIS12345678910", "2023-24", BAD_REQUEST, RuleTaxYearNotSupportedError),
           )
 
-          input.foreach((validationErrorTest _).tupled)
+          input.foreach(validationErrorTest.tupled)
         }
       }
 
@@ -150,7 +150,7 @@ class WithdrawLateAccountingDateRuleControllerISpec extends IntegrationBaseSpec 
           (UNPROCESSABLE_ENTITY, "4200",                 BAD_REQUEST,           RuleOutsideAmendmentWindowError)
         )
 
-        errors.foreach((serviceErrorTest _).tupled)
+        errors.foreach(serviceErrorTest.tupled)
       }
     }
   }

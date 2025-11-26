@@ -21,8 +21,8 @@ import api.controllers.validators.resolvers.{ResolveBusinessId, ResolveDetailedT
 import api.models.domain.TaxYear
 import api.models.errors.MtdError
 import cats.data.Validated
-import cats.data.Validated._
-import cats.implicits._
+import cats.data.Validated.*
+import cats.implicits.*
 import config.AppConfig
 import v2.withdrawLateAccountingDateRule.model.request.WithdrawLateAccountingDateRuleRequest
 
@@ -40,6 +40,6 @@ class WithdrawLateAccountingDateRuleValidator(nino: String, businessId: String, 
       ResolveNino(nino),
       ResolveBusinessId(businessId),
       resolveTaxYear(taxYear)
-    ).mapN(WithdrawLateAccountingDateRuleRequest)
+    ).mapN(WithdrawLateAccountingDateRuleRequest.apply)
 
 }

@@ -23,7 +23,7 @@ import api.models.outcomes.ResponseWrapper
 import api.services.ServiceOutcome
 import cats.data.EitherT
 import cats.data.Validated.Valid
-import cats.implicits._
+import cats.implicits.*
 import config.AppConfig
 import config.Deprecation.Deprecated
 import play.api.http.Status
@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait RequestHandler {
 
-  def handleRequest()(implicit ctx: RequestContext, request: UserRequest[_], ec: ExecutionContext, appConfig: AppConfig): Future[Result]
+  def handleRequest()(implicit ctx: RequestContext, request: UserRequest[?], ec: ExecutionContext, appConfig: AppConfig): Future[Result]
 
 }
 
@@ -62,7 +62,7 @@ object RequestHandler {
       auditHandler: Option[AuditHandler] = None
   ) extends RequestHandler {
 
-    def handleRequest()(implicit ctx: RequestContext, request: UserRequest[_], ec: ExecutionContext, appConfig: AppConfig): Future[Result] =
+    def handleRequest()(implicit ctx: RequestContext, request: UserRequest[?], ec: ExecutionContext, appConfig: AppConfig): Future[Result] =
       Delegate.handleRequest()
 
     def withErrorHandling(errorHandling: ErrorHandling): RequestHandlerBuilder[Input, Output] =
@@ -148,7 +148,7 @@ object RequestHandler {
 
       }
 
-      def handleRequest()(implicit ctx: RequestContext, request: UserRequest[_], ec: ExecutionContext, appConfig: AppConfig): Future[Result] = {
+      def handleRequest()(implicit ctx: RequestContext, request: UserRequest[?], ec: ExecutionContext, appConfig: AppConfig): Future[Result] = {
 
         logger.info(
           message = s"[${ctx.endpointLogContext.controllerName}][${ctx.endpointLogContext.endpointName}] " +
@@ -174,7 +174,7 @@ object RequestHandler {
         }.merge
       }
 
-      private def simulateRequestCannotBeFulfilled(implicit request: UserRequest[_], appConfig: AppConfig): Boolean =
+      private def simulateRequestCannotBeFulfilled(implicit request: UserRequest[?], appConfig: AppConfig): Boolean =
         request.headers.get("Gov-Test-Scenario").contains("REQUEST_CANNOT_BE_FULFILLED") &&
           appConfig.allowRequestCannotBeFulfilledHeader(Version(request))
 
@@ -182,7 +182,7 @@ object RequestHandler {
 
       private def handleSuccess(parsedRequest: Input, serviceResponse: ResponseWrapper[Output])(implicit
           ctx: RequestContext,
-          request: UserRequest[_],
+          request: UserRequest[?],
           ec: ExecutionContext,
           appConfig: AppConfig): Result = {
 
@@ -201,7 +201,7 @@ object RequestHandler {
       }
 
       private def handleFailure(
-          errorWrapper: ErrorWrapper)(implicit ctx: RequestContext, request: UserRequest[_], ec: ExecutionContext, appConfig: AppConfig): Result = {
+          errorWrapper: ErrorWrapper)(implicit ctx: RequestContext, request: UserRequest[?], ec: ExecutionContext, appConfig: AppConfig): Result = {
 
         implicit val apiVersion: Version = Version(request)
         logger.warn(
@@ -223,7 +223,7 @@ object RequestHandler {
 
       def auditIfRequired(httpStatus: Int, response: Either[ErrorWrapper, Option[JsValue]])(implicit
           ctx: RequestContext,
-          request: UserRequest[_],
+          request: UserRequest[?],
           ec: ExecutionContext): Unit =
         auditHandler.foreach { creator =>
           creator.performAudit(request.userDetails, httpStatus, response)

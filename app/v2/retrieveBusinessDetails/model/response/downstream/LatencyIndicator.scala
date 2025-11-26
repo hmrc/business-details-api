@@ -16,7 +16,7 @@
 
 package v2.retrieveBusinessDetails.model.response.downstream
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 trait LatencyIndicator
 

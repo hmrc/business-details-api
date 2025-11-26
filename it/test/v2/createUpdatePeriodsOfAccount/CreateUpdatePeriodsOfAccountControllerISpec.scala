@@ -154,7 +154,7 @@ class CreateUpdatePeriodsOfAccountControllerISpec extends IntegrationBaseSpec wi
           )
         )
 
-        input.foreach(args => (validationErrorTest _).tupled(args))
+        input.foreach(validationErrorTest.tupled)
       }
 
       "downstream service error" when {
@@ -203,7 +203,7 @@ class CreateUpdatePeriodsOfAccountControllerISpec extends IntegrationBaseSpec wi
           (NOT_FOUND, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError)
         )
 
-        errors.foreach(args => (serviceErrorTest _).tupled(args))
+        errors.foreach(serviceErrorTest.tupled)
       }
     }
   }

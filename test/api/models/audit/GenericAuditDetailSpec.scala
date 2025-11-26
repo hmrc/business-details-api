@@ -16,7 +16,7 @@
 
 package api.models.audit
 
-import api.fixtures.GenericAuditDetailFixture._
+import api.fixtures.GenericAuditDetailFixture.*
 import play.api.libs.json.Json
 import support.UnitSpec
 

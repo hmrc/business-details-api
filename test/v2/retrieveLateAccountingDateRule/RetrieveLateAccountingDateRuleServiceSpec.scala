@@ -73,7 +73,7 @@ class RetrieveLateAccountingDateRuleServiceSpec extends ServiceSpec {
         ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError)
       )
 
-      errors.foreach((serviceError _).tupled)
+      errors.foreach(serviceError.tupled)
     }
   }
 

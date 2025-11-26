@@ -17,7 +17,7 @@
 package v2.updateAccountingType
 
 import api.connectors.DownstreamUri.HipUri
-import api.connectors.httpparsers.StandardDownstreamHttpParser._
+import api.connectors.httpparsers.StandardDownstreamHttpParser.*
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
 import play.api.http.Status.NO_CONTENT
@@ -37,7 +37,7 @@ class UpdateAccountingTypeConnector @Inject() (val http: HttpClientV2, val appCo
       correlationId: String
   ): Future[DownstreamOutcome[Unit]] = {
 
-    import request._
+    import request.*
 
     implicit val successCode: SuccessCode = SuccessCode(NO_CONTENT)
 

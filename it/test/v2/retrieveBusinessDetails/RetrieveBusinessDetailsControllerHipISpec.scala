@@ -16,13 +16,12 @@
 
 package v2.retrieveBusinessDetails
 
-import api.models.errors._
+import api.models.errors.*
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.http.HeaderNames.ACCEPT
 import play.api.libs.json.{JsArray, JsObject, JsPath, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import support.IntegrationBaseSpec
 
 class RetrieveBusinessDetailsControllerHipISpec extends IntegrationBaseSpec {
@@ -126,7 +125,7 @@ class RetrieveBusinessDetailsControllerHipISpec extends IntegrationBaseSpec {
           ("AA123456A", "X2", BAD_REQUEST, BusinessIdFormatError)
         )
 
-        input.foreach(args => (validationErrorTest _).tupled(args))
+        input.foreach(validationErrorTest.tupled)
       }
 
       "downstream service error" when {
@@ -154,7 +153,7 @@ class RetrieveBusinessDetailsControllerHipISpec extends IntegrationBaseSpec {
           (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError)
         )
 
-        errors.foreach((serviceErrorTest _).tupled)
+        errors.foreach(serviceErrorTest.tupled)
       }
     }
   }

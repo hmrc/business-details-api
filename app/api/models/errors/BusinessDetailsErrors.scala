@@ -16,7 +16,7 @@
 
 package api.models.errors
 
-import play.api.http.Status._
+import play.api.http.Status.*
 
 object RuleBusinessIdNotFoundError extends MtdError("RULE_BUSINESS_ID_NOT_FOUND", "The business ID provided is not found", NOT_FOUND)
 

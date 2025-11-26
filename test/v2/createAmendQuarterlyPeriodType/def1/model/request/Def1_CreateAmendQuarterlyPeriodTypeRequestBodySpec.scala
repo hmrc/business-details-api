@@ -20,7 +20,7 @@ import config.MockAppConfig
 import play.api.Configuration
 import play.api.libs.json.Json
 import support.UnitSpec
-import v2.createAmendQuarterlyPeriodType.def1.model.request.Def1_CreateAmendQuarterlyPeriodTypeRequestBody._
+import v2.createAmendQuarterlyPeriodType.def1.model.request.Def1_CreateAmendQuarterlyPeriodTypeRequestBody.*
 
 class Def1_CreateAmendQuarterlyPeriodTypeRequestBodySpec extends UnitSpec with MockAppConfig {
 

@@ -105,7 +105,7 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerHipISpec extends IntegrationB
           ("AA123456A", "XAIS12345678910", "2022-23", JsObject.empty, BAD_REQUEST, RuleIncorrectOrEmptyBodyError)
         )
 
-        input.foreach((validationErrorTest _).tupled)
+        input.foreach(validationErrorTest.tupled)
       }
 
       "downstream service error" when {
@@ -138,7 +138,7 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerHipISpec extends IntegrationB
           (NOT_FOUND, "5010", NOT_FOUND, RuleBusinessIdNotFoundError)
         )
 
-        errors.foreach((serviceErrorTest _).tupled)
+        errors.foreach(serviceErrorTest.tupled)
       }
     }
   }

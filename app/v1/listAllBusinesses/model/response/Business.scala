@@ -27,7 +27,7 @@ object Business {
   implicit val writes: OWrites[Business] = Json.writes[Business]
 
   def fromDownstreamBusiness(businessData: BusinessData): Business = {
-    import businessData._
+    import businessData.*
     Business(
       TypeOfBusiness.`self-employment`,
       businessId = incomeSourceId,
@@ -36,7 +36,7 @@ object Business {
   }
 
   def fromDownstreamProperty(propertyData: PropertyData): Business = {
-    import propertyData._
+    import propertyData.*
     Business(
       propertyData.incomeSourceType.getOrElse(TypeOfBusiness.`property-unspecified`),
       businessId = incomeSourceId,

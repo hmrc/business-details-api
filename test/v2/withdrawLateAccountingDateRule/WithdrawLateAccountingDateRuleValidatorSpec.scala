@@ -17,7 +17,7 @@
 package v2.withdrawLateAccountingDateRule
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import api.models.errors._
+import api.models.errors.*
 import config.MockAppConfig
 import support.UnitSpec
 import v2.withdrawLateAccountingDateRule.model.request.WithdrawLateAccountingDateRuleRequest
