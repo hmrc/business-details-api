@@ -21,14 +21,6 @@ import routing.Version
 import routing.Version.{VersionReads, VersionWrites}
 import utils.enums.Enums
 
-case class Parameter(name: String, required: Boolean = false)
-
-object Parameter {
-  implicit val formatParameter: OFormat[Parameter] = Json.format[Parameter]
-}
-
-case class PublishingException(message: String) extends Exception(message)
-
 enum APIStatus {
   case ALPHA, BETA, STABLE, DEPRECATED, RETIRED
 }

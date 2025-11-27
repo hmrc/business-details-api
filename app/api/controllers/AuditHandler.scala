@@ -53,21 +53,6 @@ object AuditHandler {
       responseBodyMap = if (includeResponse) identity else const(None)
     )
 
-  def custom[A: Writes](auditService: AuditService,
-                        auditType: String,
-                        transactionName: String,
-                        auditDetailCreator: AuditDetailCreator[A],
-                        requestBody: Option[JsValue] = None,
-                        responseBodyMap: Option[JsValue] => Option[JsValue]): AuditHandler =
-    new AuditHandlerImpl[A](
-      auditService = auditService,
-      auditType = auditType,
-      transactionName = transactionName,
-      auditDetailCreator,
-      requestBody = requestBody,
-      responseBodyMap = responseBodyMap
-    )
-
   trait AuditDetailCreator[A] {
     def createAuditDetail(userDetails: UserDetails, requestBody: Option[JsValue], auditResponse: AuditResponse)(implicit ctx: RequestContext): A
   }
