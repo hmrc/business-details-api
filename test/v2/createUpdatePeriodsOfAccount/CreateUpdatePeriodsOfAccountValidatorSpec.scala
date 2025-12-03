@@ -17,13 +17,13 @@
 package v2.createUpdatePeriodsOfAccount
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import api.models.errors._
+import api.models.errors.*
 import api.utils.JsonErrorValidators
 import config.MockAppConfig
-import play.api.libs.json._
+import play.api.libs.json.*
 import support.UnitSpec
 import v2.createUpdatePeriodsOfAccount.request.{CreateUpdatePeriodsOfAccountRequest, CreateUpdatePeriodsOfAccountRequestBody}
-import v2.fixtures.CreateUpdatePeriodsOfAccountFixtures._
+import v2.fixtures.CreateUpdatePeriodsOfAccountFixtures.*
 
 class CreateUpdatePeriodsOfAccountValidatorSpec extends UnitSpec with JsonErrorValidators with MockAppConfig {
 

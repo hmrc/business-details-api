@@ -60,7 +60,12 @@ class RetrieveLateAccountingDateResponseSpec extends UnitSpec {
       |""".stripMargin)
 
   private val parsedResponse =
-    RetrieveLateAccountingDateRuleResponse(disapply = true, eligible = true, Some(TaxYear("2026")), Some(TaxYear("2026")))
+    RetrieveLateAccountingDateRuleResponse(
+      disapply = true,
+      eligible = true,
+      Some(TaxYear.fromMtd("2025-26")),
+      Some(TaxYear.fromMtd("2025-26"))
+    )
 
   "RetrieveLateAccountingDateRuleResponse" when {
     "There are periods of accounts dates" should {

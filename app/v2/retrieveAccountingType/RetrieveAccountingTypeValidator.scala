@@ -20,17 +20,16 @@ import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.{ResolveBusinessId, ResolveNino, ResolveTaxYear}
 import api.models.errors.MtdError
 import cats.data.Validated
-import cats.data.Validated._
-import cats.implicits._
+import cats.data.Validated.*
+import cats.implicits.*
 import v2.retrieveAccountingType.model.request.RetrieveAccountingTypeRequest
 
 class RetrieveAccountingTypeValidator(nino: String, businessId: String, taxYear: String) extends Validator[RetrieveAccountingTypeRequest] {
 
-  def validate: Validated[Seq[MtdError], RetrieveAccountingTypeRequest] =
-    (
-      ResolveNino(nino),
-      ResolveBusinessId(businessId),
-      ResolveTaxYear(taxYear)
-    ).mapN(RetrieveAccountingTypeRequest)
+  def validate: Validated[Seq[MtdError], RetrieveAccountingTypeRequest] = (
+    ResolveNino(nino),
+    ResolveBusinessId(businessId),
+    ResolveTaxYear(taxYear)
+  ).mapN(RetrieveAccountingTypeRequest.apply)
 
 }

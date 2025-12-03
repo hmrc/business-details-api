@@ -16,13 +16,12 @@
 
 package v2.retrievePeriodsOfAccount
 
-import api.models.errors._
+import api.models.errors.*
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.http.HeaderNames.ACCEPT
-import play.api.libs.json._
+import play.api.libs.json.*
 import play.api.libs.ws.{WSRequest, WSResponse}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import support.IntegrationBaseSpec
 
 class RetrievePeriodsOfAccountControllerISpec extends IntegrationBaseSpec {
@@ -79,7 +78,7 @@ class RetrievePeriodsOfAccountControllerISpec extends IntegrationBaseSpec {
           ("AA123456A", "XAIS12345678901", "2025-27", BAD_REQUEST, RuleTaxYearRangeInvalidError)
         )
 
-        input.foreach(args => (validationErrorTest _).tupled(args))
+        input.foreach(validationErrorTest.tupled)
       }
 
       "downstream service error" when {
@@ -109,7 +108,7 @@ class RetrievePeriodsOfAccountControllerISpec extends IntegrationBaseSpec {
           (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError)
         )
 
-        errors.foreach((serviceErrorTest _).tupled)
+        errors.foreach(serviceErrorTest.tupled)
       }
     }
   }

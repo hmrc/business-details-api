@@ -16,7 +16,7 @@
 
 package v2.listAllBusinesses
 
-import api.controllers._
+import api.controllers.*
 import api.hateoas.HateoasFactory
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
 import config.AppConfig

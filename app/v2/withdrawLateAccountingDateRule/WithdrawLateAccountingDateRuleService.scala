@@ -17,9 +17,9 @@
 package v2.withdrawLateAccountingDateRule
 
 import api.controllers.RequestContext
-import api.models.errors._
+import api.models.errors.*
 import api.services.{BaseService, ServiceOutcome}
-import cats.implicits._
+import cats.implicits.*
 import v2.withdrawLateAccountingDateRule.model.request.WithdrawLateAccountingDateRuleRequest
 
 import javax.inject.{Inject, Singleton}

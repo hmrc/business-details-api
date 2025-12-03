@@ -20,7 +20,7 @@ import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.auth.UserDetails
 import api.models.errors.ErrorWrapper
 import api.services.AuditService
-import cats.syntax.either._
+import cats.syntax.either.*
 import play.api.libs.json.{JsValue, Writes}
 import routing.Version
 
@@ -51,21 +51,6 @@ object AuditHandler {
       auditDetailCreator = GenericAuditDetail.auditDetailCreator(apiVersion, params),
       requestBody = requestBody,
       responseBodyMap = if (includeResponse) identity else const(None)
-    )
-
-  def custom[A: Writes](auditService: AuditService,
-                        auditType: String,
-                        transactionName: String,
-                        auditDetailCreator: AuditDetailCreator[A],
-                        requestBody: Option[JsValue] = None,
-                        responseBodyMap: Option[JsValue] => Option[JsValue]): AuditHandler =
-    new AuditHandlerImpl[A](
-      auditService = auditService,
-      auditType = auditType,
-      transactionName = transactionName,
-      auditDetailCreator,
-      requestBody = requestBody,
-      responseBodyMap = responseBodyMap
     )
 
   trait AuditDetailCreator[A] {

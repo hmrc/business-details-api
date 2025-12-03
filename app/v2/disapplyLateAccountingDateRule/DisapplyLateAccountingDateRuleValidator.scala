@@ -21,8 +21,8 @@ import api.controllers.validators.resolvers.{ResolveBusinessId, ResolveDetailedT
 import api.models.domain.TaxYear
 import api.models.errors.MtdError
 import cats.data.Validated
-import cats.data.Validated._
-import cats.implicits._
+import cats.data.Validated.*
+import cats.implicits.*
 import config.AppConfig
 import v2.disapplyLateAccountingDateRule.model.request.DisapplyLateAccountingDateRuleRequest
 
@@ -35,11 +35,10 @@ class DisapplyLateAccountingDateRuleValidator(nino: String, businessId: String, 
     allowIncompleteTaxYear = !temporalValidationEnabled
   )
 
-  def validate: Validated[Seq[MtdError], DisapplyLateAccountingDateRuleRequest] =
-    (
-      ResolveNino(nino),
-      ResolveBusinessId(businessId),
-      resolveTaxYear(taxYear)
-    ).mapN(DisapplyLateAccountingDateRuleRequest)
+  def validate: Validated[Seq[MtdError], DisapplyLateAccountingDateRuleRequest] = (
+    ResolveNino(nino),
+    ResolveBusinessId(businessId),
+    resolveTaxYear(taxYear)
+  ).mapN(DisapplyLateAccountingDateRuleRequest.apply)
 
 }

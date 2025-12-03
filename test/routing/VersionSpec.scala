@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,9 @@
 package routing
 
 import play.api.http.HeaderNames.ACCEPT
-import play.api.libs.json.{JsError, JsResult, JsString, JsSuccess, JsValue, Json}
+import play.api.libs.json.*
 import play.api.test.FakeRequest
+import routing.GetFromRequestError.{InvalidHeader, VersionNotFound}
 import routing.Version.{VersionReads, VersionWrites}
 import support.UnitSpec
 

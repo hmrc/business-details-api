@@ -17,7 +17,7 @@
 package api.support
 
 import api.controllers.EndpointLogContext
-import api.models.errors._
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import utils.Logging
 

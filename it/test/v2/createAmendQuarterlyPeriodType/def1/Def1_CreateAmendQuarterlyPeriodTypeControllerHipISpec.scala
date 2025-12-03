@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 
 package v2.createAmendQuarterlyPeriodType.def1
 
-import api.models.errors._
+import api.models.errors.*
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
@@ -104,7 +105,7 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerHipISpec extends IntegrationB
           ("AA123456A", "XAIS12345678910", "2022-23", JsObject.empty, BAD_REQUEST, RuleIncorrectOrEmptyBodyError)
         )
 
-        input.foreach((validationErrorTest _).tupled)
+        input.foreach(validationErrorTest.tupled)
       }
 
       "downstream service error" when {
@@ -137,15 +138,15 @@ class Def1_CreateAmendQuarterlyPeriodTypeControllerHipISpec extends IntegrationB
           (NOT_FOUND, "5010", NOT_FOUND, RuleBusinessIdNotFoundError)
         )
 
-        errors.foreach((serviceErrorTest _).tupled)
+        errors.foreach(serviceErrorTest.tupled)
       }
     }
   }
 
   private trait Test {
-    val nino: String       = "AA123456A"
-    val businessId: String = "X0IS12345678901"
-    val taxYear: String    = "2023-24"
+    val nino: String                               = "AA123456A"
+    val businessId: String                         = "X0IS12345678901"
+    val taxYear: String                            = "2023-24"
     val downstreamQueryParams: Map[String, String] = Map("taxYear" -> "23-24")
 
     def setupStubs(): StubMapping

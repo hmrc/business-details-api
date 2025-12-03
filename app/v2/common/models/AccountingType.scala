@@ -19,12 +19,10 @@ package v2.common.models
 import play.api.libs.json.Format
 import utils.enums.Enums
 
-sealed trait AccountingType
+enum AccountingType {
+  case CASH, ACCRUAL
+}
 
 object AccountingType {
-  case object CASH    extends AccountingType
-  case object ACCRUAL extends AccountingType
-
-  implicit val format: Format[AccountingType] = Enums.format[AccountingType]
-
+  given Format[AccountingType] = Enums.format(values)
 }

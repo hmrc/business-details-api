@@ -17,7 +17,7 @@
 package v1.retrieveBusinessDetails
 
 import api.models.domain.{BusinessId, Nino}
-import api.models.errors._
+import api.models.errors.*
 import support.UnitSpec
 import v1.retrieveBusinessDetails.model.request.RetrieveBusinessDetailsRequestData
 

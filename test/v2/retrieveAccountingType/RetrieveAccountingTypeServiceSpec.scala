@@ -17,11 +17,11 @@
 package v2.retrieveAccountingType
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import api.models.errors._
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import v2.common.models.AccountingType
-import v2.retrieveAccountingType.model.request._
+import v2.retrieveAccountingType.model.request.*
 import v2.retrieveAccountingType.model.response.RetrieveAccountingTypeResponse
 
 import scala.concurrent.Future
@@ -67,7 +67,7 @@ class RetrieveAccountingTypeServiceSpec extends ServiceSpec {
         ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError)
       )
 
-      errors.foreach((serviceError _).tupled)
+      errors.foreach(serviceError.tupled)
     }
   }
 

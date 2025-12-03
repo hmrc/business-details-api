@@ -16,7 +16,7 @@
 
 package utils
 
-import play.api.libs.json._
+import play.api.libs.json.*
 import support.UnitSpec
 
 object JsonWritesUtilSpec {
@@ -27,7 +27,7 @@ object JsonWritesUtilSpec {
 }
 
 class JsonWritesUtilSpec extends UnitSpec with JsonWritesUtil {
-  import JsonWritesUtilSpec._
+  import JsonWritesUtilSpec.*
 
   "OWrites produced from writesFrom" when {
     implicit val writesOnlyForD1_D2: OWrites[D] = writesFrom {

@@ -17,7 +17,7 @@
 package v2.withdrawLateAccountingDateRule
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import api.models.errors._
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import v2.withdrawLateAccountingDateRule.model.request.WithdrawLateAccountingDateRuleRequest
@@ -72,7 +72,7 @@ class WithdrawLateAccountingDateRuleServiceSpec extends ServiceSpec {
         "4200" -> RuleOutsideAmendmentWindowError,
         "5000" -> RuleTaxYearNotSupportedError
       )
-      errors.foreach((serviceError _).tupled)
+      errors.foreach(serviceError.tupled)
     }
   }
 

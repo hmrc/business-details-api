@@ -20,7 +20,7 @@ import api.models.domain.DateRange
 import api.models.errors.{EndDateFormatError, MtdError, RuleEndBeforeStartDateError, StartDateFormatError}
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
-import cats.implicits._
+import cats.implicits.*
 
 import java.time.LocalDate
 import scala.math.Ordering.Implicits.infixOrderingOps
@@ -44,13 +44,7 @@ case class ResolveDateRange(startDateFormatError: MtdError = StartDateFormatErro
                          maxDate: LocalDate,
                          maxError: MtdError = endDateFormatError,
                          enforceStartOnOrAfterMin: Boolean = true): Resolver[(String, String), DateRange] =
-    resolver thenValidate ResolveDateRange.datesLimitedTo(
-      minDate,
-      minError,
-      maxDate,
-      maxError,
-      enforceStartOnOrAfterMin
-    )
+    resolver.thenValidate(ResolveDateRange.datesLimitedTo(minDate, minError, maxDate, maxError, enforceStartOnOrAfterMin))
 
   private def resolveDateRange(parsedStartDate: LocalDate, parsedEndDate: LocalDate): Validated[Seq[MtdError], DateRange] =
     if (parsedEndDate < parsedStartDate) {
@@ -78,7 +72,7 @@ object ResolveDateRange extends ResolverSupport {
       Some[Validator[DateRange]](satisfies(maxError)(_.endDate >= minDate))
     ).flatten
 
-    combinedValidator(validators.head, validators.tail: _*)
+    combinedValidator(validators.head, validators.tail*)
   }
 
 }

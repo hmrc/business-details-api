@@ -19,7 +19,7 @@ package api.controllers.validators.resolvers
 import api.models.errors.{InternalError, MtdError}
 import cats.data.Validated
 import cats.data.Validated.Valid
-import cats.implicits._
+import cats.implicits.*
 
 /** Parses a raw value (e.g. String or JsValue) to a target type, validating in the process.
   *
@@ -79,7 +79,7 @@ trait Resolver[S, T] {
       case None        => additional
     }
 
-  final protected def combine(results: Validated[Seq[MtdError], _]*): Validated[Seq[MtdError], Unit] =
+  final protected def combine(results: Validated[Seq[MtdError], ?]*): Validated[Seq[MtdError], Unit] =
     results.traverse_(identity)
 
 }

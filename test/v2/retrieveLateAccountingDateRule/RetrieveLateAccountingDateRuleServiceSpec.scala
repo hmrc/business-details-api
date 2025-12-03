@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package v2.retrieveLateAccountingDateRule
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import api.models.errors._
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import v2.retrieveLateAccountingDateRule.model.request.RetrieveLateAccountingDateRuleRequest
@@ -33,7 +33,12 @@ class RetrieveLateAccountingDateRuleServiceSpec extends ServiceSpec {
   private val requestData = RetrieveLateAccountingDateRuleRequest(nino, businessId, taxYear)
 
   private val expectedResponse =
-    RetrieveLateAccountingDateRuleResponse(disapply = true, eligible = true, Some(TaxYear("2025")), Some(TaxYear("2025")))
+    RetrieveLateAccountingDateRuleResponse(
+      disapply = true,
+      eligible = true,
+      Some(TaxYear.fromMtd("2024-25")),
+      Some(TaxYear.fromMtd("2024-25"))
+    )
 
   "service" when {
     "a connector call is successful" should {
@@ -68,7 +73,7 @@ class RetrieveLateAccountingDateRuleServiceSpec extends ServiceSpec {
         ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError)
       )
 
-      errors.foreach((serviceError _).tupled)
+      errors.foreach(serviceError.tupled)
     }
   }
 

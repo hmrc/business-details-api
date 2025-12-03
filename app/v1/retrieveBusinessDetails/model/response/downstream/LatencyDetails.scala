@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package v1.retrieveBusinessDetails.model.response.downstream
 
 import api.models.domain.TaxYear
-import play.api.libs.functional.syntax._
+import play.api.libs.functional.syntax.*
 import play.api.libs.json.{JsPath, Json, OWrites, Reads}
 
 case class LatencyDetails(latencyEndDate: String,
@@ -37,6 +37,6 @@ object LatencyDetails {
       (JsPath \ "latencyIndicator1").read[LatencyIndicator] and
       (JsPath \ "taxYear2").read[TaxYear] and
       (JsPath \ "latencyIndicator2").read[LatencyIndicator]
-  )(LatencyDetails.apply _)
+  )(LatencyDetails.apply)
 
 }

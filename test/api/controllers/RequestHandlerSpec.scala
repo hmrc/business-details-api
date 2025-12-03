@@ -17,7 +17,7 @@
 package api.controllers
 
 import api.controllers.validators.Validator
-import api.hateoas._
+import api.hateoas.*
 import api.models.audit.{AuditError, AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.auth.UserDetails
 import api.models.errors.{ErrorWrapper, MtdError, NinoFormatError}

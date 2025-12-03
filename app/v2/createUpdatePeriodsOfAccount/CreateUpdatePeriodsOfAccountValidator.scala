@@ -34,12 +34,14 @@ class CreateUpdatePeriodsOfAccountValidator(nino: String, businessId: String, ta
 
   private val resolveTaxYear: ResolveDetailedTaxYear = ResolveDetailedTaxYear(TaxYear.ending(appConfig.accountingTypeMinimumTaxYear))
 
-  override def validate: Validated[Seq[MtdError], CreateUpdatePeriodsOfAccountRequest] =
-    (
-      ResolveNino(nino),
-      ResolveBusinessId(businessId),
-      resolveTaxYear(taxYear),
-      resolveJson(body)
-    ).mapN(CreateUpdatePeriodsOfAccountRequest) andThen CreateUpdatePeriodsOfAccountRulesValidator.validateBusinessRules
+  override def validate: Validated[Seq[MtdError], CreateUpdatePeriodsOfAccountRequest] = (
+    ResolveNino(nino),
+    ResolveBusinessId(businessId),
+    resolveTaxYear(taxYear),
+    resolveJson(body)
+  ).mapN(CreateUpdatePeriodsOfAccountRequest.apply)
+    .andThen(
+      CreateUpdatePeriodsOfAccountRulesValidator.validateBusinessRules
+    )
 
 }

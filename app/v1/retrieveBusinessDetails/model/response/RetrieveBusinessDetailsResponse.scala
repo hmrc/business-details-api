@@ -49,7 +49,7 @@ object RetrieveBusinessDetailsResponse extends HateoasLinks {
       extends HateoasLinksFactory[RetrieveBusinessDetailsResponse, RetrieveBusinessDetailsHateoasData] {
 
     override def links(appConfig: AppConfig, data: RetrieveBusinessDetailsHateoasData): Seq[Link] = {
-      import data._
+      import data.*
       List(
         retrieveBusinessDetails(appConfig, nino, businessId)
       )
@@ -59,7 +59,7 @@ object RetrieveBusinessDetailsResponse extends HateoasLinks {
 
   def fromBusinessData(businessData: BusinessData, yearOfMigration: Option[String])(implicit
       featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
-    import businessData._
+    import businessData.*
 
     RetrieveBusinessDetailsResponse(
       businessId = incomeSourceId,
@@ -85,7 +85,7 @@ object RetrieveBusinessDetailsResponse extends HateoasLinks {
 
   def fromPropertyData(propertyData: PropertyData, yearOfMigration: Option[String])(implicit
       featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
-    import propertyData._
+    import propertyData.*
 
     RetrieveBusinessDetailsResponse(
       businessId = incomeSourceId,

@@ -17,7 +17,7 @@
 package api.controllers.validators.resolvers
 
 import api.models.domain.TaxYear
-import api.models.errors._
+import api.models.errors.*
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 
@@ -63,13 +63,13 @@ case class ResolveDetailedTaxYear(minimumTaxYear: TaxYear,
 
   private val baseResolver: Resolver[String, TaxYear] = ResolveTaxYear.resolverWithCustomErrors(formatError, rangeError)
 
-  private val withMinCheck: Resolver[String, TaxYear] = baseResolver thenValidate satisfiesMin(minimumTaxYear, notSupportedError)
+  private val withMinCheck: Resolver[String, TaxYear] = baseResolver.thenValidate(satisfiesMin(minimumTaxYear, notSupportedError))
 
   private val fullResolver: Resolver[String, TaxYear] =
     if (allowIncompleteTaxYear) {
       withMinCheck
     } else {
-      withMinCheck thenValidate satisfies(incompleteTaxYearError)(_ < TaxYear.currentTaxYear)
+      withMinCheck.thenValidate(satisfies(incompleteTaxYearError)(_ < TaxYear.currentTaxYear))
     }
 
   def apply(value: String): Validated[Seq[MtdError], TaxYear] = fullResolver(value)

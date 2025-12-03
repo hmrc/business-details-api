@@ -16,7 +16,7 @@
 
 package v2.updateAccountingType
 
-import api.controllers._
+import api.controllers.*
 import api.controllers.validators.Validator
 import api.models.audit.{AuditEvent, AuditResponse, FlattenedGenericAuditDetail}
 import api.models.auth.UserDetails

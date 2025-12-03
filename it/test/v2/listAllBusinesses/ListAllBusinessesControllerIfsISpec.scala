@@ -20,7 +20,7 @@ import api.models.errors.{InternalError, MtdError, NinoFormatError, NotFoundErro
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
@@ -107,7 +107,7 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
           ("AA1123A", BAD_REQUEST, NinoFormatError),
           ("", NOT_FOUND, NotFoundError)
         )
-        input.foreach(args => (validationErrorTest _).tupled(args))
+        input.foreach(validationErrorTest.tupled)
       }
       "downstream service error" when {
         def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
@@ -142,7 +142,7 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
           (BAD_REQUEST, "INVALID_IDTYPE", INTERNAL_SERVER_ERROR, InternalError),
           (NOT_FOUND, "NOT_FOUND", NOT_FOUND, NotFoundError)
         )
-        (errors ++ extraIfsErrors).foreach(args => (serviceErrorTest _).tupled(args))
+        (errors ++ extraIfsErrors).foreach(serviceErrorTest.tupled)
       }
     }
   }

@@ -17,7 +17,7 @@
 package v2.retrieveLateAccountingDateRule
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import api.models.errors._
+import api.models.errors.*
 import support.UnitSpec
 import v2.retrieveLateAccountingDateRule.model.request.RetrieveLateAccountingDateRuleRequest
 

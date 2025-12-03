@@ -17,12 +17,13 @@
 package v2.updateAccountingType
 
 import api.models.domain.TaxYear
-import api.models.errors._
+import api.models.errors.*
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import play.api.http.HeaderNames.ACCEPT
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
@@ -71,7 +72,7 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
       }
 
       "a valid request is made with the current tax year and suspendTemporalValidations is true" in new Test {
-        override val taxYear: String = TaxYear.currentTaxYear.asMtd
+        override val taxYear: String                    = TaxYear.currentTaxYear.asMtd
         override val suspendTemporalValidations: String = "true"
 
         override def setupStubs(): StubMapping = {
@@ -129,7 +130,7 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
           ("AA123456A", "XAIS12345678910", "2024-25", JsObject.empty, BAD_REQUEST, RuleIncorrectOrEmptyBodyError)
         )
 
-        input.foreach((validationErrorTest _).tupled)
+        input.foreach(validationErrorTest.tupled)
       }
 
       "downstream service error" when {
@@ -160,7 +161,7 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
           (UNPROCESSABLE_ENTITY, "4200", BAD_REQUEST, RuleOutsideAmendmentWindowError)
         )
 
-        errors.foreach((serviceErrorTest _).tupled)
+        errors.foreach(serviceErrorTest.tupled)
       }
     }
   }

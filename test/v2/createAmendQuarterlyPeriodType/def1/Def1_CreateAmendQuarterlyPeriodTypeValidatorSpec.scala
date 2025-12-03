@@ -17,11 +17,11 @@
 package v2.createAmendQuarterlyPeriodType.def1
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import api.models.errors._
+import api.models.errors.*
 import api.utils.JsonErrorValidators
-import play.api.libs.json._
+import play.api.libs.json.*
 import support.UnitSpec
-import v2.createAmendQuarterlyPeriodType.def1.model.request._
+import v2.createAmendQuarterlyPeriodType.def1.model.request.*
 
 class Def1_CreateAmendQuarterlyPeriodTypeValidatorSpec extends UnitSpec with JsonErrorValidators {
 

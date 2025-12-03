@@ -22,7 +22,7 @@ import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
 import v2.common.models.PeriodsOfAccountDates
-import v2.retrievePeriodsOfAccount.model.request._
+import v2.retrievePeriodsOfAccount.model.request.*
 import v2.retrievePeriodsOfAccount.model.response.RetrievePeriodsOfAccountResponse
 
 import scala.concurrent.Future
@@ -79,7 +79,7 @@ class RetrievePeriodsOfAccountConnectorSpec extends ConnectorSpec {
     }
   }
 
-  trait Test { _: ConnectorTest =>
+  trait Test { self: ConnectorTest =>
     protected val connector: RetrievePeriodsOfAccountConnector = new RetrievePeriodsOfAccountConnector(mockHttpClient, mockAppConfig)
   }
 

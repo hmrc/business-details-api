@@ -22,7 +22,7 @@ import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
 import uk.gov.hmrc.http.StringContextOps
-import v2.createAmendQuarterlyPeriodType.def1.model.request._
+import v2.createAmendQuarterlyPeriodType.def1.model.request.*
 
 import scala.concurrent.Future
 
@@ -83,7 +83,7 @@ class CreateAmendQuarterlyPeriodTypeConnectorSpec extends ConnectorSpec {
     }
   }
 
-  trait Test { _: ConnectorTest =>
+  trait Test { self: ConnectorTest =>
     protected val connector: CreateAmendQuarterlyPeriodTypeConnector = new CreateAmendQuarterlyPeriodTypeConnector(mockHttpClient, mockAppConfig)
   }
 

@@ -16,13 +16,11 @@
 
 package api.hateoas
 
-import cats.Functor
 import org.scalamock.handlers.CallHandler
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.TestSuite
 
 trait MockHateoasFactory extends TestSuite with MockFactory {
-
   val mockHateoasFactory: HateoasFactory = mock[HateoasFactory]
 
   object MockHateoasFactory {
@@ -31,12 +29,6 @@ trait MockHateoasFactory extends TestSuite with MockFactory {
       (mockHateoasFactory
         .wrap(_: A, _: D)(_: HateoasLinksFactory[A, D]))
         .expects(a, data, *)
-    }
-
-    def wrapList[A[_]: Functor, I, D <: HateoasData](a: A[I], data: D): CallHandler[HateoasWrapper[A[HateoasWrapper[I]]]] = {
-      (mockHateoasFactory
-        .wrapList(_: A[I], _: D)(_: Functor[A], _: HateoasListLinksFactory[A, I, D]))
-        .expects(a, data, *, *)
     }
 
   }

@@ -17,11 +17,11 @@
 package v2.updateAccountingType
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import api.models.errors._
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import v2.common.models.AccountingType
-import v2.updateAccountingType.model.request._
+import v2.updateAccountingType.model.request.*
 
 import scala.concurrent.Future
 
@@ -67,7 +67,7 @@ class UpdateAccountingTypeServiceSpec extends ServiceSpec {
         ("4200", RuleOutsideAmendmentWindowError)
       )
 
-      errors.foreach((serviceError _).tupled)
+      errors.foreach(serviceError.tupled)
     }
   }
 

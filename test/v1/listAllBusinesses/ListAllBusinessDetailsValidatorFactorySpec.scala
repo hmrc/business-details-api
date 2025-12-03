@@ -17,7 +17,7 @@
 package v1.listAllBusinesses
 
 import api.models.domain.Nino
-import api.models.errors._
+import api.models.errors.*
 import support.UnitSpec
 import v1.listAllBusinesses.model.request.ListAllBusinessesRequestData
 

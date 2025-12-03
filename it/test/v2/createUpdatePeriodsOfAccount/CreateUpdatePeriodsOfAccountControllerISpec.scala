@@ -16,13 +16,15 @@
 
 package v2.createUpdatePeriodsOfAccount
 
-import api.models.errors._
+import api.models.errors.*
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import api.utils.JsonErrorValidators
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json._
+import play.api.libs.json.*
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
+import play.api.libs.ws.WSBodyWritables.writeableOf_JsValue
 import play.api.libs.ws.{WSRequest, WSResponse}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import support.IntegrationBaseSpec
 import v2.fixtures.CreateUpdatePeriodsOfAccountFixtures.validFullRequestBodyJson
 
@@ -152,7 +154,7 @@ class CreateUpdatePeriodsOfAccountControllerISpec extends IntegrationBaseSpec wi
           )
         )
 
-        input.foreach(args => (validationErrorTest _).tupled(args))
+        input.foreach(validationErrorTest.tupled)
       }
 
       "downstream service error" when {
@@ -201,7 +203,7 @@ class CreateUpdatePeriodsOfAccountControllerISpec extends IntegrationBaseSpec wi
           (NOT_FOUND, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError)
         )
 
-        errors.foreach(args => (serviceErrorTest _).tupled(args))
+        errors.foreach(serviceErrorTest.tupled)
       }
     }
   }

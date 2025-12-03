@@ -17,7 +17,7 @@
 package v2.createAmendQuarterlyPeriodType
 
 import api.connectors.DownstreamUri.{Api2089Uri, HipUri}
-import api.connectors.httpparsers.StandardDownstreamHttpParser._
+import api.connectors.httpparsers.StandardDownstreamHttpParser.*
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
 import play.api.http.Status.{NO_CONTENT, OK}
@@ -37,7 +37,7 @@ class CreateAmendQuarterlyPeriodTypeConnector @Inject() (val http: HttpClientV2,
       correlationId: String
   ): Future[DownstreamOutcome[Unit]] = {
 
-    import request._
+    import request.*
 
     val (downstreamUri, successfulStatus) =
       if (featureSwitches.isEnabled("ifs_hip_migration_2089")) {

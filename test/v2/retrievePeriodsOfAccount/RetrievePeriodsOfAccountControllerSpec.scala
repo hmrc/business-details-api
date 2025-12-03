@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package v2.retrievePeriodsOfAccount
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.models.domain._
-import api.models.errors._
+import api.models.domain.*
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
 import config.MockAppConfig
@@ -44,8 +44,9 @@ class RetrievePeriodsOfAccountControllerSpec
     with MockIdGenerator
     with MockAppConfig {
 
-  private val businessId = "XAIS12345678910"
-  private val taxYear    = "2026"
+  private val businessId     = "XAIS12345678910"
+  private val taxYear        = "2026"
+  private val taxYearFromMtd = "2025-26"
 
   private val responseBody = Json.parse(
     """
@@ -99,7 +100,7 @@ class RetrievePeriodsOfAccountControllerSpec
     )
   )
 
-  private val requestData = RetrievePeriodsOfAccountRequest(Nino(nino), BusinessId(businessId), TaxYear(taxYear))
+  private val requestData = RetrievePeriodsOfAccountRequest(Nino(nino), BusinessId(businessId), TaxYear.fromMtd(taxYearFromMtd))
 
   "handleRequest" should {
     "return successful response with status OK" when {
@@ -136,7 +137,7 @@ class RetrievePeriodsOfAccountControllerSpec
 
   trait Test extends ControllerTest {
 
-    val controller = new RetrievePeriodsOfAccountController(
+    val controller: RetrievePeriodsOfAccountController = new RetrievePeriodsOfAccountController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockRetrievePeriodsOfAccountValidatorFactory,

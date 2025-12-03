@@ -17,7 +17,7 @@
 package v2.createUpdatePeriodsOfAccount
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import api.models.errors._
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import v2.createUpdatePeriodsOfAccount.request.CreateUpdatePeriodsOfAccountRequest
@@ -79,7 +79,7 @@ class CreateUpdatePeriodsOfAccountServiceSpec extends ServiceSpec {
         "UNMATCHED_STUB_ERROR" -> RuleIncorrectGovTestScenarioError
       )
 
-      errors.foreach((serviceError _).tupled)
+      errors.foreach(serviceError.tupled)
     }
   }
 

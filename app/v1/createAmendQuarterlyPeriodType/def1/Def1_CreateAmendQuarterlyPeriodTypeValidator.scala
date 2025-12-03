@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import api.models.errors.MtdError
 import cats.data.Validated
 import cats.implicits.catsSyntaxTuple4Semigroupal
 import play.api.libs.json.JsValue
-import v1.createAmendQuarterlyPeriodType.def1.model.request._
+import v1.createAmendQuarterlyPeriodType.def1.model.request.*
 import v1.createAmendQuarterlyPeriodType.model.request.CreateAmendQuarterlyPeriodTypeRequestData
 
 class Def1_CreateAmendQuarterlyPeriodTypeValidator(nino: String, businessId: String, taxYear: String, body: JsValue)
@@ -30,12 +30,11 @@ class Def1_CreateAmendQuarterlyPeriodTypeValidator(nino: String, businessId: Str
 
   private val resolveJson = new ResolveNonEmptyJsonObject[Def1_CreateAmendQuarterlyPeriodTypeRequestBody]()
 
-  def validate: Validated[Seq[MtdError], CreateAmendQuarterlyPeriodTypeRequestData] =
-    (
-      ResolveNino(nino),
-      ResolveBusinessId(businessId),
-      ResolveTaxYear(taxYear),
-      resolveJson(body)
-    ) mapN Def1_CreateAmendQuarterlyPeriodTypeRequestData
+  def validate: Validated[Seq[MtdError], CreateAmendQuarterlyPeriodTypeRequestData] = (
+    ResolveNino(nino),
+    ResolveBusinessId(businessId),
+    ResolveTaxYear(taxYear),
+    resolveJson(body)
+  ).mapN(Def1_CreateAmendQuarterlyPeriodTypeRequestData.apply)
 
 }

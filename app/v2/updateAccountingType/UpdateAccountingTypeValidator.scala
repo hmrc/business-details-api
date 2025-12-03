@@ -24,7 +24,7 @@ import cats.data.Validated
 import cats.implicits.catsSyntaxTuple4Semigroupal
 import config.AppConfig
 import play.api.libs.json.JsValue
-import v2.updateAccountingType.model.request._
+import v2.updateAccountingType.model.request.*
 
 class UpdateAccountingTypeValidator(nino: String, businessId: String, taxYear: String, body: JsValue, temporalValidationEnabled: Boolean)(implicit
     appConfig: AppConfig)
@@ -38,12 +38,11 @@ class UpdateAccountingTypeValidator(nino: String, businessId: String, taxYear: S
     allowIncompleteTaxYear = !temporalValidationEnabled
   )
 
-  def validate: Validated[Seq[MtdError], UpdateAccountingTypeRequestData] =
-    (
-      ResolveNino(nino),
-      ResolveBusinessId(businessId),
-      resolveTaxYear(taxYear),
-      resolveJson(body)
-    ) mapN UpdateAccountingTypeRequestData
+  def validate: Validated[Seq[MtdError], UpdateAccountingTypeRequestData] = (
+    ResolveNino(nino),
+    ResolveBusinessId(businessId),
+    resolveTaxYear(taxYear),
+    resolveJson(body)
+  ).mapN(UpdateAccountingTypeRequestData.apply)
 
 }

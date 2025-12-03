@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import api.models.domain.{AccountingType, TaxYear, TypeOfBusiness}
 import config.{MockAppConfig, MockFeatureSwitches}
 import play.api.libs.json.Json
 import support.UnitSpec
-import v1.retrieveBusinessDetails.model.response.downstream._
+import v1.retrieveBusinessDetails.model.response.downstream.*
 
 class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig with MockFeatureSwitches {
 
@@ -267,7 +267,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
             firstAccountingPeriodEndDate = Some("firstEndDate"),
             latencyDetails = latencyDetails,
             yearOfMigration = yearOfMigration,
-            quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear("2023")))
+            quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromMtd("2022-23")))
           )
       }
 

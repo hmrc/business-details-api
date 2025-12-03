@@ -17,7 +17,7 @@
 package v2.disapplyLateAccountingDateRule
 
 import api.connectors.DownstreamUri.HipUri
-import api.connectors.httpparsers.StandardDownstreamHttpParser._
+import api.connectors.httpparsers.StandardDownstreamHttpParser.*
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome, DownstreamUri}
 import config.AppConfig
 import uk.gov.hmrc.http.HeaderCarrier
@@ -35,7 +35,7 @@ class DisapplyLateAccountingDateRuleConnector @Inject() (val http: HttpClientV2,
       ec: ExecutionContext,
       correlationId: String): Future[DownstreamOutcome[Unit]] = {
 
-    import request._
+    import request.*
 
     val downstreamUri: DownstreamUri[Unit] =
       HipUri[Unit](s"itsd/income-sources/$nino/late-accounting-date/$businessId?taxYear=${taxYear.asTysDownstream}")

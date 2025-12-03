@@ -20,18 +20,17 @@ import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.{ResolveBusinessId, ResolveNino, ResolveTaxYear}
 import api.models.errors.MtdError
 import cats.data.Validated
-import cats.data.Validated._
-import cats.implicits._
+import cats.data.Validated.*
+import cats.implicits.*
 import v2.retrieveLateAccountingDateRule.model.request.RetrieveLateAccountingDateRuleRequest
 
 class RetrieveLateAccountingDateRuleValidator(nino: String, businessId: String, taxYear: String)
     extends Validator[RetrieveLateAccountingDateRuleRequest] {
 
-  def validate: Validated[Seq[MtdError], RetrieveLateAccountingDateRuleRequest] =
-    (
-      ResolveNino(nino),
-      ResolveBusinessId(businessId),
-      ResolveTaxYear(taxYear)
-    ).mapN(RetrieveLateAccountingDateRuleRequest)
+  def validate: Validated[Seq[MtdError], RetrieveLateAccountingDateRuleRequest] = (
+    ResolveNino(nino),
+    ResolveBusinessId(businessId),
+    ResolveTaxYear(taxYear)
+  ).mapN(RetrieveLateAccountingDateRuleRequest.apply)
 
 }

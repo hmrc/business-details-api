@@ -20,7 +20,7 @@ import api.utils.JsonErrorValidators
 import play.api.libs.json.Json
 import support.UnitSpec
 import v2.createUpdatePeriodsOfAccount.request.CreateUpdatePeriodsOfAccountRequestBody
-import v2.fixtures.CreateUpdatePeriodsOfAccountFixtures._
+import v2.fixtures.CreateUpdatePeriodsOfAccountFixtures.*
 
 class CreateUpdatePeriodsOfAccountRequestBodySpec extends UnitSpec with JsonErrorValidators {
 

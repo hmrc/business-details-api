@@ -19,7 +19,7 @@ package v2.createUpdatePeriodsOfAccount
 import api.controllers.validators.RulesValidator
 import api.controllers.validators.resolvers.ResolveDateRange
 import api.models.domain.{DateRange, TaxYear}
-import api.models.errors._
+import api.models.errors.*
 import cats.data.Validated
 import cats.data.Validated.Invalid
 import cats.implicits.toTraverseOps
@@ -31,7 +31,7 @@ object CreateUpdatePeriodsOfAccountRulesValidator extends RulesValidator[CreateU
   override def validateBusinessRules(
       parsed: CreateUpdatePeriodsOfAccountRequest
   ): Validated[Seq[MtdError], CreateUpdatePeriodsOfAccountRequest] = {
-    import parsed._
+    import parsed.*
 
     combine(
       validatePeriodsOfAccount(body.periodsOfAccount, body.periodsOfAccountDates),

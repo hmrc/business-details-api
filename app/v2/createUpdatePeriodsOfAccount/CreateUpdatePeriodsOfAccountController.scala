@@ -16,7 +16,7 @@
 
 package v2.createUpdatePeriodsOfAccount
 
-import api.controllers._
+import api.controllers.*
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import config.AppConfig
 import play.api.libs.json.JsValue

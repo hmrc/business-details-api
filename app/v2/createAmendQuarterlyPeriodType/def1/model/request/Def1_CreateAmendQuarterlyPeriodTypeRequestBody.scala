@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package v2.createAmendQuarterlyPeriodType.def1.model.request
 
 import config.{AppConfig, FeatureSwitches}
-import play.api.libs.json._
-import shapeless.HNil
+import play.api.libs.json.*
 import utils.EmptinessChecker
+import utils.EmptinessChecker.field
 import v2.createAmendQuarterlyPeriodType.model.request.CreateAmendQuarterlyPeriodTypeRequestBody
 
 case class Def1_CreateAmendQuarterlyPeriodTypeRequestBody(quarterlyPeriodType: QuarterlyPeriodType) extends CreateAmendQuarterlyPeriodTypeRequestBody
@@ -27,7 +27,9 @@ case class Def1_CreateAmendQuarterlyPeriodTypeRequestBody(quarterlyPeriodType: Q
 object Def1_CreateAmendQuarterlyPeriodTypeRequestBody {
 
   implicit val emptinessChecker: EmptinessChecker[Def1_CreateAmendQuarterlyPeriodTypeRequestBody] = EmptinessChecker.use { o =>
-    "quarterlyPeriodType" -> o.quarterlyPeriodType.toString :: HNil
+    List(
+      field("accountingType", o.quarterlyPeriodType.toString)
+    )
   }
 
   implicit val reads: Reads[Def1_CreateAmendQuarterlyPeriodTypeRequestBody] = Json.reads[Def1_CreateAmendQuarterlyPeriodTypeRequestBody]

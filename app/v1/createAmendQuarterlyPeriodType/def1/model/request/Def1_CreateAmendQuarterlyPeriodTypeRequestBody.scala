@@ -18,8 +18,8 @@ package v1.createAmendQuarterlyPeriodType.def1.model.request
 
 import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.{Json, OWrites, Reads}
-import shapeless.HNil
 import utils.EmptinessChecker
+import utils.EmptinessChecker.field
 import v1.createAmendQuarterlyPeriodType.model.request.CreateAmendQuarterlyPeriodTypeRequestBody
 
 case class Def1_CreateAmendQuarterlyPeriodTypeRequestBody(quarterlyPeriodType: QuarterlyPeriodType) extends CreateAmendQuarterlyPeriodTypeRequestBody
@@ -27,7 +27,9 @@ case class Def1_CreateAmendQuarterlyPeriodTypeRequestBody(quarterlyPeriodType: Q
 object Def1_CreateAmendQuarterlyPeriodTypeRequestBody {
 
   implicit val emptinessChecker: EmptinessChecker[Def1_CreateAmendQuarterlyPeriodTypeRequestBody] = EmptinessChecker.use { o =>
-    "quarterlyPeriodType" -> o.quarterlyPeriodType.toString :: HNil
+    List(
+      field("quarterlyPeriodType", o.quarterlyPeriodType.toString)
+    )
   }
 
   implicit val reads: Reads[Def1_CreateAmendQuarterlyPeriodTypeRequestBody] = Json.reads[Def1_CreateAmendQuarterlyPeriodTypeRequestBody]

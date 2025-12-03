@@ -18,7 +18,7 @@ package v2.retrieveLateAccountingDateRule.model.response
 
 import api.models.domain.TaxYear
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json._
+import play.api.libs.json.*
 
 case class RetrieveLateAccountingDateRuleResponse(disapply: Boolean,
                                                   eligible: Boolean,
@@ -34,7 +34,7 @@ object RetrieveLateAccountingDateRuleResponse {
       (JsPath \\ "eligible").read[Boolean] and
       (JsPath \\ "taxYearOfElection").readNullable[TaxYear] and
       (JsPath \\ "taxYearElectionExpires").readNullable[TaxYear]
-  )(RetrieveLateAccountingDateRuleResponse.apply _)
+  )(RetrieveLateAccountingDateRuleResponse.apply)
 
   implicit val writes: OWrites[RetrieveLateAccountingDateRuleResponse] = Json.writes[RetrieveLateAccountingDateRuleResponse]
 }

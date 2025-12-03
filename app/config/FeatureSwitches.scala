@@ -29,7 +29,7 @@ trait FeatureSwitches {
   def isIfsEnabled: Boolean
   def isScp005aQuarterlyTypeChoiceEnabled: Boolean
   def supportingAgentsAccessControlEnabled: Boolean
-  def isTemporalValidationEnabled(implicit request: Request[_]): Boolean
+  def isTemporalValidationEnabled(implicit request: Request[?]): Boolean
   def isEnabled(key: String): Boolean
   def isReleasedInProduction(feature: String): Boolean
 }
@@ -44,7 +44,7 @@ class FeatureSwitchesImpl(featureSwitchConfig: Configuration) extends FeatureSwi
   val isScp005aQuarterlyTypeChoiceEnabled: Boolean  = isEnabled("scp005a_QuarterlyTypeChoice")
   val supportingAgentsAccessControlEnabled: Boolean = isEnabled("supporting-agents-access-control")
 
-  def isTemporalValidationEnabled(implicit request: Request[_]): Boolean = {
+  def isTemporalValidationEnabled(implicit request: Request[?]): Boolean = {
     if (isEnabled("allowTemporalValidationSuspension")) {
       request.headers.get("suspend-temporal-validations").forall(!BooleanUtils.toBoolean(_))
     } else {

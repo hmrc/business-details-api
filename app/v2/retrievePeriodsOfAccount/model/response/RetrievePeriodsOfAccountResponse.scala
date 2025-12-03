@@ -18,7 +18,7 @@ package v2.retrievePeriodsOfAccount.model.response
 
 import api.models.domain.Timestamp
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json._
+import play.api.libs.json.*
 import v2.common.models.PeriodsOfAccountDates
 
 case class RetrievePeriodsOfAccountResponse(submittedOn: Timestamp,
@@ -31,7 +31,7 @@ object RetrievePeriodsOfAccountResponse {
     (JsPath \ "submittedOn").read[Timestamp] and
       (JsPath \ "periodsOfAccount").readWithDefault[Boolean](true) and
       (JsPath \ "periodsOfAccountDates").readNullable[Seq[PeriodsOfAccountDates]]
-  )(RetrievePeriodsOfAccountResponse.apply _)
+  )(RetrievePeriodsOfAccountResponse.apply)
 
   implicit val writes: OWrites[RetrievePeriodsOfAccountResponse] = Json.writes[RetrievePeriodsOfAccountResponse]
 

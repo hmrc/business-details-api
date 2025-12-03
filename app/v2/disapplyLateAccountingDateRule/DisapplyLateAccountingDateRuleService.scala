@@ -17,9 +17,9 @@
 package v2.disapplyLateAccountingDateRule
 
 import api.controllers.RequestContext
-import api.models.errors._
+import api.models.errors.*
 import api.services.{BaseService, ServiceOutcome}
-import cats.implicits._
+import cats.implicits.*
 import v2.disapplyLateAccountingDateRule.model.request.DisapplyLateAccountingDateRuleRequest
 
 import javax.inject.{Inject, Singleton}

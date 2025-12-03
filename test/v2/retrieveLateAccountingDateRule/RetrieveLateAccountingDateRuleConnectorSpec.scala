@@ -35,9 +35,10 @@ class RetrieveLateAccountingDateRuleConnectorSpec extends ConnectorSpec {
 
   private val request = RetrieveLateAccountingDateRuleRequest(nino, businessId, taxYear)
 
-  private val response = RetrieveLateAccountingDateRuleResponse(disapply = true, eligible = true, Some(TaxYear("2025")), Some(TaxYear("2025")))
+  private val response =
+    RetrieveLateAccountingDateRuleResponse(disapply = true, eligible = true, Some(TaxYear.fromMtd("2024-25")), Some(TaxYear.fromMtd("2024-25")))
 
-  val queryParams = Map(
+  val queryParams: Map[String, String] = Map(
     "incomeSourceId"  -> "XAIS12345678910",
     "taxYearExplicit" -> "2024-25"
   )
@@ -87,7 +88,7 @@ class RetrieveLateAccountingDateRuleConnectorSpec extends ConnectorSpec {
     }
   }
 
-  trait Test { _: ConnectorTest =>
+  trait Test { self: ConnectorTest =>
     protected val connector: RetrieveLateAccountingDateRuleConnector = new RetrieveLateAccountingDateRuleConnector(mockHttpClient, mockAppConfig)
   }
 

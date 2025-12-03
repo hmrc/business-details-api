@@ -17,7 +17,7 @@
 package v2.disapplyLateAccountingDateRule
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import api.models.errors._
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
 import v2.disapplyLateAccountingDateRule.model.request.DisapplyLateAccountingDateRuleRequest
@@ -68,7 +68,7 @@ class DisapplyLateAccountingDateRuleServiceSpec extends ServiceSpec {
         ("5000", RuleTaxYearNotSupportedError)
       )
 
-      errors.foreach((serviceError _).tupled)
+      errors.foreach(serviceError.tupled)
     }
   }
 

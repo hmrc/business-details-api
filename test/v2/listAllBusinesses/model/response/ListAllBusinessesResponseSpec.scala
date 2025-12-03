@@ -19,7 +19,7 @@ package v2.listAllBusinesses.model.response
 import api.hateoas.Method.GET
 import api.hateoas.{HateoasFactory, HateoasWrapper, Link}
 import api.models.domain.TypeOfBusiness
-import api.models.domain.TypeOfBusiness._
+import api.models.domain.TypeOfBusiness.*
 import config.MockAppConfig
 import play.api.libs.json.Json
 import support.UnitSpec

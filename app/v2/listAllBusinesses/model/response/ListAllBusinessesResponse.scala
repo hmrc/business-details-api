@@ -20,7 +20,7 @@ import api.hateoas.RelType.RETRIEVE_BUSINESS_DETAILS
 import api.hateoas.{HateoasData, HateoasLinks, HateoasListLinksFactory, Link}
 import cats.Functor
 import config.AppConfig
-import play.api.libs.json._
+import play.api.libs.json.*
 import v2.retrieveBusinessDetails.model.response.downstream.RetrieveBusinessDetailsDownstreamResponse
 
 case class ListAllBusinessesResponse[I](listOfBusinesses: Seq[I])

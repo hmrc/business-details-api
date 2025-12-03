@@ -63,7 +63,12 @@ class RetrieveLateAccountingDateRuleControllerSpec
   private val requestData =
     RetrieveLateAccountingDateRuleRequest(parsedNino, parsedBusinessId, parsedTaxYear)
 
-  private val responseData = RetrieveLateAccountingDateRuleResponse(disapply = true, eligible = true, Some(TaxYear("2026")), Some(TaxYear("2026")))
+  private val responseData = RetrieveLateAccountingDateRuleResponse(
+    disapply = true,
+    eligible = true,
+    Some(TaxYear.fromMtd("2025-26")),
+    Some(TaxYear.fromMtd("2025-26"))
+  )
 
   "handleRequest" should {
     "return successful response with status OK" when {
@@ -97,7 +102,7 @@ class RetrieveLateAccountingDateRuleControllerSpec
 
   private trait Test extends ControllerTest {
 
-    val controller = new RetrieveLateAccountingDateRuleController(
+    val controller: RetrieveLateAccountingDateRuleController = new RetrieveLateAccountingDateRuleController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockRetrieveLateAccountingDateRuleValidatorFactory,
