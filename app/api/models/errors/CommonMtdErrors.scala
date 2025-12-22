@@ -70,6 +70,7 @@ object RuleCountryCodeError extends MtdError("RULE_COUNTRY_CODE", "The country c
 object NotFoundError           extends MtdError("MATCHING_RESOURCE_NOT_FOUND", "Matching resource not found", NOT_FOUND)
 object InternalError           extends MtdError("INTERNAL_SERVER_ERROR", "An internal server error occurred", INTERNAL_SERVER_ERROR)
 object BadRequestError         extends MtdError("INVALID_REQUEST", "Invalid request", BAD_REQUEST)
+object GatewayTimeoutError     extends MtdError("GATEWAY_TIMEOUT", "The request has timed out", GATEWAY_TIMEOUT)
 object BVRError                extends MtdError("BUSINESS_ERROR", "Business validation error", BAD_REQUEST)
 object ServiceUnavailableError extends MtdError("SERVICE_UNAVAILABLE", "Internal server error", INTERNAL_SERVER_ERROR)
 object InvalidHttpMethodError  extends MtdError("INVALID_HTTP_METHOD", "Invalid HTTP method", METHOD_NOT_ALLOWED)
