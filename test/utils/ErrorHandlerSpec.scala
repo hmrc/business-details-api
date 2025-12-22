@@ -140,8 +140,9 @@ class ErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite {
         contentAsJson(result) shouldBe InternalError.asJson
       }
     }
-    "return 504 with error body" when {
-      Seq(499, 504).foreach { statusCode =>
+    
+    "return GATEWAY_TIMEOUT with error body" when {
+      Seq(499, GATEWAY_TIMEOUT).foreach { statusCode =>
         s"a $statusCode UpstreamErrorResponse is returned" in new Test {
           val errorResponse: UpstreamErrorResponse = UpstreamErrorResponse("request timeout", statusCode, statusCode, Map.empty)
           val result: Future[Result]               = handler.onServerError(requestHeader, errorResponse)
