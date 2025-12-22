@@ -89,11 +89,14 @@ class ErrorHandler @Inject() (config: Configuration, auditConnector: AuditConnec
       ex
     )
 
+    val timeoutStatusCodes: Set[Int] = Set(499, 504)
+
     val (errorCode, eventType) = ex match {
-      case _: NotFoundException      => (NotFoundError, "ResourceNotFound")
-      case _: AuthorisationException => (ClientOrAgentNotAuthorisedError.withStatus401, "ClientError")
-      case _: JsValidationException  => (BadRequestError, "ServerValidationError")
-      case _: HttpException          => (BadRequestError, "ServerValidationError")
+      case _: NotFoundException                                                  => (NotFoundError, "ResourceNotFound")
+      case _: AuthorisationException                                             => (ClientOrAgentNotAuthorisedError.withStatus401, "ClientError")
+      case _: JsValidationException                                              => (BadRequestError, "ServerValidationError")
+      case e: HttpException                                                      => (BadRequestError, "ServerValidationError")
+      case e: UpstreamErrorResponse if timeoutStatusCodes.contains(e.statusCode) => (GatewayTimeoutError, "ServerTimeoutError")
       case e: UpstreamErrorResponse if UpstreamErrorResponse.Upstream4xxResponse.unapply(e).isDefined =>
         (BadRequestError, "ServerValidationError")
       case e: UpstreamErrorResponse if UpstreamErrorResponse.Upstream5xxResponse.unapply(e).isDefined =>
