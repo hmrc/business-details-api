@@ -17,8 +17,6 @@
 package v2.retrieveBusinessDetails
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.hateoas.Method.GET
-import api.hateoas.{HateoasWrapper, Link, MockHateoasFactory}
 import api.models.domain.*
 import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
@@ -31,7 +29,7 @@ import routing.Version2
 import utils.MockIdGenerator
 import v2.retrieveBusinessDetails.model.request.RetrieveBusinessDetailsRequestData
 import v2.retrieveBusinessDetails.model.response.downstream.{LatencyDetails, LatencyIndicator, QuarterReportingType, QuarterTypeElection}
-import v2.retrieveBusinessDetails.model.response.{AccountingPeriod, RetrieveBusinessDetailsHateoasData, RetrieveBusinessDetailsResponse}
+import v2.retrieveBusinessDetails.model.response.{AccountingPeriod, RetrieveBusinessDetailsResponse}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -42,13 +40,11 @@ class RetrieveBusinessDetailsControllerSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockRetrieveBusinessDetailsService
-    with MockHateoasFactory
     with MockRetrieveBusinessDetailsValidatorFactory
     with MockIdGenerator
     with MockAppConfig {
 
-  private val businessId      = "XAIS12345678910"
-  private val testHateoasLink = Link(href = "/foo/bar", method = GET, rel = "test-relationship")
+  private val businessId = "XAIS12345678910"
 
   private val responseBody = Json.parse(
     """
@@ -84,14 +80,7 @@ class RetrieveBusinessDetailsControllerSpec
       |   "quarterlyTypeChoice": {
       |     "quarterlyPeriodType": "standard",
       |     "taxYearOfChoice": "2023-24"
-      |   },
-      |   "links": [
-      |     {
-      |       "href": "/foo/bar",
-      |       "method": "GET",
-      |       "rel": "test-relationship"
-      |     }
-      |   ]
+      |   }
       |}
         """.stripMargin
   )
@@ -134,10 +123,6 @@ class RetrieveBusinessDetailsControllerSpec
           .retrieveBusinessDetailsService(requestData)
           .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData))))
 
-        MockHateoasFactory
-          .wrap(responseData, RetrieveBusinessDetailsHateoasData(nino, businessId))
-          .returns(HateoasWrapper(responseData, Seq(testHateoasLink)))
-
         runOkTest(expectedStatus = OK, maybeExpectedResponseBody = Some(responseBody))
 
       }
@@ -169,7 +154,6 @@ class RetrieveBusinessDetailsControllerSpec
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockRetrieveBusinessDetailsValidatorFactory,
       service = mockRetrieveBusinessDetailsService,
-      hateoasFactory = mockHateoasFactory,
       cc = cc,
       idGenerator = mockIdGenerator
     )

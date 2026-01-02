@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,8 @@
 
 package v2.listAllBusinesses.model.response
 
-import api.hateoas.Method.GET
-import api.hateoas.{HateoasFactory, HateoasWrapper, Link}
 import api.models.domain.TypeOfBusiness
 import api.models.domain.TypeOfBusiness.*
-import config.MockAppConfig
 import play.api.libs.json.Json
 import support.UnitSpec
 import v2.retrieveBusinessDetails.model.response.downstream.{BusinessData, PropertyData, RetrieveBusinessDetailsDownstreamResponse}
@@ -162,30 +159,6 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
              |""".stripMargin)
         Json.toJson(model) shouldBe mtdJson
       }
-    }
-  }
-
-  "HateoasFactory" must {
-    class Test extends MockAppConfig {
-      val hateoasFactory = new HateoasFactory(mockAppConfig)
-      val nino           = "someNino"
-      MockedAppConfig.apiGatewayContext.returns("individuals/business/details").anyNumberOfTimes()
-    }
-
-    "expose the correct links for list" in new Test {
-      hateoasFactory.wrapList(
-        ListAllBusinessesResponse(Seq(Business(TypeOfBusiness.`self-employment`, "myid", None))),
-        ListAllBusinessesHateoasData(nino)) shouldBe
-        HateoasWrapper(
-          ListAllBusinessesResponse(
-            Seq(
-              HateoasWrapper(
-                Business(TypeOfBusiness.`self-employment`, "myid", None),
-                Seq(Link(s"/individuals/business/details/$nino/myid", GET, "retrieve-business-details"))))),
-          Seq(
-            Link(s"/individuals/business/details/$nino/list", GET, "self")
-          )
-        )
     }
   }
 

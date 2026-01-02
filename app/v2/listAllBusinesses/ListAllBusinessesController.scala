@@ -17,13 +17,10 @@
 package v2.listAllBusinesses
 
 import api.controllers.*
-import api.hateoas.HateoasFactory
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
 import config.AppConfig
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
-import v2.listAllBusinesses.model.response.ListAllBusinessesHateoasData
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
@@ -33,7 +30,6 @@ class ListAllBusinessesController @Inject() (
     val lookupService: MtdIdLookupService,
     service: ListAllBusinessesService,
     validatorFactory: ListAllBusinessDetailsValidatorFactory,
-    hateoasFactory: HateoasFactory,
     cc: ControllerComponents,
     idGenerator: IdGenerator
 )(implicit appConfig: AppConfig, ec: ExecutionContext)
@@ -54,8 +50,7 @@ class ListAllBusinessesController @Inject() (
         RequestHandler
           .withValidator(validator)
           .withService(service.listAllBusinessesService)
-          .withResultCreator(ResultCreator.hateoasListWrapping(hateoasFactory)((_, _) => ListAllBusinessesHateoasData(nino)))
-
+          .withPlainJsonResult()
       requestHandler.handleRequest()
     }
 

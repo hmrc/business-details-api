@@ -149,23 +149,9 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
         |    {
         |      "typeOfBusiness": "self-employment",
         |      "businessId": "XAIS12345678901",
-        |      "tradingName": "RCDTS",
-        |      "links": [
-        |        {
-        |          "href": "/individuals/business/details/AA123456A/XAIS12345678901",
-        |          "method": "GET",
-        |          "rel": "retrieve-business-details"
-        |        }
-        |      ]
+        |      "tradingName": "RCDTS"
         |    }
-        |  ],
-        |  "links": [
-        |    {
-        |      "href": "/individuals/business/details/AA123456A/list",
-        |      "method": "GET",
-        |      "rel": "self"
-        |    }
-        |  ]
+        |  ]   
         |}
       """.stripMargin
     )
@@ -176,21 +162,7 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
         |  "listOfBusinesses": [
         |    {
         |      "typeOfBusiness": "uk-property",
-        |      "businessId": "XPIS12345678901",
-        |      "links": [
-        |        {
-        |          "href": "/individuals/business/details/AA123456A/XPIS12345678901",
-        |          "method": "GET",
-        |          "rel": "retrieve-business-details"
-        |        }
-        |      ]
-        |    }
-        |  ],
-        |  "links": [
-        |    {
-        |      "href": "/individuals/business/details/AA123456A/list",
-        |      "method": "GET",
-        |      "rel": "self"
+        |      "businessId": "XPIS12345678901"
         |    }
         |  ]
         |}
@@ -204,32 +176,11 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
         |    {
         |      "typeOfBusiness": "self-employment",
         |      "businessId": "XAIS12345671111",
-        |      "tradingName": "RCDTS",
-        |      "links": [
-        |        {
-        |          "href": "/individuals/business/details/AA123456A/XAIS12345671111",
-        |          "method": "GET",
-        |          "rel": "retrieve-business-details"
-        |        }
-        |      ]
+        |      "tradingName": "RCDTS"
         |    },
         |    {
         |      "typeOfBusiness": "foreign-property",
-        |      "businessId": "XFIS12345678903",
-        |      "links": [
-        |        {
-        |          "href": "/individuals/business/details/AA123456A/XFIS12345678903",
-        |          "method": "GET",
-        |          "rel": "retrieve-business-details"
-        |        }
-        |      ]
-        |    }
-        |  ],
-        |  "links": [
-        |    {
-        |      "href": "/individuals/business/details/AA123456A/list",
-        |      "method": "GET",
-        |      "rel": "self"
+        |      "businessId": "XFIS12345678903"
         |    }
         |  ]
         |}

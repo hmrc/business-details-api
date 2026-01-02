@@ -17,7 +17,6 @@
 package v2.listAllBusinesses
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.hateoas.HateoasFactory
 import api.models.domain.{Nino, TypeOfBusiness}
 import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
@@ -51,21 +50,7 @@ class ListAllBusinessesControllerSpec
        |    {
        |      "typeOfBusiness": "self-employment",
        |      "businessId": "123456789012345",
-       |      "tradingName": "RCDTS",
-       |      "links": [
-       |        {
-       |          "href": "/individuals/business/details/$nino/123456789012345",
-       |          "method": "GET",
-       |          "rel": "retrieve-business-details"
-       |        }
-       |      ]
-       |    }
-       |  ],
-       |  "links": [
-       |    {
-       |      "href": "/individuals/business/details/$nino/list",
-       |      "method": "GET",
-       |      "rel": "self"
+       |      "tradingName": "RCDTS"
        |    }
        |  ]
        |}
@@ -114,7 +99,6 @@ class ListAllBusinessesControllerSpec
       lookupService = mockMtdIdLookupService,
       service = mockListAllBusinessesService,
       validatorFactory = mockListAllBusinessDetailsValidatorFactory,
-      hateoasFactory = new HateoasFactory(mockAppConfig),
       cc = cc,
       idGenerator = mockIdGenerator
     )

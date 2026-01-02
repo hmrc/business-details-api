@@ -89,7 +89,7 @@ class ErrorHandler @Inject() (config: Configuration, auditConnector: AuditConnec
       ex
     )
 
-    val NGINX_TIMEOUT = 499
+    val NGINX_TIMEOUT                = 499
     val timeoutStatusCodes: Set[Int] = Set(NGINX_TIMEOUT, GATEWAY_TIMEOUT)
 
     val (errorCode, eventType) = ex match {
