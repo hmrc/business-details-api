@@ -158,21 +158,7 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
         |    {
         |      "typeOfBusiness": "self-employment",
         |      "businessId": "123456789012345",
-        |      "tradingName": "RCDTS",
-        |      "links":[
-        |        {
-        |          "href":"/individuals/business/details/AA123456A/123456789012345",
-        |          "method":"GET",
-        |          "rel":"retrieve-business-details"
-        |        }
-        |      ]
-        |    }
-        |  ],
-        |  "links":[
-        |    {
-        |      "href":"/individuals/business/details/AA123456A/list",
-        |      "method":"GET",
-        |      "rel":"self"
+        |      "tradingName": "RCDTS"
         |    }
         |  ]
         |}
@@ -185,21 +171,7 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
         |  "listOfBusinesses":[
         |    {
         |      "typeOfBusiness": "uk-property",
-        |      "businessId": "098765432109876",
-        |      "links":[
-        |        {
-        |          "href":"/individuals/business/details/AA123456A/098765432109876",
-        |          "method":"GET",
-        |          "rel":"retrieve-business-details"
-        |        }
-        |      ]
-        |    }
-        |  ],
-        |  "links":[
-        |    {
-        |      "href":"/individuals/business/details/AA123456A/list",
-        |      "method":"GET",
-        |      "rel":"self"
+        |      "businessId": "098765432109876"
         |    }
         |  ]
         |}
@@ -213,32 +185,11 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
         |    {
         |      "typeOfBusiness": "self-employment",
         |      "businessId": "123456789012345",
-        |      "tradingName": "RCDTS",
-        |      "links":[
-        |        {
-        |          "href":"/individuals/business/details/AA123456A/123456789012345",
-        |          "method":"GET",
-        |          "rel":"retrieve-business-details"
-        |        }
-        |      ]
+        |      "tradingName": "RCDTS"
         |    },
         |    {
         |      "typeOfBusiness": "uk-property",
-        |      "businessId": "098765432109876",
-        |      "links":[
-        |        {
-        |          "href":"/individuals/business/details/AA123456A/098765432109876",
-        |          "method":"GET",
-        |          "rel":"retrieve-business-details"
-        |        }
-        |      ]
-        |    }
-        |  ],
-        |  "links":[
-        |    {
-        |      "href":"/individuals/business/details/AA123456A/list",
-        |      "method":"GET",
-        |      "rel":"self"
+        |      "businessId": "098765432109876"
         |    }
         |  ]
         |}

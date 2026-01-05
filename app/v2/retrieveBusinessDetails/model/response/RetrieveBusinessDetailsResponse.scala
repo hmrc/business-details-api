@@ -16,9 +16,8 @@
 
 package v2.retrieveBusinessDetails.model.response
 
-import api.hateoas.{HateoasData, HateoasLinks, HateoasLinksFactory, Link}
 import api.models.domain.{AccountingType, TypeOfBusiness}
-import config.{AppConfig, FeatureSwitches}
+import config.FeatureSwitches
 import play.api.libs.json.{Json, OWrites}
 import v2.retrieveBusinessDetails.model.response.downstream.{BusinessData, LatencyDetails, PropertyData, QuarterTypeElection}
 
@@ -41,21 +40,9 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            yearOfMigration: Option[String],
                                            quarterlyTypeChoice: Option[QuarterTypeElection])
 
-object RetrieveBusinessDetailsResponse extends HateoasLinks {
+object RetrieveBusinessDetailsResponse {
 
   implicit val writes: OWrites[RetrieveBusinessDetailsResponse] = Json.writes[RetrieveBusinessDetailsResponse]
-
-  implicit object RetrieveBusinessDetailsLinksFactory
-      extends HateoasLinksFactory[RetrieveBusinessDetailsResponse, RetrieveBusinessDetailsHateoasData] {
-
-    override def links(appConfig: AppConfig, data: RetrieveBusinessDetailsHateoasData): Seq[Link] = {
-      import data.*
-      List(
-        retrieveBusinessDetails(appConfig, nino, businessId)
-      )
-    }
-
-  }
 
   def fromBusinessData(businessData: BusinessData, yearOfMigration: Option[String])(implicit
       featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
@@ -114,5 +101,3 @@ object RetrieveBusinessDetailsResponse extends HateoasLinks {
   }
 
 }
-
-case class RetrieveBusinessDetailsHateoasData(nino: String, businessId: String) extends HateoasData

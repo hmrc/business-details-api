@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,10 @@
 package v2.retrieveBusinessDetails
 
 import api.controllers.{AuthorisedController, EndpointLogContext, RequestContext, RequestHandler}
-import api.hateoas.HateoasFactory
 import api.services.{EnrolmentsAuthService, MtdIdLookupService}
 import config.AppConfig
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
-import v2.retrieveBusinessDetails.model.response.RetrieveBusinessDetailsHateoasData
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
@@ -33,7 +30,6 @@ class RetrieveBusinessDetailsController @Inject() (
     val lookupService: MtdIdLookupService,
     service: RetrieveBusinessDetailsService,
     validatorFactory: RetrieveBusinessDetailsValidatorFactory,
-    hateoasFactory: HateoasFactory,
     cc: ControllerComponents,
     val idGenerator: IdGenerator
 )(implicit appConfig: AppConfig, ec: ExecutionContext)
@@ -54,7 +50,7 @@ class RetrieveBusinessDetailsController @Inject() (
         RequestHandler
           .withValidator(validator)
           .withService(service.retrieveBusinessDetailsService)
-          .withHateoasResult(hateoasFactory)(RetrieveBusinessDetailsHateoasData(nino, businessId))
+          .withPlainJsonResult(OK)
 
       requestHandler.handleRequest()
     }

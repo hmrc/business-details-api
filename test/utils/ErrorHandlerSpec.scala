@@ -140,7 +140,7 @@ class ErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite {
         contentAsJson(result) shouldBe InternalError.asJson
       }
     }
-    
+
     "return GATEWAY_TIMEOUT with error body" when {
       Seq(499, GATEWAY_TIMEOUT).foreach { statusCode =>
         s"a $statusCode UpstreamErrorResponse is returned" in new Test {

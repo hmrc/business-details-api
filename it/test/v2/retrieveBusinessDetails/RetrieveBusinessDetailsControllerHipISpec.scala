@@ -374,14 +374,7 @@ class RetrieveBusinessDetailsControllerHipISpec extends IntegrationBaseSpec {
         |  "quarterlyTypeChoice": {
         |    "quarterlyPeriodType": "standard",
         |    "taxYearOfChoice": "2022-23"
-        |  },
-        |  "links": [
-        |    {
-        |      "href": "/individuals/business/details/$nino/$businessId",
-        |      "method": "GET",
-        |      "rel": "self"
-        |    }
-        |  ]
+        |  }
         |}
       """.stripMargin
     )

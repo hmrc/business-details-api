@@ -16,8 +16,6 @@
 
 package v2.retrieveBusinessDetails.model.response
 
-import api.hateoas.Link
-import api.hateoas.Method.GET
 import api.models.domain.{AccountingType, TaxYear, TypeOfBusiness}
 import config.{MockAppConfig, MockFeatureSwitches}
 import play.api.libs.json.Json
@@ -283,21 +281,6 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
 
         RetrieveBusinessDetailsResponse.fromBusinessData(businessData(cashOrAccruals = None), yearOfMigration) shouldBe
           businessResponse(cashOrAccruals = None)
-      }
-    }
-  }
-
-  "LinksFactory" should {
-    "expose the correct links" when {
-      "called" in {
-        val nino       = "mynino"
-        val businessId = "myid"
-        MockedAppConfig.apiGatewayContext.returns("individuals/business/details").anyNumberOfTimes()
-        RetrieveBusinessDetailsResponse.RetrieveBusinessDetailsLinksFactory
-          .links(mockAppConfig, RetrieveBusinessDetailsHateoasData(nino, businessId)) shouldBe Seq(
-          Link(s"/individuals/business/details/$nino/$businessId", GET, "self")
-        )
-
       }
     }
   }
