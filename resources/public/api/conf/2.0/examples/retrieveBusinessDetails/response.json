@@ -34,12 +34,5 @@
   "businessAddressLineThree": "Greater London",
   "businessAddressLineFour": "United Kingdom",
   "businessAddressPostcode": "M1 1AG",
-  "businessAddressCountryCode": "GB",
-  "links": [
-    {
-      "href": "/individuals/business/details/ET009363D/XAIS12345678910",
-      "method": "GET",
-      "rel": "self"
-    }
-  ]
+  "businessAddressCountryCode": "GB"
 }
