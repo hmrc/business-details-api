@@ -26,7 +26,8 @@ import javax.inject.Singleton
 @Singleton
 class CreateUpdatePeriodsOfAccountValidatorFactory {
 
-  def validator(nino: String, businessId: String, taxYear: String, body: JsValue)(implicit appConfig: AppConfig): Validator[CreateUpdatePeriodsOfAccountRequest] =
+  def validator(nino: String, businessId: String, taxYear: String, body: JsValue)(implicit
+      appConfig: AppConfig): Validator[CreateUpdatePeriodsOfAccountRequest] =
     new CreateUpdatePeriodsOfAccountValidator(nino, businessId, taxYear, body)
 
 }

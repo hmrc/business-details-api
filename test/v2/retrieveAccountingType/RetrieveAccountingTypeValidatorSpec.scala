@@ -28,12 +28,12 @@ class RetrieveAccountingTypeValidatorSpec extends UnitSpec {
   private val nino       = "AA123456A"
   private val businessId = "X0IS12345678901"
   private val taxYear    = "2023-24"
-  
+
   private def validator(nino: String, businessId: String, taxYear: String) =
     new RetrieveAccountingTypeValidator(nino, businessId, taxYear)
 
   "validator" should {
-    List("2022-23", "2023-24", "2024-25").foreach {taxYear =>
+    List("2022-23", "2023-24", "2024-25").foreach { taxYear =>
       "return the parsed domain object" when {
         s"given a valid request for taxYear $taxYear" in {
           val result: Either[ErrorWrapper, RetrieveAccountingTypeRequest] = validator(nino, businessId, taxYear).validateAndWrapResult()
@@ -47,25 +47,25 @@ class RetrieveAccountingTypeValidatorSpec extends UnitSpec {
   "return a single error" when {
     "passed an invalid nino" in {
       val result: Either[ErrorWrapper, RetrieveAccountingTypeRequest] = validator("invalid", businessId, taxYear).validateAndWrapResult()
-      
+
       result shouldBe Left(ErrorWrapper(correlationId, NinoFormatError))
     }
 
     "passed an invalid business id" in {
       val result: Either[ErrorWrapper, RetrieveAccountingTypeRequest] = validator(nino, "invalid", taxYear).validateAndWrapResult()
-      
+
       result shouldBe Left(ErrorWrapper(correlationId, BusinessIdFormatError))
     }
 
     "passed an invalid tax year" in {
       val result: Either[ErrorWrapper, RetrieveAccountingTypeRequest] = validator(nino, businessId, "invalid").validateAndWrapResult()
-      
+
       result shouldBe Left(ErrorWrapper(correlationId, TaxYearFormatError))
     }
 
     "passed an invalid range tax year" in {
       val result: Either[ErrorWrapper, RetrieveAccountingTypeRequest] = validator(nino, businessId, "2024-26").validateAndWrapResult()
-      
+
       result shouldBe Left(ErrorWrapper(correlationId, RuleTaxYearRangeInvalidError))
     }
   }

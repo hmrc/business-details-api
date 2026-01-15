@@ -25,7 +25,7 @@ class RetrieveAccountingTypeValidatorFactorySpec extends UnitSpec {
   private val nino       = "AA123456A"
   private val businessId = "X0IS12345678901"
   private val taxYear    = "2024-25"
-  
+
   private val validatorFactory = new RetrieveAccountingTypeValidatorFactory
 
   "validator()" when {

@@ -80,22 +80,22 @@ object RuleQuarterlyPeriodUpdatingError
     )
 
 object RuleNoAccountingDateFoundError
-  extends MtdError(
-    "RULE_NO_ACCOUNTING_DATE_FOUND",
-    "Cannot disapply LADR. No Accounting Date found between 31 March and 4 April inclusive",
-    UNPROCESSABLE_ENTITY
-  )
+    extends MtdError(
+      "RULE_NO_ACCOUNTING_DATE_FOUND",
+      "Cannot disapply LADR. No Accounting Date found between 31 March and 4 April inclusive",
+      UNPROCESSABLE_ENTITY
+    )
 
 object RuleElectionPeriodNotExpiredError
-  extends MtdError(
-    "RULE_ELECTION_PERIOD_NOT_EXPIRED",
-    "Cannot change LADR disapplication. Existing status has not expired",
-    UNPROCESSABLE_ENTITY
-  )
+    extends MtdError(
+      "RULE_ELECTION_PERIOD_NOT_EXPIRED",
+      "Cannot change LADR disapplication. Existing status has not expired",
+      UNPROCESSABLE_ENTITY
+    )
 
 object RuleTypeOfBusinessIncorrectError
-  extends MtdError(
-    "RULE_TYPE_OF_BUSINESS_INCORRECT",
-    "The businessId is not for a self-employment business",
-    UNPROCESSABLE_ENTITY
-  )
+    extends MtdError(
+      "RULE_TYPE_OF_BUSINESS_INCORRECT",
+      "The businessId is not for a self-employment business",
+      UNPROCESSABLE_ENTITY
+    )

@@ -27,7 +27,7 @@ object CreateAmendQuarterlyPeriodTypeRequestBody extends JsonWritesUtil {
 
   implicit def writes(implicit appConfig: AppConfig): OWrites[CreateAmendQuarterlyPeriodTypeRequestBody] = writesFrom {
     case a: Def1_CreateAmendQuarterlyPeriodTypeRequestBody =>
-    Json.toJson(a).as[JsObject]
+      Json.toJson(a).as[JsObject]
   }
 
 }

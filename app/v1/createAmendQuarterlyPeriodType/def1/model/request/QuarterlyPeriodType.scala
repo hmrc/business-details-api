@@ -33,12 +33,12 @@ object QuarterlyPeriodType {
   val parser: PartialFunction[String, QuarterlyPeriodType] = Enums.parser[QuarterlyPeriodType]
 
   case object `standard` extends QuarterlyPeriodType {
-    val asDownstream: String = "Standard"
+    val asDownstream: String    = "Standard"
     val asHipDownstream: String = "STANDARD"
   }
 
   case object `calendar` extends QuarterlyPeriodType {
-    val asDownstream: String = "Calendar"
+    val asDownstream: String    = "Calendar"
     val asHipDownstream: String = "CALENDAR"
   }
 

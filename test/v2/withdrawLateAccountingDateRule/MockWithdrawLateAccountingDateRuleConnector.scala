@@ -42,5 +42,7 @@ trait MockWithdrawLateAccountingDateRuleConnector extends TestSuite with MockFac
         )
         .expects(request, *, *, *)
     }
+
   }
+
 }

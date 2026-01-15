@@ -29,9 +29,9 @@ class UpdateAccountingTypeValidatorSpec extends UnitSpec with JsonErrorValidator
 
   private implicit val correlationId: String = "1234"
 
-  private val validNino: String = "AA123456A"
+  private val validNino: String       = "AA123456A"
   private val validBusinessId: String = "X0IS12345678901"
-  private val validTaxYear: String = "2024-25"
+  private val validTaxYear: String    = "2024-25"
 
   private val parsedNino: Nino             = Nino(validNino)
   private val parsedBusinessId: BusinessId = BusinessId(validBusinessId)

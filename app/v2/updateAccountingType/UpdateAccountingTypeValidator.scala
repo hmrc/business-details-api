@@ -26,11 +26,8 @@ import config.AppConfig
 import play.api.libs.json.JsValue
 import v2.updateAccountingType.model.request._
 
-class UpdateAccountingTypeValidator(nino: String,
-                                    businessId: String,
-                                    taxYear: String,
-                                    body: JsValue,
-                                    temporalValidationEnabled: Boolean)(implicit appConfig: AppConfig)
+class UpdateAccountingTypeValidator(nino: String, businessId: String, taxYear: String, body: JsValue, temporalValidationEnabled: Boolean)(implicit
+    appConfig: AppConfig)
     extends Validator[UpdateAccountingTypeRequestData] {
 
   private val resolveJson: ResolveNonEmptyJsonObject[UpdateAccountingTypeRequestBody] =
