@@ -66,7 +66,6 @@ class RetrieveBusinessDetailsControllerIfsISpec extends IntegrationBaseSpec {
             |      "emailAddress": "stephen@manncorpone.co.uk"
             |    },
             |    "tradingStartDate": "2001-01-01",
-            |    "cashOrAccruals": false,
             |    "seasonal": true,
             |    "cessationDate": "2001-01-01",
             |    "cessationReason": "002",
@@ -135,7 +134,6 @@ class RetrieveBusinessDetailsControllerIfsISpec extends IntegrationBaseSpec {
             |      "emailAddress": "stephen@manncorpone.co.uk"
             |    },
             |    "tradingStartDate": "2001-01-01",
-            |    "cashOrAccruals": false,
             |    "seasonal": true,
             |    "cessationDate": "2001-01-01",
             |    "cessationReason": "002",
@@ -175,7 +173,6 @@ class RetrieveBusinessDetailsControllerIfsISpec extends IntegrationBaseSpec {
             |      "emailAddress": "stephen@manncorpone.co.uk"
             |    },
             |    "tradingStartDate": "2001-01-01",
-            |    "cashOrAccruals": false,
             |    "seasonal": true,
             |    "cessationDate": "2001-01-01",
             |    "cessationReason": "002",
@@ -187,7 +184,6 @@ class RetrieveBusinessDetailsControllerIfsISpec extends IntegrationBaseSpec {
             |    "accountingPeriodStartDate": "2019-04-06",
             |    "accountingPeriodEndDate": "2020-04-05",
             |    "tradingStartDate": "2017-07-24",
-            |    "cashOrAccruals": true,
             |    "numPropRented": 0,
             |    "numPropRentedUK": 0,
             |    "numPropRentedEEA": 5,
@@ -304,7 +300,6 @@ class RetrieveBusinessDetailsControllerIfsISpec extends IntegrationBaseSpec {
          |       "end": "2001-01-01"
          |     }
          |   ],
-         |   "accountingType": "CASH",
          |   "commencementDate": "2001-01-01",
          |   "cessationDate": "2001-01-01",
          |   "businessAddressLineOne": "100 SuttonStreet",

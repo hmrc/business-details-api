@@ -58,7 +58,6 @@ class RetrieveBusinessDetailsControllerSpec
       |       "end": "2019-04-05"
       |     }
       |   ],
-      |   "accountingType": "ACCRUALS",
       |   "commencementDate": "2016-09-24",
       |   "cessationDate": "2020-03-24",
       |   "businessAddressLineOne": "6 Harpic Drive",
@@ -86,30 +85,29 @@ class RetrieveBusinessDetailsControllerSpec
   )
 
   private val responseData = RetrieveBusinessDetailsResponse(
-    "XAIS12345678910",
-    TypeOfBusiness.`self-employment`,
-    Some("Aardvark Window Cleaning Services"),
-    Some(Seq(AccountingPeriod("2018-04-06", "2019-04-05"))),
-    Some(AccountingType.ACCRUALS),
-    Some("2016-09-24"),
-    Some("2020-03-24"),
-    Some("6 Harpic Drive"),
-    Some("Domestos Wood"),
-    Some("ToiletDucktown"),
-    Some("CIFSHIRE"),
-    Some("SW4F 3GA"),
-    Some("GB"),
-    Some("2018-04-06"),
-    Some("2018-12-12"),
-    Some(
+    businessId = "XAIS12345678910",
+    typeOfBusiness = TypeOfBusiness.`self-employment`,
+    tradingName = Some("Aardvark Window Cleaning Services"),
+    accountingPeriods = Some(Seq(AccountingPeriod("2018-04-06", "2019-04-05"))),
+    commencementDate = Some("2016-09-24"),
+    cessationDate = Some("2020-03-24"),
+    businessAddressLineOne = Some("6 Harpic Drive"),
+    businessAddressLineTwo = Some("Domestos Wood"),
+    businessAddressLineThree = Some("ToiletDucktown"),
+    businessAddressLineFour = Some("CIFSHIRE"),
+    businessAddressPostcode = Some("SW4F 3GA"),
+    businessAddressCountryCode = Some("GB"),
+    firstAccountingPeriodStartDate = Some("2018-04-06"),
+    firstAccountingPeriodEndDate = Some("2018-12-12"),
+    latencyDetails = Some(
       LatencyDetails(
         "2018-12-12",
         TaxYear.fromDownstream("2018"),
         LatencyIndicator.Annual,
         TaxYear.fromDownstream("2019"),
         LatencyIndicator.Quarterly)),
-    Some("2023"),
-    Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromMtd("2023-24")))
+    yearOfMigration = Some("2023"),
+    quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromMtd("2023-24")))
   )
 
   private val requestData = RetrieveBusinessDetailsRequestData(Nino(nino), BusinessId(businessId))

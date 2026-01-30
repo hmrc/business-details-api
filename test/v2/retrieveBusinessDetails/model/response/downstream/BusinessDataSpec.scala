@@ -16,13 +16,13 @@
 
 package v2.retrieveBusinessDetails.model.response.downstream
 
-import api.models.domain.{AccountingType, TaxYear}
+import api.models.domain.TaxYear
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 
 class BusinessDataSpec extends UnitSpec {
 
-  private def model(accountingType: AccountingType) = BusinessData(
+  private val model = BusinessData(
     incomeSourceId = "XAIS12345678910",
     tradingName = Some("RCDTS"),
     accountingPeriodStartDate = "2001-01-01",
@@ -36,7 +36,6 @@ class BusinessDataSpec extends UnitSpec {
         LatencyIndicator.Annual,
         TaxYear.fromDownstream("2019"),
         LatencyIndicator.Quarterly)),
-    cashOrAccruals = Some(accountingType),
     tradingStartDate = Some("2001-01-01"),
     cessationDate = Some("2001-01-01"),
     businessAddressDetails = Some(
@@ -51,11 +50,10 @@ class BusinessDataSpec extends UnitSpec {
     quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2023")))
   )
 
-  def json(cashOrAccrualsFlag: Boolean, isHip: Boolean): JsValue = {
+  def json(isHip: Boolean): JsValue = {
     val accPeriodStartDateField: String = if (isHip) "accPeriodSDate" else "accountingPeriodStartDate"
     val accPeriodEndDateField: String   = if (isHip) "accPeriodEDate" else "accountingPeriodEndDate"
     val tradingStartDateField: String   = if (isHip) "tradingSDate" else "tradingStartDate"
-    val cashOrAccrualsField: String     = if (isHip) "cashOrAccrualsFlag" else "cashOrAccruals"
 
     Json.parse(
       s"""
@@ -84,7 +82,6 @@ class BusinessDataSpec extends UnitSpec {
         |    "emailAddress": "stephen@manncorpone.co.uk"
         |  },
         |  "$tradingStartDateField": "2001-01-01",
-        |  "$cashOrAccrualsField": $cashOrAccrualsFlag,
         |  "seasonal": true,
         |  "cessationDate": "2001-01-01",
         |  "cessationReason": "002",
@@ -101,109 +98,11 @@ class BusinessDataSpec extends UnitSpec {
   "BusinessData" when {
     "read from JSON" must {
       Seq(
-        (AccountingType.ACCRUALS, true),
-        (AccountingType.CASH, false)
-      ).foreach { case (accountingType, flagValue) =>
-        Seq(
-          ("HIP", true, "cashOrAccrualsFlag"),
-          ("IFS", false, "cashOrAccruals")
-        ).foreach { case (downstreamName, isHip, flagName) =>
-          s"work when accountingType is $accountingType, $flagName is $flagValue and downstream is $downstreamName" in {
-            json(
-              cashOrAccrualsFlag = flagValue,
-              isHip = isHip
-            ).as[BusinessData] shouldBe model(accountingType = accountingType)
-          }
-        }
-      }
-
-      "work for accountingType" when {
-        def data(accountingType: Option[AccountingType]): BusinessData =
-          BusinessData(
-            incomeSourceId = "XAIS12345678910",
-            tradingName = None,
-            accountingPeriodStartDate = "2001-01-01",
-            accountingPeriodEndDate = "2001-01-02",
-            firstAccountingPeriodStartDate = None,
-            firstAccountingPeriodEndDate = None,
-            latencyDetails = None,
-            cashOrAccruals = accountingType,
-            tradingStartDate = None,
-            cessationDate = None,
-            businessAddressDetails = None,
-            quarterTypeElection = None
-          )
-
-        "using IFS (which has boolean cashOrAccruals)" when {
-          def json(cashOrAccruals: Boolean): JsValue =
-            Json.parse(
-              s"""
-                |{
-                |  "incomeSourceId": "XAIS12345678910",
-                |  "accountingPeriodStartDate": "2001-01-01",
-                |  "accountingPeriodEndDate": "2001-01-02",
-                |  "cashOrAccruals": $cashOrAccruals
-                |}
-              """.stripMargin
-            )
-
-          "field is true (accruals)" in {
-            json(true).as[BusinessData] shouldBe data(Some(AccountingType.ACCRUALS))
-          }
-
-          "field is false (cash)" in {
-            json(false).as[BusinessData] shouldBe data(Some(AccountingType.CASH))
-          }
-
-          "field is missing" in {
-            Json
-              .parse(
-                """
-                  |{
-                  |  "incomeSourceId": "XAIS12345678910",
-                  |  "accountingPeriodStartDate": "2001-01-01",
-                  |  "accountingPeriodEndDate": "2001-01-02"
-                  |}
-                """.stripMargin
-              )
-              .as[BusinessData] shouldBe data(None)
-          }
-        }
-
-        "using DES (which has string cashOrAccruals)" when {
-          def json(cashOrAccruals: String): JsValue =
-            Json.parse(
-              s"""
-                |{
-                |  "incomeSourceId": "XAIS12345678910",
-                |  "accountingPeriodStartDate": "2001-01-01",
-                |  "accountingPeriodEndDate": "2001-01-02",
-                |  "cashOrAccruals": "$cashOrAccruals"
-                |}
-              """.stripMargin
-            )
-
-          "field is accruals" in {
-            json("accruals").as[BusinessData] shouldBe data(Some(AccountingType.ACCRUALS))
-          }
-
-          "field is cash" in {
-            json("cash").as[BusinessData] shouldBe data(Some(AccountingType.CASH))
-          }
-        }
-
-        "field is absent" in {
-          Json
-            .parse(
-              """
-                |{
-                |  "incomeSourceId": "XAIS12345678910",
-                |  "accountingPeriodStartDate": "2001-01-01",
-                |  "accountingPeriodEndDate": "2001-01-02"
-                |}
-              """.stripMargin
-            )
-            .as[BusinessData] shouldBe data(None)
+        ("HIP", true),
+        ("IFS", false)
+      ).foreach { case (downstreamName, isHip) =>
+        s"work when downstream is $downstreamName" in {
+          json(isHip = isHip).as[BusinessData] shouldBe model
         }
       }
     }

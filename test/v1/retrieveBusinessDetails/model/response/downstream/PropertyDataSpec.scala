@@ -16,13 +16,13 @@
 
 package v1.retrieveBusinessDetails.model.response.downstream
 
-import api.models.domain.{AccountingType, TaxYear, TypeOfBusiness}
+import api.models.domain.{TaxYear, TypeOfBusiness}
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
 
 class PropertyDataSpec extends UnitSpec {
 
-  private def model(typeOfBusiness: TypeOfBusiness, accountingType: AccountingType) = PropertyData(
+  private def model(typeOfBusiness: TypeOfBusiness) = PropertyData(
     incomeSourceType = Some(typeOfBusiness),
     incomeSourceId = "X0IS123456789012",
     accountingPeriodStartDate = "2019-04-06",
@@ -36,17 +36,15 @@ class PropertyDataSpec extends UnitSpec {
         LatencyIndicator.Annual,
         TaxYear.fromDownstream("2019"),
         LatencyIndicator.Quarterly)),
-    cashOrAccruals = Some(accountingType),
     tradingStartDate = Some("2017-07-24"),
     cessationDate = Some("2020-01-01"),
     quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2023")))
   )
 
-  def json(incomeSourceType: String, cashOrAccrualsFlag: Boolean, isHip: Boolean): JsValue = {
+  def json(incomeSourceType: String, isHip: Boolean): JsValue = {
     val accPeriodStartDateField: String = if (isHip) "accPeriodSDate" else "accountingPeriodStartDate"
     val accPeriodEndDateField: String   = if (isHip) "accPeriodEDate" else "accountingPeriodEndDate"
     val tradingStartDateField: String   = if (isHip) "tradingSDate" else "tradingStartDate"
-    val cashOrAccrualsField: String     = if (isHip) "cashOrAccrualsFlag" else "cashOrAccruals"
 
     Json.parse(
       s"""
@@ -65,7 +63,6 @@ class PropertyDataSpec extends UnitSpec {
         |    "latencyIndicator2": "Q",
         |    "latencyEndDate": "2018-12-12"
         |  },
-        |  "$cashOrAccrualsField": $cashOrAccrualsFlag,
         |  "numPropRented": 0,
         |  "numPropRentedUK": 0,
         |  "numPropRentedEEA": 5,
@@ -87,110 +84,20 @@ class PropertyDataSpec extends UnitSpec {
   "PropertyData" when {
     "read from JSON" must {
       Seq(
-        (TypeOfBusiness.`uk-property`, AccountingType.ACCRUALS, true, "02", "uk-property"),
-        (TypeOfBusiness.`foreign-property`, AccountingType.CASH, false, "03", "foreign-property")
-      ).foreach { case (typeOfBusiness, accountingType, flagValue, hipIncomeSourceType, ifsIncomeSourceType) =>
+        (TypeOfBusiness.`uk-property`, "02", "uk-property"),
+        (TypeOfBusiness.`foreign-property`, "03", "foreign-property")
+      ).foreach { case (typeOfBusiness, hipIncomeSourceType, ifsIncomeSourceType) =>
         Seq(
-          ("HIP", true, hipIncomeSourceType, "cashOrAccrualsFlag"),
-          ("IFS", false, ifsIncomeSourceType, "cashOrAccruals")
-        ).foreach { case (downstreamName, isHip, incomeSourceType, flagName) =>
-          s"work when typeOfBusiness is $typeOfBusiness, accountingType is $accountingType, $flagName is $flagValue, " +
+          ("HIP", true, hipIncomeSourceType),
+          ("IFS", false, ifsIncomeSourceType)
+        ).foreach { case (downstreamName, isHip, incomeSourceType) =>
+          s"work when typeOfBusiness is $typeOfBusiness " +
             s"incomeSourceType is $incomeSourceType and downstream is $downstreamName" in {
               json(
                 incomeSourceType = incomeSourceType,
-                cashOrAccrualsFlag = flagValue,
                 isHip = isHip
-              ).as[PropertyData] shouldBe model(typeOfBusiness = typeOfBusiness, accountingType = accountingType)
+              ).as[PropertyData] shouldBe model(typeOfBusiness = typeOfBusiness)
             }
-        }
-      }
-
-      "work for accountingType" when {
-        def data(accountingType: Option[AccountingType]): PropertyData =
-          PropertyData(
-            incomeSourceType = None,
-            incomeSourceId = "XAIS12345678910",
-            accountingPeriodStartDate = "2001-01-01",
-            accountingPeriodEndDate = "2001-01-02",
-            firstAccountingPeriodStartDate = None,
-            firstAccountingPeriodEndDate = None,
-            latencyDetails = None,
-            cashOrAccruals = accountingType,
-            tradingStartDate = None,
-            cessationDate = None,
-            quarterTypeElection = None
-          )
-
-        "using IFS (which has boolean cashOrAccruals)" when {
-          def json(cashOrAccruals: Boolean): JsValue =
-            Json.parse(
-              s"""
-                |{
-                |  "incomeSourceId": "XAIS12345678910",
-                |  "accountingPeriodStartDate": "2001-01-01",
-                |  "accountingPeriodEndDate": "2001-01-02",
-                |  "cashOrAccruals": $cashOrAccruals
-                |}
-              """.stripMargin
-            )
-
-          "field is true (accruals)" in {
-            json(true).as[PropertyData] shouldBe data(Some(AccountingType.ACCRUALS))
-          }
-
-          "field is false (cash)" in {
-            json(false).as[PropertyData] shouldBe data(Some(AccountingType.CASH))
-          }
-
-          "field is missing" in {
-            Json
-              .parse(
-                """
-                  |{
-                  |  "incomeSourceId": "XAIS12345678910",
-                  |  "accountingPeriodStartDate": "2001-01-01",
-                  |  "accountingPeriodEndDate": "2001-01-02"
-                  |}
-                """.stripMargin
-              )
-              .as[PropertyData] shouldBe data(None)
-          }
-        }
-
-        "using DES (which has boolean cashOrAccrualsFlag)" when {
-          def json(cashOrAccrualsFlag: Boolean): JsValue =
-            Json.parse(
-              s"""
-                |{
-                |  "incomeSourceId": "XAIS12345678910",
-                |  "accountingPeriodStartDate": "2001-01-01",
-                |  "accountingPeriodEndDate": "2001-01-02",
-                |  "cashOrAccrualsFlag": $cashOrAccrualsFlag
-                |}
-              """.stripMargin
-            )
-
-          "field is true (accruals)" in {
-            json(true).as[PropertyData] shouldBe data(Some(AccountingType.ACCRUALS))
-          }
-
-          "field is false (cash)" in {
-            json(false).as[PropertyData] shouldBe data(Some(AccountingType.CASH))
-          }
-        }
-
-        "field is absent" in {
-          Json
-            .parse(
-              """
-                |{
-                |  "incomeSourceId": "XAIS12345678910",
-                |  "accountingPeriodStartDate": "2001-01-01",
-                |  "accountingPeriodEndDate": "2001-01-02"
-                |}
-              """.stripMargin
-            )
-            .as[PropertyData] shouldBe data(None)
         }
       }
     }

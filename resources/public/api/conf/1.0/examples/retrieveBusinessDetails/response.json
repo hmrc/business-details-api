@@ -26,7 +26,6 @@
     "taxYearOfChoice": "2023-24"
   },
   {{/if}}
-  "accountingType": "ACCRUALS",
   "commencementDate": "2023-04-06",
   "cessationDate": "2024-04-05",
   "businessAddressLineOne": "1 Acme Rd.",

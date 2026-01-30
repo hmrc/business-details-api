@@ -16,7 +16,7 @@
 
 package v2.retrieveBusinessDetails.model.response
 
-import api.models.domain.{AccountingType, TypeOfBusiness}
+import api.models.domain.TypeOfBusiness
 import config.FeatureSwitches
 import play.api.libs.json.{Json, OWrites}
 import v2.retrieveBusinessDetails.model.response.downstream.{BusinessData, LatencyDetails, PropertyData, QuarterTypeElection}
@@ -25,7 +25,6 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,
                                            tradingName: Option[String],
                                            accountingPeriods: Option[Seq[AccountingPeriod]],
-                                           accountingType: Option[AccountingType],
                                            commencementDate: Option[String],
                                            cessationDate: Option[String],
                                            businessAddressLineOne: Option[String],
@@ -53,7 +52,6 @@ object RetrieveBusinessDetailsResponse {
       typeOfBusiness = TypeOfBusiness.`self-employment`,
       tradingName = tradingName,
       accountingPeriods = Some(Seq(AccountingPeriod(accountingPeriodStartDate, accountingPeriodEndDate))),
-      accountingType = cashOrAccruals.orElse(defaultAccountingType),
       commencementDate = tradingStartDate,
       cessationDate = cessationDate,
       businessAddressLineOne = businessAddressDetails.map(_.addressLine1),
@@ -79,7 +77,6 @@ object RetrieveBusinessDetailsResponse {
       typeOfBusiness = incomeSourceType.getOrElse(TypeOfBusiness.`property-unspecified`),
       tradingName = None,
       accountingPeriods = Some(Seq(AccountingPeriod(accountingPeriodStartDate, accountingPeriodEndDate))),
-      accountingType = cashOrAccruals.orElse(defaultAccountingType),
       commencementDate = tradingStartDate,
       cessationDate = cessationDate,
       businessAddressLineOne = None,
@@ -94,10 +91,6 @@ object RetrieveBusinessDetailsResponse {
       yearOfMigration: Option[String],
       quarterlyTypeChoice = quarterTypeElection
     )
-  }
-
-  private def defaultAccountingType(implicit featureSwitches: FeatureSwitches) = {
-    if (featureSwitches.isIfsEnabled) Some(AccountingType.CASH) else None
   }
 
 }

@@ -226,7 +226,6 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
         |         "emailAddress": "stephen@manncorpone.co.uk"
         |       },
         |       "tradingStartDate": "2001-01-01",
-        |       "cashOrAccruals": false,
         |       "seasonal": true,
         |       "cessationDate": "2001-01-01",
         |       "cessationReason": "002",
@@ -254,7 +253,6 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
         |       "accountingPeriodStartDate": "2001-01-01",
         |       "accountingPeriodEndDate": "2001-01-01",
         |       "tradingStartDate": "2001-01-01",
-        |       "cashOrAccruals": true,
         |       "numPropRented": 0,
         |       "numPropRentedUK": 0,
         |       "numPropRentedEEA": 5,
@@ -301,7 +299,6 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
         |         "emailAddress": "stephen@manncorpone.co.uk"
         |       },
         |       "tradingStartDate": "2001-01-01",
-        |       "cashOrAccruals": false,
         |       "seasonal": true,
         |       "cessationDate": "2001-01-01",
         |       "cessationReason": "002",
@@ -315,7 +312,6 @@ class ListAllBusinessesControllerIfsISpec extends IntegrationBaseSpec {
         |       "accountingPeriodStartDate": "2001-01-01",
         |       "accountingPeriodEndDate": "2001-01-01",
         |       "tradingStartDate": "2001-01-01",
-        |       "cashOrAccruals": true,
         |       "numPropRented": 0,
         |       "numPropRentedUK": 0,
         |       "numPropRentedEEA": 5,
