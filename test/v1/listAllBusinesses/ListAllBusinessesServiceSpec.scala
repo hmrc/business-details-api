@@ -47,7 +47,6 @@ class ListAllBusinessesServiceSpec extends ServiceSpec {
               firstAccountingPeriodStartDate = None,
               firstAccountingPeriodEndDate = None,
               latencyDetails = None,
-              cashOrAccruals = None,
               tradingStartDate = None,
               cessationDate = None,
               quarterTypeElection = None

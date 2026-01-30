@@ -352,7 +352,6 @@ class RetrieveBusinessDetailsControllerHipISpec extends IntegrationBaseSpec {
         |      "end": "2001-01-01"
         |    }
         |  ],
-        |  "accountingType": "CASH",
         |  "commencementDate": "2001-01-01",
         |  "cessationDate": "2001-01-01",
         |  "businessAddressLineOne": "100 SuttonStreet",

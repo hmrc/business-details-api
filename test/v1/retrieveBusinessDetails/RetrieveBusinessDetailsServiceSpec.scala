@@ -33,7 +33,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
 
   private def requestDataFor(businessId: String) = RetrieveBusinessDetailsRequestData(nino, BusinessId(businessId))
 
-  private val cashOrAcruals   = Some(AccountingType.ACCRUALS)
   private val yearOfMigration = Some("migrationYear")
 
   private def propertyData(incomeSourceId: String) =
@@ -45,7 +44,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
       firstAccountingPeriodStartDate = None,
       firstAccountingPeriodEndDate = None,
       latencyDetails = None,
-      cashOrAccruals = cashOrAcruals,
       tradingStartDate = None,
       cessationDate = None,
       quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.`CALENDAR`, TaxYear.fromMtd("2023-24")))
@@ -56,7 +54,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     typeOfBusiness = TypeOfBusiness.`foreign-property`,
     tradingName = None,
     accountingPeriods = List(AccountingPeriod("accStartDate", "accEndDate")),
-    accountingType = cashOrAcruals,
     commencementDate = None,
     cessationDate = None,
     businessAddressLineOne = None,
@@ -82,7 +79,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
       firstAccountingPeriodStartDate = None,
       firstAccountingPeriodEndDate = None,
       latencyDetails = None,
-      cashOrAccruals = cashOrAcruals,
       tradingStartDate = None,
       cessationDate = None,
       quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.`CALENDAR`, TaxYear.fromMtd("2023-24")))
@@ -93,7 +89,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     typeOfBusiness = TypeOfBusiness.`self-employment`,
     tradingName = None,
     accountingPeriods = List(AccountingPeriod("accStartDate", "accEndDate")),
-    accountingType = cashOrAcruals,
     commencementDate = None,
     cessationDate = None,
     businessAddressLineOne = None,

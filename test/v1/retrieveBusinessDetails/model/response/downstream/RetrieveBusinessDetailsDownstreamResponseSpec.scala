@@ -16,7 +16,7 @@
 
 package v1.retrieveBusinessDetails.model.response.downstream
 
-import api.models.domain.{AccountingType, TaxYear}
+import api.models.domain.TaxYear
 import play.api.libs.json.Json
 import support.UnitSpec
 
@@ -62,7 +62,7 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 firstAccountingPeriodStartDate = None,
                 firstAccountingPeriodEndDate = None,
                 latencyDetails = None,
-                cashOrAccruals = None,
+//                cashOrAccruals = None,
                 tradingStartDate = None,
                 cessationDate = None,
                 businessAddressDetails = None,
@@ -108,7 +108,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 firstAccountingPeriodStartDate = None,
                 firstAccountingPeriodEndDate = None,
                 latencyDetails = None,
-                cashOrAccruals = None,
                 tradingStartDate = None,
                 cessationDate = None,
                 quarterTypeElection = None
@@ -156,7 +155,7 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 firstAccountingPeriodStartDate = None,
                 firstAccountingPeriodEndDate = None,
                 latencyDetails = None,
-                cashOrAccruals = None,
+//                cashOrAccruals = None,
                 tradingStartDate = None,
                 cessationDate = None,
                 businessAddressDetails = None,
@@ -205,7 +204,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 firstAccountingPeriodStartDate = None,
                 firstAccountingPeriodEndDate = None,
                 latencyDetails = None,
-                cashOrAccruals = None,
                 tradingStartDate = None,
                 cessationDate = None,
                 quarterTypeElection = None
@@ -256,7 +254,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 firstAccountingPeriodStartDate = None,
                 firstAccountingPeriodEndDate = None,
                 latencyDetails = None,
-                cashOrAccruals = Some(AccountingType.ACCRUALS),
                 tradingStartDate = None,
                 cessationDate = None,
                 businessAddressDetails = None,
@@ -309,7 +306,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 firstAccountingPeriodStartDate = None,
                 firstAccountingPeriodEndDate = None,
                 latencyDetails = None,
-                cashOrAccruals = Some(AccountingType.CASH),
                 tradingStartDate = None,
                 cessationDate = None,
                 quarterTypeElection = None

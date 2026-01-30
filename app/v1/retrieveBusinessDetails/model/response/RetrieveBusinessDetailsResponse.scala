@@ -17,7 +17,7 @@
 package v1.retrieveBusinessDetails.model.response
 
 import api.hateoas.{HateoasData, HateoasLinks, HateoasLinksFactory, Link}
-import api.models.domain.{AccountingType, TypeOfBusiness}
+import api.models.domain.TypeOfBusiness
 import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.{Json, OWrites}
 import v1.retrieveBusinessDetails.model.response.downstream.{BusinessData, LatencyDetails, PropertyData, QuarterTypeElection}
@@ -26,7 +26,6 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,
                                            tradingName: Option[String],
                                            accountingPeriods: Seq[AccountingPeriod],
-                                           accountingType: Option[AccountingType],
                                            commencementDate: Option[String],
                                            cessationDate: Option[String],
                                            businessAddressLineOne: Option[String],
@@ -66,7 +65,6 @@ object RetrieveBusinessDetailsResponse extends HateoasLinks {
       typeOfBusiness = TypeOfBusiness.`self-employment`,
       tradingName = tradingName,
       accountingPeriods = Seq(AccountingPeriod(accountingPeriodStartDate, accountingPeriodEndDate)),
-      accountingType = cashOrAccruals.orElse(defaultAccountingType),
       commencementDate = tradingStartDate,
       cessationDate = cessationDate,
       businessAddressLineOne = businessAddressDetails.map(_.addressLine1),
@@ -92,7 +90,6 @@ object RetrieveBusinessDetailsResponse extends HateoasLinks {
       typeOfBusiness = incomeSourceType.getOrElse(TypeOfBusiness.`property-unspecified`),
       tradingName = None,
       accountingPeriods = Seq(AccountingPeriod(accountingPeriodStartDate, accountingPeriodEndDate)),
-      accountingType = cashOrAccruals.orElse(defaultAccountingType),
       commencementDate = tradingStartDate,
       cessationDate = cessationDate,
       businessAddressLineOne = None,
@@ -107,10 +104,6 @@ object RetrieveBusinessDetailsResponse extends HateoasLinks {
       yearOfMigration: Option[String],
       quarterlyTypeChoice = quarterTypeElection
     )
-  }
-
-  private def defaultAccountingType(implicit featureSwitches: FeatureSwitches) = {
-    if (featureSwitches.isIfsEnabled) Some(AccountingType.CASH) else None
   }
 
 }

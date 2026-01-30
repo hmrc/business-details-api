@@ -16,8 +16,8 @@
 
 package v1.retrieveBusinessDetails.model.response.downstream
 
-import api.models.domain.{AccountingType, TypeOfBusiness}
-import play.api.libs.json.{JsObject, JsPath, JsString, Json, Reads}
+import api.models.domain.TypeOfBusiness
+import play.api.libs.json.*
 import utils.JsonTransformers.{conditionalCopy, conditionalUpdate}
 
 case class PropertyData(
@@ -26,7 +26,6 @@ case class PropertyData(
     accountingPeriodStartDate: String,
     accountingPeriodEndDate: String,
     tradingStartDate: Option[String],
-    cashOrAccruals: Option[AccountingType],
     cessationDate: Option[String],
     firstAccountingPeriodStartDate: Option[String],
     firstAccountingPeriodEndDate: Option[String],
@@ -35,11 +34,6 @@ case class PropertyData(
 )
 
 object PropertyData {
-
-  private implicit val acctTypeReads: Reads[AccountingType] =
-    JsPath.read[Boolean].map { flag =>
-      if (flag) AccountingType.ACCRUALS else AccountingType.CASH
-    }
 
   private val combinedTransformer: Reads[JsObject] = {
 
@@ -67,15 +61,9 @@ object PropertyData {
       targetPath = JsPath \ "tradingStartDate"
     )
 
-    val cashOrAccrualsTransformer: Reads[JsObject] = conditionalCopy(
-      sourcePath = JsPath \ "cashOrAccrualsFlag",
-      targetPath = JsPath \ "cashOrAccruals"
-    )
-
     incomeSourceTypeTransformer
       .andThen(accountingPeriodTransformer)
       .andThen(tradingStartDateTransformer)
-      .andThen(cashOrAccrualsTransformer)
   }
 
   implicit val reads: Reads[PropertyData] = Json.reads.preprocess { jsValue =>
