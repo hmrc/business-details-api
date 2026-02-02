@@ -16,7 +16,7 @@
 
 package v2.retrieveBusinessDetails.model.response
 
-import api.models.domain.{AccountingType, TaxYear, TypeOfBusiness}
+import api.models.domain.{TaxYear, TypeOfBusiness}
 import config.{MockAppConfig, MockFeatureSwitches}
 import play.api.libs.json.Json
 import support.UnitSpec
@@ -32,7 +32,6 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           typeOfBusiness = TypeOfBusiness.`self-employment`,
           tradingName = Some("tradingName"),
           accountingPeriods = Some(Seq(AccountingPeriod("2001-01-01", "2001-01-02"))),
-          accountingType = Some(AccountingType.ACCRUALS),
           commencementDate = Some("2001-01-01"),
           cessationDate = Some("2010-01-01"),
           businessAddressLineOne = Some("line1"),
@@ -66,7 +65,6 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
              |       "end": "2001-01-02"
              |     }
              |   ],
-             |   "accountingType": "ACCRUALS",
              |   "commencementDate": "2001-01-01",
              |   "cessationDate": "2010-01-01",
              |   "businessAddressLineOne": "line1",
@@ -112,7 +110,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
       behave like convert(Some(TypeOfBusiness.`uk-property`), TypeOfBusiness.`uk-property`)
       behave like convert(None, TypeOfBusiness.`property-unspecified`)
 
-      def propertyData(typeOfBusiness: Option[TypeOfBusiness] = None, cashOrAccruals: Option[AccountingType] = Some(AccountingType.ACCRUALS)) =
+      def propertyData(typeOfBusiness: Option[TypeOfBusiness] = None) =
         PropertyData(
           incomeSourceType = typeOfBusiness,
           incomeSourceId = "businessId",
@@ -121,20 +119,17 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           firstAccountingPeriodStartDate = Some("firstStartDate"),
           firstAccountingPeriodEndDate = Some("firstEndDate"),
           latencyDetails = latencyDetails,
-          cashOrAccruals = cashOrAccruals,
           tradingStartDate = Some("tradingStartDate"),
           cessationDate = Some("cessationDate"),
           quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2024")))
         )
 
-      def propertyResponse(expectedTypeOfBusiness: TypeOfBusiness = TypeOfBusiness.`property-unspecified`,
-                           cashOrAccruals: Option[AccountingType] = Some(AccountingType.ACCRUALS)) = {
+      def propertyResponse(expectedTypeOfBusiness: TypeOfBusiness = TypeOfBusiness.`property-unspecified`) = {
         RetrieveBusinessDetailsResponse(
           businessId = "businessId",
           typeOfBusiness = expectedTypeOfBusiness,
           tradingName = None,
           accountingPeriods = Some(Seq(AccountingPeriod("accStartDate", "accEndDate"))),
-          accountingType = cashOrAccruals,
           commencementDate = Some("tradingStartDate"),
           cessationDate = Some("cessationDate"),
           businessAddressLineOne = None,
@@ -156,25 +151,12 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           RetrieveBusinessDetailsResponse.fromPropertyData(propertyData(typeOfBusiness), yearOfMigration) shouldBe
             propertyResponse(expectedTypeOfBusiness)
         }
-
-      "default accountingType to cash for IFS" in {
-        MockedFeatureSwitches.isIfsEnabled returns true
-        RetrieveBusinessDetailsResponse.fromPropertyData(propertyData(cashOrAccruals = None), yearOfMigration) shouldBe
-          propertyResponse(cashOrAccruals = Some(AccountingType.CASH))
-      }
-
-      "not default accountingType for DES" in {
-        MockedFeatureSwitches.isIfsEnabled returns false
-        RetrieveBusinessDetailsResponse.fromPropertyData(propertyData(cashOrAccruals = None), yearOfMigration) shouldBe
-          propertyResponse(cashOrAccruals = None)
-      }
     }
 
     "from business data" must {
       val businessAddressDetails = Some(BusinessAddressDetails("line1", Some("line2"), Some("line3"), Some("line4"), Some("postcode"), "countryCode"))
 
       def businessData(businessAddressDetails: Option[BusinessAddressDetails] = businessAddressDetails,
-                       cashOrAccruals: Option[AccountingType] = Some(AccountingType.ACCRUALS),
                        quarterTypeElection: Option[QuarterTypeElection] =
                          Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2023")))) =
         BusinessData(
@@ -186,19 +168,17 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           firstAccountingPeriodStartDate = Some("firstStartDate"),
           firstAccountingPeriodEndDate = Some("firstEndDate"),
           latencyDetails = latencyDetails,
-          cashOrAccruals = cashOrAccruals,
           tradingStartDate = Some("tradingStartDate"),
           cessationDate = Some("cessationDate"),
           quarterTypeElection = quarterTypeElection
         )
 
-      def businessResponse(cashOrAccruals: Option[AccountingType] = Some(AccountingType.ACCRUALS)) = {
+      def businessResponse = {
         RetrieveBusinessDetailsResponse(
           businessId = "businessId",
           typeOfBusiness = TypeOfBusiness.`self-employment`,
           tradingName = Some("tradingName"),
           accountingPeriods = Some(Seq(AccountingPeriod("accStartDate", "accEndDate"))),
-          accountingType = cashOrAccruals,
           commencementDate = Some("tradingStartDate"),
           cessationDate = Some("cessationDate"),
           businessAddressLineOne = Some("line1"),
@@ -217,7 +197,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
 
       "find and convert to MTD" in {
         RetrieveBusinessDetailsResponse.fromBusinessData(businessData(businessAddressDetails), yearOfMigration) shouldBe
-          businessResponse()
+          businessResponse
       }
 
       "for only mandatory address fields" in {
@@ -228,7 +208,6 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
             typeOfBusiness = TypeOfBusiness.`self-employment`,
             tradingName = Some("tradingName"),
             accountingPeriods = Some(Seq(AccountingPeriod("accStartDate", "accEndDate"))),
-            accountingType = Some(AccountingType.ACCRUALS),
             commencementDate = Some("tradingStartDate"),
             cessationDate = Some("cessationDate"),
             businessAddressLineOne = Some("line1"),
@@ -252,7 +231,6 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
             typeOfBusiness = TypeOfBusiness.`self-employment`,
             tradingName = Some("tradingName"),
             accountingPeriods = Some(Seq(AccountingPeriod("accStartDate", "accEndDate"))),
-            accountingType = Some(AccountingType.ACCRUALS),
             commencementDate = Some("tradingStartDate"),
             cessationDate = Some("cessationDate"),
             businessAddressLineOne = None,
@@ -267,20 +245,6 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
             yearOfMigration = yearOfMigration,
             quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromMtd("2022-23")))
           )
-      }
-
-      "default accountingType to cash for IFS" in {
-        MockedFeatureSwitches.isIfsEnabled returns true
-
-        RetrieveBusinessDetailsResponse.fromBusinessData(businessData(cashOrAccruals = None), yearOfMigration) shouldBe
-          businessResponse(cashOrAccruals = Some(AccountingType.CASH))
-      }
-
-      "not default accountingType for DES" in {
-        MockedFeatureSwitches.isIfsEnabled returns false
-
-        RetrieveBusinessDetailsResponse.fromBusinessData(businessData(cashOrAccruals = None), yearOfMigration) shouldBe
-          businessResponse(cashOrAccruals = None)
       }
     }
   }

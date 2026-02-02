@@ -16,7 +16,6 @@
 
 package v2.retrieveBusinessDetails.model.response.downstream
 
-import api.models.domain.AccountingType
 import play.api.libs.json.{JsObject, JsPath, Json, Reads}
 import utils.JsonTransformers.conditionalCopy
 
@@ -27,7 +26,6 @@ case class BusinessData(
     tradingName: Option[String],
     businessAddressDetails: Option[BusinessAddressDetails],
     tradingStartDate: Option[String],
-    cashOrAccruals: Option[AccountingType],
     cessationDate: Option[String],
     firstAccountingPeriodStartDate: Option[String],
     firstAccountingPeriodEndDate: Option[String],
@@ -36,20 +34,6 @@ case class BusinessData(
 )
 
 object BusinessData {
-
-  private implicit val acctTypeReads: Reads[AccountingType] = {
-    val readBoolean: Reads[AccountingType] = JsPath.read[Boolean].map { flag =>
-      if (flag) AccountingType.ACCRUALS else AccountingType.CASH
-    }
-
-    val readString: Reads[AccountingType] = JsPath.read[String].map {
-      case "cash"     => AccountingType.CASH
-      case "accruals" => AccountingType.ACCRUALS
-      case other      => throw new RuntimeException(s"Unexpected cashOrAccruals '$other'")
-    }
-
-    readBoolean orElse readString
-  }
 
   private val combinedTransformer: Reads[JsObject] = {
 
@@ -68,14 +52,8 @@ object BusinessData {
       targetPath = JsPath \ "tradingStartDate"
     )
 
-    val cashOrAccrualsTransformer: Reads[JsObject] = conditionalCopy(
-      sourcePath = JsPath \ "cashOrAccrualsFlag",
-      targetPath = JsPath \ "cashOrAccruals"
-    )
-
     accountingPeriodTransformer
       .andThen(tradingStartDateTransformer)
-      .andThen(cashOrAccrualsTransformer)
   }
 
   implicit val reads: Reads[BusinessData] = Json.reads.preprocess { jsValue =>

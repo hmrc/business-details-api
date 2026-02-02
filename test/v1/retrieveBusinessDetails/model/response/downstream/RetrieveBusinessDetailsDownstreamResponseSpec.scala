@@ -16,7 +16,7 @@
 
 package v1.retrieveBusinessDetails.model.response.downstream
 
-import api.models.domain.{AccountingType, TaxYear}
+import api.models.domain.TaxYear
 import play.api.libs.json.Json
 import support.UnitSpec
 
@@ -62,7 +62,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 firstAccountingPeriodStartDate = None,
                 firstAccountingPeriodEndDate = None,
                 latencyDetails = None,
-                cashOrAccruals = None,
                 tradingStartDate = None,
                 cessationDate = None,
                 businessAddressDetails = None,
@@ -108,7 +107,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 firstAccountingPeriodStartDate = None,
                 firstAccountingPeriodEndDate = None,
                 latencyDetails = None,
-                cashOrAccruals = None,
                 tradingStartDate = None,
                 cessationDate = None,
                 quarterTypeElection = None
@@ -156,7 +154,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 firstAccountingPeriodStartDate = None,
                 firstAccountingPeriodEndDate = None,
                 latencyDetails = None,
-                cashOrAccruals = None,
                 tradingStartDate = None,
                 cessationDate = None,
                 businessAddressDetails = None,
@@ -205,7 +202,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 firstAccountingPeriodStartDate = None,
                 firstAccountingPeriodEndDate = None,
                 latencyDetails = None,
-                cashOrAccruals = None,
                 tradingStartDate = None,
                 cessationDate = None,
                 quarterTypeElection = None
@@ -234,8 +230,7 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 |        {
                 |          "incomeSourceId": "XAIS12345678910",
                 |          "accPeriodSDate": "2001-01-01",
-                |          "accPeriodEDate": "2001-01-02",
-                |          "cashOrAccrualsFlag": true
+                |          "accPeriodEDate": "2001-01-02"
                 |        }
                 |      ]
                 |    }
@@ -256,7 +251,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 firstAccountingPeriodStartDate = None,
                 firstAccountingPeriodEndDate = None,
                 latencyDetails = None,
-                cashOrAccruals = Some(AccountingType.ACCRUALS),
                 tradingStartDate = None,
                 cessationDate = None,
                 businessAddressDetails = None,
@@ -286,8 +280,7 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 |        {
                 |          "incomeSourceId": "X0IS123456789012",
                 |          "accPeriodSDate": "2019-04-06",
-                |          "accPeriodEDate": "2020-04-05",
-                |          "cashOrAccrualsFlag": false
+                |          "accPeriodEDate": "2020-04-05"
                 |        }
                 |      ]
                 |    }
@@ -309,7 +302,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 firstAccountingPeriodStartDate = None,
                 firstAccountingPeriodEndDate = None,
                 latencyDetails = None,
-                cashOrAccruals = Some(AccountingType.CASH),
                 tradingStartDate = None,
                 cessationDate = None,
                 quarterTypeElection = None

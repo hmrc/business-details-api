@@ -71,7 +71,6 @@ class BusinessDetailsAuthSupportingAgentsAllowedHipISpec extends AuthSupportingA
         |          },
         |          "tradingSDate": "2001-01-01",
         |          "contextualTaxYear": "2024",
-        |          "cashOrAccrualsFlag": false,
         |          "seasonalFlag": true,
         |          "cessationDate": "2001-01-01",
         |          "paperLessFlag": true,
