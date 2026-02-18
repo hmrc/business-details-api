@@ -143,9 +143,13 @@ case class ConfidenceLevelConfig(confidenceLevel: ConfidenceLevel, definitionEna
 object ConfidenceLevelConfig {
 
   implicit val configLoader: ConfigLoader[ConfidenceLevelConfig] = (rootConfig: Config, path: String) => {
-    val config = rootConfig.getConfig(path)
+    val config             = rootConfig.getConfig(path)
+    val confidenceLevelInt = config.getInt("confidence-level")
+
     ConfidenceLevelConfig(
-      confidenceLevel = ConfidenceLevel.fromInt(config.getInt("confidence-level")).getOrElse(ConfidenceLevel.L200),
+      confidenceLevel = ConfidenceLevel
+        .fromInt(confidenceLevelInt)
+        .get, // let the Exception propagate if thrown by fromInt
       definitionEnabled = config.getBoolean("definition.enabled"),
       authValidationEnabled = config.getBoolean("auth-validation.enabled")
     )
