@@ -36,9 +36,6 @@ trait MockAppConfig extends TestSuite with MockFactory {
     def mtdIdBaseUrl: CallHandler[String] = (() => mockAppConfig.mtdIdBaseUrl: String).expects()
 
     // Downstream Config
-    def desDownstreamConfig: CallHandler[DownstreamConfig]          = (() => mockAppConfig.desDownstreamConfig: DownstreamConfig).expects()
-    def ifsDownstreamConfig: CallHandler[DownstreamConfig]          = (() => mockAppConfig.ifsDownstreamConfig: DownstreamConfig).expects()
-    def api2089DownstreamConfig: CallHandler[DownstreamConfig]      = (() => mockAppConfig.api2089DownstreamConfig: DownstreamConfig).expects()
     def hipDownstreamConfig: CallHandler[BasicAuthDownstreamConfig] = (() => mockAppConfig.hipDownstreamConfig: BasicAuthDownstreamConfig).expects()
 
     // API Config

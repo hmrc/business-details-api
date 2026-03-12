@@ -24,8 +24,6 @@ trait MockFeatureSwitches extends TestSuite with MockFactory {
   implicit val mockFeatureSwitches: FeatureSwitches = mock[FeatureSwitches]
 
   object MockedFeatureSwitches {
-    def isIfsEnabled: CallHandler[Boolean]                         = (() => mockFeatureSwitches.isIfsEnabled).expects()
-    def isScp005aQuarterlyTypeChoiceEnabled: CallHandler[Boolean]  = (() => mockFeatureSwitches.isScp005aQuarterlyTypeChoiceEnabled).expects()
     def supportingAgentsAccessControlEnabled: CallHandler[Boolean] = (() => mockFeatureSwitches.supportingAgentsAccessControlEnabled).expects()
   }
 

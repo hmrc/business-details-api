@@ -107,7 +107,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
   "service" when {
     "a connector call is successful" when {
       "a unique matching property business is found" must {
-        "find and convert to MTD" in new Test with scp005aEnabled {
+        "find and convert to MTD" in new Test {
           testServiceWith(
             requestDataFor("businessId"),
             RetrieveBusinessDetailsDownstreamResponse(yearOfMigration, businessData = None, propertyData = Some(List(propertyData("businessId"))))
@@ -115,20 +115,8 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         }
       }
 
-      "the scp005a_quarterlyTypeChoice feature switch is disabled" must {
-        "return a response with the quarterlyTypeChoice field removed" in new Test with scp005aDisabled {
-          testServiceWith(
-            requestDataFor("businessId"),
-            RetrieveBusinessDetailsDownstreamResponse(
-              yearOfMigration,
-              businessData = None,
-              propertyData = Some(List(propertyData("otherBusinessId"), propertyData("businessId"))))
-          ) shouldBe Right(ResponseWrapper(correlationId, propertyResponse("businessId").copy(quarterlyTypeChoice = None)))
-        }
-      }
-
       "a unique matching self-employment business is found" must {
-        "find and convert to MTD" in new Test with scp005aEnabled {
+        "find and convert to MTD" in new Test {
           testServiceWith(
             requestDataFor("businessId"),
             RetrieveBusinessDetailsDownstreamResponse(
@@ -140,7 +128,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
       }
 
       "multiple matching property businesses are found" must {
-        "return duplicate result" in new Test with scp005aEnabled {
+        "return duplicate result" in new Test {
           testServiceWith(
             requestDataFor("businessId"),
             RetrieveBusinessDetailsDownstreamResponse(
@@ -152,7 +140,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
       }
 
       "multiple matching self-employment businesses are found" must {
-        "return an internal error" in new Test with scp005aEnabled {
+        "return an internal error" in new Test {
           testServiceWith(
             requestDataFor("businessId"),
             RetrieveBusinessDetailsDownstreamResponse(
@@ -164,7 +152,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
       }
 
       "a matching property business and a self-employment business are found" must {
-        "return duplicate result" in new Test with scp005aEnabled {
+        "return duplicate result" in new Test {
           testServiceWith(
             requestDataFor("businessId"),
             RetrieveBusinessDetailsDownstreamResponse(
@@ -176,7 +164,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
       }
 
       "nothing matching is found" must {
-        "return a not found result" in new Test with scp005aEnabled {
+        "return a not found result" in new Test {
           testServiceWith(
             requestDataFor("businessId"),
             RetrieveBusinessDetailsDownstreamResponse(yearOfMigration, businessData = None, propertyData = None)) shouldBe Left(
@@ -185,7 +173,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
       }
 
       "nothing found when the property/business data arrays are present but empty" must {
-        "return a not found result" in new Test with scp005aEnabled {
+        "return a not found result" in new Test {
           testServiceWith(
             requestDataFor("businessId"),
             RetrieveBusinessDetailsDownstreamResponse(yearOfMigration, businessData = Some(Nil), propertyData = Some(Nil))) shouldBe Left(
@@ -196,7 +184,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
 
     "a connector call is unsuccessful" should {
       def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
-        s"return ${error.code} when $downstreamErrorCode error is returned from the service" in new Test with scp005aEnabled {
+        s"return ${error.code} when $downstreamErrorCode error is returned from the service" in new Test {
           val requestData: RetrieveBusinessDetailsRequestData = requestDataFor("someBusinessId")
 
           MockedRetrieveBusinessDetailsConnector
@@ -217,13 +205,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         ("SERVICE_UNAVAILABLE", InternalError)
       )
 
-      val extraIfsErrors = List(
-        ("INVALID_MTD_ID", InternalError),
-        ("INVALID_CORRELATIONID", InternalError),
-        ("INVALID_IDTYPE", InternalError),
-        ("NOT_FOUND", NotFoundError)
-      )
-
       val hipErrors = List(
         ("001", InternalError),
         ("006", NotFoundError),
@@ -231,12 +212,11 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         ("008", NoBusinessFoundError)
       )
 
-      (errors ++ extraIfsErrors ++ hipErrors).foreach(serviceError.tupled)
+      (errors ++ hipErrors).foreach(serviceError.tupled)
     }
   }
 
   private trait Test extends MockRetrieveBusinessDetailsConnector with MockFeatureSwitches {
-    MockedFeatureSwitches.isIfsEnabled.returns(true).anyNumberOfTimes()
 
     protected val service = new RetrieveBusinessDetailsService(mockRetrieveBusinessDetailsConnector)
 
@@ -248,14 +228,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
       await(service.retrieveBusinessDetailsService(requestData))
     }
 
-  }
-
-  private trait scp005aEnabled extends MockFeatureSwitches {
-    MockedFeatureSwitches.isScp005aQuarterlyTypeChoiceEnabled.returns(true).anyNumberOfTimes()
-  }
-
-  private trait scp005aDisabled extends MockFeatureSwitches {
-    MockedFeatureSwitches.isScp005aQuarterlyTypeChoiceEnabled.returns(false).anyNumberOfTimes()
   }
 
 }

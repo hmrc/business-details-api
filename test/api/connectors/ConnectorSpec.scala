@@ -17,7 +17,7 @@
 package api.connectors
 
 import com.google.common.base.Charsets
-import config.{BasicAuthDownstreamConfig, DownstreamConfig, MockAppConfig}
+import config.{BasicAuthDownstreamConfig, MockAppConfig}
 import mocks.MockHttpClient
 import org.scalamock.handlers.CallHandler
 import play.api.libs.json.{Json, Writes}
@@ -110,41 +110,6 @@ trait ConnectorSpec extends UnitSpec {
         )
     }
 
-  }
-
-  protected trait StandardConnectorTest extends ConnectorTest {
-    protected def name: String
-
-    private val token       = s"$name-token"
-    private val environment = s"$name-environment"
-
-    protected final lazy val requiredHeaders: Seq[(String, String)] = List(
-      "Authorization"     -> s"Bearer $token",
-      "Environment"       -> environment,
-      "User-Agent"        -> "business-details-api",
-      "CorrelationId"     -> correlationId,
-      "Gov-Test-Scenario" -> "DEFAULT"
-    )
-
-    protected final val config: DownstreamConfig = DownstreamConfig(this.baseUrl, environment, token, Some(allowedHeaders))
-  }
-
-  protected trait DesTest extends StandardConnectorTest {
-    val name = "des"
-
-    MockedAppConfig.desDownstreamConfig.anyNumberOfTimes() returns config
-  }
-
-  protected trait IfsTest extends StandardConnectorTest {
-    override val name = "ifs"
-
-    MockedAppConfig.ifsDownstreamConfig.anyNumberOfTimes() returns config
-  }
-
-  protected trait Api2089Test extends StandardConnectorTest {
-    override val name = "api2089"
-
-    MockedAppConfig.api2089DownstreamConfig.anyNumberOfTimes() returns config
   }
 
   protected trait HipTest extends ConnectorTest {

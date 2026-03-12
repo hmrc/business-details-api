@@ -41,10 +41,10 @@ class PropertyDataSpec extends UnitSpec {
     quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2023")))
   )
 
-  def json(incomeSourceType: String, isHip: Boolean): JsValue = {
-    val accPeriodStartDateField: String = if (isHip) "accPeriodSDate" else "accountingPeriodStartDate"
-    val accPeriodEndDateField: String   = if (isHip) "accPeriodEDate" else "accountingPeriodEndDate"
-    val tradingStartDateField: String   = if (isHip) "tradingSDate" else "tradingStartDate"
+  def json(incomeSourceType: String): JsValue = {
+    val accPeriodStartDateField: String = "accPeriodSDate"
+    val accPeriodEndDateField: String   = "accPeriodEDate"
+    val tradingStartDateField: String   = "tradingSDate"
 
     Json.parse(
       s"""
@@ -84,21 +84,15 @@ class PropertyDataSpec extends UnitSpec {
   "PropertyData" when {
     "read from JSON" must {
       Seq(
-        (TypeOfBusiness.`uk-property`, "02", "uk-property"),
-        (TypeOfBusiness.`foreign-property`, "03", "foreign-property")
-      ).foreach { case (typeOfBusiness, hipIncomeSourceType, ifsIncomeSourceType) =>
-        Seq(
-          ("HIP", true, hipIncomeSourceType),
-          ("IFS", false, ifsIncomeSourceType)
-        ).foreach { case (downstreamName, isHip, incomeSourceType) =>
-          s"work when typeOfBusiness is $typeOfBusiness " +
-            s"incomeSourceType is $incomeSourceType and downstream is $downstreamName" in {
-              json(
-                incomeSourceType = incomeSourceType,
-                isHip = isHip
-              ).as[PropertyData] shouldBe model(typeOfBusiness = typeOfBusiness)
-            }
-        }
+        (TypeOfBusiness.`uk-property`, "02"),
+        (TypeOfBusiness.`foreign-property`, "03")
+      ).foreach { case (typeOfBusiness, incomeSourceType) =>
+        s"work when typeOfBusiness is $typeOfBusiness " +
+          s"incomeSourceType is $incomeSourceType" in {
+            json(
+              incomeSourceType = incomeSourceType
+            ).as[PropertyData] shouldBe model(typeOfBusiness = typeOfBusiness)
+          }
       }
     }
   }

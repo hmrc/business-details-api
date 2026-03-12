@@ -19,17 +19,17 @@ package api.models.errors
 import play.api.http.Status.*
 
 // Format Errors
-object NinoFormatError          extends MtdError("FORMAT_NINO", "The provided NINO is invalid", BAD_REQUEST)
-object TaxYearFormatError       extends MtdError("FORMAT_TAX_YEAR", "The provided tax year is invalid", BAD_REQUEST)
-object DateFormatError          extends MtdError(code = "FORMAT_DATE", message = "The supplied date format is not valid", BAD_REQUEST)
-object ToDateFormatError        extends MtdError(code = "FORMAT_TO_DATE", message = "The provided toDate is invalid", BAD_REQUEST)
-object FromDateFormatError      extends MtdError(code = "FORMAT_FROM_DATE", message = "The provided fromDate is invalid", BAD_REQUEST)
-object BusinessIdFormatError    extends MtdError("FORMAT_BUSINESS_ID", "The provided Business ID is invalid", BAD_REQUEST)
-object PaymentIdFormatError     extends MtdError(code = "FORMAT_PAYMENT_ID", message = "The provided payment ID is invalid", BAD_REQUEST)
-object TransactionIdFormatError extends MtdError(code = "FORMAT_TRANSACTION_ID", message = "The provided transaction ID is invalid", BAD_REQUEST)
+object NinoFormatError    extends MtdError("FORMAT_NINO", "The provided NINO is invalid", BAD_REQUEST)
+object TaxYearFormatError extends MtdError("FORMAT_TAX_YEAR", "The provided tax year is invalid", BAD_REQUEST)
+object DateFormatError    extends MtdError(code = "FORMAT_DATE", message = "The supplied date format is not valid", BAD_REQUEST)
+//object ToDateFormatError        extends MtdError(code = "FORMAT_TO_DATE", message = "The provided toDate is invalid", BAD_REQUEST)
+//object FromDateFormatError      extends MtdError(code = "FORMAT_FROM_DATE", message = "The provided fromDate is invalid", BAD_REQUEST)
+object BusinessIdFormatError extends MtdError("FORMAT_BUSINESS_ID", "The provided Business ID is invalid", BAD_REQUEST)
+//object PaymentIdFormatError     extends MtdError(code = "FORMAT_PAYMENT_ID", message = "The provided payment ID is invalid", BAD_REQUEST)
+//object TransactionIdFormatError extends MtdError(code = "FORMAT_TRANSACTION_ID", message = "The provided transaction ID is invalid", BAD_REQUEST)
 object CalculationIdFormatError extends MtdError("FORMAT_CALCULATION_ID", "The provided calculation ID is invalid", BAD_REQUEST)
 
-object IdFormatError extends MtdError(code = "FORMAT_ID", message = "The provided ID is invalid", BAD_REQUEST)
+//object IdFormatError extends MtdError(code = "FORMAT_ID", message = "The provided ID is invalid", BAD_REQUEST)
 
 object ValueFormatError extends MtdError("FORMAT_VALUE", "The value must be between 0 and 99999999999.99", BAD_REQUEST) {
 
@@ -41,7 +41,7 @@ object ValueFormatError extends MtdError("FORMAT_VALUE", "The value must be betw
 object StartDateFormatError extends MtdError("FORMAT_START_DATE", "The start date field format is invalid", BAD_REQUEST)
 object EndDateFormatError   extends MtdError("FORMAT_END_DATE", "The end date field format is invalid", BAD_REQUEST)
 
-object TypeOfBusinessFormatError extends MtdError("FORMAT_TYPE_OF_BUSINESS", "The provided type of business is invalid", BAD_REQUEST)
+//object TypeOfBusinessFormatError extends MtdError("FORMAT_TYPE_OF_BUSINESS", "The provided type of business is invalid", BAD_REQUEST)
 
 object CountryCodeFormatError extends MtdError("FORMAT_COUNTRY_CODE", "The provided Country code is invalid", BAD_REQUEST)
 
@@ -56,24 +56,24 @@ object RuleIncorrectOrEmptyBodyError
 
 object RuleTaxYearNotEndedError extends MtdError("RULE_TAX_YEAR_NOT_ENDED", "The specified tax year has not yet ended", BAD_REQUEST)
 
-object RuleTaxYearRangeExceededError
-    extends MtdError("RULE_TAX_YEAR_RANGE_EXCEEDED", "Tax year range exceeded. A tax year range of one year is required.", BAD_REQUEST)
+//object RuleTaxYearRangeExceededError
+//    extends MtdError("RULE_TAX_YEAR_RANGE_EXCEEDED", "Tax year range exceeded. A tax year range of one year is required.", BAD_REQUEST)
 
 object RuleTaxYearRangeInvalidError extends MtdError("RULE_TAX_YEAR_RANGE_INVALID", "A tax year range of one year is required", BAD_REQUEST)
 
-object InvalidTaxYearParameterError
-    extends MtdError(code = "INVALID_TAX_YEAR_PARAMETER", message = "A tax year before 2023-24 was supplied", BAD_REQUEST)
+//object InvalidTaxYearParameterError
+//    extends MtdError(code = "INVALID_TAX_YEAR_PARAMETER", message = "A tax year before 2023-24 was supplied", BAD_REQUEST)
 
 object RuleCountryCodeError extends MtdError("RULE_COUNTRY_CODE", "The country code is not a valid ISO 3166-1 alpha-3 country code", BAD_REQUEST)
 
 //Standard Errors
-object NotFoundError           extends MtdError("MATCHING_RESOURCE_NOT_FOUND", "Matching resource not found", NOT_FOUND)
-object InternalError           extends MtdError("INTERNAL_SERVER_ERROR", "An internal server error occurred", INTERNAL_SERVER_ERROR)
-object BadRequestError         extends MtdError("INVALID_REQUEST", "Invalid request", BAD_REQUEST)
-object GatewayTimeoutError     extends MtdError("GATEWAY_TIMEOUT", "The request has timed out", GATEWAY_TIMEOUT)
-object BVRError                extends MtdError("BUSINESS_ERROR", "Business validation error", BAD_REQUEST)
-object ServiceUnavailableError extends MtdError("SERVICE_UNAVAILABLE", "Internal server error", INTERNAL_SERVER_ERROR)
-object InvalidHttpMethodError  extends MtdError("INVALID_HTTP_METHOD", "Invalid HTTP method", METHOD_NOT_ALLOWED)
+object NotFoundError       extends MtdError("MATCHING_RESOURCE_NOT_FOUND", "Matching resource not found", NOT_FOUND)
+object InternalError       extends MtdError("INTERNAL_SERVER_ERROR", "An internal server error occurred", INTERNAL_SERVER_ERROR)
+object BadRequestError     extends MtdError("INVALID_REQUEST", "Invalid request", BAD_REQUEST)
+object GatewayTimeoutError extends MtdError("GATEWAY_TIMEOUT", "The request has timed out", GATEWAY_TIMEOUT)
+object BVRError            extends MtdError("BUSINESS_ERROR", "Business validation error", BAD_REQUEST)
+//object ServiceUnavailableError extends MtdError("SERVICE_UNAVAILABLE", "Internal server error", INTERNAL_SERVER_ERROR)
+object InvalidHttpMethodError extends MtdError("INVALID_HTTP_METHOD", "Invalid HTTP method", METHOD_NOT_ALLOWED)
 
 //Authorisation Errors
 

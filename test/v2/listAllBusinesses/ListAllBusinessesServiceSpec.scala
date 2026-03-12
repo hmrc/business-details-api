@@ -87,13 +87,6 @@ class ListAllBusinessesServiceSpec extends ServiceSpec {
         ("SERVICE_UNAVAILABLE", InternalError)
       )
 
-      val extraIfsErrors = List(
-        ("INVALID_MTD_ID", InternalError),
-        ("INVALID_CORRELATIONID", InternalError),
-        ("INVALID_IDTYPE", InternalError),
-        ("NOT_FOUND", NotFoundError)
-      )
-
       val hipErrors = List(
         ("001", InternalError),
         ("006", NotFoundError),
@@ -101,7 +94,7 @@ class ListAllBusinessesServiceSpec extends ServiceSpec {
         ("008", InternalError)
       )
 
-      (errors ++ extraIfsErrors ++ hipErrors).foreach(serviceError.tupled)
+      (errors ++ hipErrors).foreach(serviceError.tupled)
     }
   }
 

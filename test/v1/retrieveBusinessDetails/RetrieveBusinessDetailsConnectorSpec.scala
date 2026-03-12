@@ -19,7 +19,6 @@ package v1.retrieveBusinessDetails
 import api.connectors.ConnectorSpec
 import api.models.domain.*
 import api.models.outcomes.ResponseWrapper
-import play.api.Configuration
 import uk.gov.hmrc.http.StringContextOps
 import utils.DateUtils.nowAsUtc
 import v1.retrieveBusinessDetails.model.response.downstream.RetrieveBusinessDetailsDownstreamResponse
@@ -34,30 +33,8 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
 
   "RetrieveBusinessDetailsConnector" when {
     ".retrieveBusinessDetails" must {
-      "send a request and return the expected response when downstream is DES" in new DesTest with Test {
-        MockedAppConfig.featureSwitches returns Configuration("ifs_hip_migration_1171.enabled" -> false, "ifs.enabled" -> false)
 
-        private val outcome = Right(ResponseWrapper(correlationId, response))
-
-        willGet(url = url"$baseUrl/registration/business-details/nino/${nino.nino}") returns
-          Future.successful(outcome)
-
-        await(connector.retrieveBusinessDetails(nino)) shouldBe outcome
-      }
-
-      "send a request and return the expected response when downstream is IFS" in new IfsTest with Test {
-        MockedAppConfig.featureSwitches returns Configuration("ifs_hip_migration_1171.enabled" -> false, "ifs.enabled" -> true)
-
-        private val outcome = Right(ResponseWrapper(correlationId, response))
-
-        willGet(url = url"$baseUrl/registration/business-details/nino/${nino.nino}") returns
-          Future.successful(outcome)
-
-        await(connector.retrieveBusinessDetails(nino)) shouldBe outcome
-      }
-
-      "send a request and return the expected response when downstream is HIP" in new HipTest with Test {
-        MockedAppConfig.featureSwitches returns Configuration("ifs_hip_migration_1171.enabled" -> true)
+      "send a request and return the expected response" in new HipTest with Test {
 
         override def requiredHeaders: Seq[(String, String)] = super.requiredHeaders ++ List(
           "X-Message-Type"        -> "TaxpayerDisplay",

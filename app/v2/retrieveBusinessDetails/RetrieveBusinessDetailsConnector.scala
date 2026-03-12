@@ -16,7 +16,7 @@
 
 package v2.retrieveBusinessDetails
 
-import api.connectors.DownstreamUri.{DesUri, HipUri, IfsUri}
+import api.connectors.DownstreamUri.HipUri
 import api.connectors.httpparsers.StandardDownstreamHttpParser.reads
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import api.models.domain.Nino
@@ -36,8 +36,7 @@ class RetrieveBusinessDetailsConnector @Inject() (val http: HttpClientV2, val ap
       ec: ExecutionContext,
       correlationId: String): Future[DownstreamOutcome[RetrieveBusinessDetailsDownstreamResponse]] = {
 
-    val desIfsDownstreamUri: String = s"registration/business-details/nino/$nino"
-    val hipDownstreamUri: String    = s"etmp/RESTAdapter/itsa/taxpayer/business-details?nino=$nino"
+    val hipDownstreamUri: String = s"etmp/RESTAdapter/itsa/taxpayer/business-details?nino=$nino"
 
     val additionalContractHeaders: Seq[(String, String)] = List(
       "X-Message-Type"        -> "TaxpayerDisplay",
@@ -47,13 +46,7 @@ class RetrieveBusinessDetailsConnector @Inject() (val http: HttpClientV2, val ap
       "X-Transmitting-System" -> "HIP"
     )
 
-    if (featureSwitches.isEnabled("ifs_hip_migration_1171")) {
-      get(HipUri[RetrieveBusinessDetailsDownstreamResponse](hipDownstreamUri, additionalContractHeaders))
-    } else if (featureSwitches.isIfsEnabled) {
-      get(IfsUri[RetrieveBusinessDetailsDownstreamResponse](desIfsDownstreamUri))
-    } else {
-      get(DesUri[RetrieveBusinessDetailsDownstreamResponse](desIfsDownstreamUri))
-    }
+    get(HipUri[RetrieveBusinessDetailsDownstreamResponse](hipDownstreamUri, additionalContractHeaders))
   }
 
 }

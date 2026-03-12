@@ -57,8 +57,7 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
 
   private def featureSwitchQuarterlyTypeChoice(
       responseWrapper: ResponseWrapper[RetrieveBusinessDetailsResponse]): Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]] =
-    if (featureSwitches.isScp005aQuarterlyTypeChoiceEnabled) Right(responseWrapper)
-    else Right(responseWrapper.copy(responseData = responseWrapper.responseData.copy(quarterlyTypeChoice = None)))
+    Right(responseWrapper)
 
   private def filterIdAndConvert(
       responseWrapper: ResponseWrapper[RetrieveBusinessDetailsDownstreamResponse],
@@ -96,13 +95,6 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
       "SERVICE_UNAVAILABLE"  -> InternalError
     )
 
-    val extraIfsErrors = Map(
-      "INVALID_MTD_ID"        -> InternalError,
-      "INVALID_CORRELATIONID" -> InternalError,
-      "INVALID_IDTYPE"        -> InternalError,
-      "NOT_FOUND"             -> NotFoundError
-    )
-
     val hipErrors = Map(
       "001" -> InternalError,
       "006" -> NotFoundError,
@@ -110,7 +102,7 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
       "008" -> NoBusinessFoundError
     )
 
-    errors ++ extraIfsErrors ++ hipErrors
+    errors ++ hipErrors
   }
 
 }

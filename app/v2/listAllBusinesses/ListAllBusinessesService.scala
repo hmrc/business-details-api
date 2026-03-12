@@ -59,13 +59,6 @@ class ListAllBusinessesService @Inject() (connector: RetrieveBusinessDetailsConn
       "SERVICE_UNAVAILABLE"  -> InternalError
     )
 
-    val extraIfsErrors = Map(
-      "INVALID_MTD_ID"        -> InternalError,
-      "INVALID_CORRELATIONID" -> InternalError,
-      "INVALID_IDTYPE"        -> InternalError,
-      "NOT_FOUND"             -> NotFoundError
-    )
-
     val hipErrors = Map(
       "001" -> InternalError,
       "006" -> NotFoundError,
@@ -73,7 +66,7 @@ class ListAllBusinessesService @Inject() (connector: RetrieveBusinessDetailsConn
       "008" -> InternalError
     )
 
-    errors ++ extraIfsErrors ++ hipErrors
+    errors ++ hipErrors
   }
 
 }

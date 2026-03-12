@@ -20,7 +20,7 @@ import api.services.DownstreamStub
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 
-class BusinessDetailsAuthSupportingAgentsAllowedHipISpec extends AuthSupportingAgentsAllowedISpec {
+class BusinessDetailsAuthSupportingAgentsAllowedISpec extends AuthSupportingAgentsAllowedISpec {
 
   val callingApiVersion = "1.0"
 
