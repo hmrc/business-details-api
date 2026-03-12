@@ -25,29 +25,28 @@
       "description": "The trading name of the business.",
       "example": "ABC Ltd."
     },
-  {{#if (enabled 'retrieveAdditionalFields')}}
   "yearOfMigration": {
       "type": "string",
-      "description": "{{#unless (releasedInProduction 'retrieveAdditionalFields')}}[Test only] {{/unless}}Year of migration.",
+      "description": "Year of migration.",
       "pattern": "^(\\d{4})$",
       "format": "yyyy",
       "example": "2022"
     },
     "firstAccountingPeriodStartDate": {
       "type": "string",
-      "description": "{{#unless (releasedInProduction 'retrieveAdditionalFields')}}[Test only] {{/unless}}The first accounting period start date.\n\nNote: <b>Accounting period start and end dates should not be displayed to users of your software.</b>",
+      "description": "The first accounting period start date.\n\nNote: <b>Accounting period start and end dates should not be displayed to users of your software.</b>",
       "format": "yyyy-MM-DD",
       "example": "2019-09-30"
     },
     "firstAccountingPeriodEndDate": {
       "type": "string",
-      "description": "{{#unless (releasedInProduction 'retrieveAdditionalFields')}}[Test only] {{/unless}}The first accounting period end date.\n\nNote: <b>Accounting period start and end dates should not be displayed to users of your software.</b>",
+      "description": "The first accounting period end date.\n\nNote: <b>Accounting period start and end dates should not be displayed to users of your software.</b>",
       "format": "yyyy-MM-DD",
       "example": "2020-02-29"
     },
     "latencyDetails": {
       "type": "object",
-      "description": "{{#unless (releasedInProduction 'retrieveAdditionalFields')}}[Test only] {{/unless}}Income source latency details.",
+      "description": "Income source latency details.",
       "properties": {
         "latencyEndDate": {
           "type": "string",
@@ -102,11 +101,9 @@
         "latencyIndicator2"
       ]
     },
-    {{/if}}
-    {{#if (enabled 'scp005a_QuarterlyTypeChoice')}}
     "quarterlyTypeChoice": {
       "type": "object",
-      "description": "{{#unless (releasedInProduction 'scp005a_QuarterlyTypeChoice')}}[Test only] {{/unless}}Quarterly reporting period type.",
+      "description": "Quarterly reporting period type.",
       "properties": {
         "quarterlyPeriodType": {
           "type": "string",
@@ -126,7 +123,6 @@
         "taxYear1"
       ]
     },
-    {{/if}}
     "accountingPeriods": {
       "type": "array",
       "description": "The start and end dates of the latest accounting period for the business. This array contains dates for the latest accounting period only.\n\nNote: <b>Accounting period start and end dates should not be displayed to users of your software.</b>",
