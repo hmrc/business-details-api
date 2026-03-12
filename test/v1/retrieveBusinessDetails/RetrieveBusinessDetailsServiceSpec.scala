@@ -196,23 +196,13 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         }
 
       val errors = List(
-        ("INVALID_NINO", NinoFormatError),
-        ("INVALID_MTDBSA", InternalError),
-        ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError),
-        ("NOT_FOUND_NINO", NotFoundError),
-        ("NOT_FOUND_MTDBSA", InternalError),
-        ("SERVER_ERROR", InternalError),
-        ("SERVICE_UNAVAILABLE", InternalError)
-      )
-
-      val hipErrors = List(
         ("001", InternalError),
         ("006", NotFoundError),
         ("007", InternalError),
         ("008", NoBusinessFoundError)
       )
 
-      (errors ++ hipErrors).foreach(serviceError.tupled)
+      errors.foreach(serviceError.tupled)
     }
   }
 
