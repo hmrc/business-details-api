@@ -78,30 +78,13 @@ class ListAllBusinessesServiceSpec extends ServiceSpec {
         }
 
       val errors = List(
-        ("INVALID_NINO", NinoFormatError),
-        ("INVALID_MTDBSA", InternalError),
-        ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError),
-        ("NOT_FOUND_NINO", NotFoundError),
-        ("NOT_FOUND_MTDBSA", InternalError),
-        ("SERVER_ERROR", InternalError),
-        ("SERVICE_UNAVAILABLE", InternalError)
-      )
-
-      val extraIfsErrors = List(
-        ("INVALID_MTD_ID", InternalError),
-        ("INVALID_CORRELATIONID", InternalError),
-        ("INVALID_IDTYPE", InternalError),
-        ("NOT_FOUND", NotFoundError)
-      )
-
-      val hipErrors = List(
         ("001", InternalError),
         ("006", NotFoundError),
         ("007", InternalError),
         ("008", InternalError)
       )
 
-      (errors ++ extraIfsErrors ++ hipErrors).foreach(serviceError.tupled)
+      errors.foreach(serviceError.tupled)
     }
   }
 

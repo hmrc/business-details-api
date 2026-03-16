@@ -50,10 +50,10 @@ class BusinessDataSpec extends UnitSpec {
     quarterTypeElection = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2023")))
   )
 
-  def json(isHip: Boolean): JsValue = {
-    val accPeriodStartDateField: String = if (isHip) "accPeriodSDate" else "accountingPeriodStartDate"
-    val accPeriodEndDateField: String   = if (isHip) "accPeriodEDate" else "accountingPeriodEndDate"
-    val tradingStartDateField: String   = if (isHip) "tradingSDate" else "tradingStartDate"
+  def json: JsValue = {
+    val accPeriodStartDateField: String = "accPeriodSDate"
+    val accPeriodEndDateField: String   = "accPeriodEDate"
+    val tradingStartDateField: String   = "tradingSDate"
 
     Json.parse(
       s"""
@@ -97,13 +97,8 @@ class BusinessDataSpec extends UnitSpec {
 
   "BusinessData" when {
     "read from JSON" must {
-      Seq(
-        ("HIP", true),
-        ("IFS", false)
-      ).foreach { case (downstreamName, isHip) =>
-        s"work when downstream is $downstreamName" in {
-          json(isHip = isHip).as[BusinessData] shouldBe model
-        }
+      "work" in {
+        json.as[BusinessData] shouldBe model
       }
     }
   }

@@ -14,79 +14,98 @@
  * limitations under the License.
  */
 
-package v1.listAllBusinesses
+package v1.retrieveBusinessDetails
 
 import api.models.errors.*
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsArray, JsObject, JsPath, JsValue, Json}
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.*
 import support.IntegrationBaseSpec
 
-class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
+class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
 
-  "Calling the list all businesses endpoint" should {
-
-    trait ListAllBusinessesControllerTest extends Test {
-      def uri: String                                = s"/$nino/list"
-      def downstreamUri: String                      = "/etmp/RESTAdapter/itsa/taxpayer/business-details"
-      val downstreamQueryParams: Map[String, String] = Map("nino" -> nino)
-    }
+  "Calling the retrieve business details endpoint" should {
 
     "return a 200 status code" when {
-      "any valid request is made and downstream only returns businessData" in new ListAllBusinessesControllerTest {
+      "any valid request is made and a single business data is returned" in new Test {
+
+        val downstreamJson: JsValue = updatedDownstreamJson("businessData")
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           MtdIdLookupStub.ninoFound(nino)
           AuthStub.authorised()
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, downstreamQueryParams, OK, downstreamResponseBodyBusinessData)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, downstreamQueryParams, OK, downstreamJson)
         }
 
         val response: WSResponse = await(request().get())
         response.status shouldBe OK
-        response.json shouldBe responseBodyBusinessData
+        response.json shouldBe fullMtdJson("XAIS12345678901", "self-employment")
         response.header("Content-Type") shouldBe Some("application/json")
       }
 
-      "any valid request is made and downstream only returns propertyData" in new ListAllBusinessesControllerTest {
+      "any valid request is made and multiple business data are returned" in new Test {
+
+        override val businessId: String = "XAIS12345671111"
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           MtdIdLookupStub.ninoFound(nino)
           AuthStub.authorised()
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, downstreamQueryParams, OK, downstreamResponseBodyPropertyData)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, downstreamQueryParams, OK, fullDownstreamJson)
         }
 
         val response: WSResponse = await(request().get())
         response.status shouldBe OK
-        response.json shouldBe responseBodyPropertyData
+        response.json shouldBe fullMtdJson("XAIS12345671111", "self-employment")
         response.header("Content-Type") shouldBe Some("application/json")
       }
 
-      "any valid request is made and downstream returns both businessData and propertyData" in new ListAllBusinessesControllerTest {
+      "any valid request is made and a single property data is returned" in new Test {
+
+        override val businessId: String = "XPIS12345678901"
+        val downstreamJson: JsValue     = updatedDownstreamJson("propertyData")
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           MtdIdLookupStub.ninoFound(nino)
           AuthStub.authorised()
-          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, downstreamQueryParams, OK, downstreamResponseBodyBothData)
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, downstreamQueryParams, OK, downstreamJson)
         }
 
         val response: WSResponse = await(request().get())
         response.status shouldBe OK
-        response.json shouldBe responseBodyBothData
+        response.json shouldBe updatedMtdJson("XPIS12345678901", "uk-property")
+        response.header("Content-Type") shouldBe Some("application/json")
+      }
+
+      "any valid request is made and multiple property data are returned" in new Test {
+
+        override val businessId: String = "XFIS12345678903"
+
+        override def setupStubs(): StubMapping = {
+          AuditStub.audit()
+          MtdIdLookupStub.ninoFound(nino)
+          AuthStub.authorised()
+          DownstreamStub.onSuccess(DownstreamStub.GET, downstreamUri, downstreamQueryParams, OK, fullDownstreamJson)
+        }
+
+        val response: WSResponse = await(request().get())
+        response.status shouldBe OK
+        response.json shouldBe updatedMtdJson("XFIS12345678903", "foreign-property")
         response.header("Content-Type") shouldBe Some("application/json")
       }
     }
 
     "return error according to spec" when {
       "validation error" when {
-        def validationErrorTest(requestNino: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"validation fails with ${expectedBody.code} error" in new ListAllBusinessesControllerTest {
+        def validationErrorTest(requestNino: String, requestBusinessId: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
+          s"validation fails with ${expectedBody.code} error" in new Test {
 
-            override val nino: String = requestNino
+            override val nino: String       = requestNino
+            override val businessId: String = requestBusinessId
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
@@ -101,8 +120,9 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
         }
 
         val input = List(
-          ("AA1123A", BAD_REQUEST, NinoFormatError),
-          ("", NOT_FOUND, NotFoundError)
+          ("AA1123A", "X0IS123456789012", BAD_REQUEST, NinoFormatError),
+          ("", "X0IS123456789012", NOT_FOUND, NotFoundError),
+          ("AA123456A", "X2", BAD_REQUEST, BusinessIdFormatError)
         )
 
         input.foreach(validationErrorTest.tupled)
@@ -110,12 +130,12 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
 
       "downstream service error" when {
         def serviceErrorTest(downstreamStatus: Int, downstreamCode: String, expectedStatus: Int, expectedBody: MtdError): Unit = {
-          s"downstream returns a code $downstreamCode error and status $downstreamStatus" in new ListAllBusinessesControllerTest {
+          s"downstream returns a code $downstreamCode error and status $downstreamStatus" in new Test {
 
             override def setupStubs(): StubMapping = {
               AuditStub.audit()
-              MtdIdLookupStub.ninoFound(nino)
               AuthStub.authorised()
+              MtdIdLookupStub.ninoFound(nino)
               DownstreamStub.onError(DownstreamStub.GET, downstreamUri, downstreamQueryParams, downstreamStatus, errorBody(downstreamCode))
             }
 
@@ -129,7 +149,7 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
           (UNPROCESSABLE_ENTITY, "001", INTERNAL_SERVER_ERROR, InternalError),
           (UNPROCESSABLE_ENTITY, "006", NOT_FOUND, NotFoundError),
           (UNPROCESSABLE_ENTITY, "007", INTERNAL_SERVER_ERROR, InternalError),
-          (UNPROCESSABLE_ENTITY, "008", INTERNAL_SERVER_ERROR, InternalError),
+          (UNPROCESSABLE_ENTITY, "008", NOT_FOUND, NoBusinessFoundError),
           (BAD_REQUEST, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError)
         )
 
@@ -140,103 +160,14 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
 
   private trait Test {
 
-    val nino = "AA123456A"
+    val nino: String                               = "AA123456A"
+    val businessId: String                         = "XAIS12345678901"
+    val downstreamQueryParams: Map[String, String] = Map("nino" -> nino)
 
-    val responseBodyBusinessData: JsValue = Json.parse(
-      """
-        |{
-        |  "listOfBusinesses": [
-        |    {
-        |      "typeOfBusiness": "self-employment",
-        |      "businessId": "XAIS12345678901",
-        |      "tradingName": "RCDTS",
-        |      "links": [
-        |        {
-        |          "href": "/individuals/business/details/AA123456A/XAIS12345678901",
-        |          "method": "GET",
-        |          "rel": "retrieve-business-details"
-        |        }
-        |      ]
-        |    }
-        |  ],
-        |  "links": [
-        |    {
-        |      "href": "/individuals/business/details/AA123456A/list",
-        |      "method": "GET",
-        |      "rel": "self"
-        |    }
-        |  ]
-        |}
-      """.stripMargin
-    )
+    private def uri: String   = s"/$nino/$businessId"
+    def downstreamUri: String = "/etmp/RESTAdapter/itsa/taxpayer/business-details"
 
-    val responseBodyPropertyData: JsValue = Json.parse(
-      """
-        |{
-        |  "listOfBusinesses": [
-        |    {
-        |      "typeOfBusiness": "uk-property",
-        |      "businessId": "XPIS12345678901",
-        |      "links": [
-        |        {
-        |          "href": "/individuals/business/details/AA123456A/XPIS12345678901",
-        |          "method": "GET",
-        |          "rel": "retrieve-business-details"
-        |        }
-        |      ]
-        |    }
-        |  ],
-        |  "links": [
-        |    {
-        |      "href": "/individuals/business/details/AA123456A/list",
-        |      "method": "GET",
-        |      "rel": "self"
-        |    }
-        |  ]
-        |}
-      """.stripMargin
-    )
-
-    val responseBodyBothData: JsValue = Json.parse(
-      """
-        |{
-        |  "listOfBusinesses": [
-        |    {
-        |      "typeOfBusiness": "self-employment",
-        |      "businessId": "XAIS12345671111",
-        |      "tradingName": "RCDTS",
-        |      "links": [
-        |        {
-        |          "href": "/individuals/business/details/AA123456A/XAIS12345671111",
-        |          "method": "GET",
-        |          "rel": "retrieve-business-details"
-        |        }
-        |      ]
-        |    },
-        |    {
-        |      "typeOfBusiness": "foreign-property",
-        |      "businessId": "XFIS12345678903",
-        |      "links": [
-        |        {
-        |          "href": "/individuals/business/details/AA123456A/XFIS12345678903",
-        |          "method": "GET",
-        |          "rel": "retrieve-business-details"
-        |        }
-        |      ]
-        |    }
-        |  ],
-        |  "links": [
-        |    {
-        |      "href": "/individuals/business/details/AA123456A/list",
-        |      "method": "GET",
-        |      "rel": "self"
-        |    }
-        |  ]
-        |}
-      """.stripMargin
-    )
-
-    val downstreamResponseBodyBusinessData: JsValue = Json.parse(
+    val fullDownstreamJson: JsValue = Json.parse(
       """
         |{
         |  "success": {
@@ -287,74 +218,7 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
         |            "quarterReportingType": "STANDARD",
         |            "taxYearofElection": "2023"
         |          }
-        |        }
-        |      ]
-        |    }
-        |  }
-        |}
-      """.stripMargin
-    )
-
-    val downstreamResponseBodyPropertyData: JsValue = Json.parse(
-      """
-        |{
-        |  "success": {
-        |    "processingDate": "2023-07-05T09:16:58Z",
-        |    "taxPayerDisplayResponse": {
-        |      "safeId": "XAIS123456789012",
-        |      "nino": "AA123456A",
-        |      "mtdId": "XNIT00000068707",
-        |      "yearOfMigration": "2023",
-        |      "propertyIncomeFlag": false,
-        |      "propertyData": [
-        |        {
-        |          "incomeSourceType": "02",
-        |          "incomeSourceId": "XPIS12345678901",
-        |          "accPeriodSDate": "2001-01-01",
-        |          "accPeriodEDate": "2001-01-01",
-        |          "tradingSDate": "2001-01-01",
-        |          "contextualTaxYear": "2024",
-        |          "numPropRented": 0,
-        |          "numPropRentedUK": 0,
-        |          "numPropRentedEEA": 5,
-        |          "numPropRentedNONEEA": 1,
-        |          "email": "stephen@manncorpone.co.uk",
-        |          "cessationDate": "2001-01-01",
-        |          "paperLessFlag": true,
-        |          "incomeSourceStartDate": "2019-07-14",
-        |          "firstAccountingPeriodStartDate": "2018-04-06",
-        |          "firstAccountingPeriodEndDate": "2018-12-12",
-        |          "latencyDetails": {
-        |            "latencyEndDate": "2018-12-12",
-        |            "taxYear1": "2018",
-        |            "latencyIndicator1": "A",
-        |            "taxYear2": "2019",
-        |            "latencyIndicator2": "Q"
-        |          },
-        |          "quarterTypeElection": {
-        |            "quarterReportingType": "STANDARD",
-        |            "taxYearofElection": "2023"
-        |          }
-        |        }
-        |      ]
-        |    }
-        |  }
-        |}
-      """.stripMargin
-    )
-
-    val downstreamResponseBodyBothData: JsValue = Json.parse(
-      """
-        |{
-        |  "success": {
-        |    "processingDate": "2023-07-05T09:16:58Z",
-        |    "taxPayerDisplayResponse": {
-        |      "safeId": "XAIS123456789012",
-        |      "nino": "AA123456A",
-        |      "mtdId": "XNIT00000068707",
-        |      "yearOfMigration": "2023",
-        |      "propertyIncomeFlag": false,
-        |      "businessData": [
+        |        },
         |        {
         |          "incomeSourceId": "XAIS12345671111",
         |          "incomeSource": "ITSB",
@@ -398,6 +262,35 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
         |      ],
         |      "propertyData": [
         |        {
+        |          "incomeSourceType": "02",
+        |          "incomeSourceId": "XPIS12345678901",
+        |          "accPeriodSDate": "2001-01-01",
+        |          "accPeriodEDate": "2001-01-01",
+        |          "tradingSDate": "2001-01-01",
+        |          "contextualTaxYear": "2024",
+        |          "numPropRented": 0,
+        |          "numPropRentedUK": 0,
+        |          "numPropRentedEEA": 5,
+        |          "numPropRentedNONEEA": 1,
+        |          "email": "stephen@manncorpone.co.uk",
+        |          "cessationDate": "2001-01-01",
+        |          "paperLessFlag": true,
+        |          "incomeSourceStartDate": "2019-07-14",
+        |          "firstAccountingPeriodStartDate": "2018-04-06",
+        |          "firstAccountingPeriodEndDate": "2018-12-12",
+        |          "latencyDetails": {
+        |            "latencyEndDate": "2018-12-12",
+        |            "taxYear1": "2018",
+        |            "latencyIndicator1": "A",
+        |            "taxYear2": "2019",
+        |            "latencyIndicator2": "Q"
+        |          },
+        |          "quarterTypeElection": {
+        |            "quarterReportingType": "STANDARD",
+        |            "taxYearofElection": "2023"
+        |          }
+        |        },
+        |        {
         |          "incomeSourceType": "03",
         |          "incomeSourceId": "XFIS12345678903",
         |          "accPeriodSDate": "2001-01-01",
@@ -433,14 +326,78 @@ class ListAllBusinessesControllerHipISpec extends IntegrationBaseSpec {
       """.stripMargin
     )
 
+    def updatedDownstreamJson(field: String): JsValue = fullDownstreamJson
+      .transform(
+        (JsPath \ "success" \ "taxPayerDisplayResponse" \ field).json.update(
+          JsPath.read[JsArray].map { arr =>
+            JsArray(arr.value.take(1))
+          }
+        )
+      )
+      .get
+
+    def fullMtdJson(businessId: String, typeOfBusiness: String): JsValue = Json.parse(
+      s"""
+        |{
+        |  "businessId": "$businessId",
+        |  "typeOfBusiness": "$typeOfBusiness",
+        |  "tradingName": "RCDTS",
+        |  "accountingPeriods": [
+        |    {
+        |      "start": "2001-01-01",
+        |      "end": "2001-01-01"
+        |    }
+        |  ],
+        |  "commencementDate": "2001-01-01",
+        |  "cessationDate": "2001-01-01",
+        |  "businessAddressLineOne": "100 SuttonStreet",
+        |  "businessAddressLineTwo": "Wokingham",
+        |  "businessAddressLineThree": "Surrey",
+        |  "businessAddressLineFour": "London",
+        |  "businessAddressPostcode": "DH14EJ",
+        |  "businessAddressCountryCode": "GB",
+        |  "firstAccountingPeriodStartDate": "2018-04-06",
+        |  "firstAccountingPeriodEndDate": "2018-12-12",
+        |  "latencyDetails": {
+        |    "latencyEndDate": "2018-12-12",
+        |    "taxYear1": "2017-18",
+        |    "latencyIndicator1": "A",
+        |    "taxYear2": "2018-19",
+        |    "latencyIndicator2": "Q"
+        |  },
+        |  "yearOfMigration": "2023",
+        |  "quarterlyTypeChoice": {
+        |    "quarterlyPeriodType": "standard",
+        |    "taxYearOfChoice": "2022-23"
+        |  },
+        |  "links": [
+        |    {
+        |      "href": "/individuals/business/details/$nino/$businessId",
+        |      "method": "GET",
+        |      "rel": "self"
+        |    }
+        |  ]
+        |}
+      """.stripMargin
+    )
+
+    def updatedMtdJson(businessId: String, typeOfBusiness: String): JsValue = {
+      val original: JsValue = fullMtdJson(businessId, typeOfBusiness)
+
+      original.as[JsObject] -
+        "tradingName" -
+        "businessAddressLineOne" -
+        "businessAddressLineTwo" -
+        "businessAddressLineThree" -
+        "businessAddressLineFour" -
+        "businessAddressPostcode" -
+        "businessAddressCountryCode"
+    }
+
     def setupStubs(): StubMapping
 
-    def uri: String
-
     def request(): WSRequest = {
-      AuthStub.resetAll()
       setupStubs()
-
       buildRequest(uri)
         .withHttpHeaders(
           (ACCEPT, "application/vnd.hmrc.1.0+json"),

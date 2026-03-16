@@ -16,23 +16,11 @@
 
 package api.connectors
 
-import config.{AppConfig, DownstreamConfig}
+import config.AppConfig
 
 case class DownstreamUri[+Resp](path: String, strategy: DownstreamStrategy)
 
 object DownstreamUri {
-
-  private def withStandardStrategy[Resp](path: String, config: DownstreamConfig): DownstreamUri[Resp] =
-    DownstreamUri(path, DownstreamStrategy.standardStrategy(config))
-
-  def DesUri[Resp](value: String)(implicit appConfig: AppConfig): DownstreamUri[Resp] =
-    withStandardStrategy(value, appConfig.desDownstreamConfig)
-
-  def IfsUri[Resp](value: String)(implicit appConfig: AppConfig): DownstreamUri[Resp] =
-    withStandardStrategy(value, appConfig.ifsDownstreamConfig)
-
-  def Api2089Uri[Resp](value: String)(implicit appConfig: AppConfig): DownstreamUri[Resp] =
-    withStandardStrategy(value, appConfig.api2089DownstreamConfig)
 
   def HipUri[Resp](path: String, additionalContractHeaders: => Seq[(String, String)] = Nil)(implicit appConfig: AppConfig): DownstreamUri[Resp] =
     DownstreamUri(path, DownstreamStrategy.basicAuthStrategy(appConfig.hipDownstreamConfig, additionalContractHeaders))

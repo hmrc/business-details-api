@@ -27,7 +27,7 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.AUTHORIZATION
 import support.IntegrationBaseSpec
 
-class Def1_CreateAmendQuarterlyPeriodTypeControllerHipISpec extends IntegrationBaseSpec {
+class Def1_CreateAmendQuarterlyPeriodTypeControllerISpec extends IntegrationBaseSpec {
 
   private val requestBodyJson = Json.parse("""
       |{

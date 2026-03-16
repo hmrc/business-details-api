@@ -16,7 +16,7 @@
 
 package v2.createAmendQuarterlyPeriodType.def1.model.request
 
-import config.{AppConfig, FeatureSwitches}
+import config.AppConfig
 import play.api.libs.json.*
 import utils.EmptinessChecker
 import utils.EmptinessChecker.field
@@ -36,11 +36,7 @@ object Def1_CreateAmendQuarterlyPeriodTypeRequestBody {
 
   implicit def writes(implicit appConfig: AppConfig): OWrites[Def1_CreateAmendQuarterlyPeriodTypeRequestBody] =
     (body: Def1_CreateAmendQuarterlyPeriodTypeRequestBody) => {
-      if (FeatureSwitches(appConfig).isEnabled("ifs_hip_migration_2089")) {
-        Json.obj("quarterReportingType" -> body.quarterlyPeriodType.asHipDownstream)
-      } else {
-        Json.obj("QRT" -> body.quarterlyPeriodType.asDownstream)
-      }
+      Json.obj("quarterReportingType" -> body.quarterlyPeriodType.asHipDownstream)
     }
 
 }

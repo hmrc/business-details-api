@@ -25,15 +25,11 @@ class FeatureSwitchesSpec extends UnitSpec {
     "return true" when {
       "the feature switch is set to true" in {
         val config = Configuration(
-          "ifs.enabled"                              -> true,
-          "scp005a_QuarterlyTypeChoice.enabled"      -> true,
           "supporting-agents-access-control.enabled" -> true
         )
 
         val featureSwitches = FeatureSwitches(config)
 
-        featureSwitches.isIfsEnabled shouldBe true
-        featureSwitches.isScp005aQuarterlyTypeChoiceEnabled shouldBe true
         featureSwitches.supportingAgentsAccessControlEnabled shouldBe true
       }
 
@@ -42,22 +38,19 @@ class FeatureSwitchesSpec extends UnitSpec {
 
         val featureSwitches = FeatureSwitches(config)
 
-        featureSwitches.isIfsEnabled shouldBe true
-        featureSwitches.isScp005aQuarterlyTypeChoiceEnabled shouldBe true
+        featureSwitches.supportingAgentsAccessControlEnabled shouldBe true
       }
     }
 
     "return false" when {
       "the feature switch is set to false" in {
         val config = Configuration(
-          "ifs.enabled"                         -> false,
-          "scp005a_QuarterlyTypeChoice.enabled" -> false
+          "supporting-agents-access-control.enabled" -> false
         )
 
         val featureSwitches = FeatureSwitches(config)
 
-        featureSwitches.isIfsEnabled shouldBe false
-        featureSwitches.isScp005aQuarterlyTypeChoiceEnabled shouldBe false
+        featureSwitches.supportingAgentsAccessControlEnabled shouldBe false
       }
     }
   }

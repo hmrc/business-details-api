@@ -26,8 +26,6 @@ import javax.inject.{Inject, Singleton}
 @ImplementedBy(classOf[FeatureSwitchesImpl])
 trait FeatureSwitches {
 
-  def isIfsEnabled: Boolean
-  def isScp005aQuarterlyTypeChoiceEnabled: Boolean
   def supportingAgentsAccessControlEnabled: Boolean
   def isTemporalValidationEnabled(implicit request: Request[?]): Boolean
   def isEnabled(key: String): Boolean
@@ -40,8 +38,6 @@ class FeatureSwitchesImpl(featureSwitchConfig: Configuration) extends FeatureSwi
   @Inject
   def this(appConfig: AppConfig) = this(appConfig.featureSwitches)
 
-  val isIfsEnabled: Boolean                         = isEnabled("ifs")
-  val isScp005aQuarterlyTypeChoiceEnabled: Boolean  = isEnabled("scp005a_QuarterlyTypeChoice")
   val supportingAgentsAccessControlEnabled: Boolean = isEnabled("supporting-agents-access-control")
 
   def isTemporalValidationEnabled(implicit request: Request[?]): Boolean = {

@@ -18,15 +18,7 @@ package v2.retrieveBusinessDetails
 
 import api.controllers.RequestContext
 import api.models.domain.BusinessId
-import api.models.errors.{
-  ErrorWrapper,
-  InternalError,
-  MtdError,
-  NinoFormatError,
-  NoBusinessFoundError,
-  NotFoundError,
-  RuleIncorrectGovTestScenarioError
-}
+import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{BaseService, ServiceOutcome}
 import cats.data.EitherT
@@ -57,8 +49,7 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
 
   private def featureSwitchQuarterlyTypeChoice(
       responseWrapper: ResponseWrapper[RetrieveBusinessDetailsResponse]): Either[ErrorWrapper, ResponseWrapper[RetrieveBusinessDetailsResponse]] =
-    if (featureSwitches.isScp005aQuarterlyTypeChoiceEnabled) Right(responseWrapper)
-    else Right(responseWrapper.copy(responseData = responseWrapper.responseData.copy(quarterlyTypeChoice = None)))
+    Right(responseWrapper)
 
   private def filterIdAndConvert(
       responseWrapper: ResponseWrapper[RetrieveBusinessDetailsDownstreamResponse],
@@ -86,31 +77,12 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
   }
 
   private val downstreamErrorMap: Map[String, MtdError] = {
-    val errors = Map(
-      "INVALID_NINO"         -> NinoFormatError,
-      "INVALID_MTDBSA"       -> InternalError,
-      "UNMATCHED_STUB_ERROR" -> RuleIncorrectGovTestScenarioError,
-      "NOT_FOUND_NINO"       -> NotFoundError,
-      "NOT_FOUND_MTDBSA"     -> InternalError,
-      "SERVER_ERROR"         -> InternalError,
-      "SERVICE_UNAVAILABLE"  -> InternalError
-    )
-
-    val extraIfsErrors = Map(
-      "INVALID_MTD_ID"        -> InternalError,
-      "INVALID_CORRELATIONID" -> InternalError,
-      "INVALID_IDTYPE"        -> InternalError,
-      "NOT_FOUND"             -> NotFoundError
-    )
-
-    val hipErrors = Map(
+    Map(
       "001" -> InternalError,
       "006" -> NotFoundError,
       "007" -> InternalError,
       "008" -> NoBusinessFoundError
     )
-
-    errors ++ extraIfsErrors ++ hipErrors
   }
 
 }
