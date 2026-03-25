@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,22 +21,21 @@ import api.models.errors.{MtdError, NinoFormatError}
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 
-object ResolveNino extends Resolver[String, Nino] {
+object ResolveNino {
 
-  private val ninoRegex =
-    ("^([ACEHJLMOPRSWXY][A-CEGHJ-NPR-TW-Z]|B[A-CEHJ-NPR-TW-Z]|G[ACEGHJ-NPR-TW-Z]|" +
-      "[KT][A-CEGHJ-MPR-TW-Z]|N[A-CEGHJL-NPR-SW-Z]|Z[A-CEGHJ-NPR-TW-Y])[0-9]{6}[A-D ]?$").r
-
-  def apply(value: String, error: Option[MtdError], path: Option[String]): Validated[Seq[MtdError], Nino] = {
-    if (Nino.isValid(value) && ninoRegex.matches(value))
+  def apply(value: String): Validated[Seq[MtdError], Nino] =
+    if (isValid(value))
       Valid(Nino(value))
     else
-      Invalid(List(withError(error, NinoFormatError, path)))
-  }
+      Invalid(List(NinoFormatError))
 
   def isValid(nino: String): Boolean = nino != null && hasValidPrefix(nino) && ninoRegex.matches(nino)
 
   private def hasValidPrefix(nino: String) = !invalidPrefixes.exists(nino.startsWith)
+
+  private val ninoRegex =
+    ("^([ACEHJLMOPRSWXY][A-CEGHJ-NPR-TW-Z]|B[A-CEHJ-NPR-TW-Z]|G[ACEGHJ-NPR-TW-Z]|" +
+      "[KT][A-CEGHJ-MPR-TW-Z]|N[A-CEGHJL-NPR-SW-Z]|Z[A-CEGHJ-NPR-TW-Y])[0-9]{6}[A-D ]?$").r
 
   private val invalidPrefixes =
     List("BG", "GB", "NK", "KN", "TN", "NT", "ZZ")
