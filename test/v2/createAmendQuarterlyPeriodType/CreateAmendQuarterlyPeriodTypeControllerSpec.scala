@@ -17,7 +17,6 @@
 package v2.createAmendQuarterlyPeriodType
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.hateoas.MockHateoasFactory
 import api.models.audit.{AuditEvent, AuditResponse, FlattenedGenericAuditDetail}
 import api.models.auth.UserDetails
 import api.models.domain.{BusinessId, Nino, TaxYear}
@@ -41,7 +40,6 @@ class CreateAmendQuarterlyPeriodTypeControllerSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockCreateAmendQuarterlyPeriodTypeService
-    with MockHateoasFactory
     with MockCreateAmendQuarterlyPeriodTypeValidatorFactory
     with MockIdGenerator
     with MockAppConfig {

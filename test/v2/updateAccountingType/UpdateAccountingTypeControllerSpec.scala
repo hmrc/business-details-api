@@ -17,7 +17,6 @@
 package v2.updateAccountingType
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.hateoas.MockHateoasFactory
 import api.models.audit.{AuditEvent, AuditResponse, FlattenedGenericAuditDetail}
 import api.models.auth.UserDetails
 import api.models.domain.{BusinessId, Nino, TaxYear}
@@ -41,7 +40,6 @@ class UpdateAccountingTypeControllerSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockUpdateAccountingTypeService
-    with MockHateoasFactory
     with MockUpdateAccountingTypeValidatorFactory
     with MockIdGenerator
     with MockAppConfig {

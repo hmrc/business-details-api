@@ -17,7 +17,6 @@
 package v2.withdrawLateAccountingDateRule
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.hateoas.MockHateoasFactory
 import api.models.audit.{AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.auth.UserDetails
 import api.models.domain.{BusinessId, Nino, TaxYear}
@@ -41,7 +40,6 @@ class WithdrawLateAccountingDateRuleControllerSpec
     with MockEnrolmentsAuthService
     with MockMtdIdLookupService
     with MockWithdrawLateAccountingDateRuleService
-    with MockHateoasFactory
     with MockWithdrawLateAccountingDateRuleValidatorFactory
     with MockIdGenerator
     with MockAppConfig {
