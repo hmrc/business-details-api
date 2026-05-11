@@ -18,7 +18,7 @@ package definition
 
 import cats.data.Validated.Invalid
 import config.AppConfig
-import routing.{Version, Version1, Version2}
+import routing.{Version, Version2}
 import utils.Logging
 
 import javax.inject.{Inject, Singleton}
@@ -34,11 +34,6 @@ class ApiDefinitionFactory @Inject() (appConfig: AppConfig) extends Logging {
         context = appConfig.apiGatewayContext,
         categories = Seq("INCOME_TAX_MTD"),
         versions = Seq(
-          APIVersion(
-            version = Version1,
-            status = buildAPIStatus(Version1),
-            endpointsEnabled = appConfig.endpointsEnabled(Version1)
-          ),
           APIVersion(
             version = Version2,
             status = buildAPIStatus(Version2),

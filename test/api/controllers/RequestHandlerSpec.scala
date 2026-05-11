@@ -33,7 +33,7 @@ import play.api.http.{HeaderNames, Status}
 import play.api.libs.json.{JsString, Json, OWrites}
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.{FakeRequest, ResultExtractors}
-import routing.{Version, Version1, Version2}
+import routing.{Version, Version2}
 import support.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
@@ -80,7 +80,7 @@ class RequestHandlerSpec
 
   implicit val hc: HeaderCarrier                               = HeaderCarrier()
   implicit val ctx: RequestContext                             = RequestContext.from(mockIdGenerator, endpointLogContext)
-  private val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(HeaderNames.ACCEPT -> "application/vnd.hmrc.1.0+json")
+  private val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(HeaderNames.ACCEPT -> "application/vnd.hmrc.2.0+json")
   implicit val userRequest: UserRequest[AnyContent]            = UserRequest[AnyContent](userDetails, fakeRequest)
   implicit val appConfig: AppConfig                            = mockAppConfig
   implicit val apiVersion: Version                             = Version(userRequest)
@@ -260,7 +260,7 @@ class RequestHandlerSpec
           mockAuditService,
           auditType = auditType,
           transactionName = txName,
-          apiVersion = Version1,
+          apiVersion = Version2,
           params = params,
           requestBody = requestBody,
           includeResponse = includeResponse
@@ -284,7 +284,7 @@ class RequestHandlerSpec
               GenericAuditDetail(
                 userDetails,
                 params = params,
-                apiVersion = Version1.name,
+                apiVersion = Version2.name,
                 requestBody = requestBody,
                 `X-CorrelationId` = correlationId,
                 auditResponse = auditResponse)

@@ -22,7 +22,7 @@ import config.{ConfidenceLevelConfig, MockAppConfig}
 import definition.APIStatus.{ALPHA, BETA}
 import mocks.MockHttpClient
 import play.api.Configuration
-import routing.{Version1, Version2}
+import routing.Version2
 import support.UnitSpec
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 
@@ -39,11 +39,8 @@ class ApiDefinitionFactorySpec extends UnitSpec {
     "called" should {
       "return a valid Definition case class" in new Test {
         MockedAppConfig.featureSwitches returns Configuration.empty
-        MockedAppConfig.apiStatus(Version1) returns "BETA"
         MockedAppConfig.apiStatus(Version2) returns "BETA"
-        MockedAppConfig.endpointsEnabled(Version1) returns true
         MockedAppConfig.endpointsEnabled(Version2) returns true
-        MockedAppConfig.deprecationFor(Version1).returns(NotDeprecated.valid).anyNumberOfTimes()
         MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
         (MockedAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(
           confidenceLevel = confidenceLevel,
@@ -60,11 +57,6 @@ class ApiDefinitionFactorySpec extends UnitSpec {
               categories = Seq("INCOME_TAX_MTD"),
               versions = Seq(
                 APIVersion(
-                  version = Version1,
-                  status = BETA,
-                  endpointsEnabled = true
-                ),
-                APIVersion(
                   version = Version2,
                   status = BETA,
                   endpointsEnabled = true
@@ -80,31 +72,31 @@ class ApiDefinitionFactorySpec extends UnitSpec {
   "buildAPIStatus" when {
     "the 'apiStatus' parameter is present and valid" should {
       "return the correct status" in new Test {
-        MockedAppConfig.apiStatus(Version1) returns "BETA"
-        MockedAppConfig.deprecationFor(Version1).returns(NotDeprecated.valid).anyNumberOfTimes()
-        apiDefinitionFactory.buildAPIStatus(Version1) shouldBe BETA
+        MockedAppConfig.apiStatus(Version2) returns "BETA"
+        MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
+        apiDefinitionFactory.buildAPIStatus(Version2) shouldBe BETA
       }
     }
 
     "the 'apiStatus' parameter is present and invalid" should {
       "default to alpha" in new Test {
-        MockedAppConfig.apiStatus(Version1) returns "ALPHO"
-        MockedAppConfig.deprecationFor(Version1).returns(NotDeprecated.valid).anyNumberOfTimes()
-        apiDefinitionFactory.buildAPIStatus(Version1) shouldBe ALPHA
+        MockedAppConfig.apiStatus(Version2) returns "ALPHO"
+        MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
+        apiDefinitionFactory.buildAPIStatus(Version2) shouldBe ALPHA
       }
     }
   }
 
   "the 'deprecatedOn' parameter is missing for a deprecated version" should {
     "throw exception" in new Test {
-      MockedAppConfig.apiStatus(Version1) returns "DEPRECATED"
+      MockedAppConfig.apiStatus(Version2) returns "DEPRECATED"
       MockedAppConfig
-        .deprecationFor(Version1)
+        .deprecationFor(Version2)
         .returns("deprecatedOn date is required for a deprecated version".invalid)
         .anyNumberOfTimes()
 
       val exception: Exception = intercept[Exception] {
-        apiDefinitionFactory.buildAPIStatus(Version1)
+        apiDefinitionFactory.buildAPIStatus(Version2)
       }
 
       val exceptionMessage: String = exception.getMessage

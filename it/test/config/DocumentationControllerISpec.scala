@@ -32,9 +32,6 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
 
   override def servicesConfig: Map[String, Any] =
     Map(
-      "api.1.0.status"                               -> "BETA",
-      "api.1.0.endpoints.enabled"                    -> "true",
-      "api.1.0.endpoints.api-released-in-production" -> "true",
       "api.2.0.status"                               -> "BETA",
       "api.2.0.endpoints.enabled"                    -> "true",
       "api.2.0.endpoints.api-released-in-production" -> "true"
@@ -51,11 +48,6 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
       |         "INCOME_TAX_MTD"
       |      ],
       |      "versions":[
-      |         {
-      |            "version":"1.0",
-      |            "status":"BETA",
-      |            "endpointsEnabled":true
-      |         },
       |         {
       |            "version":"2.0",
       |            "status":"BETA",
@@ -77,7 +69,7 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
 
   "an OAS documentation request" must {
     "return the documentation that passes OAS V3 parser" in {
-      val response: WSResponse = await(buildRequest("/api/conf/1.0/application.yaml").get())
+      val response: WSResponse = await(buildRequest("/api/conf/2.0/application.yaml").get())
       response.status shouldBe Status.OK
 
       val contents     = response.body
@@ -88,11 +80,11 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
       openAPI.isEmpty shouldBe false
       openAPI.get.getOpenapi shouldBe "3.0.3"
       openAPI.get.getInfo.getTitle shouldBe "Business Details (MTD)"
-      openAPI.get.getInfo.getVersion shouldBe "1.0"
+      openAPI.get.getInfo.getVersion shouldBe "2.0"
     }
 
-    "return the documentation with the correct accept header for version 1.0" in {
-      val response: WSResponse = await(buildRequest("/api/conf/1.0/common/headers.yaml").get())
+    "return the documentation with the correct accept header for version 2.0" in {
+      val response: WSResponse = await(buildRequest("/api/conf/2.0/common/headers.yaml").get())
       response.status shouldBe Status.OK
       val contents = response.body
 
@@ -101,7 +93,7 @@ class DocumentationControllerISpec extends IntegrationBaseSpec {
       header.isDefined shouldBe true
 
       val versionFromHeader = header.get.group(1)
-      versionFromHeader shouldBe "1.0"
+      versionFromHeader shouldBe "2.0"
 
     }
   }

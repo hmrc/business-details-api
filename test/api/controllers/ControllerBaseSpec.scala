@@ -29,14 +29,14 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContent, AnyContentAsEmpty, ControllerComponents, Result}
 import play.api.test.Helpers.stubControllerComponents
 import play.api.test.{FakeRequest, ResultExtractors}
-import routing.{Version, Version1}
+import routing.{Version, Version2}
 import support.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.MockIdGenerator
 
 import scala.concurrent.Future
 
-abstract class ControllerBaseSpec(version: Version = Version1)
+abstract class ControllerBaseSpec(version: Version = Version2)
     extends UnitSpec
     with Status
     with MimeTypes

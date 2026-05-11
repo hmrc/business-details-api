@@ -22,7 +22,7 @@ import play.api.libs.ws.{WSRequest, WSResponse}
 
 class BusinessDetailsAuthSupportingAgentsAllowedISpec extends AuthSupportingAgentsAllowedISpec {
 
-  val callingApiVersion = "1.0"
+  val callingApiVersion = "2.0"
 
   val supportingAgentsAllowedEndpoint = "list-all-businesses"
 
