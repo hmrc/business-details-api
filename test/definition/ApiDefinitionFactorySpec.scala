@@ -19,10 +19,10 @@ package definition
 import cats.implicits.catsSyntaxValidatedId
 import config.Deprecation.NotDeprecated
 import config.{ConfidenceLevelConfig, MockAppConfig}
-import definition.APIStatus.{ALPHA, BETA}
+import definition.APIStatus.{ALPHA, BETA, RETIRED}
 import mocks.MockHttpClient
 import play.api.Configuration
-import routing.Version2
+import routing.{Version1, Version2}
 import support.UnitSpec
 import uk.gov.hmrc.auth.core.ConfidenceLevel
 
@@ -56,6 +56,11 @@ class ApiDefinitionFactorySpec extends UnitSpec {
               context = "individuals/business/details",
               categories = Seq("INCOME_TAX_MTD"),
               versions = Seq(
+                APIVersion(
+                  version = Version1,
+                  status = RETIRED,
+                  endpointsEnabled = false
+                ),
                 APIVersion(
                   version = Version2,
                   status = BETA,
