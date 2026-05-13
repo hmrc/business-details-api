@@ -1,0 +1,109 @@
+get:
+  summary: List All Businesses
+  description: |
+    This endpoint allows a developer to retrieve all details of a user's business income sources. The unique account 
+    reference (National Insurance number) must be provided.
+    
+    ### Test data
+    Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.    
+    
+    | Header Value (Gov-Test-Scenario) | Scenario                                                                                         |
+    |----------------------------------|--------------------------------------------------------------------------------------------------|
+    | N/A - DEFAULT                    | Simulate a successful response with a self-employment business.                                  |
+    | PROPERTY                         | Simulate a successful response with a uk-property business.                                      |
+    | FOREIGN_PROPERTY                 | Simulate a successful response with a foreign-property business.                                 |                                                                |
+    | BUSINESS_AND_PROPERTY            | Simulate a successful response with a self-employment, uk-property and foreign-property business.|
+    | UNSPECIFIED                      | Simulate a successful response with a property-unspecified business.                             |
+    | NOT_FOUND                        | Simulates the scenario where no data is found.                                                   |
+    | STATEFUL                         | Performs a stateful list.                                                                        |
+
+  parameters:
+    - $ref: './common/pathParameters.yaml#/components/parameters/nino'
+    - $ref: './common/headers.yaml#/components/parameters/acceptJson'
+    - $ref: './common/headers.yaml#/components/parameters/authorization'
+    - $ref: './common/headers.yaml#/components/parameters/testScenarioHeader'
+
+  security:
+    - User-Restricted:
+        - read:self-assessment
+
+  responses:
+    "200":
+      description: Success
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        Sunset:
+          $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        Link:
+          $ref: ./common/headers.yaml#/components/parameters/linkHeader
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/listAllbusinesses/response.json'
+          examples:
+            example-response:
+              description: Example Response
+              value:
+                $ref: './examples/listAllBusinesses/response.json'
+
+    "400":
+      description: Bad request
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        Sunset:
+          $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        Link:
+          $ref: ./common/headers.yaml#/components/parameters/linkHeader
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error-response.yaml'
+          examples:
+            FORMAT_NINO:
+              $ref: './common/errors.yaml#/components/examples/formatNino'
+            RULE_INCORRECT_GOV_TEST_SCENARIO:
+              $ref: './common/errors.yaml#/components/examples/ruleIncorrectGovTestScenario'
+
+    "403":
+      description: Forbidden
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        Sunset:
+          $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        Link:
+          $ref: ./common/headers.yaml#/components/parameters/linkHeader
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error-response.yaml'
+          examples:
+            CLIENT_OR_AGENT_NOT_AUTHORISED:
+              $ref: './common/errors.yaml#/components/examples/clientOrAgentNotAuthorised'
+
+    "404":
+      description: Not Found
+      headers:
+        X-CorrelationId:
+          $ref: './common/headers.yaml#/components/parameters/correlationId'
+        Deprecation:
+          $ref: ./common/headers.yaml#/components/parameters/deprecationHeader
+        Sunset:
+          $ref: ./common/headers.yaml#/components/parameters/sunsetHeader
+        Link:
+          $ref: ./common/headers.yaml#/components/parameters/linkHeader
+      content:
+        application/json:
+          schema:
+            $ref: './schemas/error-response.yaml'
+          examples:
+            MATCHING_RESOURCE_NOT_FOUND:
+              $ref: './common/errors.yaml#/components/examples/notFound'
