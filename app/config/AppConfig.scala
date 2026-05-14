@@ -64,10 +64,9 @@ class AppConfig @Inject() (val config: ServicesConfig, protected[config] val con
       .getOrElse(false)
 
   def apiVersionReleasedInProduction(version: String): Boolean =
-    confBoolean(
-      path = s"api.$version.endpoints.api-released-in-production",
-      defaultValue = false
-    )
+    configuration
+      .getOptional[Boolean](s"api.$version.endpoints.api-released-in-production")
+      .getOrElse(false)
 
   def endpointReleasedInProduction(version: String, name: String): Boolean =
     apiVersionReleasedInProduction(version) &&
