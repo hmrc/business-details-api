@@ -18,17 +18,17 @@ package definition
 
 import definition.APIStatus.ALPHA
 import play.api.libs.json.Json
-import routing.Version1
+import routing.Version2
 import support.UnitSpec
 
 class ApiDefinitionSpec extends UnitSpec {
 
-  val apiVersion: APIVersion       = APIVersion(Version1, ALPHA, endpointsEnabled = false)
+  val apiVersion: APIVersion       = APIVersion(Version2, ALPHA, endpointsEnabled = false)
   val apiDefinition: APIDefinition = APIDefinition("b", "c", "d", Seq("e"), Seq(apiVersion), Some(false))
 
   private val apiVersionJson = Json.parse("""
         {
-          "version": "1.0",
+          "version": "2.0",
           "status": "ALPHA",
           "endpointsEnabled": false
         }
@@ -42,7 +42,7 @@ class ApiDefinitionSpec extends UnitSpec {
           "categories": ["e"],
           "versions": [
             {
-              "version": "1.0",
+              "version": "2.0",
               "status": "ALPHA",
               "endpointsEnabled": false
             }
@@ -60,7 +60,7 @@ class ApiDefinitionSpec extends UnitSpec {
             "categories": ["e"],
             "versions": [
               {
-                "version": "1.0",
+                "version": "2.0",
                 "status": "ALPHA",
                 "endpointsEnabled": false
               }

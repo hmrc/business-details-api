@@ -36,8 +36,8 @@ class ApiDefinitionFactory @Inject() (appConfig: AppConfig) extends Logging {
         versions = Seq(
           APIVersion(
             version = Version1,
-            status = buildAPIStatus(Version1),
-            endpointsEnabled = appConfig.endpointsEnabled(Version1)
+            status = APIStatus.RETIRED,
+            endpointsEnabled = false
           ),
           APIVersion(
             version = Version2,

@@ -25,7 +25,7 @@ import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import config.{AppConfig, FeatureSwitches}
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
-import routing.{Version, Version1}
+import routing.{Version, Version2}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.IdGenerator
@@ -79,7 +79,7 @@ class UpdateAccountingTypeController @Inject() (
           httpStatus: Int,
           response: Either[ErrorWrapper, Option[JsValue]]
       )(implicit ctx: RequestContext, ec: ExecutionContext): Unit = {
-        val versionNumber  = Version.from(request, orElse = Version1)
+        val versionNumber  = Version.from(request, orElse = Version2)
         val accountingType = (request.request.body \ "accountingType").asOpt[String]
 
         val params = Map("nino" -> nino, "businessId" -> businessId, "taxYear" -> taxYear) ++ accountingType.map("accountingType" -> _)

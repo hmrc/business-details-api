@@ -24,7 +24,7 @@ import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
 import config.AppConfig
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
-import routing.{Version, Version1}
+import routing.{Version, Version2}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.IdGenerator
@@ -71,7 +71,7 @@ class CreateAmendQuarterlyPeriodTypeController @Inject() (
           httpStatus: Int,
           response: Either[ErrorWrapper, Option[JsValue]]
       )(implicit ctx: RequestContext, ec: ExecutionContext): Unit = {
-        val versionNumber = Version.from(request, orElse = Version1)
+        val versionNumber = Version.from(request, orElse = Version2)
         val quarterlyPeriodType = (request.request.body \ "quarterlyPeriodType").asOpt[String] match {
           case Some(x) => Map("quarterlyPeriodType" -> x)
           case None    => Map.empty[String, String]

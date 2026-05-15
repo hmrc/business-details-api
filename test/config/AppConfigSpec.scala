@@ -181,7 +181,7 @@ class AppConfigSpec extends UnitSpec {
       "return NotDeprecated" in {
         val config: AppConfig = appConfig(
           """
-            |    1.0 {
+            |    2.0 {
             |      status = "BETA"
             |      endpoints {
             |        enabled = true
@@ -191,7 +191,7 @@ class AppConfigSpec extends UnitSpec {
             |    }
             |""".stripMargin
         )
-        config.deprecationFor(Version1) shouldBe Valid(NotDeprecated)
+        config.deprecationFor(Version2) shouldBe Valid(NotDeprecated)
       }
     }
 
@@ -200,7 +200,7 @@ class AppConfigSpec extends UnitSpec {
         "return the expected message" in {
           val config: AppConfig = appConfig(
             """
-              |    1.0 {
+              |    2.0 {
               |      status = "DEPRECATED"
               |      endpoints {
               |        enabled = true
@@ -211,9 +211,9 @@ class AppConfigSpec extends UnitSpec {
             """.stripMargin
           )
 
-          val result: Validated[String, Deprecation] = config.deprecationFor(Version1)
+          val result: Validated[String, Deprecation] = config.deprecationFor(Version2)
 
-          result shouldBe Invalid("deprecatedOn date is required for a deprecated version 1.0")
+          result shouldBe Invalid("deprecatedOn date is required for a deprecated version 2.0")
         }
       }
 
@@ -223,7 +223,7 @@ class AppConfigSpec extends UnitSpec {
             "return Deprecated with supplied sunsetDate" in {
               val config: AppConfig = appConfig(
                 """
-                  |    1.0 {
+                  |    2.0 {
                   |      status = "DEPRECATED"
                   |      deprecatedOn = "2024-01-15"
                   |      sunsetDate = "2025-01-15"
@@ -236,7 +236,7 @@ class AppConfigSpec extends UnitSpec {
                 """.stripMargin
               )
 
-              val result: Validated[String, Deprecation] = config.deprecationFor(Version1)
+              val result: Validated[String, Deprecation] = config.deprecationFor(Version2)
 
               result shouldBe Valid(
                 Deprecated(
@@ -251,7 +251,7 @@ class AppConfigSpec extends UnitSpec {
             "return Deprecated with default sunsetDate (+6 months)" in {
               val config: AppConfig = appConfig(
                 """
-                  |    1.0 {
+                  |    2.0 {
                   |      status = "DEPRECATED"
                   |      deprecatedOn = "2024-01-15"
                   |      endpoints {
@@ -263,7 +263,7 @@ class AppConfigSpec extends UnitSpec {
                 """.stripMargin
               )
 
-              val result: Validated[String, Deprecation] = config.deprecationFor(Version1)
+              val result: Validated[String, Deprecation] = config.deprecationFor(Version2)
 
               result shouldBe Valid(
                 Deprecated(
@@ -280,7 +280,7 @@ class AppConfigSpec extends UnitSpec {
             "return Deprecated without the supplied sunsetDate" in {
               val config: AppConfig = appConfig(
                 """
-                  |    1.0 {
+                  |    2.0 {
                   |      status = "DEPRECATED"
                   |      deprecatedOn = "2024-01-15"
                   |      sunsetDate = "2025-01-15"
@@ -294,7 +294,7 @@ class AppConfigSpec extends UnitSpec {
                 """.stripMargin
               )
 
-              val result: Validated[String, Deprecation] = config.deprecationFor(Version1)
+              val result: Validated[String, Deprecation] = config.deprecationFor(Version2)
 
               result shouldBe Valid(
                 Deprecated(
@@ -309,7 +309,7 @@ class AppConfigSpec extends UnitSpec {
             "return Deprecated with no sunsetDate" in {
               val config: AppConfig = appConfig(
                 """
-                  |    1.0 {
+                  |    2.0 {
                   |      status = "DEPRECATED"
                   |      deprecatedOn = "2024-01-15"
                   |      sunsetEnabled = false
@@ -322,7 +322,7 @@ class AppConfigSpec extends UnitSpec {
                 """.stripMargin
               )
 
-              val result: Validated[String, Deprecation] = config.deprecationFor(Version1)
+              val result: Validated[String, Deprecation] = config.deprecationFor(Version2)
 
               result shouldBe Valid(
                 Deprecated(
@@ -338,7 +338,7 @@ class AppConfigSpec extends UnitSpec {
           "return the expected message" in {
             val config: AppConfig = appConfig(
               """
-                |    1.0 {
+                |    2.0 {
                 |      status = "DEPRECATED"
                 |      deprecatedOn = "2024-01-15"
                 |      sunsetDate = "2023-12-31"
@@ -351,9 +351,9 @@ class AppConfigSpec extends UnitSpec {
               """.stripMargin
             )
 
-            val result: Validated[String, Deprecation] = config.deprecationFor(Version1)
+            val result: Validated[String, Deprecation] = config.deprecationFor(Version2)
 
-            result shouldBe Invalid("sunsetDate must be later than deprecatedOn date for a deprecated version 1.0")
+            result shouldBe Invalid("sunsetDate must be later than deprecatedOn date for a deprecated version 2.0")
           }
         }
       }

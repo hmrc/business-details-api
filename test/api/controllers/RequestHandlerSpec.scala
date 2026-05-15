@@ -17,7 +17,6 @@
 package api.controllers
 
 import api.controllers.validators.Validator
-import api.hateoas.*
 import api.models.audit.{AuditError, AuditEvent, AuditResponse, GenericAuditDetail}
 import api.models.auth.UserDetails
 import api.models.errors.{ErrorWrapper, MtdError, NinoFormatError}
@@ -33,7 +32,7 @@ import play.api.http.{HeaderNames, Status}
 import play.api.libs.json.{JsString, Json, OWrites}
 import play.api.mvc.{AnyContent, AnyContentAsEmpty}
 import play.api.test.{FakeRequest, ResultExtractors}
-import routing.{Version, Version1, Version2}
+import routing.{Version, Version2}
 import support.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
@@ -46,12 +45,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class RequestHandlerSpec
     extends UnitSpec
     with MockAuditService
-    with MockHateoasFactory
     with MockIdGenerator
     with Status
     with HeaderNames
     with ResultExtractors
-    with ControllerSpecHateoasSupport
     with MockAppConfig {
 
   private val successResponseJson = Json.obj("result" -> "SUCCESS!")
@@ -67,11 +64,6 @@ class RequestHandlerSpec
 
   case object Input
   case object Output { implicit val writes: OWrites[Output.type] = _ => successResponseJson }
-  case object HData extends HateoasData
-
-  implicit object HLinksFactory extends HateoasLinksFactory[Output.type, HData.type] {
-    override def links(appConfig: AppConfig, data: HData.type): Seq[Link] = hateoaslinks
-  }
 
   MockIdGenerator.generateCorrelationId.returns(generatedCorrelationId).anyNumberOfTimes()
 
@@ -80,7 +72,7 @@ class RequestHandlerSpec
 
   implicit val hc: HeaderCarrier                               = HeaderCarrier()
   implicit val ctx: RequestContext                             = RequestContext.from(mockIdGenerator, endpointLogContext)
-  private val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(HeaderNames.ACCEPT -> "application/vnd.hmrc.1.0+json")
+  private val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders(HeaderNames.ACCEPT -> "application/vnd.hmrc.2.0+json")
   implicit val userRequest: UserRequest[AnyContent]            = UserRequest[AnyContent](userDetails, fakeRequest)
   implicit val appConfig: AppConfig                            = mockAppConfig
   implicit val apiVersion: Version                             = Version(userRequest)
@@ -135,24 +127,6 @@ class RequestHandlerSpec
         contentAsString(result) shouldBe ""
         header("X-CorrelationId", result) shouldBe Some(serviceCorrelationId)
         status(result) shouldBe NO_CONTENT
-      }
-
-      "wrap the response with hateoas links if required§" in {
-        val requestHandler = RequestHandler
-          .withValidator(successValidatorForRequest)
-          .withService(mockService.service)
-          .withHateoasResult(mockHateoasFactory)(HData, successCode)
-
-        mockDeprecation(NotDeprecated)
-        service returns Future.successful(Right(ResponseWrapper(serviceCorrelationId, Output)))
-
-        MockHateoasFactory.wrap(Output, HData) returns HateoasWrapper(Output, hateoaslinks)
-
-        val result = requestHandler.handleRequest()
-
-        contentAsJson(result) shouldBe successResponseJson ++ hateoaslinksJson
-        header("X-CorrelationId", result) shouldBe Some(serviceCorrelationId)
-        status(result) shouldBe successCode
       }
 
       "a request is made to a deprecated version" must {
@@ -260,7 +234,7 @@ class RequestHandlerSpec
           mockAuditService,
           auditType = auditType,
           transactionName = txName,
-          apiVersion = Version1,
+          apiVersion = Version2,
           params = params,
           requestBody = requestBody,
           includeResponse = includeResponse
@@ -284,7 +258,7 @@ class RequestHandlerSpec
               GenericAuditDetail(
                 userDetails,
                 params = params,
-                apiVersion = Version1.name,
+                apiVersion = Version2.name,
                 requestBody = requestBody,
                 `X-CorrelationId` = correlationId,
                 auditResponse = auditResponse)

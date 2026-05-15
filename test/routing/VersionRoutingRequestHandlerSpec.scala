@@ -47,17 +47,13 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
     DefaultHandler
   }
 
-  private val v1Router = Router.from { case GET(p"/v1") =>
-    V1Handler
-  }
-
   private val v2Router = Router.from { case GET(p"/v2") =>
     V2Handler
   }
 
   private val routingMap = new VersionRoutingMap {
     override val defaultRouter: Router     = test.defaultRouter
-    override val map: Map[Version, Router] = Map(Version1 -> v1Router, Version2 -> v2Router)
+    override val map: Map[Version, Router] = Map(Version2 -> v2Router)
   }
 
   class Test(implicit acceptHeader: Option[String]) {
@@ -89,12 +85,6 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
     handleWithDefaultRoutes()
   }
 
-  "Routing requests with v1" should {
-    implicit val acceptHeader: Some[String] = Some("application/vnd.hmrc.1.0+json")
-
-    handleWithVersionRoutes("/v1", V1Handler, Version1)
-  }
-
   "Routing requests with v2" should {
     implicit val acceptHeader: Some[String] = Some("application/vnd.hmrc.2.0+json")
 
@@ -105,7 +95,7 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
     "if the request ends with a trailing slash" when {
       "handler found" should {
         "use it" in new Test {
-          MockedAppConfig.endpointsEnabled(Version1).returns(true).anyNumberOfTimes()
+          MockedAppConfig.endpointsEnabled(Version2).returns(true).anyNumberOfTimes()
 
           requestHandler.routeRequest(buildRequest("/")) shouldBe Some(DefaultHandler)
         }
@@ -113,7 +103,7 @@ class VersionRoutingRequestHandlerSpec extends UnitSpec with Inside with MockApp
 
       "handler not found" should {
         "try without the trailing slash" in new Test {
-          MockedAppConfig.endpointsEnabled(Version1).returns(true).anyNumberOfTimes()
+          MockedAppConfig.endpointsEnabled(Version2).returns(true).anyNumberOfTimes()
 
           requestHandler.routeRequest(buildRequest("")) shouldBe Some(DefaultHandler)
         }
