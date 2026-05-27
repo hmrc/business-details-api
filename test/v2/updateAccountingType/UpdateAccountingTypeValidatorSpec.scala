@@ -47,8 +47,8 @@ class UpdateAccountingTypeValidatorSpec extends UnitSpec with JsonErrorValidator
 
   private val parsedBody: UpdateAccountingTypeRequestBody = UpdateAccountingTypeRequestBody(AccountingType.CASH)
 
-  private def validator(nino: String, businessId: String, taxYear: String, body: JsValue, temporalValidationEnabled: Boolean = true) =
-    new UpdateAccountingTypeValidator(nino, businessId, taxYear, body, temporalValidationEnabled)(mockAppConfig)
+  private def validator(nino: String, businessId: String, taxYear: String, body: JsValue) =
+    new UpdateAccountingTypeValidator(nino, businessId, taxYear, body)(mockAppConfig)
 
   private trait Test {
     MockedAppConfig.accountingTypeMinimumTaxYear.returns(2025).anyNumberOfTimes()
@@ -56,20 +56,19 @@ class UpdateAccountingTypeValidatorSpec extends UnitSpec with JsonErrorValidator
 
   "validator" should {
     "return the parsed domain object" when {
-      "passed a valid request with a tax year that has ended and temporal validation is enabled" in new Test {
+      "passed a valid request with a tax year that has ended" in new Test {
         val result: Either[ErrorWrapper, UpdateAccountingTypeRequestData] =
           validator(validNino, validBusinessId, validTaxYear, validBody).validateAndWrapResult()
 
         result shouldBe Right(UpdateAccountingTypeRequestData(parsedNino, parsedBusinessId, parsedTaxYear, parsedBody))
       }
 
-      "passed a valid request with a tax year that has not ended and temporal validation is disabled" in new Test {
+      "passed a valid request with a tax year that has not ended" in new Test {
         val result: Either[ErrorWrapper, UpdateAccountingTypeRequestData] = validator(
           validNino,
           validBusinessId,
           TaxYear.currentTaxYear.asMtd,
-          validBody,
-          temporalValidationEnabled = false
+          validBody
         ).validateAndWrapResult()
 
         result shouldBe Right(UpdateAccountingTypeRequestData(parsedNino, parsedBusinessId, TaxYear.currentTaxYear, parsedBody))
@@ -110,15 +109,6 @@ class UpdateAccountingTypeValidatorSpec extends UnitSpec with JsonErrorValidator
 
         result shouldBe Left(
           ErrorWrapper(correlationId, RuleTaxYearNotSupportedError)
-        )
-      }
-
-      "passed an tax year that has not ended and temporal validation is enabled" in new Test {
-        val result: Either[ErrorWrapper, UpdateAccountingTypeRequestData] =
-          validator(validNino, validBusinessId, TaxYear.currentTaxYear.asMtd, validBody).validateAndWrapResult()
-
-        result shouldBe Left(
-          ErrorWrapper(correlationId, RuleTaxYearNotEndedError)
         )
       }
 

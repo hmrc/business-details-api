@@ -52,7 +52,7 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
 
   "Calling the update accounting type endpoint" should {
     "return a 204 status code" when {
-      "a valid request is made with a past tax year and suspendTemporalValidations is false" in new Test {
+      "a valid request is made with a past tax year" in new Test {
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
           MtdIdLookupStub.ninoFound(nino)
@@ -71,9 +71,8 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
         response.status shouldBe NO_CONTENT
       }
 
-      "a valid request is made with the current tax year and suspendTemporalValidations is true" in new Test {
+      "a valid request is made with the current tax year" in new Test {
         override val taxYear: String                    = TaxYear.currentTaxYear.asMtd
-        override val suspendTemporalValidations: String = "true"
 
         override def setupStubs(): StubMapping = {
           AuditStub.audit()
@@ -124,7 +123,6 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
           ("AA1123A", "XAIS12345678910", "2024-25", requestBodyJson, BAD_REQUEST, NinoFormatError),
           ("AA123456A", "invalid", "2024-25", requestBodyJson, BAD_REQUEST, BusinessIdFormatError),
           ("AA123456A", "XAIS12345678910", "invalid", requestBodyJson, BAD_REQUEST, TaxYearFormatError),
-          ("AA123456A", "XAIS12345678910", TaxYear.currentTaxYear().asMtd, requestBodyJson, BAD_REQUEST, RuleTaxYearNotEndedError),
           ("AA123456A", "XAIS12345678910", "2024-26", requestBodyJson, BAD_REQUEST, RuleTaxYearRangeInvalidError),
           ("AA123456A", "XAIS12345678910", "2023-24", requestBodyJson, BAD_REQUEST, RuleTaxYearNotSupportedError),
           ("AA123456A", "XAIS12345678910", "2024-25", JsObject.empty, BAD_REQUEST, RuleIncorrectOrEmptyBodyError)
@@ -157,7 +155,6 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
           (BAD_REQUEST, "1007", BAD_REQUEST, BusinessIdFormatError),
           (NOT_FOUND, "UNMATCHED_STUB_ERROR", BAD_REQUEST, RuleIncorrectGovTestScenarioError),
           (BAD_REQUEST, "5010", NOT_FOUND, NotFoundError),
-          (UNPROCESSABLE_ENTITY, "1115", BAD_REQUEST, RuleTaxYearNotEndedError),
           (UNPROCESSABLE_ENTITY, "4200", BAD_REQUEST, RuleOutsideAmendmentWindowError)
         )
 
@@ -171,8 +168,6 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
     val businessId: String = "X0IS12345678901"
     val taxYear: String    = "2024-25"
 
-    val suspendTemporalValidations: String = "false"
-
     def setupStubs(): StubMapping
 
     private def mtdUri: String = s"/$nino/$businessId/$taxYear/accounting-type"
@@ -184,8 +179,7 @@ class UpdateAccountingTypeControllerISpec extends IntegrationBaseSpec {
       buildRequest(mtdUri)
         .withHttpHeaders(
           (ACCEPT, "application/vnd.hmrc.2.0+json"),
-          (AUTHORIZATION, "Bearer 123"),
-          ("suspend-temporal-validations", suspendTemporalValidations)
+          (AUTHORIZATION, "Bearer 123")
         )
     }
 
