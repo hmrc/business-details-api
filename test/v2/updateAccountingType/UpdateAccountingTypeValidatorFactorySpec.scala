@@ -47,8 +47,7 @@ class UpdateAccountingTypeValidatorFactorySpec extends UnitSpec with MockAppConf
           nino = validNino,
           businessId = validBusinessId,
           taxYear = validTaxYear,
-          body = validBody,
-          temporalValidationEnabled = true
+          body = validBody
         )
 
         result shouldBe a[UpdateAccountingTypeValidator]

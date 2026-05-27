@@ -26,8 +26,8 @@ import javax.inject.Singleton
 @Singleton
 class UpdateAccountingTypeValidatorFactory {
 
-  def validator(nino: String, businessId: String, taxYear: String, body: JsValue, temporalValidationEnabled: Boolean)(implicit
+  def validator(nino: String, businessId: String, taxYear: String, body: JsValue)(implicit
       appConfig: AppConfig): Validator[UpdateAccountingTypeRequestData] =
-    new UpdateAccountingTypeValidator(nino, businessId, taxYear, body, temporalValidationEnabled)
+    new UpdateAccountingTypeValidator(nino, businessId, taxYear, body)
 
 }

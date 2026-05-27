@@ -63,7 +63,6 @@ class UpdateAccountingTypeServiceSpec extends ServiceSpec {
         ("1007", BusinessIdFormatError),
         ("UNMATCHED_STUB_ERROR", RuleIncorrectGovTestScenarioError),
         ("5010", NotFoundError),
-        ("1115", RuleTaxYearNotEndedError),
         ("4200", RuleOutsideAmendmentWindowError)
       )
 
