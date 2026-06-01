@@ -152,6 +152,13 @@ class ErrorHandlerSpec extends UnitSpec with GuiceOneAppPerSuite {
         }
       }
     }
+
+    s"a GatewayTimeoutException is returned" in new Test {
+      val result: Future[Result] = handler.onServerError(requestHeader, new GatewayTimeoutException("gateway timeout") with NoStackTrace)
+
+      status(result) shouldBe GATEWAY_TIMEOUT
+      contentAsJson(result) shouldBe GatewayTimeoutError.asJson
+    }
   }
 
   def versionHeader: (String, String) = ACCEPT -> s"application/vnd.hmrc.1.0+json"

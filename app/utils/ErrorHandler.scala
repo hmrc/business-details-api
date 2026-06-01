@@ -96,6 +96,7 @@ class ErrorHandler @Inject() (config: Configuration, auditConnector: AuditConnec
       case _: NotFoundException                                                  => (NotFoundError, "ResourceNotFound")
       case _: AuthorisationException                                             => (ClientOrAgentNotAuthorisedError.withStatus401, "ClientError")
       case _: JsValidationException                                              => (BadRequestError, "ServerValidationError")
+      case _: GatewayTimeoutException                                            => (GatewayTimeoutError, "ServerTimeoutError")
       case e: HttpException                                                      => (BadRequestError, "ServerValidationError")
       case e: UpstreamErrorResponse if timeoutStatusCodes.contains(e.statusCode) => (GatewayTimeoutError, "ServerTimeoutError")
       case e: UpstreamErrorResponse if UpstreamErrorResponse.Upstream4xxResponse.unapply(e).isDefined =>
