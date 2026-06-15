@@ -22,7 +22,7 @@ import api.models.audit.{AuditEvent, AuditResponse, FlattenedGenericAuditDetail}
 import api.models.auth.UserDetails
 import api.models.errors.ErrorWrapper
 import api.services.{AuditService, EnrolmentsAuthService, MtdIdLookupService}
-import config.{AppConfig, FeatureSwitches}
+import config.AppConfig
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, ControllerComponents}
 import routing.{Version, Version2}
@@ -59,8 +59,7 @@ class UpdateAccountingTypeController @Inject() (
         nino = nino,
         businessId = businessId,
         taxYear = taxYear,
-        body = request.body,
-        temporalValidationEnabled = FeatureSwitches(appConfig).isTemporalValidationEnabled
+        body = request.body
       )
 
       val requestHandler: RequestHandler.RequestHandlerBuilder[UpdateAccountingTypeRequestData, Unit] =
