@@ -53,7 +53,7 @@ http://localhost:7792/api/conf/2.0/application.yaml
 
 ## Changelog
 
-You can see our changelog [here](https://github.com/hmrc/income-tax-mtd-changelog/wiki)
+You can see our changelog [here](https://github.com/hmrc/income-tax-mtd-changelog)
 
 ## Support and Reporting Issues
 
