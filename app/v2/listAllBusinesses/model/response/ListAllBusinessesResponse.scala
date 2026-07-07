@@ -16,7 +16,7 @@
 
 package v2.listAllBusinesses.model.response
 
-import cats.Functor
+//import cats.Functor
 import play.api.libs.json.*
 import v2.retrieveBusinessDetails.model.response.downstream.RetrieveBusinessDetailsDownstreamResponse
 
@@ -31,12 +31,5 @@ object ListAllBusinessesResponse {
     )
 
   implicit def writes[I: Writes]: OWrites[ListAllBusinessesResponse[I]] = Json.writes[ListAllBusinessesResponse[I]]
-
-  implicit object ResponseFunctor extends Functor[ListAllBusinessesResponse] {
-
-    override def map[A, B](fa: ListAllBusinessesResponse[A])(f: A => B): ListAllBusinessesResponse[B] =
-      ListAllBusinessesResponse(fa.listOfBusinesses.map(f))
-
-  }
 
 }
