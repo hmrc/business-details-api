@@ -16,7 +16,7 @@
 
 package api
 
-import api.models.errors.{DownstreamError}
+import api.models.errors.DownstreamError
 import api.models.outcomes.ResponseWrapper
 
 package object connectors {

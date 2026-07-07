@@ -19,7 +19,7 @@ package v2.retrieveBusinessDetails
 import api.models.errors.*
 import api.services.{AuditStub, AuthStub, DownstreamStub, MtdIdLookupStub}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import play.api.libs.json.{JsArray, JsObject, JsPath, JsValue, Json}
+import play.api.libs.json.*
 import play.api.libs.ws.{WSRequest, WSResponse}
 import play.api.test.Helpers.*
 import support.IntegrationBaseSpec

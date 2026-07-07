@@ -16,14 +16,13 @@
 
 package api.services
 
-import play.api.http.Status.*
 import api.connectors.MtdIdLookupConnector
 import api.controllers.validators.resolvers.ResolveNino
+import api.models.errors.{InvalidBearerTokenError, NinoFormatError, *}
+import play.api.http.Status.*
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import uk.gov.hmrc.http.HeaderCarrier
-import api.models.errors.{InvalidBearerTokenError, NinoFormatError, _}
-
 import scala.concurrent.{ExecutionContext, Future}
 
 object MtdIdLookupService {
