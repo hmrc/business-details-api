@@ -16,7 +16,6 @@
 
 package v2.listAllBusinesses.model.response
 
-//import cats.Functor
 import play.api.libs.json.*
 import v2.retrieveBusinessDetails.model.response.downstream.RetrieveBusinessDetailsDownstreamResponse
 
