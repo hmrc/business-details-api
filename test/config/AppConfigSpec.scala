@@ -19,8 +19,8 @@ package config
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import com.typesafe.config.ConfigFactory
-import play.api.Configuration
 import config.Deprecation.{Deprecated, NotDeprecated}
+import play.api.Configuration
 import routing.*
 import support.UnitSpec
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

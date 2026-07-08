@@ -23,9 +23,9 @@ import controllers.{AssetsConfiguration, DefaultAssetsMetadata, RewriteableAsset
 import definition.ApiDefinitionFactory
 import org.apache.pekko.stream.Materializer
 import org.apache.pekko.stream.testkit.NoMaterializer
-import play.api.{Configuration, Environment}
 import play.api.http.{DefaultFileMimeTypes, DefaultHttpErrorHandler, FileMimeTypesConfiguration, HttpConfiguration}
 import play.api.mvc.Result
+import play.api.{Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package v2.listAllBusinesses.model.response
 
-import cats.Functor
 import play.api.libs.json.*
 import v2.retrieveBusinessDetails.model.response.downstream.RetrieveBusinessDetailsDownstreamResponse
 
@@ -31,12 +30,5 @@ object ListAllBusinessesResponse {
     )
 
   implicit def writes[I: Writes]: OWrites[ListAllBusinessesResponse[I]] = Json.writes[ListAllBusinessesResponse[I]]
-
-  implicit object ResponseFunctor extends Functor[ListAllBusinessesResponse] {
-
-    override def map[A, B](fa: ListAllBusinessesResponse[A])(f: A => B): ListAllBusinessesResponse[B] =
-      ListAllBusinessesResponse(fa.listOfBusinesses.map(f))
-
-  }
 
 }

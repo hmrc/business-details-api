@@ -20,8 +20,8 @@ import api.connectors.DownstreamUri.HipUri
 import api.connectors.httpparsers.StandardDownstreamHttpParser.reads
 import api.connectors.{BaseDownstreamConnector, DownstreamOutcome}
 import config.AppConfig
-import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.client.HttpClientV2
 import v2.retrievePeriodsOfAccount.model.request.RetrievePeriodsOfAccountRequest
 import v2.retrievePeriodsOfAccount.model.response.RetrievePeriodsOfAccountResponse
 

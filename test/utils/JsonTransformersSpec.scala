@@ -16,7 +16,7 @@
 
 package utils
 
-import play.api.libs.json.{JsObject, JsPath, JsString, JsSuccess, Json, Reads}
+import play.api.libs.json.*
 import support.UnitSpec
 import utils.JsonTransformers.{conditionalCopy, conditionalUpdate}
 

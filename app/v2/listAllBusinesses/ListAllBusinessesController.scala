@@ -21,6 +21,7 @@ import api.services.{EnrolmentsAuthService, MtdIdLookupService}
 import config.AppConfig
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import utils.IdGenerator
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 

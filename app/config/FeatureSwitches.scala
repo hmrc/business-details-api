@@ -16,8 +16,8 @@
 
 package config
 
-import org.apache.commons.lang3.BooleanUtils
 import com.google.inject.ImplementedBy
+import org.apache.commons.lang3.BooleanUtils
 import play.api.Configuration
 import play.api.mvc.Request
 
