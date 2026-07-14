@@ -2,6 +2,7 @@ post:
   summary: Disapply Late Accounting Date Rule
   description: |
     Allows a customer to submit an election to disapply the automatic Late Accounting Date Rule treatment for a given tax year. A National Insurance number, business ID and tax year must be provided.
+    This endpoint can only be used after the tax year has ended.
   
     ### Test data
     Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
