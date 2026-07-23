@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import api.models.domain.TypeOfBusiness
 import play.api.libs.json.{Json, OWrites}
 import v2.retrieveBusinessDetails.model.response.downstream.{BusinessData, PropertyData}
 
-case class Business(typeOfBusiness: TypeOfBusiness, businessId: String, tradingName: Option[String])
+case class Business(typeOfBusiness: TypeOfBusiness, businessId: String, tradingType: Option[String], tradingName: Option[String])
 
 object Business {
 
@@ -31,6 +31,7 @@ object Business {
     Business(
       TypeOfBusiness.`self-employment`,
       businessId = incomeSourceId,
+      tradingType = incomeSource,
       tradingName
     )
   }
@@ -40,6 +41,7 @@ object Business {
     Business(
       propertyData.incomeSourceType.getOrElse(TypeOfBusiness.`property-unspecified`),
       businessId = incomeSourceId,
+      tradingType = None,
       tradingName = None
     )
   }

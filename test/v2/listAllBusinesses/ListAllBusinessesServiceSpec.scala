@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ class ListAllBusinessesServiceSpec extends ServiceSpec {
           businessData = Some(
             Seq(BusinessData(
               incomeSourceId = "someBusinessId",
+              incomeSource = None,
               accountingPeriodStartDate = "ignoredStartDate",
               accountingPeriodEndDate = "ignoredEndDate",
               tradingName = None,
@@ -61,7 +62,7 @@ class ListAllBusinessesServiceSpec extends ServiceSpec {
           Right(
             ResponseWrapper(
               correlationId,
-              ListAllBusinessesResponse(List(Business(TypeOfBusiness.`self-employment`, "someBusinessId", None)))
+              ListAllBusinessesResponse(List(Business(TypeOfBusiness.`self-employment`, "someBusinessId", None, None)))
             ))
       }
     }

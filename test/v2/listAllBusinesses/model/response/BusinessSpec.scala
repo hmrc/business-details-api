@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,12 @@ class BusinessSpec extends UnitSpec {
   "writes" should {
     "write to JSON" when {
       "passed a model" in {
-        val model = Business(TypeOfBusiness.`self-employment`, "myid", Some("name"))
+        val model = Business(TypeOfBusiness.`self-employment`, "myid", Some("Plastering"), Some("name"))
         val json = Json.parse("""
             |{
             |  "typeOfBusiness": "self-employment",
             |  "businessId": "myid",
+            |  "tradingType": "Plastering",
             |  "tradingName": "name"
             |}
             |""".stripMargin)

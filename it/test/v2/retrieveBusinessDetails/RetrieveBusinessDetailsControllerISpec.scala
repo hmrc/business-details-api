@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -181,9 +181,9 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         |      "businessData": [
         |        {
         |          "incomeSourceId": "XAIS12345678901",
-        |          "incomeSource": "ITSB",
         |          "accPeriodSDate": "2001-01-01",
         |          "accPeriodEDate": "2001-01-01",
+        |          "incomeSource":   "Plastering",
         |          "tradingName": "RCDTS",
         |          "businessAddressDetails": {
         |            "addressLine1": "100 SuttonStreet",
@@ -221,9 +221,9 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         |        },
         |        {
         |          "incomeSourceId": "XAIS12345671111",
-        |          "incomeSource": "ITSB",
         |          "accPeriodSDate": "2001-01-01",
         |          "accPeriodEDate": "2001-01-01",
+        |          "incomeSource": "Plastering",
         |          "tradingName": "RCDTS",
         |          "businessAddressDetails": {
         |            "addressLine1": "100 SuttonStreet",
@@ -341,6 +341,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         |{
         |  "businessId": "$businessId",
         |  "typeOfBusiness": "$typeOfBusiness",
+        |  "tradingType": "Plastering",
         |  "tradingName": "RCDTS",
         |  "accountingPeriods": [
         |    {
@@ -378,6 +379,7 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
       val original: JsValue = fullMtdJson(businessId, typeOfBusiness)
 
       original.as[JsObject] -
+        "tradingType" -
         "tradingName" -
         "businessAddressLineOne" -
         "businessAddressLineTwo" -

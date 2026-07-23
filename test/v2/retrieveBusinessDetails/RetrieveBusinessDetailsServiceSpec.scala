@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
   private def propertyResponse(incomeSourceId: String) = RetrieveBusinessDetailsResponse(
     businessId = incomeSourceId,
     typeOfBusiness = TypeOfBusiness.`foreign-property`,
+    tradingType = None,
     tradingName = None,
     accountingPeriods = Some(List(AccountingPeriod("accStartDate", "accEndDate"))),
     commencementDate = None,
@@ -74,6 +75,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
       incomeSourceId = incomeSourceId,
       accountingPeriodStartDate = "accStartDate",
       accountingPeriodEndDate = "accEndDate",
+      incomeSource = None,
       tradingName = None,
       businessAddressDetails = None,
       firstAccountingPeriodStartDate = None,
@@ -87,6 +89,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
   private def selfEmploymentResponse(incomeSourceId: String) = RetrieveBusinessDetailsResponse(
     businessId = incomeSourceId,
     typeOfBusiness = TypeOfBusiness.`self-employment`,
+    tradingType = None,
     tradingName = None,
     accountingPeriods = Some(List(AccountingPeriod("accStartDate", "accEndDate"))),
     commencementDate = None,

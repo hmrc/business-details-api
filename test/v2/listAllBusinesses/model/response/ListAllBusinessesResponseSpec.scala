@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
 
       val incomeSourceId  = "someIncomeSourceId"
       val yearOfMigration = Some("ignoredYear")
+      val incomeSource    = Some("Plastering")
 
       def downstream(businessData: Option[Seq[BusinessData]] = None,
                      propertyData: Option[Seq[PropertyData]] = None): RetrieveBusinessDetailsDownstreamResponse =
@@ -39,6 +40,7 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
           incomeSourceId = incomeSourceId,
           accountingPeriodStartDate = "ignoredStart",
           accountingPeriodEndDate = "ignoredEnd",
+          incomeSource = incomeSource,
           tradingName = tradingName,
           businessAddressDetails = None,
           tradingStartDate = None,
@@ -71,7 +73,7 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
         def singlePropertyTest(downstreamTypeOfBusiness: Option[TypeOfBusiness], expectedTypeOfBusiness: TypeOfBusiness): Unit =
           s"return single entry with that type of business $downstreamTypeOfBusiness" in {
             ListAllBusinessesResponse.fromDownstream(downstream(propertyData = Some(Seq(downstreamProperty(downstreamTypeOfBusiness))))) shouldBe
-              ListAllBusinessesResponse(Seq(Business(expectedTypeOfBusiness, incomeSourceId, None)))
+              ListAllBusinessesResponse(Seq(Business(expectedTypeOfBusiness, incomeSourceId, None, None)))
           }
       }
 
@@ -83,7 +85,7 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
       def singleBusinessTest(tradingName: Option[String]): Unit =
         s"return a response with a single self-employment entry and trading name $tradingName" in {
           ListAllBusinessesResponse.fromDownstream(downstream(businessData = Some(Seq(downstreamBusiness(tradingName))))) shouldBe
-            ListAllBusinessesResponse(Seq(Business(`self-employment`, incomeSourceId, tradingName)))
+            ListAllBusinessesResponse(Seq(Business(`self-employment`, incomeSourceId, incomeSource, tradingName)))
         }
 
       "given multiple properties and self-employment businesses" must {
@@ -100,9 +102,9 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
           )) shouldBe
             ListAllBusinessesResponse(
               Seq(
-                Business(`self-employment`, incomeSourceId, Some("businessA")),
-                Business(`self-employment`, incomeSourceId, Some("businessB")),
-                Business(`foreign-property`, incomeSourceId, None)
+                Business(`self-employment`, incomeSourceId, incomeSource, Some("businessA")),
+                Business(`self-employment`, incomeSourceId, incomeSource, Some("businessB")),
+                Business(`foreign-property`, incomeSourceId, None, None)
               ))
         }
       }
@@ -114,7 +116,7 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
               propertyData = Some(Nil),
               businessData = Some(Seq(downstreamBusiness(None)))
             )) shouldBe
-            ListAllBusinessesResponse(Seq(Business(`self-employment`, incomeSourceId, None)))
+            ListAllBusinessesResponse(Seq(Business(`self-employment`, incomeSourceId, incomeSource, None)))
         }
       }
 
@@ -125,7 +127,7 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
               propertyData = Some(Seq(downstreamProperty(None))),
               businessData = Some(Nil)
             )) shouldBe
-            ListAllBusinessesResponse(Seq(Business(`property-unspecified`, incomeSourceId, None)))
+            ListAllBusinessesResponse(Seq(Business(`property-unspecified`, incomeSourceId, None, None)))
         }
       }
 
@@ -137,8 +139,8 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
       "return mtd JSON" in {
         val model = ListAllBusinessesResponse(
           Seq(
-            Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("name")),
-            Business(TypeOfBusiness.`uk-property`, "123456789012346", None)
+            Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("Plastering"), Some("name")),
+            Business(TypeOfBusiness.`uk-property`, "123456789012346", None, None)
           ))
         val mtdJson = Json.parse(s"""
              |{
@@ -146,6 +148,7 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
              |    {
              |      "typeOfBusiness": "self-employment",
              |      "businessId": "123456789012345",
+             |      "tradingType": "Plastering",
              |      "tradingName": "name"
              |    },
              |    {

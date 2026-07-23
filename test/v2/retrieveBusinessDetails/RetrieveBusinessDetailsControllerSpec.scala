@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,7 @@ class RetrieveBusinessDetailsControllerSpec
       |{
       |   "businessId": "XAIS12345678910",
       |   "typeOfBusiness": "self-employment",
+      |   "tradingType": "Plastering",
       |   "tradingName": "Aardvark Window Cleaning Services",
       |   "accountingPeriods": [
       |     {
@@ -87,6 +88,7 @@ class RetrieveBusinessDetailsControllerSpec
   private val responseData = RetrieveBusinessDetailsResponse(
     businessId = "XAIS12345678910",
     typeOfBusiness = TypeOfBusiness.`self-employment`,
+    tradingType = Some("Plastering"),
     tradingName = Some("Aardvark Window Cleaning Services"),
     accountingPeriods = Some(Seq(AccountingPeriod("2018-04-06", "2019-04-05"))),
     commencementDate = Some("2016-09-24"),

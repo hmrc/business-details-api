@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
         RetrieveBusinessDetailsResponse(
           businessId = "businessId",
           typeOfBusiness = TypeOfBusiness.`self-employment`,
+          tradingType = Some("Plastering"),
           tradingName = Some("tradingName"),
           accountingPeriods = Some(Seq(AccountingPeriod("2001-01-01", "2001-01-02"))),
           commencementDate = Some("2001-01-01"),
@@ -58,6 +59,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
              |{
              |   "businessId": "businessId",
              |   "typeOfBusiness": "self-employment",
+             |   "tradingType": "Plastering",
              |   "tradingName": "tradingName",
              |   "accountingPeriods": [
              |     {
@@ -128,6 +130,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
         RetrieveBusinessDetailsResponse(
           businessId = "businessId",
           typeOfBusiness = expectedTypeOfBusiness,
+          tradingType = None,
           tradingName = None,
           accountingPeriods = Some(Seq(AccountingPeriod("accStartDate", "accEndDate"))),
           commencementDate = Some("tradingStartDate"),
@@ -163,6 +166,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           incomeSourceId = "businessId",
           accountingPeriodStartDate = "accStartDate",
           accountingPeriodEndDate = "accEndDate",
+          incomeSource = Some("Plastering"),
           tradingName = Some("tradingName"),
           businessAddressDetails = businessAddressDetails,
           firstAccountingPeriodStartDate = Some("firstStartDate"),
@@ -176,6 +180,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
       def businessResponse = {
         RetrieveBusinessDetailsResponse(
           businessId = "businessId",
+          tradingType = Some("Plastering"),
           typeOfBusiness = TypeOfBusiness.`self-employment`,
           tradingName = Some("tradingName"),
           accountingPeriods = Some(Seq(AccountingPeriod("accStartDate", "accEndDate"))),
@@ -206,6 +211,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           RetrieveBusinessDetailsResponse(
             businessId = "businessId",
             typeOfBusiness = TypeOfBusiness.`self-employment`,
+            tradingType = Some("Plastering"),
             tradingName = Some("tradingName"),
             accountingPeriods = Some(Seq(AccountingPeriod("accStartDate", "accEndDate"))),
             commencementDate = Some("tradingStartDate"),
@@ -229,6 +235,7 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           RetrieveBusinessDetailsResponse(
             businessId = "businessId",
             typeOfBusiness = TypeOfBusiness.`self-employment`,
+            tradingType = Some("Plastering"),
             tradingName = Some("tradingName"),
             accountingPeriods = Some(Seq(AccountingPeriod("accStartDate", "accEndDate"))),
             commencementDate = Some("tradingStartDate"),

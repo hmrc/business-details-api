@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import v2.retrieveBusinessDetails.model.response.downstream.{BusinessData, Laten
 
 case class RetrieveBusinessDetailsResponse(businessId: String,
                                            typeOfBusiness: TypeOfBusiness,
+                                           tradingType: Option[String],
                                            tradingName: Option[String],
                                            accountingPeriods: Option[Seq[AccountingPeriod]],
                                            commencementDate: Option[String],
@@ -50,6 +51,7 @@ object RetrieveBusinessDetailsResponse {
     RetrieveBusinessDetailsResponse(
       businessId = incomeSourceId,
       typeOfBusiness = TypeOfBusiness.`self-employment`,
+      tradingType = incomeSource,
       tradingName = tradingName,
       accountingPeriods = Some(Seq(AccountingPeriod(accountingPeriodStartDate, accountingPeriodEndDate))),
       commencementDate = tradingStartDate,
@@ -74,6 +76,7 @@ object RetrieveBusinessDetailsResponse {
 
     RetrieveBusinessDetailsResponse(
       businessId = incomeSourceId,
+      tradingType = None,
       typeOfBusiness = incomeSourceType.getOrElse(TypeOfBusiness.`property-unspecified`),
       tradingName = None,
       accountingPeriods = Some(Seq(AccountingPeriod(accountingPeriodStartDate, accountingPeriodEndDate))),
