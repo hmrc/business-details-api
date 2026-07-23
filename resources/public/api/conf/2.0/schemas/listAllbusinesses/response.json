@@ -27,10 +27,18 @@
             "example": "XAIS12345678910",
             "pattern": "^X[a-zA-Z0-9]{1}IS[0-9]{11}$"
           },
+          "tradingType": {
+            "type": "string",
+            "description": "The type of trading carried out by the business.",
+            "example": "Plastering",
+            "minLength": 1,
+            "maxLength": 35
+          },
           "tradingName": {
             "description": "The trading name of the business.",
             "type": "string",
-            "example": "RCDTS"
+            "example": "RCDTS",
+            "maxLength": 105
           }
         },
         "required": [

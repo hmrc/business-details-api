@@ -20,12 +20,20 @@
         "property-unspecified"
       ]
     },
+    "tradingType": {
+      "type": "string",
+      "description": "The type of trading carried out by the business.",
+      "example": "Plastering",
+      "minLength": 1,
+      "maxLength": 35
+    },
     "tradingName": {
       "type": "string",
       "description": "The trading name of the business.",
-      "example": "ABC Ltd."
+      "example": "ABC Ltd.",
+      "maxLength": 105
     },
-  "yearOfMigration": {
+    "yearOfMigration": {
       "type": "string",
       "description": "Year of migration.",
       "pattern": "^(\\d{4})$",
@@ -107,7 +115,10 @@
       "properties": {
         "quarterlyPeriodType": {
           "type": "string",
-          "enum": ["standard", "calendar"],
+          "enum": [
+            "standard",
+            "calendar"
+          ],
           "description": "The quarterly period type that is being chosen for the business ID.",
           "example": "standard"
         },
