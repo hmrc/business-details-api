@@ -76,8 +76,8 @@ object RetrieveBusinessDetailsResponse {
 
     RetrieveBusinessDetailsResponse(
       businessId = incomeSourceId,
-      tradingType = None,
       typeOfBusiness = incomeSourceType.getOrElse(TypeOfBusiness.`property-unspecified`),
+      tradingType = None,
       tradingName = None,
       accountingPeriods = Some(Seq(AccountingPeriod(accountingPeriodStartDate, accountingPeriodEndDate))),
       commencementDate = tradingStartDate,

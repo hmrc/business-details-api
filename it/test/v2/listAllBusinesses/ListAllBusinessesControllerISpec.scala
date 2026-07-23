@@ -203,9 +203,9 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         |      "businessData": [
         |        {
         |          "incomeSourceId": "XAIS12345678901",
-        |          "incomeSource": "Plastering",
         |          "accPeriodSDate": "2001-01-01",
         |          "accPeriodEDate": "2001-01-01",
+        |          "incomeSource": "Plastering",
         |          "tradingName": "RCDTS",
         |          "businessAddressDetails": {
         |            "addressLine1": "100 SuttonStreet",
@@ -310,9 +310,9 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         |      "businessData": [
         |        {
         |          "incomeSourceId": "XAIS12345671111",
-        |          "incomeSource": "Plastering",
         |          "accPeriodSDate": "2001-01-01",
         |          "accPeriodEDate": "2001-01-01",
+        |          "incomeSource": "Plastering",
         |          "tradingName": "RCDTS",
         |          "businessAddressDetails": {
         |            "addressLine1": "100 SuttonStreet",
