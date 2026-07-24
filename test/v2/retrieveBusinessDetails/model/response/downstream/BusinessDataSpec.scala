@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ class BusinessDataSpec extends UnitSpec {
 
   private val model = BusinessData(
     incomeSourceId = "XAIS12345678910",
+    incomeSource = Some("Plastering"),
     tradingName = Some("RCDTS"),
     accountingPeriodStartDate = "2001-01-01",
     accountingPeriodEndDate = "2001-01-02",
@@ -70,6 +71,7 @@ class BusinessDataSpec extends UnitSpec {
         |    "latencyIndicator2": "Q",
         |    "latencyEndDate": "2018-12-12"
         |  },
+        |  "incomeSource": "Plastering",
         |  "tradingName": "RCDTS",
         |  "businessAddressDetails": {
         |    "addressLine1": "100 SuttonStreet",

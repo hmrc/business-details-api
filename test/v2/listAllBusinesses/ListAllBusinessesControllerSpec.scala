@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ class ListAllBusinessesControllerSpec
        |    {
        |      "typeOfBusiness": "self-employment",
        |      "businessId": "123456789012345",
+       |      "tradingType": "Plastering",
        |      "tradingName": "RCDTS"
        |    }
        |  ]
@@ -57,7 +58,7 @@ class ListAllBusinessesControllerSpec
     """.stripMargin
   )
 
-  private val business     = Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("RCDTS"))
+  private val business     = Business(TypeOfBusiness.`self-employment`, "123456789012345", Some("Plastering"), Some("RCDTS"))
   private val responseData = ListAllBusinessesResponse(Seq(business))
   private val requestData  = ListAllBusinessesRequestData(Nino(nino))
 
