@@ -6,8 +6,8 @@
   "properties": {
     "quarterlyPeriodType": {
       "type": "string",
-      "description": "The quarterly period type that is being set for the business id.",
-      "example": "standard",
+      "description": "The quarterly period type that is being set for the business id. This is only returned when the customer has previously selected calndar quarters, and then switched back to standard",
+      "example": "calendar",
       "enum": [
         "standard",
         "calendar"
