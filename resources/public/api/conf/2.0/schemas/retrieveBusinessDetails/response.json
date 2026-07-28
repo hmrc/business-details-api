@@ -119,8 +119,8 @@
             "standard",
             "calendar"
           ],
-          "description": "The quarterly period type that is being chosen for the business ID.",
-          "example": "standard"
+          "description": "The quarterly period type that is being chosen for the business ID. For standard quarters, `quarterlyTypeChoice` is only returned when the customer has previously selected calendar quarters, and then switched back to standard.",
+          "example": "calendar"
         },
         "taxYearOfChoice": {
           "type": "string",

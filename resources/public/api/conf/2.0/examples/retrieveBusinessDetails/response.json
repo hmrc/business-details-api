@@ -20,7 +20,7 @@
     }
   ],
   "quarterlyTypeChoice": {
-    "quarterlyPeriodType": "standard",
+    "quarterlyPeriodType": "calendar",
     "taxYearOfChoice": "2023-24"
   },
   "commencementDate": "2023-04-06",
