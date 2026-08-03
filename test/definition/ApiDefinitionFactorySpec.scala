@@ -41,6 +41,7 @@ class ApiDefinitionFactorySpec extends UnitSpec {
         MockedAppConfig.featureSwitches returns Configuration.empty
         MockedAppConfig.apiStatus(Version2) returns "BETA"
         MockedAppConfig.endpointsEnabled(Version2) returns true
+        MockedAppConfig.controlledAccessEnabled returns false
         MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
         (MockedAppConfig.confidenceLevelCheckEnabled returns ConfidenceLevelConfig(
           confidenceLevel = confidenceLevel,
@@ -59,11 +60,13 @@ class ApiDefinitionFactorySpec extends UnitSpec {
                 APIVersion(
                   version = Version1,
                   status = RETIRED,
+                  access = APIAccessType.PUBLIC,
                   endpointsEnabled = false
                 ),
                 APIVersion(
                   version = Version2,
                   status = BETA,
+                  access = APIAccessType.PUBLIC,
                   endpointsEnabled = true
                 )
               ),
@@ -106,6 +109,32 @@ class ApiDefinitionFactorySpec extends UnitSpec {
 
       val exceptionMessage: String = exception.getMessage
       exceptionMessage shouldBe "deprecatedOn date is required for a deprecated version"
+    }
+  }
+
+  "set the access level" when {
+    "the controlled access flag is enabled" should {
+      "to be CONTROLLED" in new Test {
+        MockedAppConfig.endpointsEnabled(Version2)
+        MockedAppConfig.apiStatus(Version2) returns "BETA"
+        MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
+
+        MockedAppConfig.controlledAccessEnabled returns true
+
+        apiDefinitionFactory.definition.api.versions.head.access shouldBe APIAccessType.CONTROLLED
+      }
+    }
+
+    "the controlled access flag is disabled" should {
+      "return PUBLIC" in new Test {
+        MockedAppConfig.endpointsEnabled(Version2)
+        MockedAppConfig.apiStatus(Version2) returns "BETA"
+        MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
+
+        MockedAppConfig.controlledAccessEnabled returns false
+
+        apiDefinitionFactory.definition.api.versions.head.access shouldBe APIAccessType.PUBLIC
+      }
     }
   }
 

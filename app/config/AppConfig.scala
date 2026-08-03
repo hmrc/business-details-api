@@ -53,6 +53,9 @@ class AppConfig @Inject() (val config: ServicesConfig, protected[config] val con
   def endpointsEnabled(version: String): Boolean   = config.getBoolean(s"api.$version.endpoints.enabled")
   def endpointsEnabled(version: Version): Boolean  = config.getBoolean(s"api.${version.name}.endpoints.enabled")
 
+  def controlledAccessEnabled: Boolean =
+    configuration.getOptional[Boolean]("api.controlledAccessEnabled").getOrElse(false)
+
   def allowRequestCannotBeFulfilledHeader(version: Version): Boolean =
     config.getBoolean(s"api.$version.endpoints.allow-request-cannot-be-fulfilled-header")
 
