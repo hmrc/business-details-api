@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
 import play.api.Configuration
 import uk.gov.hmrc.http.StringContextOps
+import v2.retrieveLateAccountingDateRule.fixture.RetrieveLateAccountingDateFixture.responseModel
 import v2.retrieveLateAccountingDateRule.model.request.RetrieveLateAccountingDateRuleRequest
 import v2.retrieveLateAccountingDateRule.model.response.RetrieveLateAccountingDateRuleResponse
 
@@ -29,23 +30,22 @@ import scala.concurrent.Future
 
 class RetrieveLateAccountingDateRuleConnectorSpec extends ConnectorSpec {
 
-  private val nino       = Nino("AA123456A")
-  private val businessId = BusinessId("XAIS12345678910")
-  private val taxYear    = TaxYear.fromMtd("2024-25")
+  private val nino: Nino             = Nino("AA123456A")
+  private val businessId: BusinessId = BusinessId("XAIS12345678910")
+  private val taxYear: TaxYear       = TaxYear.fromMtd("2025-26")
 
-  private val request = RetrieveLateAccountingDateRuleRequest(nino, businessId, taxYear)
-
-  private val response =
-    RetrieveLateAccountingDateRuleResponse(disapply = true, eligible = true, Some(TaxYear.fromMtd("2024-25")), Some(TaxYear.fromMtd("2024-25")))
-
-  val queryParams: Map[String, String] = Map(
-    "incomeSourceId"  -> "XAIS12345678910",
-    "taxYearExplicit" -> "2024-25"
+  private val queryParams: Seq[(String, String)] = Seq(
+    "incomeSourceId"  -> businessId.businessId,
+    "taxYearExplicit" -> taxYear.asMtd
   )
 
-  val mappedQueryParams: Map[String, String] = queryParams.collect { case (k: String, v: String) => (k, v) }
+  private val request: RetrieveLateAccountingDateRuleRequest = RetrieveLateAccountingDateRuleRequest(
+    nino = nino,
+    businessId = businessId,
+    taxYear = taxYear
+  )
 
-  "RetrieveAccountingTypeConnector" must {
+  "RetrieveLateAccountingDateRuleConnector" should {
     "return a successful response" when {
       List(
         (false, None),
@@ -54,13 +54,14 @@ class RetrieveLateAccountingDateRuleConnectorSpec extends ConnectorSpec {
         s"the downstream request is successful and passIntentHeader is set to $passIntentHeaderFlag" in new HipTest with Test {
           override def intent: Option[String] = intentValue
 
-          val outcome: Right[Nothing, ResponseWrapper[RetrieveLateAccountingDateRuleResponse]] = Right(ResponseWrapper(correlationId, response))
+          val outcome: DownstreamOutcome[RetrieveLateAccountingDateRuleResponse] = Right(ResponseWrapper(correlationId, responseModel))
 
-          MockedAppConfig.featureSwitches returns Configuration("passIntentHeader.enabled" -> passIntentHeaderFlag)
+          MockedAppConfig.featureSwitches.returns(Configuration("passIntentHeader.enabled" -> passIntentHeaderFlag))
 
-          willGet(url"$baseUrl/itsd/income-sources/v2/$nino", mappedQueryParams.toList).returns(Future.successful(outcome))
+          willGet(url"$baseUrl/itsd/income-sources/v2/$nino", queryParams).returns(Future.successful(outcome))
 
           val result: DownstreamOutcome[RetrieveLateAccountingDateRuleResponse] = await(connector.retrieveLateAccountingDateRule(request))
+
           result shouldBe outcome
         }
       }
@@ -74,21 +75,22 @@ class RetrieveLateAccountingDateRuleConnectorSpec extends ConnectorSpec {
         s"the downstream request is unsuccessful and passIntentHeader is set to $passIntentHeaderFlag" in new HipTest with Test {
           override def intent: Option[String] = intentValue
 
-          val downstreamErrorResponse: DownstreamErrors                 = DownstreamErrors.single(DownstreamErrorCode("SOME_ERROR"))
-          val outcome: Left[ResponseWrapper[DownstreamErrors], Nothing] = Left(ResponseWrapper(correlationId, downstreamErrorResponse))
+          val downstreamErrorResponse: DownstreamErrors                          = DownstreamErrors.single(DownstreamErrorCode("SOME_ERROR"))
+          val outcome: DownstreamOutcome[RetrieveLateAccountingDateRuleResponse] = Left(ResponseWrapper(correlationId, downstreamErrorResponse))
 
-          MockedAppConfig.featureSwitches returns Configuration("passIntentHeader.enabled" -> passIntentHeaderFlag)
+          MockedAppConfig.featureSwitches.returns(Configuration("passIntentHeader.enabled" -> passIntentHeaderFlag))
 
-          willGet(url"$baseUrl/itsd/income-sources/v2/$nino", mappedQueryParams.toList).returns(Future.successful(outcome))
+          willGet(url"$baseUrl/itsd/income-sources/v2/$nino", queryParams).returns(Future.successful(outcome))
 
           val result: DownstreamOutcome[RetrieveLateAccountingDateRuleResponse] = await(connector.retrieveLateAccountingDateRule(request))
+
           result shouldBe outcome
         }
       }
     }
   }
 
-  trait Test { self: ConnectorTest =>
+  private trait Test { self: ConnectorTest =>
     protected val connector: RetrieveLateAccountingDateRuleConnector = new RetrieveLateAccountingDateRuleConnector(mockHttpClient, mockAppConfig)
   }
 

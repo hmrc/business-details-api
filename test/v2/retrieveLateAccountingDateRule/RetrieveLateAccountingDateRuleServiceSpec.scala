@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors.*
 import api.models.outcomes.ResponseWrapper
 import api.services.{ServiceOutcome, ServiceSpec}
+import v2.retrieveLateAccountingDateRule.fixture.RetrieveLateAccountingDateFixture.responseModel
 import v2.retrieveLateAccountingDateRule.model.request.RetrieveLateAccountingDateRuleRequest
 import v2.retrieveLateAccountingDateRule.model.response.RetrieveLateAccountingDateRuleResponse
 
@@ -27,31 +28,38 @@ import scala.concurrent.Future
 
 class RetrieveLateAccountingDateRuleServiceSpec extends ServiceSpec {
 
-  private val nino        = Nino("AA123456A")
-  private val businessId  = BusinessId("XAIS12345678910")
-  private val taxYear     = TaxYear.fromMtd("2024-25")
-  private val requestData = RetrieveLateAccountingDateRuleRequest(nino, businessId, taxYear)
+  private val requestData: RetrieveLateAccountingDateRuleRequest = RetrieveLateAccountingDateRuleRequest(
+    Nino("AA123456A"),
+    BusinessId("XAIS12345678910"),
+    TaxYear.fromMtd("2025-26")
+  )
 
-  private val expectedResponse =
-    RetrieveLateAccountingDateRuleResponse(
-      disapply = true,
-      eligible = true,
-      Some(TaxYear.fromMtd("2024-25")),
-      Some(TaxYear.fromMtd("2024-25"))
-    )
-
-  "service" when {
-    "a connector call is successful" should {
+  "RetrieveLateAccountingDateRuleService" when {
+    "the connector returns a response containing a lateAccountingDate" should {
       "return a mapped result" in new Test {
         MockRetrieveLateAccountingDateRuleConnector
           .retrieveLateAccountingDateRule(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, expectedResponse))))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseModel))))
 
         val result: ServiceOutcome[RetrieveLateAccountingDateRuleResponse] = await(service.retrieveLateAccountingDateRule(requestData))
-        result shouldBe Right(ResponseWrapper(correlationId, expectedResponse))
+
+        result shouldBe Right(ResponseWrapper(correlationId, responseModel))
       }
     }
-    "a connector call is unsuccessful" should {
+
+    "the connector returns a response without a lateAccountingDate" should {
+      "return NotFoundError" in new Test {
+        MockRetrieveLateAccountingDateRuleConnector
+          .retrieveLateAccountingDateRule(requestData)
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseModel.copy(lateAccountingDate = None)))))
+
+        val result: ServiceOutcome[RetrieveLateAccountingDateRuleResponse] = await(service.retrieveLateAccountingDateRule(requestData))
+
+        result shouldBe Left(ErrorWrapper(correlationId, NotFoundError))
+      }
+    }
+
+    "the connector returns an error response" should {
       def serviceError(downstreamErrorCode: String, error: MtdError): Unit =
         s"return ${error.code} when $downstreamErrorCode error is returned from the service" in new Test {
           MockRetrieveLateAccountingDateRuleConnector
@@ -59,10 +67,11 @@ class RetrieveLateAccountingDateRuleServiceSpec extends ServiceSpec {
             .returns(Future.successful(Left(ResponseWrapper(correlationId, DownstreamErrors.single(DownstreamErrorCode(downstreamErrorCode))))))
 
           val result: ServiceOutcome[RetrieveLateAccountingDateRuleResponse] = await(service.retrieveLateAccountingDateRule(requestData))
+
           result shouldBe Left(ErrorWrapper(correlationId, error))
         }
 
-      val errors = List(
+      val errors: Seq[(String, MtdError)] = List(
         ("1215", NinoFormatError),
         ("1117", TaxYearFormatError),
         ("1007", BusinessIdFormatError),
@@ -79,7 +88,9 @@ class RetrieveLateAccountingDateRuleServiceSpec extends ServiceSpec {
 
   private trait Test extends MockRetrieveLateAccountingDateRuleConnector {
 
-    protected val service = new RetrieveLateAccountingDateRuleService(mockRetrieveLateAccountingDateRuleConnector)
+    protected val service: RetrieveLateAccountingDateRuleService = new RetrieveLateAccountingDateRuleService(
+      mockRetrieveLateAccountingDateRuleConnector
+    )
 
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ package v2.retrieveLateAccountingDateRule
 import api.controllers.RequestContext
 import api.models.errors.*
 import api.services.{BaseService, ServiceOutcome}
-import cats.implicits.toBifunctorOps
 import v2.retrieveLateAccountingDateRule.model.request.RetrieveLateAccountingDateRuleRequest
 import v2.retrieveLateAccountingDateRule.model.response.RetrieveLateAccountingDateRuleResponse
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Either.cond
 
 @Singleton
 class RetrieveLateAccountingDateRuleService @Inject() (connector: RetrieveLateAccountingDateRuleConnector) extends BaseService {
@@ -33,20 +33,20 @@ class RetrieveLateAccountingDateRuleService @Inject() (connector: RetrieveLateAc
       ctx: RequestContext,
       ec: ExecutionContext): Future[ServiceOutcome[RetrieveLateAccountingDateRuleResponse]] = {
 
-    connector.retrieveLateAccountingDateRule(request).map(_.leftMap(mapDownstreamErrors(downstreamErrorMap)))
+    connector.retrieveLateAccountingDateRule(request).map {
+      case Right(wrapper) => cond(wrapper.responseData.hasLateAccountingDate, wrapper, ErrorWrapper(wrapper.correlationId, NotFoundError))
+      case Left(wrapper)  => Left(mapDownstreamErrors(downstreamErrorMap)(wrapper))
+    }
   }
 
-  private val downstreamErrorMap: Map[String, MtdError] = {
-    Map(
-      "1215"                 -> NinoFormatError,
-      "1117"                 -> TaxYearFormatError,
-      "1007"                 -> BusinessIdFormatError,
-      "1122"                 -> InternalError,
-      "1229"                 -> InternalError,
-      "5009"                 -> InternalError,
-      "5010"                 -> NotFoundError,
-      "UNMATCHED_STUB_ERROR" -> RuleIncorrectGovTestScenarioError
-    )
-  }
+  private val downstreamErrorMap: Map[String, MtdError] = Map(
+    "1215" -> NinoFormatError,
+    "1117" -> TaxYearFormatError,
+    "1007" -> BusinessIdFormatError,
+    "1122" -> InternalError,
+    "1229" -> InternalError,
+    "5009" -> InternalError,
+    "5010" -> NotFoundError
+  )
 
 }

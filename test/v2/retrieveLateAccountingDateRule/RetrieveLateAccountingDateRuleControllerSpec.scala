@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,74 +17,50 @@
 package v2.retrieveLateAccountingDateRule
 
 import api.controllers.{ControllerBaseSpec, ControllerTestRunner}
-import api.models.auth.UserDetails
 import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors.{ErrorWrapper, NinoFormatError, TaxYearFormatError}
 import api.models.outcomes.ResponseWrapper
-import api.services.{MockEnrolmentsAuthService, MockMtdIdLookupService}
 import play.api.Configuration
-import play.api.libs.json.Json
 import play.api.mvc.Result
 import routing.Version2
-import utils.MockIdGenerator
+import v2.retrieveLateAccountingDateRule.fixture.RetrieveLateAccountingDateFixture.{mtdResponseJson, responseModel}
 import v2.retrieveLateAccountingDateRule.model.request.RetrieveLateAccountingDateRuleRequest
-import v2.retrieveLateAccountingDateRule.model.response.RetrieveLateAccountingDateRuleResponse
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class RetrieveLateAccountingDateRuleControllerSpec
     extends ControllerBaseSpec(Version2)
     with ControllerTestRunner
-    with MockEnrolmentsAuthService
-    with MockMtdIdLookupService
     with MockRetrieveLateAccountingDateRuleValidatorFactory
-    with MockRetrieveLateAccountingDateRuleService
-    with MockIdGenerator {
+    with MockRetrieveLateAccountingDateRuleService {
 
-  implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
-  private val businessId                             = "XAIS12345678910"
-  private val taxYear                                = "2025-26"
-  val userType: String                               = "Individual"
-  val userDetails: UserDetails                       = UserDetails("mtdId", userType, None)
+  private val businessId: String = "XAIS12345678910"
+  private val taxYear: String    = "2025-26"
 
-  private val validBody = Json.parse("""
-                                            |{
-                                            |    "disapply": true,
-                                            |    "eligible": true,
-                                            |    "taxYearOfElection": "2025-26",
-                                            |    "taxYearElectionExpires": "2025-26"
-                                            |}
-                                            |""".stripMargin)
-
-  private val parsedNino       = Nino(nino)
-  private val parsedBusinessId = BusinessId(businessId)
-  private val parsedTaxYear    = TaxYear.fromMtd(taxYear)
-
-  private val requestData =
-    RetrieveLateAccountingDateRuleRequest(parsedNino, parsedBusinessId, parsedTaxYear)
-
-  private val responseData = RetrieveLateAccountingDateRuleResponse(
-    disapply = true,
-    eligible = true,
-    Some(TaxYear.fromMtd("2025-26")),
-    Some(TaxYear.fromMtd("2025-26"))
+  private val requestData: RetrieveLateAccountingDateRuleRequest = RetrieveLateAccountingDateRuleRequest(
+    Nino(nino),
+    BusinessId(businessId),
+    TaxYear.fromMtd(taxYear)
   )
 
-  "handleRequest" should {
-    "return successful response with status OK" when {
-      "valid request" in new Test {
+  "RetrieveLateAccountingDateRuleController" should {
+    "return 200 (OK) status" when {
+      "the request received is valid" in new Test {
         willUseValidator(returningSuccess(requestData))
 
         MockRetrieveLateAccountingDateRuleService
           .retrieveLateAccountingDateRule(requestData)
-          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseData))))
-        runOkTest(expectedStatus = OK, maybeExpectedResponseBody = Some(validBody))
+          .returns(Future.successful(Right(ResponseWrapper(correlationId, responseModel))))
+
+        runOkTest(expectedStatus = OK, maybeExpectedResponseBody = Some(mtdResponseJson))
       }
     }
 
     "return the error as per spec" when {
       "the parser validation fails" in new Test {
         willUseValidator(returning(NinoFormatError))
+
         runErrorTest(NinoFormatError)
       }
 
@@ -102,7 +78,7 @@ class RetrieveLateAccountingDateRuleControllerSpec
 
   private trait Test extends ControllerTest {
 
-    val controller: RetrieveLateAccountingDateRuleController = new RetrieveLateAccountingDateRuleController(
+    protected val controller: RetrieveLateAccountingDateRuleController = new RetrieveLateAccountingDateRuleController(
       authService = mockEnrolmentsAuthService,
       lookupService = mockMtdIdLookupService,
       validatorFactory = mockRetrieveLateAccountingDateRuleValidatorFactory,
@@ -111,11 +87,13 @@ class RetrieveLateAccountingDateRuleControllerSpec
       idGenerator = mockIdGenerator
     )
 
-    MockedAppConfig.featureSwitches.anyNumberOfTimes() returns Configuration(
-      "supporting-agents-access-control.enabled" -> true
-    )
+    MockedAppConfig.featureSwitches
+      .anyNumberOfTimes()
+      .returns(
+        Configuration("supporting-agents-access-control.enabled" -> true)
+      )
 
-    MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes() returns false
+    MockedAppConfig.endpointAllowsSupportingAgents(controller.endpointName).anyNumberOfTimes().returns(true)
 
     protected def callController(): Future[Result] = controller.handleRequest(nino, businessId, taxYear)(fakeGetRequest)
 

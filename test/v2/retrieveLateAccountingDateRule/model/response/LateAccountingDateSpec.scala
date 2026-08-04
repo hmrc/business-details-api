@@ -16,21 +16,24 @@
 
 package v2.retrieveLateAccountingDateRule.model.response
 
-import play.api.libs.json.*
+import play.api.libs.json.Json
+import support.UnitSpec
+import v2.retrieveLateAccountingDateRule.fixture.RetrieveLateAccountingDateFixture.*
 
-case class RetrieveLateAccountingDateRuleResponse(lateAccountingDate: Option[LateAccountingDate]) {
-  def hasLateAccountingDate: Boolean = lateAccountingDate.isDefined
-}
+class LateAccountingDateSpec extends UnitSpec {
 
-object RetrieveLateAccountingDateRuleResponse {
+  "LateAccountingDate" when {
+    "read from valid JSON" should {
+      "produce the expected response model" in {
+        lateAccountingDateDownstreamJson.as[LateAccountingDate] shouldBe lateAccountingDateModel
+      }
+    }
 
-  implicit val reads: Reads[RetrieveLateAccountingDateRuleResponse] =
-    (JsPath \ "selfEmployments" \\ "lateAccountingDate")
-      .readNullable[LateAccountingDate]
-      .map(RetrieveLateAccountingDateRuleResponse.apply)
-
-  implicit val writes: OWrites[RetrieveLateAccountingDateRuleResponse] = OWrites { response =>
-    response.lateAccountingDate.fold(Json.obj())(Json.toJsObject)
+    "written to JSON" should {
+      "produce the expected JSON" in {
+        Json.toJson(lateAccountingDateModel) shouldBe mtdResponseJson
+      }
+    }
   }
 
 }
