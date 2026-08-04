@@ -108,9 +108,7 @@ class ApiDefinitionFactorySpec extends UnitSpec with MockAppConfig {
         MockedAppConfig.endpointsEnabled(Version2)
         MockedAppConfig.apiStatus(Version2) returns "BETA"
         MockedAppConfig.deprecationFor(Version2).returns(NotDeprecated.valid).anyNumberOfTimes()
-        MockedAppConfig.controlledAccessEnabled returns false
-
-        MockedAppConfig.controlledAccessEnabled returns true
+        MockedAppConfig.controlledAccessEnabled.returns(true).twice()
 
         apiDefinitionFactory.definition.api.versions.last.access shouldBe APIAccessType.CONTROLLED
       }
