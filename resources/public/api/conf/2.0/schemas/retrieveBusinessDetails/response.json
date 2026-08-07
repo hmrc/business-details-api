@@ -18,7 +18,8 @@
         "uk-property",
         "foreign-property",
         "property-unspecified"
-      ]
+      ],
+      "example": "self-employment"
     },
     "tradingType": {
       "type": "string",
@@ -37,19 +38,19 @@
       "type": "string",
       "description": "Year of migration.",
       "pattern": "^(\\d{4})$",
-      "format": "yyyy",
+      "format": "YYYY",
       "example": "2022"
     },
     "firstAccountingPeriodStartDate": {
       "type": "string",
-      "description": "The first accounting period start date.\n\nNote: <b>Accounting period start and end dates should not be displayed to users of your software.</b>",
-      "format": "yyyy-MM-DD",
+      "description": "The first accounting period start date. Must conform to the format `YYYY-MM-DD`\n\nNote: <b>Accounting period start and end dates should not be displayed to users of your software.</b>",
+      "format": "date",
       "example": "2019-09-30"
     },
     "firstAccountingPeriodEndDate": {
       "type": "string",
-      "description": "The first accounting period end date.\n\nNote: <b>Accounting period start and end dates should not be displayed to users of your software.</b>",
-      "format": "yyyy-MM-DD",
+      "description": "The first accounting period end date. Must conform to the format `YYYY-MM-DD`\n\nNote: <b>Accounting period start and end dates should not be displayed to users of your software.</b>",
+      "format": "date",
       "example": "2020-02-29"
     },
     "latencyDetails": {
@@ -58,17 +59,17 @@
       "properties": {
         "latencyEndDate": {
           "type": "string",
-          "description": "End date of latency period for the income source.",
+          "description": "End date of latency period for the income source. Must conform to the format `YYYY-MM-DD`",
           "example": "2020-02-27",
-          "format": "YYYY-MM-DD"
+          "format": "date"
         },
         "taxYear1": {
           "type": "string",
           "description": "First tax year for the income source.",
           "example": "2018-19",
           "format": "YYYY-YY",
-          "minimum": 4,
-          "maximum": 4
+          "minLength": 7,
+          "maxLength": 7
         },
         "latencyIndicator1": {
           "type": "string",
@@ -77,8 +78,6 @@
             "A",
             "Q"
           ],
-          "minimum": 1,
-          "maximum": 1,
           "example": "A"
         },
         "taxYear2": {
@@ -86,8 +85,8 @@
           "description": "Second tax year for the income source.",
           "example": "2019-20",
           "format": "YYYY-YY",
-          "minimum": 4,
-          "maximum": 4
+          "minLength": 7,
+          "maxLength": 7
         },
         "latencyIndicator2": {
           "type": "string",
@@ -96,8 +95,6 @@
             "A",
             "Q"
           ],
-          "minimum": 1,
-          "maximum": 1,
           "example": "A"
         }
       },
@@ -107,7 +104,8 @@
         "latencyIndicator1",
         "taxYear2",
         "latencyIndicator2"
-      ]
+      ],
+      "additionalProperties": false
     },
     "quarterlyTypeChoice": {
       "type": "object",
@@ -129,10 +127,11 @@
           "example": "2023-24"
         }
       },
-      "taxYearOfChoice": [
+      "required": [
         "quarterlyPeriodType",
-        "taxYear1"
-      ]
+        "taxYearOfChoice"
+      ],
+      "additionalProperties": false
     },
     "accountingPeriods": {
       "type": "array",
@@ -141,13 +140,15 @@
         "type": "object",
         "properties": {
           "start": {
-            "description": "Date your books or accounts start - the beginning of your accounting period.",
+            "description": "Date your books or accounts start - the beginning of your accounting period. Must conform to the format `YYYY-MM-DD`",
             "type": "string",
+            "format": "date",
             "example": "2018-04-06"
           },
           "end": {
-            "description": "Date your books or accounts are made up to - the end of your accounting period.",
+            "description": "Date your books or accounts are made up to - the end of your accounting period. Must conform to the format `YYYY-MM-DD`",
             "type": "string",
+            "format": "date",
             "example": "2019-04-05"
           }
         },
@@ -159,38 +160,50 @@
       }
     },
     "commencementDate": {
-      "description": "Business start date, must be in the past.",
+      "description": "Business start date, must be in the past. Must conform to the format `YYYY-MM-DD`",
       "type": "string",
+      "format": "date",
       "example": "2016-09-24"
     },
     "cessationDate": {
-      "description": "Business cessation date.",
+      "description": "Business cessation date. Must conform to the format `YYYY-MM-DD`",
       "type": "string",
+      "format": "date",
       "example": "2020-03-24"
     },
     "businessAddressLineOne": {
       "description": "First line of the business address.",
       "type": "string",
+      "minLength": 1,
+      "maxLength": 35,
       "example": "1 ABC Rd."
     },
     "businessAddressLineTwo": {
       "description": "Second line of the business address.",
       "type": "string",
+      "minLength": 1,
+      "maxLength": 35,
       "example": "London"
     },
     "businessAddressLineThree": {
       "description": "Third line of the business address.",
       "type": "string",
+      "minLength": 1,
+      "maxLength": 35,
       "example": "Greater London"
     },
     "businessAddressLineFour": {
       "description": "Fourth line of the business address.",
       "type": "string",
+      "minLength": 1,
+      "maxLength": 35,
       "example": "United Kingdom"
     },
     "businessAddressPostcode": {
-      "description": "Business code.",
+      "description": "Business postcode.",
       "type": "string",
+      "minLength": 1,
+      "maxLength": 10,
       "example": "M1 1AG"
     },
     "businessAddressCountryCode": {
