@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,13 +61,13 @@ class RetrieveBusinessDetailsService @Inject() (connector: RetrieveBusinessDetai
       downstreamResponse.businessData
         .getOrElse(Nil)
         .filter(_.incomeSourceId == businessId.businessId)
-        .map(RetrieveBusinessDetailsResponse.fromBusinessData(_, downstreamResponse.yearOfMigration))
+        .map(RetrieveBusinessDetailsResponse.fromBusinessData(_))
 
     val matchingProperties =
       downstreamResponse.propertyData
         .getOrElse(Nil)
         .filter(_.incomeSourceId == businessId.businessId)
-        .map(RetrieveBusinessDetailsResponse.fromPropertyData(_, downstreamResponse.yearOfMigration))
+        .map(RetrieveBusinessDetailsResponse.fromPropertyData(_))
 
     matchingBusinesses ++ matchingProperties match {
       case matchingData +: Seq() => Right(responseWrapper.map(_ => matchingData))

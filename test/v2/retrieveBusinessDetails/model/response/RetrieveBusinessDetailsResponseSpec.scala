@@ -50,7 +50,6 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
             taxYear2 = TaxYear.fromDownstream("2019"),
             latencyIndicator2 = LatencyIndicator.Quarterly
           )),
-          yearOfMigration = Some("2023"),
           quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromMtd("2023-24")))
         ))
 
@@ -84,7 +83,6 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
              |     "taxYear2": "2018-19",
              |     "latencyIndicator2": "Q"
              |   },
-             |   "yearOfMigration": "2023",
              |   "quarterlyTypeChoice": {
              |    "quarterlyPeriodType": "standard",
              |    "taxYearOfChoice": "2023-24"
@@ -105,8 +103,6 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
         LatencyIndicator.Annual,
         TaxYear.fromDownstream("2019"),
         LatencyIndicator.Quarterly))
-    val yearOfMigration = Some("migrationYear")
-
     "from property data" must {
       behave like convert(Some(TypeOfBusiness.`foreign-property`), TypeOfBusiness.`foreign-property`)
       behave like convert(Some(TypeOfBusiness.`uk-property`), TypeOfBusiness.`uk-property`)
@@ -144,14 +140,13 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           firstAccountingPeriodStartDate = Some("firstStartDate"),
           firstAccountingPeriodEndDate = Some("firstEndDate"),
           latencyDetails = latencyDetails,
-          yearOfMigration = yearOfMigration,
           quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2024")))
         )
       }
 
       def convert(typeOfBusiness: Option[TypeOfBusiness], expectedTypeOfBusiness: TypeOfBusiness): Unit =
         s"find and convert to MTD for $typeOfBusiness" in {
-          RetrieveBusinessDetailsResponse.fromPropertyData(propertyData(typeOfBusiness), yearOfMigration) shouldBe
+          RetrieveBusinessDetailsResponse.fromPropertyData(propertyData(typeOfBusiness)) shouldBe
             propertyResponse(expectedTypeOfBusiness)
         }
     }
@@ -195,19 +190,18 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
           firstAccountingPeriodStartDate = Some("firstStartDate"),
           firstAccountingPeriodEndDate = Some("firstEndDate"),
           latencyDetails = latencyDetails,
-          yearOfMigration = yearOfMigration,
           quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromDownstream("2023")))
         )
       }
 
       "find and convert to MTD" in {
-        RetrieveBusinessDetailsResponse.fromBusinessData(businessData(businessAddressDetails), yearOfMigration) shouldBe
+        RetrieveBusinessDetailsResponse.fromBusinessData(businessData(businessAddressDetails)) shouldBe
           businessResponse
       }
 
       "for only mandatory address fields" in {
         val businessAddressDetails = Some(BusinessAddressDetails("line1", None, None, None, None, "countryCode"))
-        RetrieveBusinessDetailsResponse.fromBusinessData(businessData(businessAddressDetails, quarterTypeElection = None), yearOfMigration) shouldBe
+        RetrieveBusinessDetailsResponse.fromBusinessData(businessData(businessAddressDetails, quarterTypeElection = None)) shouldBe
           RetrieveBusinessDetailsResponse(
             businessId = "businessId",
             typeOfBusiness = TypeOfBusiness.`self-employment`,
@@ -225,13 +219,12 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
             firstAccountingPeriodStartDate = Some("firstStartDate"),
             firstAccountingPeriodEndDate = Some("firstEndDate"),
             latencyDetails = latencyDetails,
-            yearOfMigration = yearOfMigration,
             quarterlyTypeChoice = None
           )
       }
 
       "for no business address" in {
-        RetrieveBusinessDetailsResponse.fromBusinessData(businessData(businessAddressDetails = None), yearOfMigration) shouldBe
+        RetrieveBusinessDetailsResponse.fromBusinessData(businessData(businessAddressDetails = None)) shouldBe
           RetrieveBusinessDetailsResponse(
             businessId = "businessId",
             typeOfBusiness = TypeOfBusiness.`self-employment`,
@@ -249,7 +242,6 @@ class RetrieveBusinessDetailsResponseSpec extends UnitSpec with MockAppConfig wi
             firstAccountingPeriodStartDate = Some("firstStartDate"),
             firstAccountingPeriodEndDate = Some("firstEndDate"),
             latencyDetails = latencyDetails,
-            yearOfMigration = yearOfMigration,
             quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromMtd("2022-23")))
           )
       }
