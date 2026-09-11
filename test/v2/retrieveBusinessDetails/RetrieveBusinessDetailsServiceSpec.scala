@@ -33,8 +33,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
 
   private def requestDataFor(businessId: String) = RetrieveBusinessDetailsRequestData(nino, BusinessId(businessId))
 
-  private val yearOfMigration = Some("migrationYear")
-
   private def propertyData(incomeSourceId: String) =
     PropertyData(
       incomeSourceType = Some(TypeOfBusiness.`foreign-property`),
@@ -66,7 +64,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     firstAccountingPeriodStartDate = None,
     firstAccountingPeriodEndDate = None,
     latencyDetails = None,
-    yearOfMigration = yearOfMigration,
     quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`CALENDAR`, TaxYear.fromMtd("2023-24")))
   )
 
@@ -103,7 +100,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
     firstAccountingPeriodStartDate = None,
     firstAccountingPeriodEndDate = None,
     latencyDetails = None,
-    yearOfMigration = yearOfMigration,
     quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.`CALENDAR`, TaxYear.fromMtd("2023-24")))
   )
 
@@ -113,7 +109,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         "find and convert to MTD" in new Test {
           testServiceWith(
             requestDataFor("businessId"),
-            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration, businessData = None, propertyData = Some(List(propertyData("businessId"))))
+            RetrieveBusinessDetailsDownstreamResponse(businessData = None, propertyData = Some(List(propertyData("businessId"))))
           ) shouldBe Right(ResponseWrapper(correlationId, propertyResponse("businessId")))
         }
       }
@@ -123,7 +119,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
           testServiceWith(
             requestDataFor("businessId"),
             RetrieveBusinessDetailsDownstreamResponse(
-              yearOfMigration,
               businessData = Some(List(businessData("otherBusinessId"), businessData("businessId"))),
               propertyData = None)
           ) shouldBe Right(ResponseWrapper(correlationId, selfEmploymentResponse("businessId")))
@@ -135,7 +130,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
           testServiceWith(
             requestDataFor("businessId"),
             RetrieveBusinessDetailsDownstreamResponse(
-              yearOfMigration,
               businessData = None,
               propertyData = Some(List(propertyData("businessId"), propertyData("businessId"))))
           ) shouldBe Left(ErrorWrapper(correlationId, InternalError))
@@ -147,7 +141,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
           testServiceWith(
             requestDataFor("businessId"),
             RetrieveBusinessDetailsDownstreamResponse(
-              yearOfMigration,
               businessData = Some(List(businessData("businessId"), businessData("businessId"))),
               propertyData = None)
           ) shouldBe Left(ErrorWrapper(correlationId, InternalError))
@@ -159,7 +152,6 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
           testServiceWith(
             requestDataFor("businessId"),
             RetrieveBusinessDetailsDownstreamResponse(
-              yearOfMigration,
               businessData = Some(List(businessData("businessId"))),
               propertyData = Some(List(propertyData("businessId"))))
           ) shouldBe Left(ErrorWrapper(correlationId, InternalError))
@@ -170,7 +162,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         "return a not found result" in new Test {
           testServiceWith(
             requestDataFor("businessId"),
-            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration, businessData = None, propertyData = None)) shouldBe Left(
+            RetrieveBusinessDetailsDownstreamResponse(businessData = None, propertyData = None)) shouldBe Left(
             ErrorWrapper(correlationId, NoBusinessFoundError))
         }
       }
@@ -179,7 +171,7 @@ class RetrieveBusinessDetailsServiceSpec extends ServiceSpec {
         "return a not found result" in new Test {
           testServiceWith(
             requestDataFor("businessId"),
-            RetrieveBusinessDetailsDownstreamResponse(yearOfMigration, businessData = Some(Nil), propertyData = Some(Nil))) shouldBe Left(
+            RetrieveBusinessDetailsDownstreamResponse(businessData = Some(Nil), propertyData = Some(Nil))) shouldBe Left(
             ErrorWrapper(correlationId, NoBusinessFoundError))
         }
       }

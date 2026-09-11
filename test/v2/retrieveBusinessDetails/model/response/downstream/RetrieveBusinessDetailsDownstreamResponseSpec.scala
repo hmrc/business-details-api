@@ -36,7 +36,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 |      "safeId": "XE00001234567890",
                 |      "nino": "AA123456A",
                 |      "mtdId": "XNIT00000068707",
-                |      "yearOfMigration": "2023",
                 |      "propertyIncomeFlag": true,
                 |      "businessData": [
                 |        {
@@ -53,7 +52,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             .as[RetrieveBusinessDetailsDownstreamResponse]
 
           val expected = RetrieveBusinessDetailsDownstreamResponse(
-            yearOfMigration = Some("2023"),
             businessData = Some(
               List(BusinessData(
                 incomeSourceId = "XAIS12345678910",
@@ -87,7 +85,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
                 |      "safeId": "XE00001234567890",
                 |      "nino": "AA123456A",
                 |      "mtdId": "XNIT00000068707",
-                |      "yearOfMigration": "2023",
                 |      "propertyIncomeFlag": true,
                 |      "propertyData": [
                 |        {
@@ -104,7 +101,6 @@ class RetrieveBusinessDetailsDownstreamResponseSpec extends UnitSpec {
             .as[RetrieveBusinessDetailsDownstreamResponse]
 
           val expected = RetrieveBusinessDetailsDownstreamResponse(
-            yearOfMigration = Some("2023"),
             businessData = None,
             propertyData = Some(
               List(PropertyData(

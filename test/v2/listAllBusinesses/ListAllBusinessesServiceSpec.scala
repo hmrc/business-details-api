@@ -36,7 +36,6 @@ class ListAllBusinessesServiceSpec extends ServiceSpec {
     "a connector call is successful" should {
       "return a converted result" in new Test {
         private val downstreamResponse = RetrieveBusinessDetailsDownstreamResponse(
-          yearOfMigration = None,
           businessData = Some(
             Seq(BusinessData(
               incomeSourceId = "someBusinessId",

@@ -76,7 +76,6 @@ class RetrieveBusinessDetailsControllerSpec
       |     "taxYear2": "2018-19",
       |     "latencyIndicator2": "Q"
       |   },
-      |   "yearOfMigration": "2023",
       |   "quarterlyTypeChoice": {
       |     "quarterlyPeriodType": "standard",
       |     "taxYearOfChoice": "2023-24"
@@ -108,7 +107,6 @@ class RetrieveBusinessDetailsControllerSpec
         LatencyIndicator.Annual,
         TaxYear.fromDownstream("2019"),
         LatencyIndicator.Quarterly)),
-    yearOfMigration = Some("2023"),
     quarterlyTypeChoice = Some(QuarterTypeElection(QuarterReportingType.STANDARD, TaxYear.fromMtd("2023-24")))
   )
 

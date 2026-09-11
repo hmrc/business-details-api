@@ -176,7 +176,6 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         |      "safeId": "XAIS123456789012",
         |      "nino": "AA123456A",
         |      "mtdId": "XNIT00000068707",
-        |      "yearOfMigration": "2023",
         |      "propertyIncomeFlag": false,
         |      "businessData": [
         |        {
@@ -366,7 +365,6 @@ class RetrieveBusinessDetailsControllerISpec extends IntegrationBaseSpec {
         |    "taxYear2": "2018-19",
         |    "latencyIndicator2": "Q"
         |  },
-        |  "yearOfMigration": "2023",
         |  "quarterlyTypeChoice": {
         |    "quarterlyPeriodType": "standard",
         |    "taxYearOfChoice": "2022-23"

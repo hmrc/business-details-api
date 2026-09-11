@@ -27,13 +27,12 @@ class ListAllBusinessesResponseSpec extends UnitSpec {
   "ListAllBusinessesResponse" must {
     "correctly convert from the downstream data model" when {
 
-      val incomeSourceId  = "someIncomeSourceId"
-      val yearOfMigration = Some("ignoredYear")
-      val incomeSource    = Some("Plastering")
+      val incomeSourceId = "someIncomeSourceId"
+      val incomeSource   = Some("Plastering")
 
       def downstream(businessData: Option[Seq[BusinessData]] = None,
                      propertyData: Option[Seq[PropertyData]] = None): RetrieveBusinessDetailsDownstreamResponse =
-        RetrieveBusinessDetailsDownstreamResponse(yearOfMigration, businessData, propertyData)
+        RetrieveBusinessDetailsDownstreamResponse(businessData, propertyData)
 
       def downstreamBusiness(tradingName: Option[String]): BusinessData =
         BusinessData(

@@ -37,15 +37,13 @@ case class RetrieveBusinessDetailsResponse(businessId: String,
                                            firstAccountingPeriodStartDate: Option[String],
                                            firstAccountingPeriodEndDate: Option[String],
                                            latencyDetails: Option[LatencyDetails],
-                                           yearOfMigration: Option[String],
                                            quarterlyTypeChoice: Option[QuarterTypeElection])
 
 object RetrieveBusinessDetailsResponse {
 
   implicit val writes: OWrites[RetrieveBusinessDetailsResponse] = Json.writes[RetrieveBusinessDetailsResponse]
 
-  def fromBusinessData(businessData: BusinessData, yearOfMigration: Option[String])(implicit
-      featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
+  def fromBusinessData(businessData: BusinessData)(implicit featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
     import businessData.*
 
     RetrieveBusinessDetailsResponse(
@@ -65,13 +63,11 @@ object RetrieveBusinessDetailsResponse {
       firstAccountingPeriodStartDate: Option[String],
       firstAccountingPeriodEndDate: Option[String],
       latencyDetails: Option[LatencyDetails],
-      yearOfMigration: Option[String],
       quarterlyTypeChoice = quarterTypeElection
     )
   }
 
-  def fromPropertyData(propertyData: PropertyData, yearOfMigration: Option[String])(implicit
-      featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
+  def fromPropertyData(propertyData: PropertyData)(implicit featureSwitches: FeatureSwitches): RetrieveBusinessDetailsResponse = {
     import propertyData.*
 
     RetrieveBusinessDetailsResponse(
@@ -91,7 +87,6 @@ object RetrieveBusinessDetailsResponse {
       firstAccountingPeriodStartDate: Option[String],
       firstAccountingPeriodEndDate: Option[String],
       latencyDetails: Option[LatencyDetails],
-      yearOfMigration: Option[String],
       quarterlyTypeChoice = quarterTypeElection
     )
   }
