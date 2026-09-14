@@ -198,7 +198,6 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         |      "safeId": "XAIS123456789012",
         |      "nino": "AA123456A",
         |      "mtdId": "XNIT00000068707",
-        |      "yearOfMigration": "2023",
         |      "propertyIncomeFlag": false,
         |      "businessData": [
         |        {
@@ -257,7 +256,6 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         |      "safeId": "XAIS123456789012",
         |      "nino": "AA123456A",
         |      "mtdId": "XNIT00000068707",
-        |      "yearOfMigration": "2023",
         |      "propertyIncomeFlag": false,
         |      "propertyData": [
         |        {
@@ -305,7 +303,6 @@ class ListAllBusinessesControllerISpec extends IntegrationBaseSpec {
         |      "safeId": "XAIS123456789012",
         |      "nino": "AA123456A",
         |      "mtdId": "XNIT00000068707",
-        |      "yearOfMigration": "2023",
         |      "propertyIncomeFlag": false,
         |      "businessData": [
         |        {
