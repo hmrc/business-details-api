@@ -46,7 +46,6 @@ class BusinessDetailsAuthSupportingAgentsAllowedISpec extends AuthSupportingAgen
         |      "safeId": "XAIS123456789012",
         |      "nino": "$nino",
         |      "mtdId": "XNIT00000068707",
-        |      "yearOfMigration": "2023",
         |      "propertyIncomeFlag": false,
         |      "businessData": [
         |        {

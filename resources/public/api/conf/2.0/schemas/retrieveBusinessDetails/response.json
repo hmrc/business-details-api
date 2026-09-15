@@ -34,13 +34,6 @@
       "example": "ABC Ltd.",
       "maxLength": 105
     },
-    "yearOfMigration": {
-      "type": "string",
-      "description": "Year of migration.",
-      "pattern": "^(\\d{4})$",
-      "format": "YYYY",
-      "example": "2022"
-    },
     "firstAccountingPeriodStartDate": {
       "type": "string",
       "description": "The first accounting period start date. Must conform to the format `YYYY-MM-DD`\n\nNote: <b>Accounting period start and end dates should not be displayed to users of your software.</b>",

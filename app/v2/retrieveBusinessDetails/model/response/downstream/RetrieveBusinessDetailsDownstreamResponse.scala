@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,7 @@ package v2.retrieveBusinessDetails.model.response.downstream
 
 import play.api.libs.json.{JsPath, Json, Reads}
 
-case class RetrieveBusinessDetailsDownstreamResponse(yearOfMigration: Option[String],
-                                                     businessData: Option[Seq[BusinessData]],
-                                                     propertyData: Option[Seq[PropertyData]])
+case class RetrieveBusinessDetailsDownstreamResponse(businessData: Option[Seq[BusinessData]], propertyData: Option[Seq[PropertyData]])
 
 object RetrieveBusinessDetailsDownstreamResponse {
 

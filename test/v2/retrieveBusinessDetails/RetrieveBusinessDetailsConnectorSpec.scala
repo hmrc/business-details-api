@@ -29,7 +29,7 @@ class RetrieveBusinessDetailsConnectorSpec extends ConnectorSpec {
 
   private val nino = Nino("AA123456A")
 
-  private val response: RetrieveBusinessDetailsDownstreamResponse = RetrieveBusinessDetailsDownstreamResponse(Some("2023"), None, None)
+  private val response: RetrieveBusinessDetailsDownstreamResponse = RetrieveBusinessDetailsDownstreamResponse(None, None)
 
   "RetrieveBusinessDetailsConnector" when {
     ".retrieveBusinessDetails" must {
