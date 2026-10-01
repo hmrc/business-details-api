@@ -83,7 +83,7 @@
         },
         "latencyIndicator2": {
           "type": "string",
-          "description": "Self assessment submission frequency.",
+          "description": "'A' indicates a latent business. 'Q' indicates a non-latent business.",
           "enum": [
             "A",
             "Q"
