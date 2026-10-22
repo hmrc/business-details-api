@@ -24,7 +24,7 @@ import cats.data.EitherT
 import cats.data.Validated.Valid
 import cats.implicits.*
 import config.AppConfig
-import config.Deprecation.Deprecated
+import config.Deprecation.HasDeprecationDates
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Writes}
 import play.api.mvc.Result
@@ -94,16 +94,13 @@ object RequestHandler {
 
       implicit class Response(result: Result)(implicit appConfig: AppConfig, apiVersion: Version) {
 
-        private def withDeprecationHeaders: List[(String, String)] = {
-
-          appConfig.deprecationFor(apiVersion) match {
-            case Valid(Deprecated(deprecatedOn, maybeSunsetDate)) =>
-              List(
-                "Deprecation" -> longDateTimestampGmt(deprecatedOn),
-                "Link"        -> appConfig.apiDocumentationUrl
-              ) ++ maybeSunsetDate.map(sunsetDate => "Sunset" -> longDateTimestampGmt(sunsetDate))
-            case _ => Nil
-          }
+        private def withDeprecationHeaders: List[(String, String)] = appConfig.deprecationFor(apiVersion) match {
+          case Valid(deprecation: HasDeprecationDates) =>
+            List(
+              "Deprecation" -> longDateTimestampGmt(deprecation.deprecatedOn),
+              "Link"        -> appConfig.apiDocumentationUrl
+            ) ++ deprecation.sunsetDate.map(sunsetDate => "Sunset" -> longDateTimestampGmt(sunsetDate))
+          case _ => Nil
         }
 
         def withApiHeaders(correlationId: String, responseHeaders: (String, String)*): Result = {
