@@ -22,15 +22,16 @@ import api.models.auth.UserDetails
 import api.models.errors.{ErrorWrapper, MtdError, NinoFormatError}
 import api.models.outcomes.ResponseWrapper
 import api.services.{MockAuditService, ServiceOutcome}
+import utils.DateUtils.longDateTimestampGmt
 import cats.data.Validated
 import cats.data.Validated.{Invalid, Valid}
 import cats.implicits.catsSyntaxValidatedId
-import config.Deprecation.{Deprecated, NotDeprecated}
+import config.Deprecation.*
 import config.{AppConfig, Deprecation, MockAppConfig}
 import org.scalamock.handlers.CallHandler
 import play.api.http.{HeaderNames, Status}
 import play.api.libs.json.{JsString, Json, OWrites}
-import play.api.mvc.{AnyContent, AnyContentAsEmpty}
+import play.api.mvc.{AnyContent, AnyContentAsEmpty, Result}
 import play.api.test.{FakeRequest, ResultExtractors}
 import routing.{Version, Version2}
 import support.UnitSpec
@@ -38,7 +39,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.MockIdGenerator
 
-import java.time.LocalDateTime
+import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -94,6 +95,11 @@ class RequestHandlerSpec
   private val singleErrorValidatorForRequest = new Validator[Input.type] {
     def validate: Validated[Seq[MtdError], Input.type] = Invalid(List(NinoFormatError))
   }
+
+  private val successRequestHandler =
+    RequestHandler
+      .withValidator(successValidatorForRequest)
+      .withService(mockService.service)
 
   "RequestHandler" when {
     "a request is successful" must {
@@ -185,6 +191,42 @@ class RequestHandlerSpec
             header("Link", result) shouldBe Some("http://someUrl")
             status(result) shouldBe successCode
           }
+        }
+      }
+
+      "handling deprecation headers" should {
+        val documentationUrl: String    = "http://test-BaseUrl/documentation-url"
+        val deprecatedOn: LocalDateTime = LocalDate.parse("2027-01-15").plusDays(1).atStartOfDay.minusSeconds(1)
+        val sunsetDate: LocalDateTime   = LocalDate.parse("2028-01-15").plusDays(1).atStartOfDay.minusSeconds(1)
+
+        "include the correct headers for a scheduled API version deprecation" in {
+          MockedAppConfig.apiDocumentationUrl().returns(documentationUrl).anyNumberOfTimes()
+
+          mockDeprecation(ScheduledDeprecation(deprecatedOn = deprecatedOn, sunsetDate = Some(sunsetDate)))
+
+          service.returns(Future.successful(Right(ResponseWrapper(serviceCorrelationId, Output))))
+
+          val requestHandler: RequestHandler = successRequestHandler.withPlainJsonResult(successCode)
+          val result: Future[Result]         = requestHandler.handleRequest()
+
+          header("Deprecation", result) shouldBe Some(longDateTimestampGmt(deprecatedOn))
+          header("Sunset", result) shouldBe Some(longDateTimestampGmt(sunsetDate))
+          header("Link", result) shouldBe Some(documentationUrl)
+        }
+
+        "include the correct headers for a deprecated API version" in {
+          MockedAppConfig.apiDocumentationUrl().returns(documentationUrl).anyNumberOfTimes()
+
+          mockDeprecation(Deprecated(deprecatedOn = deprecatedOn, sunsetDate = None))
+
+          service.returns(Future.successful(Right(ResponseWrapper(serviceCorrelationId, Output))))
+
+          val requestHandler: RequestHandler = successRequestHandler.withPlainJsonResult(successCode)
+          val result: Future[Result]         = requestHandler.handleRequest()
+
+          header("Deprecation", result) shouldBe Some(longDateTimestampGmt(deprecatedOn))
+          header("Sunset", result) shouldBe None
+          header("Link", result) shouldBe Some(documentationUrl)
         }
       }
 
