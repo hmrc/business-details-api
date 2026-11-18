@@ -17,13 +17,10 @@
 package v2.createAmendQuarterlyPeriodType.model.request
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
-import v2.createAmendQuarterlyPeriodType.CreateAmendQuarterlyPeriodTypeSchema
 
 trait CreateAmendQuarterlyPeriodTypeRequestData {
   def nino: Nino
   def businessId: BusinessId
   def taxYear: TaxYear
   def body: CreateAmendQuarterlyPeriodTypeRequestBody
-
-  val schema: CreateAmendQuarterlyPeriodTypeSchema
 }
