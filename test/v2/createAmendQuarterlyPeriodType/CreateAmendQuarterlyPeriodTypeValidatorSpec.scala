@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package v2.createAmendQuarterlyPeriodType.def1
+package v2.createAmendQuarterlyPeriodType
 
 import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors.*
 import api.utils.JsonErrorValidators
 import play.api.libs.json.*
 import support.UnitSpec
-import v2.createAmendQuarterlyPeriodType.def1.model.request.*
+import v2.createAmendQuarterlyPeriodType.model.request.*
 
-class Def1_CreateAmendQuarterlyPeriodTypeValidatorSpec extends UnitSpec with JsonErrorValidators {
+class CreateAmendQuarterlyPeriodTypeValidatorSpec extends UnitSpec with JsonErrorValidators {
 
   private implicit val correlationId: String = "1234"
 
@@ -41,17 +41,17 @@ class Def1_CreateAmendQuarterlyPeriodTypeValidatorSpec extends UnitSpec with Jso
   private val parsedBusinessId = BusinessId(validBusinessId)
   private val parsedTaxYear    = TaxYear.fromMtd(validTaxYear)
 
-  private val parsedBody = Def1_CreateAmendQuarterlyPeriodTypeRequestBody(QuarterlyPeriodType.`standard`)
+  private val parsedBody = CreateAmendQuarterlyPeriodTypeRequestBody(QuarterlyPeriodType.`standard`)
 
   private def validator(nino: String, businessId: String, taxYear: String, body: JsValue) =
-    new Def1_CreateAmendQuarterlyPeriodTypeValidator(nino, businessId, taxYear, body)
+    new CreateAmendQuarterlyPeriodTypeValidator(nino, businessId, taxYear, body)
 
   "validator" should {
     "return the parsed domain object" when {
       "passed a valid request" in {
         val result = validator(validNino, validBusinessId, validTaxYear, validBody).validateAndWrapResult()
 
-        result shouldBe Right(Def1_CreateAmendQuarterlyPeriodTypeRequestData(parsedNino, parsedBusinessId, parsedTaxYear, parsedBody))
+        result shouldBe Right(CreateAmendQuarterlyPeriodTypeRequestData(parsedNino, parsedBusinessId, parsedTaxYear, parsedBody))
       }
     }
 

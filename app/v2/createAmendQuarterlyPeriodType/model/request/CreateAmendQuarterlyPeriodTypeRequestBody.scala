@@ -17,17 +17,25 @@
 package v2.createAmendQuarterlyPeriodType.model.request
 
 import config.AppConfig
-import play.api.libs.json.{JsObject, Json, OWrites}
-import utils.JsonWritesUtil
-import v2.createAmendQuarterlyPeriodType.def1.model.request.Def1_CreateAmendQuarterlyPeriodTypeRequestBody
+import play.api.libs.json.{JsObject, Json, OWrites, Reads}
+import utils.EmptinessChecker
+import utils.EmptinessChecker.field
 
-trait CreateAmendQuarterlyPeriodTypeRequestBody
+case class CreateAmendQuarterlyPeriodTypeRequestBody(quarterlyPeriodType: QuarterlyPeriodType)
 
-object CreateAmendQuarterlyPeriodTypeRequestBody extends JsonWritesUtil {
+object CreateAmendQuarterlyPeriodTypeRequestBody {
 
-  implicit def writes(implicit appConfig: AppConfig): OWrites[CreateAmendQuarterlyPeriodTypeRequestBody] = writesFrom {
-    case a: Def1_CreateAmendQuarterlyPeriodTypeRequestBody =>
-      Json.toJson(a).as[JsObject]
+  implicit val emptinessChecker: EmptinessChecker[CreateAmendQuarterlyPeriodTypeRequestBody] = EmptinessChecker.use { o =>
+    List(
+      field("accountingType", o.quarterlyPeriodType.toString)
+    )
   }
+
+  implicit val reads: Reads[CreateAmendQuarterlyPeriodTypeRequestBody] = Json.reads[CreateAmendQuarterlyPeriodTypeRequestBody]
+
+  implicit def writes(implicit appConfig: AppConfig): OWrites[CreateAmendQuarterlyPeriodTypeRequestBody] =
+    (body: CreateAmendQuarterlyPeriodTypeRequestBody) => {
+      Json.obj("quarterReportingType" -> body.quarterlyPeriodType.asHipDownstream)
+    }
 
 }

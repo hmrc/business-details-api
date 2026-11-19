@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v2.createAmendQuarterlyPeriodType.def1.model.request
+package v2.createAmendQuarterlyPeriodType.model.request
 
 import play.api.libs.json.{Reads, Writes}
 import utils.enums.Enums

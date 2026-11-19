@@ -21,7 +21,7 @@ import api.models.domain.{BusinessId, Nino, TaxYear}
 import api.models.errors.{DownstreamErrorCode, DownstreamErrors}
 import api.models.outcomes.ResponseWrapper
 import uk.gov.hmrc.http.StringContextOps
-import v2.createAmendQuarterlyPeriodType.def1.model.request.*
+import v2.createAmendQuarterlyPeriodType.model.request.*
 
 import scala.concurrent.Future
 
@@ -30,9 +30,9 @@ class CreateAmendQuarterlyPeriodTypeConnectorSpec extends ConnectorSpec {
   private val nino       = Nino("AA123456A")
   private val businessId = BusinessId("XAIS12345678910")
   private val taxYear    = TaxYear.fromMtd("2023-24")
-  private val body       = Def1_CreateAmendQuarterlyPeriodTypeRequestBody(QuarterlyPeriodType.`standard`)
+  private val body       = CreateAmendQuarterlyPeriodTypeRequestBody(QuarterlyPeriodType.`standard`)
 
-  private val request = Def1_CreateAmendQuarterlyPeriodTypeRequestData(nino, businessId, taxYear, body)
+  private val request = CreateAmendQuarterlyPeriodTypeRequestData(nino, businessId, taxYear, body)
 
   "CreateAmendQuarterlyPeriodTypeConnector" must {
     "return a successful response" when {
