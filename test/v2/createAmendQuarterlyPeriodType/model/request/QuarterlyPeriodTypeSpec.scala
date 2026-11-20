@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package v2.createAmendQuarterlyPeriodType.def1.model.request
+package v2.createAmendQuarterlyPeriodType.model.request
 
 import play.api.libs.json.*
 import support.UnitSpec
-import v2.createAmendQuarterlyPeriodType.def1.model.request.QuarterlyPeriodType.*
+import v2.createAmendQuarterlyPeriodType.model.request.QuarterlyPeriodType.*
 
 class QuarterlyPeriodTypeSpec extends UnitSpec {
 

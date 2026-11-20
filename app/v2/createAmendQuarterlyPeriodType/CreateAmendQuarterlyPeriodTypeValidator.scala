@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package v2.createAmendQuarterlyPeriodType.def1
+package v2.createAmendQuarterlyPeriodType
 
 import api.controllers.validators.Validator
 import api.controllers.validators.resolvers.{ResolveBusinessId, ResolveNino, ResolveNonEmptyJsonObject, ResolveTaxYear}
@@ -22,19 +22,18 @@ import api.models.errors.MtdError
 import cats.data.Validated
 import cats.implicits.catsSyntaxTuple4Semigroupal
 import play.api.libs.json.JsValue
-import v2.createAmendQuarterlyPeriodType.def1.model.request.*
-import v2.createAmendQuarterlyPeriodType.model.request.CreateAmendQuarterlyPeriodTypeRequestData
+import v2.createAmendQuarterlyPeriodType.model.request.*
 
-class Def1_CreateAmendQuarterlyPeriodTypeValidator(nino: String, businessId: String, taxYear: String, body: JsValue)
+class CreateAmendQuarterlyPeriodTypeValidator(nino: String, businessId: String, taxYear: String, body: JsValue)
     extends Validator[CreateAmendQuarterlyPeriodTypeRequestData] {
 
-  private val resolveJson = new ResolveNonEmptyJsonObject[Def1_CreateAmendQuarterlyPeriodTypeRequestBody]()
+  private val resolveJson = new ResolveNonEmptyJsonObject[CreateAmendQuarterlyPeriodTypeRequestBody]()
 
   def validate: Validated[Seq[MtdError], CreateAmendQuarterlyPeriodTypeRequestData] = (
     ResolveNino(nino),
     ResolveBusinessId(businessId),
     ResolveTaxYear(taxYear),
     resolveJson(body)
-  ).mapN(Def1_CreateAmendQuarterlyPeriodTypeRequestData.apply)
+  ).mapN(CreateAmendQuarterlyPeriodTypeRequestData.apply)
 
 }

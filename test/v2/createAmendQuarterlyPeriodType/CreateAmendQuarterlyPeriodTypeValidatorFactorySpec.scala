@@ -20,7 +20,6 @@ import api.controllers.validators.Validator
 import api.utils.JsonErrorValidators
 import play.api.libs.json.*
 import support.UnitSpec
-import v2.createAmendQuarterlyPeriodType.def1.Def1_CreateAmendQuarterlyPeriodTypeValidator
 import v2.createAmendQuarterlyPeriodType.model.request.CreateAmendQuarterlyPeriodTypeRequestData
 
 class CreateAmendQuarterlyPeriodTypeValidatorFactorySpec extends UnitSpec with JsonErrorValidators {
@@ -43,7 +42,7 @@ class CreateAmendQuarterlyPeriodTypeValidatorFactorySpec extends UnitSpec with J
         val requestBody = validBody
         val result: Validator[CreateAmendQuarterlyPeriodTypeRequestData] =
           validatorFactory.validator(validNino, validBusinessId, validTaxYear, requestBody)
-        result shouldBe a[Def1_CreateAmendQuarterlyPeriodTypeValidator]
+        result shouldBe a[CreateAmendQuarterlyPeriodTypeValidator]
       }
     }
   }
